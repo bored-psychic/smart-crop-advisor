@@ -1,17 +1,18 @@
 import streamlit as st
 import pickle
 import numpy as np
+from PIL import Image
 
-# ── Page config ──────────────────────────────────────────────────────────────
+# ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Smart Crop Advisor",
+    page_title="Smart Crop Advisory System",
     page_icon="🌾",
     layout="centered"
 )
 
-# ── Load models ───────────────────────────────────────────────────────────────
+# ── Load crop recommendation models ──────────────────────────────────────────
 @st.cache_resource
-def load_models():
+def load_crop_models():
     with open('crop_model.pkl', 'rb') as f:
         model = pickle.load(f)
     with open('scaler.pkl', 'rb') as f:
@@ -20,7 +21,13 @@ def load_models():
         le = pickle.load(f)
     return model, scaler, le
 
-model, scaler, le = load_models()
+# ── Load disease detection model ──────────────────────────────────────────────
+@st.cache_resource
+def load_disease_model():
+    import tensorflow as tf
+    model = tf.keras.models.load_model('disease_model.h5')
+    class_names = np.load('class_names.npy', allow_pickle=True)
+    return model, class_names
 
 # ── Crop emoji map ────────────────────────────────────────────────────────────
 CROP_EMOJI = {
@@ -32,7 +39,6 @@ CROP_EMOJI = {
     'jute': '🌿', 'coffee': '☕'
 }
 
-# ── Crop tips ─────────────────────────────────────────────────────────────────
 CROP_TIPS = {
     'rice':       'Best grown in waterlogged, clayey soil. Requires consistent irrigation.',
     'maize':      'Grows well in well-drained loamy soil. Needs moderate water.',
@@ -58,95 +64,183 @@ CROP_TIPS = {
     'coffee':     'Needs high altitude, moderate temp, and well-distributed rainfall.'
 }
 
-# ── UI ────────────────────────────────────────────────────────────────────────
+DISEASE_TREATMENT = {
+    'Apple___Apple_scab': '💊 Apply fungicide (Captan/Mancozeb). Remove infected leaves.',
+    'Apple___Black_rot': '✂️ Prune infected branches. Apply copper-based fungicide.',
+    'Apple___Cedar_apple_rust': '🍎 Apply myclobutanil fungicide early in the season.',
+    'Corn___Common_rust': '🌽 Apply fungicide (Azoxystrobin). Use resistant varieties.',
+    'Corn___Northern_Leaf_Blight': '🌽 Apply fungicide at early stages. Rotate crops.',
+    'Corn___Cercospora_leaf_spot Gray_leaf_spot': '🌽 Improve air circulation. Apply strobilurin fungicide.',
+    'Grape___Black_rot': '🍇 Remove mummified fruits. Apply mancozeb fungicide.',
+    'Grape___Esca_(Black_Measles)': '🍇 No cure — remove infected vines to prevent spread.',
+    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': '🍇 Apply copper fungicide. Avoid overhead irrigation.',
+    'Orange___Haunglongbing_(Citrus_greening)': '🍊 No cure. Remove infected trees immediately.',
+    'Peach___Bacterial_spot': '🍑 Apply copper sprays. Use resistant varieties.',
+    'Pepper,_bell___Bacterial_spot': '🫑 Apply copper bactericide. Avoid working when wet.',
+    'Potato___Early_blight': '🥔 Apply chlorothalonil fungicide. Rotate crops annually.',
+    'Potato___Late_blight': '🥔 Apply mancozeb immediately. Destroy infected plants.',
+    'Strawberry___Leaf_scorch': '🍓 Apply fungicide. Remove infected leaves.',
+    'Tomato___Bacterial_spot': '🍅 Apply copper spray. Use disease-free seeds.',
+    'Tomato___Early_blight': '🍅 Apply mancozeb fungicide. Mulch around plants.',
+    'Tomato___Late_blight': '🍅 Apply chlorothalonil. Remove infected plants urgently.',
+    'Tomato___Leaf_Mold': '🍅 Improve ventilation. Apply fungicide (copper/mancozeb).',
+    'Tomato___Septoria_leaf_spot': '🍅 Remove lower leaves. Apply fungicide regularly.',
+    'Tomato___Spider_mites Two-spotted_spider_mite': '🍅 Apply neem oil or miticide spray.',
+    'Tomato___Target_Spot': '🍅 Apply azoxystrobin fungicide. Remove infected debris.',
+    'Tomato___Tomato_mosaic_virus': '🍅 No cure. Remove infected plants. Control aphids.',
+    'Tomato___Tomato_Yellow_Leaf_Curl_Virus': '🍅 Control whiteflies. Remove infected plants.',
+    'Squash___Powdery_mildew': '🎃 Apply potassium bicarbonate or neem oil spray.',
+    'Cherry___Powdery_mildew': '🍒 Apply sulfur-based fungicide. Improve air circulation.',
+}
+
+# ── Header ────────────────────────────────────────────────────────────────────
 st.title("🌾 Smart Crop Advisory System")
-st.caption("AI-powered crop recommendations for small and marginal farmers")
+st.caption("AI-powered advisory for small and marginal farmers")
 st.divider()
 
-# Two-column layout
-col1, col2 = st.columns(2)
+# ── Tabs ──────────────────────────────────────────────────────────────────────
+tab1, tab2 = st.tabs(["🌾 Crop Recommender", "🌿 Disease Detector"])
 
-with col1:
-    st.subheader("🧪 Soil Nutrients")
-    N = st.slider("Nitrogen (N) — kg/ha", min_value=0, max_value=140, value=90,
-                  help="Amount of nitrogen in soil")
-    P = st.slider("Phosphorus (P) — kg/ha", min_value=5, max_value=145, value=42,
-                  help="Amount of phosphorus in soil")
-    K = st.slider("Potassium (K) — kg/ha", min_value=5, max_value=205, value=43,
-                  help="Amount of potassium in soil")
-    ph = st.slider("Soil pH", min_value=3.5, max_value=9.5, value=6.5, step=0.1,
-                   help="pH 6–7 is ideal for most crops")
+# ════════════════════════════════════════════════════════════════════════════════
+# TAB 1 — CROP RECOMMENDER
+# ════════════════════════════════════════════════════════════════════════════════
+with tab1:
+    st.subheader("Find the best crop for your field")
+    st.markdown("Enter your soil and climate details below.")
 
-with col2:
-    st.subheader("🌦️ Climate Conditions")
-    temperature = st.slider("Temperature (°C)", min_value=8.0, max_value=45.0,
-                            value=25.0, step=0.5)
-    humidity = st.slider("Humidity (%)", min_value=14.0, max_value=100.0,
-                         value=80.0, step=0.5)
-    rainfall = st.slider("Rainfall (mm)", min_value=20.0, max_value=300.0,
-                         value=200.0, step=5.0)
+    crop_model, scaler, le = load_crop_models()
 
-st.divider()
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**🧪 Soil Nutrients**")
+        N = st.slider("Nitrogen (N) — kg/ha", 0, 140, 90)
+        P = st.slider("Phosphorus (P) — kg/ha", 5, 145, 42)
+        K = st.slider("Potassium (K) — kg/ha", 5, 205, 43)
+        ph = st.slider("Soil pH", 3.5, 9.5, 6.5, step=0.1)
 
-# ── Predict button ────────────────────────────────────────────────────────────
-if st.button("🔍 Get Crop Recommendation", use_container_width=True, type="primary"):
+    with col2:
+        st.markdown("**🌦️ Climate Conditions**")
+        temperature = st.slider("Temperature (°C)", 8.0, 45.0, 25.0, step=0.5)
+        humidity = st.slider("Humidity (%)", 14.0, 100.0, 80.0, step=0.5)
+        rainfall = st.slider("Rainfall (mm)", 20.0, 300.0, 200.0, step=5.0)
 
-    input_data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
-    input_scaled = scaler.transform(input_data)
-    probs = model.predict_proba(input_scaled)[0]
-    top3_idx = np.argsort(probs)[::-1][:3]
+    st.divider()
 
-    st.subheader("📊 Recommendation Results")
+    if st.button("🔍 Get Crop Recommendation", use_container_width=True, type="primary"):
+        import pandas as pd
+        input_data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+        input_scaled = scaler.transform(input_data)
+        probs = crop_model.predict_proba(input_scaled)[0]
+        top3_idx = np.argsort(probs)[::-1][:3]
 
-    # Top recommendation — big card
-    top_crop = le.classes_[top3_idx[0]]
-    top_conf = probs[top3_idx[0]] * 100
-    emoji = CROP_EMOJI.get(top_crop, '🌱')
-    tip = CROP_TIPS.get(top_crop, '')
+        top_crop = le.classes_[top3_idx[0]]
+        top_conf = probs[top3_idx[0]] * 100
+        emoji = CROP_EMOJI.get(top_crop, '🌱')
+        tip = CROP_TIPS.get(top_crop, '')
 
-    st.success(f"### {emoji} Best Crop: **{top_crop.upper()}**  —  {top_conf:.1f}% confidence")
-    if tip:
-        st.info(f"💡 **Tip:** {tip}")
+        st.success(f"### {emoji} Best Crop: **{top_crop.upper()}** — {top_conf:.1f}% confidence")
+        if tip:
+            st.info(f"💡 **Tip:** {tip}")
 
-    st.markdown("#### Other Options")
-    r2, r3 = st.columns(2)
+        st.markdown("#### Other Options")
+        r2, r3 = st.columns(2)
+        crop2 = le.classes_[top3_idx[1]]
+        conf2 = probs[top3_idx[1]] * 100
+        with r2:
+            st.metric(label=f"{CROP_EMOJI.get(crop2,'🌱')} #{2} — {crop2.capitalize()}", value=f"{conf2:.1f}%")
+        crop3 = le.classes_[top3_idx[2]]
+        conf3 = probs[top3_idx[2]] * 100
+        with r3:
+            st.metric(label=f"{CROP_EMOJI.get(crop3,'🌱')} #{3} — {crop3.capitalize()}", value=f"{conf3:.1f}%")
 
-    crop2 = le.classes_[top3_idx[1]]
-    conf2 = probs[top3_idx[1]] * 100
-    with r2:
-        st.metric(
-            label=f"{CROP_EMOJI.get(crop2,'🌱')} #{2} — {crop2.capitalize()}",
-            value=f"{conf2:.1f}%"
-        )
+        st.markdown("#### Confidence Across Top 8 Crops")
+        chart_df = pd.DataFrame({
+            'Crop': [c.capitalize() for c in le.classes_],
+            'Confidence (%)': [round(p * 100, 2) for p in probs]
+        }).sort_values('Confidence (%)', ascending=False).head(8)
+        st.bar_chart(chart_df.set_index('Crop'))
 
-    crop3 = le.classes_[top3_idx[2]]
-    conf3 = probs[top3_idx[2]] * 100
-    with r3:
-        st.metric(
-            label=f"{CROP_EMOJI.get(crop3,'🌱')} #{3} — {crop3.capitalize()}",
-            value=f"{conf3:.1f}%"
-        )
+        with st.expander("📋 Your Input Summary"):
+            summary = pd.DataFrame({
+                'Parameter': ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)',
+                              'Temperature', 'Humidity', 'pH', 'Rainfall'],
+                'Value': [f"{N} kg/ha", f"{P} kg/ha", f"{K} kg/ha",
+                          f"{temperature} °C", f"{humidity} %", str(ph), f"{rainfall} mm"]
+            })
+            st.table(summary)
 
-    # Confidence bar chart
-    st.markdown("#### Confidence Across All Crops")
-    all_crops = le.classes_
-    import pandas as pd
-    chart_df = pd.DataFrame({
-        'Crop': [c.capitalize() for c in all_crops],
-        'Confidence (%)': [round(p * 100, 2) for p in probs]
-    }).sort_values('Confidence (%)', ascending=False).head(8)
-    st.bar_chart(chart_df.set_index('Crop'))
+# ════════════════════════════════════════════════════════════════════════════════
+# TAB 2 — DISEASE DETECTOR
+# ════════════════════════════════════════════════════════════════════════════════
+with tab2:
+    st.subheader("Detect crop disease from a leaf photo")
+    st.markdown("Upload a clear photo of a single leaf to get an instant diagnosis.")
 
-    # Input summary
-    with st.expander("📋 Your Input Summary"):
-        summary = pd.DataFrame({
-            'Parameter': ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)',
-                          'Temperature', 'Humidity', 'pH', 'Rainfall'],
-            'Value': [f"{N} kg/ha", f"{P} kg/ha", f"{K} kg/ha",
-                      f"{temperature} °C", f"{humidity} %", str(ph), f"{rainfall} mm"]
-        })
-        st.table(summary)
+    uploaded_file = st.file_uploader(
+        "📸 Upload leaf image",
+        type=["jpg", "jpeg", "png"],
+        help="Take a close-up photo of the affected leaf in good lighting"
+    )
+
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+
+        col_img, col_info = st.columns([1, 1])
+        with col_img:
+            st.image(image, caption="Uploaded Leaf", use_container_width=True)
+
+        with col_info:
+            st.markdown("**📊 Analyzing your leaf...**")
+            with st.spinner("Running AI diagnosis..."):
+                import tensorflow as tf
+                disease_model, class_names = load_disease_model()
+
+                img = image.resize((224, 224))
+                img_array = np.array(img) / 255.0
+                if img_array.shape[-1] == 4:
+                    img_array = img_array[:, :, :3]
+                img_array = np.expand_dims(img_array, axis=0)
+
+                predictions = disease_model.predict(img_array)
+                top3_idx = np.argsort(predictions[0])[::-1][:3]
+
+            top_disease = class_names[top3_idx[0]]
+            top_conf = predictions[0][top3_idx[0]] * 100
+            display_name = top_disease.replace('___', ' — ').replace('_', ' ')
+
+            if 'healthy' in top_disease.lower():
+                st.success(f"### ✅ Healthy Plant!")
+                st.markdown(f"**Confidence:** {top_conf:.1f}%")
+            else:
+                st.error(f"### ⚠️ {display_name}")
+                st.markdown(f"**Confidence:** {top_conf:.1f}%")
+
+        st.divider()
+
+        treatment = DISEASE_TREATMENT.get(top_disease,
+            "🔍 Consult your local agricultural extension officer for treatment advice.")
+        st.info(f"**💊 Recommended Action:**\n\n{treatment}")
+
+        st.markdown("#### Top 3 Predictions")
+        for rank, idx in enumerate(top3_idx, 1):
+            disease = class_names[idx].replace('___', ' — ').replace('_', ' ')
+            conf = predictions[0][idx] * 100
+            st.progress(int(conf), text=f"#{rank} {disease} — {conf:.1f}%")
+
+    else:
+        st.markdown("""
+        #### How to get the best results:
+        - 📷 Take photo in **natural daylight**
+        - 🍃 Focus on a **single leaf**
+        - 🔍 Make sure the **affected area is clearly visible**
+        - 📐 Hold the camera **close** to the leaf
+
+        #### Supported crops:
+        Apple · Blueberry · Cherry · Corn · Grape · Orange ·
+        Peach · Pepper · Potato · Raspberry · Soybean · Squash ·
+        Strawberry · Tomato
+        """)
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
-st.caption("Built with ❤️ using Random Forest · 99%+ accuracy · 22 crops · Smart Crop Advisory System")
+st.caption("Built with ❤️ | Random Forest + MobileNetV2 | 22 crops · 38 disease classes | Smart Crop Advisory System")
