@@ -3,4 +3,4 @@ scikit-learn
 numpy
 pandas
 pillow
-tensorflow
+tensorflow-cpu==2.13.0
