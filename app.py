@@ -215,14 +215,14 @@ with tab2:
         with col_img:
             st.image(image, caption="Uploaded Leaf", use_container_width=True)
 
-        with col_info:
+       with col_info:
             with st.spinner("🔍 Analyzing leaf with AI..."):
                 import google.generativeai as genai
                 import base64
                 from io import BytesIO
 
                 # Load API key from Streamlit secrets
-genai.configure(api_key="AIzaSyC-KSHSW_5MJ6FqLyTniJcdveWZwlwHLZY")
+                genai.configure(api_key="AIzaSyC-KSHSW_5MJ6FqLyTniJcdveWZwlwHLZY")
 
                 # Convert image to bytes
                 buffer = BytesIO()
