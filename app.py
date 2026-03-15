@@ -22,14 +22,6 @@ def load_crop_models():
         le = pickle.load(f)
     return model, scaler, le
 
-# ── Load TFLite disease model ─────────────────────────────────────────────────
-@st.cache_resource
-def load_disease_model():
-    import tflite_runtime.interpreter as tflite
-    interpreter = tflite.Interpreter(model_path='disease_model.tflite')
-    interpreter.allocate_tensors()
-    class_names = np.load('class_names.npy', allow_pickle=True)
-    return interpreter, class_names
 
 # ── Crop maps ─────────────────────────────────────────────────────────────────
 CROP_EMOJI = {
