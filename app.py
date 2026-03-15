@@ -174,74 +174,16 @@ with tab1:
 # TAB 2 — DISEASE DETECTOR
 # ════════════════════════════════════════════════════════════════════════════════
 with tab2:
-    st.subheader("Detect crop disease from a leaf photo")
-    st.markdown("Upload a clear photo of a single leaf to get an instant diagnosis.")
-
-    uploaded_file = st.file_uploader(
-        "📸 Upload leaf image",
-        type=["jpg", "jpeg", "png"],
-        help="Take a close-up photo of the affected leaf in good lighting"
-    )
-
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert('RGB')
-
-        col_img, col_info = st.columns([1, 1])
-        with col_img:
-            st.image(image, caption="Uploaded Leaf", use_container_width=True)
-
-        with col_info:
-            with st.spinner("🔍 Analyzing leaf..."):
-                interpreter, class_names = load_disease_model()
-
-                input_details = interpreter.get_input_details()
-                output_details = interpreter.get_output_details()
-
-                img = image.resize((224, 224))
-                img_array = np.array(img, dtype=np.float32) / 255.0
-                img_array = np.expand_dims(img_array, axis=0)
-
-                interpreter.set_tensor(input_details[0]['index'], img_array)
-                interpreter.invoke()
-                predictions = interpreter.get_tensor(output_details[0]['index'])[0]
-                top3_idx = np.argsort(predictions)[::-1][:3]
-
-            top_disease = class_names[top3_idx[0]]
-            top_conf = predictions[top3_idx[0]] * 100
-            display_name = top_disease.replace('___', ' — ').replace('_', ' ')
-
-            if 'healthy' in top_disease.lower():
-                st.success(f"### ✅ Healthy Plant!")
-                st.markdown(f"**Confidence:** {top_conf:.1f}%")
-            else:
-                st.error(f"### ⚠️ {display_name}")
-                st.markdown(f"**Confidence:** {top_conf:.1f}%")
-
-        st.divider()
-
-        treatment = DISEASE_TREATMENT.get(top_disease,
-            "🔍 Consult your local agricultural extension officer for treatment advice.")
-        st.info(f"**💊 Recommended Action:** {treatment}")
-
-        st.markdown("#### Top 3 Predictions")
-        for rank, idx in enumerate(top3_idx, 1):
-            disease = class_names[idx].replace('___', ' — ').replace('_', ' ')
-            conf = predictions[idx] * 100
-            st.progress(int(conf), text=f"#{rank} {disease} — {conf:.1f}%")
-
-    else:
-        st.markdown("""
-        #### How to get the best results:
-        - 📷 Take photo in **natural daylight**
-        - 🍃 Focus on a **single leaf**
-        - 🔍 Make sure the **affected area is clearly visible**
-        - 📐 Hold the camera **close** to the leaf
-
-        #### Supported crops:
-        Apple · Blueberry · Cherry · Corn · Grape · Orange ·
-        Peach · Pepper · Potato · Raspberry · Soybean · Squash ·
-        Strawberry · Tomato
-        """)
+    st.subheader("🌿 Plant Disease Detector")
+    st.info("🚧 Coming Soon — upgrade in progress.")
+    st.markdown("""
+    **Model details:**
+    - MobileNetV2 Transfer Learning
+    - 54,000+ leaf images · 38 disease classes · 96%+ accuracy
+    
+    **Currently works locally** on your machine.
+    Cloud deployment coming in the next update.
+    """)
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
