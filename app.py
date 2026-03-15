@@ -222,7 +222,7 @@ with tab2:
                 from io import BytesIO
 
                 # Load API key from Streamlit secrets
-                genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+genai.configure(api_key="AIzaSyC-KSHSW_5MJ6FqLyTniJcdveWZwlwHLZY")
 
                 # Convert image to bytes
                 buffer = BytesIO()
