@@ -27,7 +27,13 @@ def load_crop_models():
 @st.cache_resource
 def load_price_models():
     from prophet.serialize import model_from_json
-    crops = ['Wheat', 'Rice', 'Tomato', 'Onion', 'Potato', 'Maize']
+    crops = [
+        'Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
+        'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
+        'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Onion', 'Orange',
+        'Papaya', 'Pigeonpeas', 'Pomegranate', 'Potato', 'Rice', 'Tomato',
+        'Watermelon', 'Wheat'
+    ]
     models = {}
     for crop in crops:
         with open(f'price_model_{crop.lower()}.json', 'r') as f:
