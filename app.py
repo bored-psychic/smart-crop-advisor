@@ -364,7 +364,312 @@ with tab2:
                 'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Panama_disease_banana.jpg/320px-Panama_disease_banana.jpg'
             },
         },
-    }
+   'Chickpea': {
+            'Yellowing + wilting of whole plant': {
+                'disease': 'Fusarium Wilt (Fusarium oxysporum)',
+                'treatment': 'Seed treatment with Trichoderma viride @ 4g/kg. Remove infected plants.',
+                'prevention': 'Use resistant varieties. Long crop rotation with cereals.',
+                'severity': 'High'
+            },
+            'Grey mold on pods and stems': {
+                'disease': 'Botrytis Grey Mold (Botrytis cinerea)',
+                'treatment': 'Apply Carbendazim @ 1g/L. Improve field drainage.',
+                'prevention': 'Avoid dense planting. Ensure good air circulation.',
+                'severity': 'High'
+            },
+            'Brown lesions on leaves + defoliation': {
+                'disease': 'Ascochyta Blight (Ascochyta rabiei)',
+                'treatment': 'Apply Mancozeb 75% WP @ 2g/L every 10 days.',
+                'prevention': 'Use certified disease-free seed. Crop rotation.',
+                'severity': 'Medium'
+            },
+        },
+        'Lentil': {
+            'Yellowing + wilting from base': {
+                'disease': 'Fusarium Wilt (Fusarium oxysporum)',
+                'treatment': 'Seed treatment with Carbendazim @ 2g/kg seed.',
+                'prevention': 'Use resistant varieties. Avoid waterlogged soils.',
+                'severity': 'High'
+            },
+            'Brown spots on leaves and pods': {
+                'disease': 'Ascochyta Blight (Ascochyta lentis)',
+                'treatment': 'Apply Chlorothalonil @ 2g/L at first sign.',
+                'prevention': 'Use disease-free seed. Avoid overhead irrigation.',
+                'severity': 'Medium'
+            },
+        },
+        'Mungbean': {
+            'Yellow mosaic patches on leaves': {
+                'disease': 'Yellow Mosaic Virus (MYMV)',
+                'treatment': 'No cure. Remove infected plants immediately.',
+                'prevention': 'Control whitefly with Imidacloprid. Use resistant varieties.',
+                'severity': 'High'
+            },
+            'Brown water-soaked stem lesions': {
+                'disease': 'Cercospora Leaf Spot',
+                'treatment': 'Apply Carbendazim @ 1g/L or Mancozeb @ 2g/L.',
+                'prevention': 'Crop rotation. Avoid dense planting.',
+                'severity': 'Medium'
+            },
+        },
+        'Blackgram': {
+            'Yellow mosaic on leaves': {
+                'disease': 'Yellow Mosaic Virus (MYMV)',
+                'treatment': 'No cure. Uproot and destroy infected plants.',
+                'prevention': 'Use virus-resistant varieties. Control whiteflies.',
+                'severity': 'High'
+            },
+            'Powdery white coating on leaves': {
+                'disease': 'Powdery Mildew (Erysiphe polygoni)',
+                'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole.',
+                'prevention': 'Avoid excess nitrogen. Improve air circulation.',
+                'severity': 'Low'
+            },
+        },
+        'Pigeonpeas': {
+            'Wilting + stem rotting at base': {
+                'disease': 'Phytophthora Stem Blight',
+                'treatment': 'Apply Metalaxyl @ 2g/L. Improve field drainage.',
+                'prevention': 'Avoid waterlogging. Use resistant varieties.',
+                'severity': 'High'
+            },
+            'Small brown spots with yellow halo': {
+                'disease': 'Cercospora Leaf Spot',
+                'treatment': 'Apply Mancozeb 75% WP @ 2g/L.',
+                'prevention': 'Crop rotation. Remove infected plant debris.',
+                'severity': 'Medium'
+            },
+        },
+        'Mothbeans': {
+            'Yellow mosaic on leaves': {
+                'disease': 'Yellow Mosaic Virus',
+                'treatment': 'No cure. Remove infected plants. Control vectors.',
+                'prevention': 'Use healthy seed. Control whitefly population.',
+                'severity': 'High'
+            },
+            'Brown spots on leaves': {
+                'disease': 'Leaf Spot (Cercospora)',
+                'treatment': 'Apply Mancozeb @ 2g/L every 10 days.',
+                'prevention': 'Crop rotation. Use disease-free seed.',
+                'severity': 'Medium'
+            },
+        },
+        'Kidneybeans': {
+            'Rust-colored pustules on leaves': {
+                'disease': 'Bean Rust (Uromyces appendiculatus)',
+                'treatment': 'Apply Mancozeb or Tebuconazole fungicide.',
+                'prevention': 'Use resistant varieties. Remove crop debris after harvest.',
+                'severity': 'Medium'
+            },
+            'Water-soaked brown pods + seeds': {
+                'disease': 'Anthracnose (Colletotrichum lindemuthianum)',
+                'treatment': 'Apply Carbendazim @ 1g/L. Use hot water seed treatment.',
+                'prevention': 'Use certified disease-free seed. Avoid overhead irrigation.',
+                'severity': 'High'
+            },
+        },
+        'Mango': {
+            'Black spots on leaves and fruits': {
+                'disease': 'Anthracnose (Colletotrichum gloeosporioides)',
+                'treatment': 'Apply Carbendazim @ 1g/L or Copper oxychloride @ 3g/L.',
+                'prevention': 'Prune dense canopy. Avoid wetting foliage.',
+                'severity': 'High'
+            },
+            'White powdery coating on flowers': {
+                'disease': 'Powdery Mildew (Oidium mangiferae)',
+                'treatment': 'Apply Sulphur 80% WP @ 2g/L at flowering.',
+                'prevention': 'Spray preventively before flowering season.',
+                'severity': 'High'
+            },
+            'Gum oozing from stem/bark': {
+                'disease': 'Stem End Rot / Gummosis',
+                'treatment': 'Remove infected bark. Apply Bordeaux paste on wounds.',
+                'prevention': 'Avoid mechanical injuries. Proper drainage.',
+                'severity': 'Medium'
+            },
+        },
+        'Grapes': {
+            'White powdery patches on leaves': {
+                'disease': 'Powdery Mildew (Uncinula necator)',
+                'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole.',
+                'prevention': 'Prune for air circulation. Spray preventively.',
+                'severity': 'High'
+            },
+            'Brown water-soaked lesions on berries': {
+                'disease': 'Downy Mildew (Plasmopara viticola)',
+                'treatment': 'Apply Metalaxyl + Mancozeb @ 2g/L.',
+                'prevention': 'Avoid wetting foliage. Use copper-based sprays preventively.',
+                'severity': 'High'
+            },
+            'Shriveled black berries': {
+                'disease': 'Black Rot (Guignardia bidwellii)',
+                'treatment': 'Apply Mancozeb @ 2g/L from bud break.',
+                'prevention': 'Remove mummified berries. Prune infected canes.',
+                'severity': 'High'
+            },
+        },
+        'Watermelon': {
+            'Yellow mosaic + fruit deformation': {
+                'disease': 'Watermelon Mosaic Virus',
+                'treatment': 'No cure. Remove infected plants.',
+                'prevention': 'Control aphid vectors. Use reflective mulch.',
+                'severity': 'High'
+            },
+            'White powdery coating on leaves': {
+                'disease': 'Powdery Mildew',
+                'treatment': 'Apply Sulphur 80% WP @ 2g/L.',
+                'prevention': 'Improve air circulation. Avoid excess nitrogen.',
+                'severity': 'Medium'
+            },
+            'Wilting + crown rot': {
+                'disease': 'Fusarium Crown Rot',
+                'treatment': 'Apply Carbendazim soil drench. Remove infected plants.',
+                'prevention': 'Crop rotation. Use grafted resistant rootstock.',
+                'severity': 'High'
+            },
+        },
+        'Muskmelon': {
+            'Yellow mosaic on leaves': {
+                'disease': 'Cucumber Mosaic Virus (CMV)',
+                'treatment': 'No cure. Remove infected plants.',
+                'prevention': 'Control aphids with Imidacloprid. Use reflective mulch.',
+                'severity': 'High'
+            },
+            'White powdery spots on leaves': {
+                'disease': 'Powdery Mildew',
+                'treatment': 'Apply Sulphur or Hexaconazole fungicide.',
+                'prevention': 'Avoid overhead irrigation. Good spacing.',
+                'severity': 'Medium'
+            },
+        },
+        'Apple': {
+            'Olive-green scabby lesions on fruit/leaves': {
+                'disease': 'Apple Scab (Venturia inaequalis)',
+                'treatment': 'Apply Captan or Mancozeb @ 2g/L from green tip stage.',
+                'prevention': 'Rake and destroy fallen leaves. Use scab-resistant varieties.',
+                'severity': 'High'
+            },
+            'Brown rotting fruit with rings': {
+                'disease': 'Brown Rot (Monilinia fructicola)',
+                'treatment': 'Apply Iprodione or Carbendazim. Remove mummified fruits.',
+                'prevention': 'Thin fruits to avoid contact. Good orchard sanitation.',
+                'severity': 'High'
+            },
+            'Red-orange spots on leaves': {
+                'disease': 'Cedar Apple Rust (Gymnosporangium juniperi)',
+                'treatment': 'Apply Myclobutanil fungicide from pink bud stage.',
+                'prevention': 'Remove nearby juniper/cedar trees if possible.',
+                'severity': 'Medium'
+            },
+        },
+        'Orange': {
+            'Yellow blotchy leaves + dieback': {
+                'disease': 'Citrus Greening / Huanglongbing (HLB)',
+                'treatment': 'No cure. Remove infected trees immediately.',
+                'prevention': 'Control psyllid vectors. Use certified disease-free nursery stock.',
+                'severity': 'High'
+            },
+            'Water-soaked dark lesions on fruit': {
+                'disease': 'Citrus Canker (Xanthomonas axonopodis)',
+                'treatment': 'Apply copper hydroxide @ 3g/L. Prune infected branches.',
+                'prevention': 'Use disease-free budwood. Windbreaks to reduce spread.',
+                'severity': 'High'
+            },
+            'White cottony growth on branches': {
+                'disease': 'Powdery Mildew / Cottony Cushion Scale',
+                'treatment': 'Apply horticultural oil or Imidacloprid spray.',
+                'prevention': 'Regular monitoring. Encourage natural predators.',
+                'severity': 'Medium'
+            },
+        },
+        'Papaya': {
+            'Mosaic + ring spots on fruit': {
+                'disease': 'Papaya Ringspot Virus (PRSV)',
+                'treatment': 'No cure. Remove infected plants immediately.',
+                'prevention': 'Use virus-free tissue culture plants. Control aphids.',
+                'severity': 'High'
+            },
+            'Water-soaked stem rot at base': {
+                'disease': 'Phytophthora Root/Stem Rot',
+                'treatment': 'Apply Metalaxyl @ 2g/L soil drench. Improve drainage.',
+                'prevention': 'Avoid waterlogging. Raised bed planting.',
+                'severity': 'High'
+            },
+            'Powdery white patches on leaves': {
+                'disease': 'Powdery Mildew',
+                'treatment': 'Apply Sulphur 80% WP @ 2g/L.',
+                'prevention': 'Good spacing. Avoid overhead irrigation.',
+                'severity': 'Low'
+            },
+        },
+        'Coconut': {
+            'Crown wilting + bud rot': {
+                'disease': 'Bud Rot (Phytophthora palmivora)',
+                'treatment': 'Apply Bordeaux mixture 1% into crown. Remove infected tissue.',
+                'prevention': 'Avoid waterlogging. Improve drainage around base.',
+                'severity': 'High'
+            },
+            'Yellowing of older leaves progressively': {
+                'disease': 'Root Wilt Disease',
+                'treatment': 'Apply balanced fertilizer + micronutrients. Root feeding with nutrients.',
+                'prevention': 'Use disease-free seedlings. Proper irrigation management.',
+                'severity': 'High'
+            },
+            'Black spots on nuts': {
+                'disease': 'Stem Bleeding (Thielaviopsis paradoxa)',
+                'treatment': 'Scrape infected area. Apply Bordeaux paste on wound.',
+                'prevention': 'Avoid mechanical injury to trunk. Good drainage.',
+                'severity': 'Medium'
+            },
+        },
+        'Jute': {
+            'Stem rot + plant collapse': {
+                'disease': 'Stem Rot (Macrophomina phaseolina)',
+                'treatment': 'Apply Carbendazim @ 1g/L. Remove infected plants.',
+                'prevention': 'Crop rotation. Avoid dense planting.',
+                'severity': 'High'
+            },
+            'Brown spots with yellow halo on leaves': {
+                'disease': 'Anthracnose (Colletotrichum corchori)',
+                'treatment': 'Apply Mancozeb 75% WP @ 2g/L.',
+                'prevention': 'Use healthy seed. Avoid waterlogging.',
+                'severity': 'Medium'
+            },
+        },
+        'Coffee': {
+            'Orange powdery pustules under leaves': {
+                'disease': 'Coffee Leaf Rust (Hemileia vastatrix)',
+                'treatment': 'Apply Copper oxychloride @ 3g/L or Propiconazole.',
+                'prevention': 'Use rust-resistant varieties. Shade management.',
+                'severity': 'High'
+            },
+            'Dark brown berry borer holes': {
+                'disease': 'Coffee Berry Borer (Hypothenemus hampei)',
+                'treatment': 'Apply Chlorpyrifos @ 2ml/L. Use pheromone traps.',
+                'prevention': 'Harvest all ripe and overripe berries promptly.',
+                'severity': 'High'
+            },
+            'Black lesions on berries': {
+                'disease': 'Coffee Berry Disease (Colletotrichum kahawae)',
+                'treatment': 'Apply Carbendazim @ 1g/L. Remove mummified berries.',
+                'prevention': 'Use resistant varieties. Maintain good canopy hygiene.',
+                'severity': 'High'
+            },
+        },
+        'Pomegranate': {
+            'Black lesions on fruit + cracking': {
+                'disease': 'Fruit Rot / Alternaria Rot',
+                'treatment': 'Apply Carbendazim @ 1g/L before and after flowering.',
+                'prevention': 'Avoid fruit injury. Bag fruits at marble stage.',
+                'severity': 'High'
+            },
+            'Yellowing + wilting of shoots': {
+                'disease': 'Bacterial Blight (Xanthomonas axonopodis)',
+                'treatment': 'Apply copper hydroxide @ 3g/L. Prune infected parts.',
+                'prevention': 'Avoid overhead irrigation. Prune for air circulation.',
+                'severity': 'High'
+            },
+        }, }
 
     # Show symptom images for reference BEFORE selecting
     st.markdown("#### 👇 Select your crop and match your symptom to the cards below")
@@ -446,7 +751,11 @@ with tab3:
 
     crop_choice = st.selectbox(
         "🌾 Select Crop",
-        ['Wheat', 'Rice', 'Tomato', 'Onion', 'Potato', 'Maize'],
+        ['Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
+ 'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
+ 'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Onion', 'Orange',
+ 'Papaya', 'Pigeonpeas', 'Pomegranate', 'Potato', 'Rice', 'Tomato',
+ 'Watermelon', 'Wheat'],
         index=0
     )
     forecast_days = st.slider("Forecast horizon (days)", 7, 60, 30)
