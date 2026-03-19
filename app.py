@@ -4,6 +4,55 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import json
+import requests
+
+# ── Soil type detection ───────────────────────────────────────────────────────
+def get_soil_type(N, P, K, ph):
+    if ph < 5.5:
+        return "Acidic Soil", "Add lime to increase pH. Most crops struggle below pH 5.5.", "🔴"
+    elif ph > 7.5:
+        return "Alkaline Soil", "Add gypsum or sulfur to reduce pH. Iron deficiency common.", "🟡"
+    elif K > 150 and ph >= 6.5:
+        return "Black/Regur Soil", "Excellent for cotton, sorghum, wheat. High water retention.", "⚫"
+    elif N < 30 and P < 20:
+        return "Red/Laterite Soil", "Low fertility. Add organic matter and NPK fertilizers.", "🔶"
+    elif N > 80 and 6.0 <= ph <= 7.5:
+        return "Alluvial Soil", "Highly fertile! Ideal for rice, wheat, sugarcane, vegetables.", "🟢"
+    elif P > 80:
+        return "Sandy Loam Soil", "Good drainage. Suitable for groundnut, potato, vegetables.", "🟤"
+    else:
+        return "Loamy Soil", "Well-balanced soil. Suitable for most crops.", "🟢"
+
+# ── Live weather ──────────────────────────────────────────────────────────────
+def get_weather(city):
+    try:
+        api_key = "bd5e378503939ddaee76f12ad7a97608"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={api_key}&units=metric"
+        r = requests.get(url, timeout=5)
+        data = r.json()
+        if data.get('cod') == 200:
+            return {
+                'temp': data['main']['temp'],
+                'humidity': data['main']['humidity'],
+                'description': data['weather'][0]['description'].title(),
+                'wind_speed': data['wind']['speed'] * 3.6,
+                'rainfall': data.get('rain', {}).get('1h', 0),
+                'city': data['name']
+            }
+    except:
+        pass
+    return None
+
+CALAMITY_TIPS = {
+    'thunderstorm': ['⚡ Move livestock to shelter', '🚫 Stop all field work immediately', '💧 Clear drainage channels'],
+    'rain':         ['🌱 Avoid fertilizer — will wash away', '🌊 Create bunds around fields', '📞 Contact agriculture office if flooding'],
+    'drizzle':      ['💧 Good for germination', '🌱 Ideal time for transplanting', '✅ Reduce irrigation today'],
+    'snow':         ['🌿 Cover sensitive crops with cloth', '🔥 Light irrigation before frost protects roots', '🌱 Avoid pruning until frost passes'],
+    'mist':         ['🍄 Watch for fungal disease', '💊 Apply preventive fungicide', '🌬️ Improve air circulation'],
+    'haze':         ['😷 Reduce outdoor work', '💧 Increase irrigation — heat stress likely', '🌿 Monitor crops for wilting'],
+    'clear':        ['☀️ Good day for spraying pesticides', '🚜 Ideal for harvesting', '💧 Check soil moisture levels'],
+    'clouds':       ['🌤️ Good day for transplanting', '💧 Moderate irrigation needed', '🌱 Apply fertilizers today'],
+}
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -27,17 +76,18 @@ def load_crop_models():
 @st.cache_resource
 def load_price_models():
     from prophet.serialize import model_from_json
-    crops = [
-        'Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
-        'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
-        'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Onion', 'Orange',
-        'Papaya', 'Pigeonpeas', 'Pomegranate', 'Potato', 'Rice', 'Tomato',
-        'Watermelon', 'Wheat'
-    ]
+    import os
+    all_crops = ['Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
+                 'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
+                 'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Onion', 'Orange',
+                 'Papaya', 'Pigeonpeas', 'Pomegranate', 'Potato', 'Rice', 'Tomato',
+                 'Watermelon', 'Wheat']
     models = {}
-    for crop in crops:
-        with open(f'price_model_{crop.lower()}.json', 'r') as f:
-            models[crop] = model_from_json(json.load(f))
+    for crop in all_crops:
+        path = f'price_model_{crop.lower()}.json'
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                models[crop] = model_from_json(json.load(f))
     return models
 
 # ── Crop maps ─────────────────────────────────────────────────────────────────
@@ -173,6 +223,11 @@ with tab1:
         st.success(f"### {emoji} Best Crop: **{top_crop.upper()}** — {top_conf:.1f}% confidence")
         if tip:
             st.info(f"💡 **Tip:** {tip}")
+
+        # Soil type detection
+        soil, soil_advice, soil_color = get_soil_type(N, P, K, ph)
+        st.markdown(f"#### {soil_color} Detected Soil Type: **{soil}**")
+        st.warning(f"🌱 **Soil Advice:** {soil_advice}")
 
         st.markdown("#### Other Options")
         r2, r3 = st.columns(2)
@@ -370,312 +425,7 @@ with tab2:
                 'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Panama_disease_banana.jpg/320px-Panama_disease_banana.jpg'
             },
         },
-   'Chickpea': {
-            'Yellowing + wilting of whole plant': {
-                'disease': 'Fusarium Wilt (Fusarium oxysporum)',
-                'treatment': 'Seed treatment with Trichoderma viride @ 4g/kg. Remove infected plants.',
-                'prevention': 'Use resistant varieties. Long crop rotation with cereals.',
-                'severity': 'High'
-            },
-            'Grey mold on pods and stems': {
-                'disease': 'Botrytis Grey Mold (Botrytis cinerea)',
-                'treatment': 'Apply Carbendazim @ 1g/L. Improve field drainage.',
-                'prevention': 'Avoid dense planting. Ensure good air circulation.',
-                'severity': 'High'
-            },
-            'Brown lesions on leaves + defoliation': {
-                'disease': 'Ascochyta Blight (Ascochyta rabiei)',
-                'treatment': 'Apply Mancozeb 75% WP @ 2g/L every 10 days.',
-                'prevention': 'Use certified disease-free seed. Crop rotation.',
-                'severity': 'Medium'
-            },
-        },
-        'Lentil': {
-            'Yellowing + wilting from base': {
-                'disease': 'Fusarium Wilt (Fusarium oxysporum)',
-                'treatment': 'Seed treatment with Carbendazim @ 2g/kg seed.',
-                'prevention': 'Use resistant varieties. Avoid waterlogged soils.',
-                'severity': 'High'
-            },
-            'Brown spots on leaves and pods': {
-                'disease': 'Ascochyta Blight (Ascochyta lentis)',
-                'treatment': 'Apply Chlorothalonil @ 2g/L at first sign.',
-                'prevention': 'Use disease-free seed. Avoid overhead irrigation.',
-                'severity': 'Medium'
-            },
-        },
-        'Mungbean': {
-            'Yellow mosaic patches on leaves': {
-                'disease': 'Yellow Mosaic Virus (MYMV)',
-                'treatment': 'No cure. Remove infected plants immediately.',
-                'prevention': 'Control whitefly with Imidacloprid. Use resistant varieties.',
-                'severity': 'High'
-            },
-            'Brown water-soaked stem lesions': {
-                'disease': 'Cercospora Leaf Spot',
-                'treatment': 'Apply Carbendazim @ 1g/L or Mancozeb @ 2g/L.',
-                'prevention': 'Crop rotation. Avoid dense planting.',
-                'severity': 'Medium'
-            },
-        },
-        'Blackgram': {
-            'Yellow mosaic on leaves': {
-                'disease': 'Yellow Mosaic Virus (MYMV)',
-                'treatment': 'No cure. Uproot and destroy infected plants.',
-                'prevention': 'Use virus-resistant varieties. Control whiteflies.',
-                'severity': 'High'
-            },
-            'Powdery white coating on leaves': {
-                'disease': 'Powdery Mildew (Erysiphe polygoni)',
-                'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole.',
-                'prevention': 'Avoid excess nitrogen. Improve air circulation.',
-                'severity': 'Low'
-            },
-        },
-        'Pigeonpeas': {
-            'Wilting + stem rotting at base': {
-                'disease': 'Phytophthora Stem Blight',
-                'treatment': 'Apply Metalaxyl @ 2g/L. Improve field drainage.',
-                'prevention': 'Avoid waterlogging. Use resistant varieties.',
-                'severity': 'High'
-            },
-            'Small brown spots with yellow halo': {
-                'disease': 'Cercospora Leaf Spot',
-                'treatment': 'Apply Mancozeb 75% WP @ 2g/L.',
-                'prevention': 'Crop rotation. Remove infected plant debris.',
-                'severity': 'Medium'
-            },
-        },
-        'Mothbeans': {
-            'Yellow mosaic on leaves': {
-                'disease': 'Yellow Mosaic Virus',
-                'treatment': 'No cure. Remove infected plants. Control vectors.',
-                'prevention': 'Use healthy seed. Control whitefly population.',
-                'severity': 'High'
-            },
-            'Brown spots on leaves': {
-                'disease': 'Leaf Spot (Cercospora)',
-                'treatment': 'Apply Mancozeb @ 2g/L every 10 days.',
-                'prevention': 'Crop rotation. Use disease-free seed.',
-                'severity': 'Medium'
-            },
-        },
-        'Kidneybeans': {
-            'Rust-colored pustules on leaves': {
-                'disease': 'Bean Rust (Uromyces appendiculatus)',
-                'treatment': 'Apply Mancozeb or Tebuconazole fungicide.',
-                'prevention': 'Use resistant varieties. Remove crop debris after harvest.',
-                'severity': 'Medium'
-            },
-            'Water-soaked brown pods + seeds': {
-                'disease': 'Anthracnose (Colletotrichum lindemuthianum)',
-                'treatment': 'Apply Carbendazim @ 1g/L. Use hot water seed treatment.',
-                'prevention': 'Use certified disease-free seed. Avoid overhead irrigation.',
-                'severity': 'High'
-            },
-        },
-        'Mango': {
-            'Black spots on leaves and fruits': {
-                'disease': 'Anthracnose (Colletotrichum gloeosporioides)',
-                'treatment': 'Apply Carbendazim @ 1g/L or Copper oxychloride @ 3g/L.',
-                'prevention': 'Prune dense canopy. Avoid wetting foliage.',
-                'severity': 'High'
-            },
-            'White powdery coating on flowers': {
-                'disease': 'Powdery Mildew (Oidium mangiferae)',
-                'treatment': 'Apply Sulphur 80% WP @ 2g/L at flowering.',
-                'prevention': 'Spray preventively before flowering season.',
-                'severity': 'High'
-            },
-            'Gum oozing from stem/bark': {
-                'disease': 'Stem End Rot / Gummosis',
-                'treatment': 'Remove infected bark. Apply Bordeaux paste on wounds.',
-                'prevention': 'Avoid mechanical injuries. Proper drainage.',
-                'severity': 'Medium'
-            },
-        },
-        'Grapes': {
-            'White powdery patches on leaves': {
-                'disease': 'Powdery Mildew (Uncinula necator)',
-                'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole.',
-                'prevention': 'Prune for air circulation. Spray preventively.',
-                'severity': 'High'
-            },
-            'Brown water-soaked lesions on berries': {
-                'disease': 'Downy Mildew (Plasmopara viticola)',
-                'treatment': 'Apply Metalaxyl + Mancozeb @ 2g/L.',
-                'prevention': 'Avoid wetting foliage. Use copper-based sprays preventively.',
-                'severity': 'High'
-            },
-            'Shriveled black berries': {
-                'disease': 'Black Rot (Guignardia bidwellii)',
-                'treatment': 'Apply Mancozeb @ 2g/L from bud break.',
-                'prevention': 'Remove mummified berries. Prune infected canes.',
-                'severity': 'High'
-            },
-        },
-        'Watermelon': {
-            'Yellow mosaic + fruit deformation': {
-                'disease': 'Watermelon Mosaic Virus',
-                'treatment': 'No cure. Remove infected plants.',
-                'prevention': 'Control aphid vectors. Use reflective mulch.',
-                'severity': 'High'
-            },
-            'White powdery coating on leaves': {
-                'disease': 'Powdery Mildew',
-                'treatment': 'Apply Sulphur 80% WP @ 2g/L.',
-                'prevention': 'Improve air circulation. Avoid excess nitrogen.',
-                'severity': 'Medium'
-            },
-            'Wilting + crown rot': {
-                'disease': 'Fusarium Crown Rot',
-                'treatment': 'Apply Carbendazim soil drench. Remove infected plants.',
-                'prevention': 'Crop rotation. Use grafted resistant rootstock.',
-                'severity': 'High'
-            },
-        },
-        'Muskmelon': {
-            'Yellow mosaic on leaves': {
-                'disease': 'Cucumber Mosaic Virus (CMV)',
-                'treatment': 'No cure. Remove infected plants.',
-                'prevention': 'Control aphids with Imidacloprid. Use reflective mulch.',
-                'severity': 'High'
-            },
-            'White powdery spots on leaves': {
-                'disease': 'Powdery Mildew',
-                'treatment': 'Apply Sulphur or Hexaconazole fungicide.',
-                'prevention': 'Avoid overhead irrigation. Good spacing.',
-                'severity': 'Medium'
-            },
-        },
-        'Apple': {
-            'Olive-green scabby lesions on fruit/leaves': {
-                'disease': 'Apple Scab (Venturia inaequalis)',
-                'treatment': 'Apply Captan or Mancozeb @ 2g/L from green tip stage.',
-                'prevention': 'Rake and destroy fallen leaves. Use scab-resistant varieties.',
-                'severity': 'High'
-            },
-            'Brown rotting fruit with rings': {
-                'disease': 'Brown Rot (Monilinia fructicola)',
-                'treatment': 'Apply Iprodione or Carbendazim. Remove mummified fruits.',
-                'prevention': 'Thin fruits to avoid contact. Good orchard sanitation.',
-                'severity': 'High'
-            },
-            'Red-orange spots on leaves': {
-                'disease': 'Cedar Apple Rust (Gymnosporangium juniperi)',
-                'treatment': 'Apply Myclobutanil fungicide from pink bud stage.',
-                'prevention': 'Remove nearby juniper/cedar trees if possible.',
-                'severity': 'Medium'
-            },
-        },
-        'Orange': {
-            'Yellow blotchy leaves + dieback': {
-                'disease': 'Citrus Greening / Huanglongbing (HLB)',
-                'treatment': 'No cure. Remove infected trees immediately.',
-                'prevention': 'Control psyllid vectors. Use certified disease-free nursery stock.',
-                'severity': 'High'
-            },
-            'Water-soaked dark lesions on fruit': {
-                'disease': 'Citrus Canker (Xanthomonas axonopodis)',
-                'treatment': 'Apply copper hydroxide @ 3g/L. Prune infected branches.',
-                'prevention': 'Use disease-free budwood. Windbreaks to reduce spread.',
-                'severity': 'High'
-            },
-            'White cottony growth on branches': {
-                'disease': 'Powdery Mildew / Cottony Cushion Scale',
-                'treatment': 'Apply horticultural oil or Imidacloprid spray.',
-                'prevention': 'Regular monitoring. Encourage natural predators.',
-                'severity': 'Medium'
-            },
-        },
-        'Papaya': {
-            'Mosaic + ring spots on fruit': {
-                'disease': 'Papaya Ringspot Virus (PRSV)',
-                'treatment': 'No cure. Remove infected plants immediately.',
-                'prevention': 'Use virus-free tissue culture plants. Control aphids.',
-                'severity': 'High'
-            },
-            'Water-soaked stem rot at base': {
-                'disease': 'Phytophthora Root/Stem Rot',
-                'treatment': 'Apply Metalaxyl @ 2g/L soil drench. Improve drainage.',
-                'prevention': 'Avoid waterlogging. Raised bed planting.',
-                'severity': 'High'
-            },
-            'Powdery white patches on leaves': {
-                'disease': 'Powdery Mildew',
-                'treatment': 'Apply Sulphur 80% WP @ 2g/L.',
-                'prevention': 'Good spacing. Avoid overhead irrigation.',
-                'severity': 'Low'
-            },
-        },
-        'Coconut': {
-            'Crown wilting + bud rot': {
-                'disease': 'Bud Rot (Phytophthora palmivora)',
-                'treatment': 'Apply Bordeaux mixture 1% into crown. Remove infected tissue.',
-                'prevention': 'Avoid waterlogging. Improve drainage around base.',
-                'severity': 'High'
-            },
-            'Yellowing of older leaves progressively': {
-                'disease': 'Root Wilt Disease',
-                'treatment': 'Apply balanced fertilizer + micronutrients. Root feeding with nutrients.',
-                'prevention': 'Use disease-free seedlings. Proper irrigation management.',
-                'severity': 'High'
-            },
-            'Black spots on nuts': {
-                'disease': 'Stem Bleeding (Thielaviopsis paradoxa)',
-                'treatment': 'Scrape infected area. Apply Bordeaux paste on wound.',
-                'prevention': 'Avoid mechanical injury to trunk. Good drainage.',
-                'severity': 'Medium'
-            },
-        },
-        'Jute': {
-            'Stem rot + plant collapse': {
-                'disease': 'Stem Rot (Macrophomina phaseolina)',
-                'treatment': 'Apply Carbendazim @ 1g/L. Remove infected plants.',
-                'prevention': 'Crop rotation. Avoid dense planting.',
-                'severity': 'High'
-            },
-            'Brown spots with yellow halo on leaves': {
-                'disease': 'Anthracnose (Colletotrichum corchori)',
-                'treatment': 'Apply Mancozeb 75% WP @ 2g/L.',
-                'prevention': 'Use healthy seed. Avoid waterlogging.',
-                'severity': 'Medium'
-            },
-        },
-        'Coffee': {
-            'Orange powdery pustules under leaves': {
-                'disease': 'Coffee Leaf Rust (Hemileia vastatrix)',
-                'treatment': 'Apply Copper oxychloride @ 3g/L or Propiconazole.',
-                'prevention': 'Use rust-resistant varieties. Shade management.',
-                'severity': 'High'
-            },
-            'Dark brown berry borer holes': {
-                'disease': 'Coffee Berry Borer (Hypothenemus hampei)',
-                'treatment': 'Apply Chlorpyrifos @ 2ml/L. Use pheromone traps.',
-                'prevention': 'Harvest all ripe and overripe berries promptly.',
-                'severity': 'High'
-            },
-            'Black lesions on berries': {
-                'disease': 'Coffee Berry Disease (Colletotrichum kahawae)',
-                'treatment': 'Apply Carbendazim @ 1g/L. Remove mummified berries.',
-                'prevention': 'Use resistant varieties. Maintain good canopy hygiene.',
-                'severity': 'High'
-            },
-        },
-        'Pomegranate': {
-            'Black lesions on fruit + cracking': {
-                'disease': 'Fruit Rot / Alternaria Rot',
-                'treatment': 'Apply Carbendazim @ 1g/L before and after flowering.',
-                'prevention': 'Avoid fruit injury. Bag fruits at marble stage.',
-                'severity': 'High'
-            },
-            'Yellowing + wilting of shoots': {
-                'disease': 'Bacterial Blight (Xanthomonas axonopodis)',
-                'treatment': 'Apply copper hydroxide @ 3g/L. Prune infected parts.',
-                'prevention': 'Avoid overhead irrigation. Prune for air circulation.',
-                'severity': 'High'
-            },
-        }, }
+    }
 
     # Show symptom images for reference BEFORE selecting
     st.markdown("#### 👇 Select your crop and match your symptom to the cards below")
@@ -755,15 +505,10 @@ with tab3:
     st.subheader("Predict mandi prices for the next 30 days")
     st.markdown("Select a crop to see the price forecast and the best day to sell.")
 
-    crop_choice = st.selectbox(
-        "🌾 Select Crop",
-        ['Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
- 'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
- 'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Onion', 'Orange',
- 'Papaya', 'Pigeonpeas', 'Pomegranate', 'Potato', 'Rice', 'Tomato',
- 'Watermelon', 'Wheat'],
-        index=0
-    )
+    price_models = load_price_models()
+    available_crops = sorted(list(price_models.keys()))
+
+    crop_choice = st.selectbox("🌾 Select Crop", available_crops, index=0)
     forecast_days = st.slider("Forecast horizon (days)", 7, 60, 30)
 
     if st.button("📈 Forecast Price", use_container_width=True, type="primary"):
@@ -818,6 +563,33 @@ with tab4:
     st.subheader("Smart Irrigation & Fertilizer Advisor")
     st.markdown("Get precise water and fertilizer recommendations based on your crop and weather.")
 
+    # Live weather section
+    st.markdown("#### 🌤️ Live Weather (Auto-fill)")
+    city = st.text_input("Enter your city name", placeholder="e.g. Bengaluru, Pune, Hyderabad")
+    weather_data = None
+    if city:
+        weather_data = get_weather(city)
+        if weather_data:
+            wc1, wc2, wc3, wc4 = st.columns(4)
+            wc1.metric("🌡️ Temp", f"{weather_data['temp']}°C")
+            wc2.metric("💧 Humidity", f"{weather_data['humidity']}%")
+            wc3.metric("💨 Wind", f"{weather_data['wind_speed']:.1f} km/h")
+            wc4.metric("🌧️ Rain", f"{weather_data['rainfall']} mm")
+            st.success(f"📍 Live weather for **{weather_data['city']}**: {weather_data['description']}")
+
+            # Calamity tips
+            desc_lower = weather_data['description'].lower()
+            for key, tips in CALAMITY_TIPS.items():
+                if key in desc_lower:
+                    st.warning("⚠️ **Weather Advisory for Farmers:**")
+                    for tip in tips:
+                        st.markdown(f"- {tip}")
+                    break
+        else:
+            st.error("City not found. Please check spelling or try a nearby city.")
+
+    st.divider()
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -833,9 +605,12 @@ with tab4:
 
     with col2:
         st.markdown("**🌡️ Today's Weather**")
-        irr_temp = st.slider("Temperature (°C)", 10.0, 48.0, 30.0, step=0.5)
-        irr_humidity = st.slider("Humidity (%)", 10.0, 100.0, 60.0, step=1.0)
-        wind_speed = st.slider("Wind Speed (km/h)", 0.0, 50.0, 10.0, step=1.0)
+        default_temp = float(weather_data['temp']) if weather_data else 30.0
+        default_humidity = float(weather_data['humidity']) if weather_data else 60.0
+        default_wind = float(weather_data['wind_speed']) if weather_data else 10.0
+        irr_temp = st.slider("Temperature (°C)", 10.0, 48.0, min(max(default_temp, 10.0), 48.0), step=0.5)
+        irr_humidity = st.slider("Humidity (%)", 10.0, 100.0, min(max(default_humidity, 10.0), 100.0), step=1.0)
+        wind_speed = st.slider("Wind Speed (km/h)", 0.0, 50.0, min(default_wind, 50.0), step=1.0)
 
     st.divider()
 
