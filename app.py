@@ -60,7 +60,31 @@ st.set_page_config(
     page_icon="🌾",
     layout="centered"
 )
+# ── Language selector ─────────────────────────────────────────────────────────
+LANGUAGES = {
+    'English': 'en',
+    'हिंदी (Hindi)': 'hi',
+    'తెలుగు (Telugu)': 'te',
+    'தமிழ் (Tamil)': 'ta',
+    'ಕನ್ನಡ (Kannada)': 'kn',
+    'मराठी (Marathi)': 'mr',
+    'বাংলা (Bengali)': 'bn',
+    'ગુજરાતી (Gujarati)': 'gu',
+    'ਪੰਜਾਬੀ (Punjabi)': 'pa',
+}
 
+def T(text):
+    """Translate text to selected language"""
+    if st.session_state.get('lang_code', 'en') == 'en':
+        return text
+    try:
+        from deep_translator import GoogleTranslator
+        return GoogleTranslator(
+            source='en',
+            target=st.session_state['lang_code']
+        ).translate(text)
+    except:
+        return text
 # ── Load crop recommendation models ──────────────────────────────────────────
 @st.cache_resource
 def load_crop_models():
@@ -173,6 +197,23 @@ def calculate_ET0(temp, humidity, wind_speed_kmh):
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.title("🌾 Smart Crop Advisory System")
+# Language selector in sidebar
+with st.sidebar:
+    st.markdown("### 🌐 भाषा / Language")
+    selected_lang = st.selectbox(
+        "Select Language",
+        list(LANGUAGES.keys()),
+        index=0
+    )
+    st.session_state['lang_code'] = LANGUAGES[selected_lang]
+    
+    if selected_lang != 'English':
+        st.success(f"✅ {selected_lang} selected")
+    
+    st.divider()
+    st.markdown("### 📱 Quick Links")
+    st.markdown("🌾 [Live App](https://smart-crop-advisor-pryetrqjrna69seh6ne4uq.streamlit.app)")
+    st.markdown("💻 [GitHub](https://github.com/bored-psychic/smart-crop-advisor)")
 st.caption("AI-powered advisory for small and marginal farmers")
 st.divider()
 
@@ -220,9 +261,10 @@ with tab1:
         emoji = CROP_EMOJI.get(top_crop, '🌱')
         tip = CROP_TIPS.get(top_crop, '')
 
-        st.success(f"### {emoji} Best Crop: **{top_crop.upper()}** — {top_conf:.1f}% confidence")
+       st.success(f"### {emoji} {T('Best Crop')}: **{top_crop.upper()}** — {top_conf:.1f}% {T('confidence')}")
         if tip:
-            st.info(f"💡 **Tip:** {tip}")
+            st.info(f"💡 **{T('Tip')}:** {T(tip)}")
+
 
         # Soil type detection
         soil, soil_advice, soil_color = get_soil_type(N, P, K, ph)
@@ -479,13 +521,13 @@ with tab2:
         severity = result['severity']
 
         if severity == 'High':
-            st.error(f"### ⚠️ {result['disease']}")
+          st.error(f"### ⚠️ {T(result['disease'])}")
             st.markdown("**Severity: 🔴 HIGH — Act immediately!**")
         elif severity == 'Medium':
             st.warning(f"### ⚠️ {result['disease']}")
             st.markdown("**Severity: 🟡 MEDIUM — Monitor closely**")
         else:
-            st.info(f"### ℹ️ {result['disease']}")
+            st.info(f"**💊 {T('Treatment')}:** {T(result['treatment'])}")
             st.markdown("**Severity: 🟢 LOW — Manageable**")
 
         st.divider()
@@ -493,7 +535,7 @@ with tab2:
         with col1:
             st.info(f"**💊 Treatment:**\n\n{result['treatment']}")
         with col2:
-            st.success(f"**🛡️ Prevention:**\n\n{result['prevention']}")
+           st.success(f"**🛡️ {T('Prevention')}:** {T(result['prevention'])}")
 
     st.divider()
     st.caption("📊 Database covers 7 crops · 20+ diseases · Treatment & prevention advice")
@@ -542,7 +584,8 @@ with tab3:
 
         today_price = future_forecast['Price'].iloc[0]
         if best_day['Price'] > today_price * 1.05:
-            st.success(f"💡 **Advice: Wait to sell!** Price expected to rise to ₹{best_day['Price']:.0f}/qtl on {best_day['Date'].strftime('%d %b %Y')}")
+            st.success(f"💡 **{T('Advice')}:** {T('Wait to sell! Price expected to rise')}")
+
         else:
             st.warning(f"💡 **Advice: Sell now.** Prices not expected to rise significantly in the next {forecast_days} days.")
 
@@ -635,10 +678,10 @@ with tab4:
         # Results
         c1, c2, c3 = st.columns(3)
         with c1:
-            st.metric("💧 Water Need", f"{ETc:.1f} mm/day",
+            st.metric(T("Water Need"), f"{ETc:.1f} mm/day")
                       help="Crop evapotranspiration")
         with c2:
-            st.metric("🚿 Net Irrigation", f"{net_irrigation:.1f} mm/day",
+          st.metric(T("Net Irrigation"), f"{net_irrigation:.1f} mm/day")
                       help="After accounting for rainfall")
         with c3:
             st.metric("🪣 Total Water", f"{total_litres/1000:.1f} kL",
