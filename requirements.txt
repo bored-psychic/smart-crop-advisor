@@ -6,3 +6,4 @@ pillow
 prophet
 pystan
 requests
+deep-translator
