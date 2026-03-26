@@ -546,8 +546,7 @@ if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
 with tab4:
     st.subheader(T("Smart Irrigation & Fertilizer Advisor"))
     st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
-
-    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
+if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
     lang = st.session_state.get('lang_code', 'en')
     speak(TAB4_INSTRUCTIONS.get(lang, TAB4_INSTRUCTIONS['en']), lang)
 
