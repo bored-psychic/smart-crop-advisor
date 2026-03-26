@@ -244,6 +244,9 @@ with tab1:
 
     crop_model, scaler, le = load_crop_models()
 
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
+        speak(T("To find the best crop for your field, enter the following details. First, enter Nitrogen value in kilograms per hectare. Then enter Phosphorus value. Then Potassium value. Then soil pH. Then temperature in celsius. Then humidity percentage. Finally enter rainfall in millimeters. Then click Get Crop Recommendation."), st.session_state.get('lang_code', 'en'))
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"**🧪 {T('Soil Nutrients')}**")
@@ -329,6 +332,9 @@ with tab1:
 with tab2:
     st.subheader("🌿 " + T("Crop Disease Checker"))
     st.markdown(T("Select your crop and symptoms — get instant disease diagnosis and treatment."))
+
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
+        speak(T("To check for crop disease, first select your crop from the dropdown. Then select the main symptom you can see on your plant. Then click Diagnose Disease to get the disease name, severity, treatment and prevention advice."), st.session_state.get('lang_code', 'en'))
 
     DISEASE_DB = {
         'Tomato': {
@@ -437,6 +443,9 @@ with tab3:
     st.subheader(T("Predict mandi prices for the next 30 days"))
     st.markdown(T("Select a crop to see the price forecast and the best day to sell."))
 
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
+        speak(T("To predict market prices, select your crop from the dropdown. Then select how many days ahead you want to forecast. Then click Forecast Price to see the best day to sell and the expected price range."), st.session_state.get('lang_code', 'en'))
+
     price_models = load_price_models()
     available_crops = sorted(list(price_models.keys()))
 
@@ -501,6 +510,9 @@ with tab3:
 with tab4:
     st.subheader(T("Smart Irrigation & Fertilizer Advisor"))
     st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
+
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
+        speak(T("To get irrigation advice, first enter your city name to get live weather. Then select your crop and growth stage. Enter your field area in acres. Enter rainfall in last 3 days. Then adjust temperature, humidity and wind speed. Finally click Get Irrigation Advice to know how much water your field needs today."), st.session_state.get('lang_code', 'en'))
 
     st.markdown(f"#### 🌤️ {T('Live Weather (Auto-fill)')}")
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"))
