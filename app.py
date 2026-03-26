@@ -29,20 +29,54 @@ def T(text):
     except:
         return text
 
-def speak(text, lang_code='en'):
-    try:
-        from gtts import gTTS
-        import base64
-        from io import BytesIO
-        tts = gTTS(text=text, lang=lang_code, slow=False)
-        audio_buffer = BytesIO()
-        tts.write_to_fp(audio_buffer)
-        audio_buffer.seek(0)
-        audio_b64 = base64.b64encode(audio_buffer.read()).decode()
-        st.markdown(f'<audio autoplay><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>', unsafe_allow_html=True)
-        st.audio(audio_buffer.getvalue(), format='audio/mp3')
-    except Exception as e:
-        st.warning(f"Audio unavailable: {e}")
+# ── Natural language instructions per language ────────────────────────────────
+TAB1_INSTRUCTIONS = {
+    'en': "Tell us about your soil and weather. Enter Nitrogen, Phosphorus, Potassium, pH, Temperature, Humidity, and Rainfall. Then tap Get Crop Recommendation.",
+    'hi': "अपनी मिट्टी और मौसम की जानकारी भरें। नाइट्रोजन, फॉस्फोरस, पोटैशियम, पीएच, तापमान, नमी और बारिश डालें। फिर फसल सुझाव पाएं बटन दबाएं।",
+    'te': "మీ నేల మరియు వాతావరణ వివరాలు నమోదు చేయండి. నత్రజని, భాస్వరం, పొటాషియం, pH, ఉష్ణోగ్రత, తేమ మరియు వర్షపాతం నమోదు చేయండి. తర్వాత పంట సూచన పొందండి బటన్ నొక్కండి.",
+    'ta': "உங்கள் மண் மற்றும் வானிலை விவரங்களை உள்ளிடுங்கள். நைட்ரஜன், பாஸ்பரஸ், பொட்டாசியம், pH, வெப்பநிலை, ஈரப்பதம் மற்றும் மழையளவு உள்ளிடவும். பின்னர் பயிர் பரிந்துரை பெறுங்கள்.",
+    'kn': "ನಿಮ್ಮ ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ. ಸಾರಜನಕ, ರಂಜಕ, ಪೊಟ್ಯಾಸಿಯಂ, pH, ತಾಪಮಾನ, ತೇವಾಂಶ ಮತ್ತು ಮಳೆ ನಮೂದಿಸಿ. ನಂತರ ಬೆಳೆ ಶಿಫಾರಸು ಪಡೆಯಿರಿ.",
+    'mr': "तुमच्या मातीची आणि हवामानाची माहिती भरा. नायट्रोजन, फॉस्फरस, पोटॅशियम, pH, तापमान, आर्द्रता आणि पाऊस टाका. मग पीक शिफारस मिळवा बटण दाबा.",
+    'bn': "আপনার মাটি ও আবহাওয়ার তথ্য দিন। নাইট্রোজেন, ফসফরাস, পটাসিয়াম, pH, তাপমাত্রা, আর্দ্রতা ও বৃষ্টিপাত লিখুন। তারপর ফসলের পরামর্শ পান বোতামটি চাপুন।",
+    'gu': "તમારી જમીન અને હવામાનની માહિતી ભરો. નાઇટ્રોજન, ફોસ્ફરસ, પોટેશિયમ, pH, તાપમાન, ભેજ અને વરસાદ દાખલ કરો. પછી પાક ભલામણ મેળવો બટન દબાવો.",
+    'pa': "ਆਪਣੀ ਮਿੱਟੀ ਅਤੇ ਮੌਸਮ ਦੀ ਜਾਣਕਾਰੀ ਭਰੋ। ਨਾਈਟ੍ਰੋਜਨ, ਫਾਸਫੋਰਸ, ਪੋਟਾਸ਼ੀਅਮ, pH, ਤਾਪਮਾਨ, ਨਮੀ ਅਤੇ ਬਾਰਸ਼ ਦਰਜ ਕਰੋ। ਫਿਰ ਫ਼ਸਲ ਸਿਫ਼ਾਰਸ਼ ਲਓ ਬਟਨ ਦਬਾਓ।",
+}
+
+TAB2_INSTRUCTIONS = {
+    'en': "Select your crop from the list. Then pick the symptom you see on your plant. Tap Diagnose to know the disease, how serious it is, and how to treat it.",
+    'hi': "अपनी फसल चुनें। फिर अपने पौधे पर जो लक्षण दिख रहा है वो चुनें। बीमारी पहचानें बटन दबाएं और इलाज जानें।",
+    'te': "మీ పంటను ఎంచుకోండి. మీ మొక్కపై కనిపించే లక్షణాన్ని ఎంచుకోండి. వ్యాధి నిర్ధారణ బటన్ నొక్కి చికిత్స తెలుసుకోండి.",
+    'ta': "உங்கள் பயிரை தேர்ந்தெடுங்கள். உங்கள் தாவரத்தில் தெரியும் அறிகுறியை தேர்வு செய்யுங்கள். நோய் கண்டறி பொத்தானை அழுத்தி சிகிச்சை தெரிந்துகொள்ளுங்கள்.",
+    'kn': "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ. ನಿಮ್ಮ ಗಿಡದಲ್ಲಿ ಕಾಣುವ ಲಕ್ಷಣವನ್ನು ಆರಿಸಿ. ರೋಗ ಪತ್ತೆ ಮಾಡಿ ಬಟನ್ ಒತ್ತಿ ಚಿಕಿತ್ಸೆ ತಿಳಿಯಿರಿ.",
+    'mr': "तुमचे पीक निवडा. तुमच्या झाडावर दिसणारे लक्षण निवडा. आजार ओळखा बटण दाबा आणि उपाय जाणून घ्या.",
+    'bn': "আপনার ফসল বেছে নিন। গাছে যে লক্ষণ দেখছেন তা নির্বাচন করুন। রোগ নির্ণয় বোতামটি চাপুন এবং চিকিৎসা জানুন।",
+    'gu': "તમારો પાક પસંદ કરો. તમારા છોડ પર દેખાતા લક્ષણ પસંદ કરો. રોગ ઓળખો બટન દબાવો અને ઉપચાર જાણો.",
+    'pa': "ਆਪਣੀ ਫ਼ਸਲ ਚੁਣੋ। ਆਪਣੇ ਪੌਦੇ 'ਤੇ ਦਿਖਾਈ ਦੇ ਰਹੇ ਲੱਛਣ ਦੀ ਚੋਣ ਕਰੋ। ਬਿਮਾਰੀ ਪਛਾਣੋ ਬਟਨ ਦਬਾਓ ਅਤੇ ਇਲਾਜ ਜਾਣੋ।",
+}
+
+TAB3_INSTRUCTIONS = {
+    'en': "Choose your crop and how many days ahead you want to see prices. Tap Forecast Price to know the best day to sell at the highest price.",
+    'hi': "अपनी फसल चुनें और कितने दिन आगे का भाव देखना है वो चुनें। भाव अनुमान लगाएं बटन दबाएं और जानें कब बेचना फायदेमंद है।",
+    'te': "మీ పంట మరియు ఎన్ని రోజుల ముందు ధరలు చూడాలో ఎంచుకోండి. ధర అంచనా వేయండి బటన్ నొక్కి అమ్మడానికి మంచి రోజు తెలుసుకోండి.",
+    'ta': "உங்கள் பயிர் மற்றும் எத்தனை நாட்கள் முன்னோக்கி விலை பார்க்கணும் என்று தேர்வு செய்யுங்கள். விலை கணிக்க பொத்தானை அழுத்தி எந்த நாளில் விற்பது லாபகரம் என்று தெரிந்துகொள்ளுங்கள்.",
+    'kn': "ನಿಮ್ಮ ಬೆಳೆ ಮತ್ತು ಎಷ್ಟು ದಿನ ಮುಂದಿನ ಬೆಲೆ ನೋಡಬೇಕು ಎಂದು ಆಯ್ಕೆಮಾಡಿ. ಬೆಲೆ ಅಂದಾಜು ಬಟನ್ ಒತ್ತಿ ಯಾವ ದಿನ ಮಾರಾಟ ಮಾಡುವುದು ಲಾಭದಾಯಕ ಎಂದು ತಿಳಿಯಿರಿ.",
+    'mr': "तुमचे पीक आणि किती दिवसांचा भाव बघायचा ते निवडा. भाव अंदाज लावा बटण दाबा आणि कधी विकणे फायदेशीर आहे ते जाणून घ्या.",
+    'bn': "আপনার ফসল এবং কত দিন এগিয়ে দাম দেখতে চান তা বেছে নিন। দাম পূর্বাভাস বোতামটি চাপুন এবং কোন দিন বিক্রি করা লাভজনক তা জানুন।",
+    'gu': "તમારો પાક અને કેટલા દિવસ આગળનો ભાવ જોવો છે તે પસંદ કરો. ભાવ અંદાજ લગાવો બટન દબાવો અને ક્યારે વેચવું ફાયદાકારક છે તે જાણો.",
+    'pa': "ਆਪਣੀ ਫ਼ਸਲ ਅਤੇ ਕਿੰਨੇ ਦਿਨ ਅੱਗੇ ਦਾ ਭਾਅ ਦੇਖਣਾ ਹੈ ਉਹ ਚੁਣੋ। ਭਾਅ ਅੰਦਾਜ਼ਾ ਲਗਾਓ ਬਟਨ ਦਬਾਓ ਅਤੇ ਕਦੋਂ ਵੇਚਣਾ ਫਾਇਦੇਮੰਦ ਹੈ ਜਾਣੋ।",
+}
+
+TAB4_INSTRUCTIONS = {
+    'en': "Enter your city to get live weather. Then select your crop, growth stage, and field size. Tell us how much rain fell in the last 3 days. Tap Get Irrigation Advice to know exactly how much water your field needs today.",
+    'hi': "अपना शहर डालें ताकि मौसम अपने आप भर जाए। अपनी फसल, विकास का चरण और खेत का आकार चुनें। पिछले 3 दिनों की बारिश बताएं। पानी की सलाह लें बटन दबाएं।",
+    'te': "లైవ్ వాతావరణం కోసం మీ నగరం నమోదు చేయండి. మీ పంట, పెరుగుదల దశ మరియు పొలం పరిమాణం ఎంచుకోండి. చివరి 3 రోజుల వర్షపాతం చెప్పండి. నీటిపారుదల సలహా పొందండి బటన్ నొక్కండి.",
+    'ta': "நேரடி வானிலைக்கு உங்கள் நகரம் உள்ளிடுங்கள். உங்கள் பயிர், வளர்ச்சி நிலை மற்றும் வயல் அளவு தேர்வு செய்யுங்கள். கடந்த 3 நாட்கள் மழை அளவு சொல்லுங்கள். நீர்ப்பாசன ஆலோசனை பெற பொத்தானை அழுத்துங்கள்.",
+    'kn': "ನೇರ ಹವಾಮಾನಕ್ಕಾಗಿ ನಿಮ್ಮ ನಗರ ನಮೂದಿಸಿ. ನಿಮ್ಮ ಬೆಳೆ, ಬೆಳವಣಿಗೆ ಹಂತ ಮತ್ತು ಜಮೀನಿನ ಗಾತ್ರ ಆಯ್ಕೆಮಾಡಿ. ಕಳೆದ 3 ದಿನಗಳ ಮಳೆ ಹೇಳಿ. ನೀರಾವರಿ ಸಲಹೆ ಪಡೆಯಿರಿ ಬಟನ್ ಒತ್ತಿ.",
+    'mr': "लाइव्ह हवामानासाठी तुमचे शहर टाका. तुमचे पीक, वाढीचा टप्पा आणि शेताचा आकार निवडा. गेल्या 3 दिवसांचा पाऊस सांगा. पाणी सल्ला मिळवा बटण दाबा.",
+    'bn': "সরাসরি আবহাওয়ার জন্য আপনার শহর লিখুন। আপনার ফসল, বৃদ্ধির পর্যায় এবং জমির আকার বেছে নিন। গত ৩ দিনের বৃষ্টি বলুন। সেচ পরামর্শ পান বোতামটি চাপুন।",
+    'gu': "લાઇવ હવામાન માટે તમારું શહેર દાખલ કરો. તમારો પાક, વૃદ્ધિ તબક્કો અને ખેતરનું કદ પસંદ કરો. છેલ્લા 3 દિવસનો વરસાદ જણાવો. સિંચાઈ સલાહ મેળવો બટન દબાવો.",
+    'pa': "ਲਾਈਵ ਮੌਸਮ ਲਈ ਆਪਣਾ ਸ਼ਹਿਰ ਦਰਜ ਕਰੋ। ਆਪਣੀ ਫ਼ਸਲ, ਵਿਕਾਸ ਪੜਾਅ ਅਤੇ ਖੇਤ ਦਾ ਆਕਾਰ ਚੁਣੋ। ਪਿਛਲੇ 3 ਦਿਨਾਂ ਦੀ ਬਾਰਸ਼ ਦੱਸੋ। ਪਾਣੀ ਦੀ ਸਲਾਹ ਲਓ ਬਟਨ ਦਬਾਓ।",
+}
 
 # ── Soil type detection ───────────────────────────────────────────────────────
 def get_soil_type(N, P, K, ph):
@@ -244,9 +278,10 @@ with tab1:
 
     crop_model, scaler, le = load_crop_models()
 
-    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
-        speak(T("To find the best crop for your field, enter the following details. First, enter Nitrogen value in kilograms per hectare. Then enter Phosphorus value. Then Potassium value. Then soil pH. Then temperature in celsius. Then humidity percentage. Finally enter rainfall in millimeters. Then click Get Crop Recommendation."), st.session_state.get('lang_code', 'en'))
-
+   if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
+    lang = st.session_state.get('lang_code', 'en')
+    speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
+       
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"**🧪 {T('Soil Nutrients')}**")
@@ -333,9 +368,11 @@ with tab2:
     st.subheader("🌿 " + T("Crop Disease Checker"))
     st.markdown(T("Select your crop and symptoms — get instant disease diagnosis and treatment."))
 
-    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
-        speak(T("To check for crop disease, first select your crop from the dropdown. Then select the main symptom you can see on your plant. Then click Diagnose Disease to get the disease name, severity, treatment and prevention advice."), st.session_state.get('lang_code', 'en'))
+if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
+    lang = st.session_state.get('lang_code', 'en')
+    speak(TAB2_INSTRUCTIONS.get(lang, TAB2_INSTRUCTIONS['en']), lang)
 
+    
     DISEASE_DB = {
         'Tomato': {
             'Yellow leaves + brown spots': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Apply Mancozeb 75% WP @ 2g/L. Remove infected leaves.', 'prevention': 'Crop rotation every 2 years. Use resistant varieties.', 'severity': 'Medium'},
@@ -443,10 +480,10 @@ with tab3:
     st.subheader(T("Predict mandi prices for the next 30 days"))
     st.markdown(T("Select a crop to see the price forecast and the best day to sell."))
 
-    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
-        speak(T("To predict market prices, select your crop from the dropdown. Then select how many days ahead you want to forecast. Then click Forecast Price to see the best day to sell and the expected price range."), st.session_state.get('lang_code', 'en'))
-
-    price_models = load_price_models()
+ if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
+    lang = st.session_state.get('lang_code', 'en')
+    speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
+     
     available_crops = sorted(list(price_models.keys()))
 
     crop_choice = st.selectbox(f"🌾 {T('Select Crop')}", available_crops, index=0)
@@ -512,7 +549,8 @@ with tab4:
     st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
 
     if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
-        speak(T("To get irrigation advice, first enter your city name to get live weather. Then select your crop and growth stage. Enter your field area in acres. Enter rainfall in last 3 days. Then adjust temperature, humidity and wind speed. Finally click Get Irrigation Advice to know how much water your field needs today."), st.session_state.get('lang_code', 'en'))
+    lang = st.session_state.get('lang_code', 'en')
+    speak(TAB4_INSTRUCTIONS.get(lang, TAB4_INSTRUCTIONS['en']), lang)
 
     st.markdown(f"#### 🌤️ {T('Live Weather (Auto-fill)')}")
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"))
