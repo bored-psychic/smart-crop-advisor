@@ -7,3 +7,4 @@ prophet
 pystan
 requests
 deep-translator
+gtts
