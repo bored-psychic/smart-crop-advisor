@@ -278,10 +278,10 @@ with tab1:
 
     crop_model, scaler, le = load_crop_models()
 
-   if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
+if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
     lang = st.session_state.get('lang_code', 'en')
     speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
-       
+    
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"**🧪 {T('Soil Nutrients')}**")
