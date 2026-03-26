@@ -29,6 +29,21 @@ def T(text):
     except:
         return text
 
+def speak(text, lang_code='en'):
+    try:
+        from gtts import gTTS
+        import base64
+        from io import BytesIO
+        tts = gTTS(text=text, lang=lang_code, slow=False)
+        audio_buffer = BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_buffer.seek(0)
+        audio_b64 = base64.b64encode(audio_buffer.read()).decode()
+        st.markdown(f'<audio autoplay><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>', unsafe_allow_html=True)
+        st.audio(audio_buffer.getvalue(), format='audio/mp3')
+    except Exception as e:
+        st.warning(f"Audio unavailable: {e}")
+
 # ── Soil type detection ───────────────────────────────────────────────────────
 def get_soil_type(N, P, K, ph):
     if ph < 5.5:
@@ -263,6 +278,8 @@ with tab1:
         soil, soil_advice, soil_color = get_soil_type(N, P, K, ph)
         st.markdown(f"#### {soil_color} {T('Detected Soil Type')}: **{T(soil)}**")
         st.warning(f"🌱 **{T('Soil Advice')}:** {T(soil_advice)}")
+        if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab1"):
+            speak(f"Best crop is {top_crop}. Confidence is {top_conf:.0f} percent. {tip}. Soil type is {soil}. {soil_advice}", st.session_state.get('lang_code', 'en'))
 
         st.markdown(f"#### {T('Other Options')}")
         r2, r3 = st.columns(2)
@@ -385,6 +402,8 @@ with tab2:
             st.info(f"**💊 {T('Treatment')}:**\n\n{T(result['treatment'])}")
         with col2:
             st.success(f"**🛡️ {T('Prevention')}:**\n\n{T(result['prevention'])}")
+        if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab2"):
+            speak(f"Disease detected is {result['disease']}. Severity is {result['severity']}. Treatment: {result['treatment']}. Prevention: {result['prevention']}", st.session_state.get('lang_code', 'en'))
 
     st.divider()
     st.caption(T("Database covers 7 crops · 20+ diseases · Treatment & prevention advice"))
@@ -431,6 +450,8 @@ with tab3:
             st.success(f"💡 **{T('Advice: Wait to sell!')}** {T('Price expected to rise to')} ₹{best_day['Price']:.0f}/qtl {T('on')} {best_day['Date'].strftime('%d %b %Y')}")
         else:
             st.warning(f"💡 **{T('Advice: Sell now.')}** {T('Prices not expected to rise significantly.')}")
+        if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab3"):
+            speak(f"Best price for {crop_choice} is rupees {best_day['Price']:.0f} per quintal on {best_day['Date'].strftime('%d %B %Y')}. Average price is rupees {avg:.0f} per quintal.", st.session_state.get('lang_code', 'en'))
 
         st.markdown(f"#### {T('Price Forecast Chart')}")
         st.line_chart(future_forecast.set_index('Date')[['Price','Min','Max']])
@@ -516,6 +537,8 @@ with tab4:
             st.warning(f"💧 **{T('Light irrigation recommended')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
         else:
             st.error(f"🚨 **{T('Irrigation urgently needed')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
+        if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab4"):
+            speak(f"Water needed today is {ETc:.1f} millimeters per day. Net irrigation required is {net_irrigation:.1f} millimeters. Total water for your field is {total_litres/1000:.1f} kiloliters.", st.session_state.get('lang_code', 'en'))
 
         st.markdown(f"#### 🌱 {T('Fertilizer Recommendation')}")
         st.info(f"""
