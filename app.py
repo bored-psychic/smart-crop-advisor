@@ -265,37 +265,52 @@ with tab1:
         input_scaled = scaler.transform(input_data)
         probs = crop_model.predict_proba(input_scaled)[0]
         top3_idx = np.argsort(probs)[::-1][:3]
-
         top_crop = le.classes_[top3_idx[0]]
         top_conf = probs[top3_idx[0]] * 100
-        emoji = CROP_EMOJI.get(top_crop, '🌱')
         tip = CROP_TIPS.get(top_crop, '')
+        soil, soil_advice, soil_color = get_soil_type(N, P, K, ph)
+        crop2 = le.classes_[top3_idx[1]]
+        conf2 = probs[top3_idx[1]] * 100
+        crop3 = le.classes_[top3_idx[2]]
+        conf3 = probs[top3_idx[2]] * 100
+        st.session_state['tab1_result'] = {
+            'top_crop': top_crop, 'top_conf': top_conf, 'tip': tip,
+            'soil': soil, 'soil_advice': soil_advice, 'soil_color': soil_color,
+            'crop2': crop2, 'conf2': conf2, 'crop3': crop3, 'conf3': conf3,
+            'probs': probs.tolist()
+        }
+
+    if 'tab1_result' in st.session_state:
+        r = st.session_state['tab1_result']
+        top_crop = r['top_crop']
+        top_conf = r['top_conf']
+        tip = r['tip']
+        soil = r['soil']
+        soil_advice = r['soil_advice']
+        soil_color = r['soil_color']
+        emoji = CROP_EMOJI.get(top_crop, '🌱')
 
         st.success(f"### {emoji} {T('Best Crop')}: **{top_crop.upper()}** — {top_conf:.1f}% {T('confidence')}")
         if tip:
             st.info(f"💡 **{T('Tip')}:** {T(tip)}")
 
-        soil, soil_advice, soil_color = get_soil_type(N, P, K, ph)
         st.markdown(f"#### {soil_color} {T('Detected Soil Type')}: **{T(soil)}**")
         st.warning(f"🌱 **{T('Soil Advice')}:** {T(soil_advice)}")
+
         if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab1"):
             speak(f"Best crop is {top_crop}. Confidence is {top_conf:.0f} percent. {tip}. Soil type is {soil}. {soil_advice}", st.session_state.get('lang_code', 'en'))
 
         st.markdown(f"#### {T('Other Options')}")
         r2, r3 = st.columns(2)
-        crop2 = le.classes_[top3_idx[1]]
-        conf2 = probs[top3_idx[1]] * 100
         with r2:
-            st.metric(label=f"{CROP_EMOJI.get(crop2,'🌱')} #2 — {crop2.capitalize()}", value=f"{conf2:.1f}%")
-        crop3 = le.classes_[top3_idx[2]]
-        conf3 = probs[top3_idx[2]] * 100
+            st.metric(label=f"{CROP_EMOJI.get(r['crop2'],'🌱')} #2 — {r['crop2'].capitalize()}", value=f"{r['conf2']:.1f}%")
         with r3:
-            st.metric(label=f"{CROP_EMOJI.get(crop3,'🌱')} #3 — {crop3.capitalize()}", value=f"{conf3:.1f}%")
+            st.metric(label=f"{CROP_EMOJI.get(r['crop3'],'🌱')} #3 — {r['crop3'].capitalize()}", value=f"{r['conf3']:.1f}%")
 
         st.markdown(f"#### {T('Confidence Across Top 8 Crops')}")
         chart_df = pd.DataFrame({
             'Crop': [c.capitalize() for c in le.classes_],
-            'Confidence (%)': [round(p * 100, 2) for p in probs]
+            'Confidence (%)': [round(p * 100, 2) for p in r['probs']]
         }).sort_values('Confidence (%)', ascending=False).head(8)
         st.bar_chart(chart_df.set_index('Crop'))
 
@@ -383,7 +398,14 @@ with tab2:
     st.divider()
 
     if st.button(f"🔬 {T('Diagnose Disease')}", use_container_width=True, type="primary"):
-        result = DISEASE_DB[selected_crop][selected_symptom]
+        st.session_state['tab2_result'] = {
+            'disease': DISEASE_DB[selected_crop][selected_symptom],
+            'crop': selected_crop,
+            'symptom': selected_symptom
+        }
+
+    if 'tab2_result' in st.session_state:
+        result = st.session_state['tab2_result']['disease']
         severity = result['severity']
 
         if severity == 'High':
@@ -430,11 +452,23 @@ with tab3:
             future_forecast.columns = ['Date','Price','Min','Max']
             future_forecast['Date'] = pd.to_datetime(future_forecast['Date'])
             future_forecast = future_forecast.round(2)
+        st.session_state['tab3_result'] = {
+            'future_forecast': future_forecast.to_dict(),
+            'crop_choice': crop_choice,
+            'forecast_days': forecast_days
+        }
 
+    if 'tab3_result' in st.session_state:
+        r = st.session_state['tab3_result']
+        future_forecast = pd.DataFrame(r['future_forecast'])
+        future_forecast['Date'] = pd.to_datetime(future_forecast['Date'])
+        crop_choice_r = r['crop_choice']
+        forecast_days_r = r['forecast_days']
         best_idx = future_forecast['Price'].idxmax()
         worst_idx = future_forecast['Price'].idxmin()
         best_day = future_forecast.loc[best_idx]
         worst_day = future_forecast.loc[worst_idx]
+        avg = future_forecast['Price'].mean()
 
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -442,16 +476,16 @@ with tab3:
         with col2:
             st.metric(f"📉 {T('Lowest Price')}", f"₹{worst_day['Price']:.0f}/qtl", f"{worst_day['Date'].strftime('%d %b')}")
         with col3:
-            avg = future_forecast['Price'].mean()
-            st.metric(f"📊 {T('Avg Price')}", f"₹{avg:.0f}/qtl", f"{T('next')} {forecast_days} {T('days')}")
+            st.metric(f"📊 {T('Avg Price')}", f"₹{avg:.0f}/qtl", f"{T('next')} {forecast_days_r} {T('days')}")
 
         today_price = future_forecast['Price'].iloc[0]
         if best_day['Price'] > today_price * 1.05:
             st.success(f"💡 **{T('Advice: Wait to sell!')}** {T('Price expected to rise to')} ₹{best_day['Price']:.0f}/qtl {T('on')} {best_day['Date'].strftime('%d %b %Y')}")
         else:
             st.warning(f"💡 **{T('Advice: Sell now.')}** {T('Prices not expected to rise significantly.')}")
+
         if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab3"):
-            speak(f"Best price for {crop_choice} is rupees {best_day['Price']:.0f} per quintal on {best_day['Date'].strftime('%d %B %Y')}. Average price is rupees {avg:.0f} per quintal.", st.session_state.get('lang_code', 'en'))
+            speak(f"Best price for {crop_choice_r} is rupees {best_day['Price']:.0f} per quintal on {best_day['Date'].strftime('%d %B %Y')}. Average price is rupees {avg:.0f} per quintal.", st.session_state.get('lang_code', 'en'))
 
         st.markdown(f"#### {T('Price Forecast Chart')}")
         st.line_chart(future_forecast.set_index('Date')[['Price','Min','Max']])
@@ -520,6 +554,19 @@ with tab4:
         litres_per_acre = net_irrigation * 4046.86
         total_litres = litres_per_acre * field_area
         fert = FERTILIZER_SCHEDULE[growth_stage]
+        st.session_state['tab4_result'] = {
+            'ET0': ET0, 'Kc': Kc, 'ETc': ETc,
+            'net_irrigation': net_irrigation, 'total_litres': total_litres,
+            'field_area': field_area, 'fert': fert,
+            'growth_stage': growth_stage, 'irr_crop': irr_crop
+        }
+
+    if 'tab4_result' in st.session_state:
+        r = st.session_state['tab4_result']
+        ET0 = r['ET0']; Kc = r['Kc']; ETc = r['ETc']
+        net_irrigation = r['net_irrigation']; total_litres = r['total_litres']
+        field_area = r['field_area']; fert = r['fert']
+        growth_stage = r['growth_stage']; irr_crop = r['irr_crop']
 
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -537,6 +584,7 @@ with tab4:
             st.warning(f"💧 **{T('Light irrigation recommended')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
         else:
             st.error(f"🚨 **{T('Irrigation urgently needed')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
+
         if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab4"):
             speak(f"Water needed today is {ETc:.1f} millimeters per day. Net irrigation required is {net_irrigation:.1f} millimeters. Total water for your field is {total_litres/1000:.1f} kiloliters.", st.session_state.get('lang_code', 'en'))
 
@@ -554,7 +602,6 @@ with tab4:
             | Reference ET₀ | {ET0:.2f} mm/day |
             | Crop Coefficient (Kc) | {Kc} |
             | Crop Water Need (ETc) | {ETc:.2f} mm/day |
-            | {T('Effective Rainfall')} | {effective_rain/3:.2f} mm/day |
             | {T('Net Irrigation Need')} | {net_irrigation:.2f} mm/day |
             | {T('Field Area')} | {field_area} {T('acres')} |
             | {T('Total Water Required')} | {total_litres/1000:.2f} kL |
