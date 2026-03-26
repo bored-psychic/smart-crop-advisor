@@ -479,11 +479,10 @@ if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
 with tab3:
     st.subheader(T("Predict mandi prices for the next 30 days"))
     st.markdown(T("Select a crop to see the price forecast and the best day to sell."))
-
- if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
+if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
     lang = st.session_state.get('lang_code', 'en')
     speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
-     
+    
     available_crops = sorted(list(price_models.keys()))
 
     crop_choice = st.selectbox(f"🌾 {T('Select Crop')}", available_crops, index=0)
