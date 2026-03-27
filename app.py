@@ -278,9 +278,9 @@ with tab1:
 
     crop_model, scaler, le = load_crop_models()
 
-if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
-    lang = st.session_state.get('lang_code', 'en')
-    speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
+        lang = st.session_state.get('lang_code', 'en')
+        speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
     
     col1, col2 = st.columns(2)
     with col1:
@@ -368,9 +368,9 @@ with tab2:
     st.subheader("🌿 " + T("Crop Disease Checker"))
     st.markdown(T("Select your crop and symptoms — get instant disease diagnosis and treatment."))
 
-if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
-    lang = st.session_state.get('lang_code', 'en')
-    speak(TAB2_INSTRUCTIONS.get(lang, TAB2_INSTRUCTIONS['en']), lang)
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
+        lang = st.session_state.get('lang_code', 'en')
+        speak(TAB2_INSTRUCTIONS.get(lang, TAB2_INSTRUCTIONS['en']), lang)
 
     
     DISEASE_DB = {
@@ -479,9 +479,9 @@ if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
 with tab3:
     st.subheader(T("Predict mandi prices for the next 30 days"))
     st.markdown(T("Select a crop to see the price forecast and the best day to sell."))
-if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
-    lang = st.session_state.get('lang_code', 'en')
-    speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
+        lang = st.session_state.get('lang_code', 'en')
+        speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
     
     available_crops = sorted(list(price_models.keys()))
 
@@ -546,9 +546,9 @@ if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
 with tab4:
     st.subheader(T("Smart Irrigation & Fertilizer Advisor"))
     st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
-if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
-    lang = st.session_state.get('lang_code', 'en')
-    speak(TAB4_INSTRUCTIONS.get(lang, TAB4_INSTRUCTIONS['en']), lang)
+    if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
+        lang = st.session_state.get('lang_code', 'en')
+        speak(TAB4_INSTRUCTIONS.get(lang, TAB4_INSTRUCTIONS['en']), lang)
 
     st.markdown(f"#### 🌤️ {T('Live Weather (Auto-fill)')}")
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"))
