@@ -496,7 +496,7 @@ with tab3:
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
     
-   price_models = load_price_models()  # ✅ add this
+   price_models = load_price_models()
 available_crops = sorted(list(price_models.keys()))
 
     crop_choice = st.selectbox(f"🌾 {T('Select Crop')}", available_crops, index=0)
