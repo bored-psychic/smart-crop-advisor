@@ -28,7 +28,20 @@ def T(text):
         return GoogleTranslator(source='en', target=lang).translate(str(text))
     except:
         return text
-
+def speak(text, lang_code='en'):
+    try:
+        from gtts import gTTS
+        import base64
+        from io import BytesIO
+        tts = gTTS(text=text, lang=lang_code, slow=False)
+        audio_buffer = BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_buffer.seek(0)
+        audio_b64 = base64.b64encode(audio_buffer.read()).decode()
+        st.markdown(f'<audio autoplay><source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3"></audio>', unsafe_allow_html=True)
+        st.audio(audio_buffer.getvalue(), format='audio/mp3')
+    except Exception as e:
+        st.warning(f"Audio unavailable: {e}")
 # ── Natural language instructions per language ────────────────────────────────
 TAB1_INSTRUCTIONS = {
     'en': "Tell us about your soil and weather. Enter Nitrogen, Phosphorus, Potassium, pH, Temperature, Humidity, and Rainfall. Then tap Get Crop Recommendation.",
@@ -483,7 +496,8 @@ with tab3:
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
     
-    available_crops = sorted(list(price_models.keys()))
+   price_models = load_price_models()  # ✅ add this
+available_crops = sorted(list(price_models.keys()))
 
     crop_choice = st.selectbox(f"🌾 {T('Select Crop')}", available_crops, index=0)
     forecast_days = st.slider(T("Forecast horizon (days)"), 7, 60, 30)
