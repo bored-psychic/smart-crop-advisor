@@ -28,6 +28,7 @@ def T(text):
         return GoogleTranslator(source='en', target=lang).translate(str(text))
     except:
         return text
+
 def speak(text, lang_code='en'):
     try:
         from gtts import gTTS
@@ -42,6 +43,7 @@ def speak(text, lang_code='en'):
         st.audio(audio_buffer.getvalue(), format='audio/mp3')
     except Exception as e:
         st.warning(f"Audio unavailable: {e}")
+
 # ── Natural language instructions per language ────────────────────────────────
 TAB1_INSTRUCTIONS = {
     'en': "Tell us about your soil and weather. Enter Nitrogen, Phosphorus, Potassium, pH, Temperature, Humidity, and Rainfall. Then tap Get Crop Recommendation.",
@@ -146,14 +148,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# ── Sidebar — Language selector ───────────────────────────────────────────────
+# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### 🌐 Language / भाषा")
-    selected_lang = st.selectbox(
-        "Select Language",
-        list(LANGUAGES.keys()),
-        index=0
-    )
+    selected_lang = st.selectbox("Select Language", list(LANGUAGES.keys()), index=0)
     st.session_state['lang_code'] = LANGUAGES[selected_lang]
     if selected_lang != 'English':
         st.success(f"✅ {selected_lang} selected")
@@ -164,7 +162,7 @@ with st.sidebar:
     st.divider()
     st.caption("Smart Crop Advisory System\nBuilt with ❤️ for Indian Farmers")
 
-# ── Load crop recommendation models ──────────────────────────────────────────
+# ── Load models ───────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_crop_models():
     with open('crop_model.pkl', 'rb') as f:
@@ -175,7 +173,6 @@ def load_crop_models():
         le = pickle.load(f)
     return model, scaler, le
 
-# ── Load price models ─────────────────────────────────────────────────────────
 @st.cache_resource
 def load_price_models():
     from prophet.serialize import model_from_json
@@ -228,7 +225,6 @@ CROP_TIPS = {
     'coffee':     'Needs high altitude, moderate temp, and well-distributed rainfall.'
 }
 
-# ── Irrigation data ───────────────────────────────────────────────────────────
 CROP_KC = {
     'Rice':        {'Initial': 1.05, 'Development': 1.20, 'Mid-season': 1.20, 'Late season': 0.90},
     'Maize':       {'Initial': 0.30, 'Development': 0.70, 'Mid-season': 1.20, 'Late season': 0.35},
@@ -294,7 +290,7 @@ with tab1:
     if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab1"):
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
-    
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"**🧪 {T('Soil Nutrients')}**")
@@ -385,7 +381,6 @@ with tab2:
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB2_INSTRUCTIONS.get(lang, TAB2_INSTRUCTIONS['en']), lang)
 
-    
     DISEASE_DB = {
         'Tomato': {
             'Yellow leaves + brown spots': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Apply Mancozeb 75% WP @ 2g/L. Remove infected leaves.', 'prevention': 'Crop rotation every 2 years. Use resistant varieties.', 'severity': 'Medium'},
@@ -480,6 +475,7 @@ with tab2:
             st.info(f"**💊 {T('Treatment')}:**\n\n{T(result['treatment'])}")
         with col2:
             st.success(f"**🛡️ {T('Prevention')}:**\n\n{T(result['prevention'])}")
+
         if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab2"):
             speak(f"Disease detected is {result['disease']}. Severity is {result['severity']}. Treatment: {result['treatment']}. Prevention: {result['prevention']}", st.session_state.get('lang_code', 'en'))
 
@@ -492,13 +488,14 @@ with tab2:
 with tab3:
     st.subheader(T("Predict mandi prices for the next 30 days"))
     st.markdown(T("Select a crop to see the price forecast and the best day to sell."))
+
+    price_models = load_price_models()
+
     if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab3"):
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB3_INSTRUCTIONS.get(lang, TAB3_INSTRUCTIONS['en']), lang)
-    
-   price_models = load_price_models()
-available_crops = sorted(list(price_models.keys()))
 
+    available_crops = sorted(list(price_models.keys()))
     crop_choice = st.selectbox(f"🌾 {T('Select Crop')}", available_crops, index=0)
     forecast_days = st.slider(T("Forecast horizon (days)"), 7, 60, 30)
 
@@ -560,6 +557,7 @@ available_crops = sorted(list(price_models.keys()))
 with tab4:
     st.subheader(T("Smart Irrigation & Fertilizer Advisor"))
     st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
+
     if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab4"):
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB4_INSTRUCTIONS.get(lang, TAB4_INSTRUCTIONS['en']), lang)
