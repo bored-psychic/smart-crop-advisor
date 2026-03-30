@@ -9,5 +9,4 @@ requests
 deep-translator
 gtts
 scipy
-tensorflow
  
