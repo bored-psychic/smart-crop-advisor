@@ -145,10 +145,320 @@ CALAMITY_TIPS = {
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Smart Crop Advisory System",
+    page_title="KisanOS · Smart Crop Advisory",
     page_icon="🌾",
     layout="centered"
 )
+
+# ── Global CSS — full visual overhaul ─────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── ROOT TOKENS ── */
+:root {
+    --kisan-green:       #22C55E;
+    --kisan-green-dark:  #16A34A;
+    --kisan-green-dim:   #166534;
+    --kisan-bg:          #0A0F0A;
+    --kisan-surface:     #111811;
+    --kisan-card:        #161E16;
+    --kisan-border:      rgba(34,197,94,0.15);
+    --kisan-border-hard: rgba(34,197,94,0.30);
+    --kisan-text:        #E8F5E9;
+    --kisan-muted:       #6B8F6B;
+    --kisan-amber:       #F59E0B;
+    --kisan-red:         #EF4444;
+    --radius:            12px;
+    --radius-sm:         8px;
+}
+
+/* ── GLOBAL RESET ── */
+html, body, [class*="css"], .stApp {
+    font-family: 'DM Sans', sans-serif !important;
+    background-color: var(--kisan-bg) !important;
+    color: var(--kisan-text) !important;
+}
+
+/* ── MAIN CONTAINER ── */
+.main .block-container {
+    padding: 1.5rem 2rem 4rem !important;
+    max-width: 860px !important;
+}
+
+/* ── HERO HEADER OVERRIDE ── */
+h1 {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 2.2rem !important;
+    font-weight: 700 !important;
+    color: var(--kisan-green) !important;
+    letter-spacing: -0.03em !important;
+    line-height: 1.15 !important;
+    margin-bottom: 0 !important;
+}
+h2, h3, h4 {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--kisan-text) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em !important;
+}
+p, label, .stMarkdown, div[data-testid="stMarkdownContainer"] {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--kisan-text) !important;
+}
+.stApp > header { background: transparent !important; }
+
+/* ── CAPTION / SUBTITLE ── */
+.stCaption, small, [data-testid="stCaptionContainer"] {
+    color: var(--kisan-muted) !important;
+    font-size: 0.82rem !important;
+}
+
+/* ── TABS ── */
+[data-baseweb="tab-list"] {
+    background: var(--kisan-surface) !important;
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--kisan-border) !important;
+    padding: 4px !important;
+    gap: 2px !important;
+}
+[data-baseweb="tab"] {
+    background: transparent !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--kisan-muted) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.82rem !important;
+    padding: 7px 14px !important;
+    border: none !important;
+    transition: all 0.18s !important;
+}
+[data-baseweb="tab"]:hover {
+    color: var(--kisan-green) !important;
+    background: rgba(34,197,94,0.06) !important;
+}
+[aria-selected="true"][data-baseweb="tab"] {
+    background: var(--kisan-green-dim) !important;
+    color: var(--kisan-green) !important;
+    font-weight: 600 !important;
+}
+[data-baseweb="tab-border"] { display: none !important; }
+[data-baseweb="tab-highlight"] { display: none !important; }
+
+/* ── SIDEBAR ── */
+[data-testid="stSidebar"] {
+    background: var(--kisan-surface) !important;
+    border-right: 1px solid var(--kisan-border) !important;
+}
+[data-testid="stSidebar"] * { color: var(--kisan-text) !important; }
+[data-testid="stSidebar"] h3 {
+    color: var(--kisan-green) !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+
+/* ── BUTTONS ── */
+.stButton > button {
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--kisan-border-hard) !important;
+    background: var(--kisan-surface) !important;
+    color: var(--kisan-green) !important;
+    transition: all 0.15s !important;
+    font-size: 0.88rem !important;
+}
+.stButton > button:hover {
+    background: var(--kisan-green-dim) !important;
+    border-color: var(--kisan-green) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+.stButton > button[kind="primary"] {
+    background: var(--kisan-green) !important;
+    color: #000 !important;
+    border-color: var(--kisan-green) !important;
+    font-weight: 700 !important;
+    font-size: 0.92rem !important;
+}
+.stButton > button[kind="primary"]:hover {
+    background: var(--kisan-green-dark) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 20px rgba(34,197,94,0.3) !important;
+}
+
+/* ── SLIDERS ── */
+[data-testid="stSlider"] > div > div > div > div {
+    background: var(--kisan-green) !important;
+}
+[data-testid="stSlider"] [data-testid="stThumbValue"] {
+    background: var(--kisan-green) !important;
+    color: #000 !important;
+    font-family: 'DM Mono', monospace !important;
+    font-weight: 500 !important;
+    font-size: 0.78rem !important;
+    border-radius: 4px !important;
+    padding: 1px 6px !important;
+}
+.stSlider [data-baseweb="slider"] div[role="slider"] {
+    background: var(--kisan-green) !important;
+    border-color: var(--kisan-green) !important;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.2) !important;
+}
+
+/* ── INPUTS & SELECTS ── */
+.stSelectbox > div > div,
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea,
+.stNumberInput > div > div > input {
+    background: var(--kisan-card) !important;
+    border: 1px solid var(--kisan-border-hard) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--kisan-text) !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+.stSelectbox > div > div:focus-within,
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {
+    border-color: var(--kisan-green) !important;
+    box-shadow: 0 0 0 2px rgba(34,197,94,0.2) !important;
+}
+/* dropdown options */
+[data-baseweb="popover"] ul li {
+    background: var(--kisan-card) !important;
+    color: var(--kisan-text) !important;
+}
+[data-baseweb="popover"] ul li:hover {
+    background: var(--kisan-green-dim) !important;
+}
+
+/* ── METRIC CARDS ── */
+[data-testid="stMetric"] {
+    background: var(--kisan-card) !important;
+    border: 1px solid var(--kisan-border) !important;
+    border-radius: var(--radius) !important;
+    padding: 16px 18px !important;
+}
+[data-testid="stMetricLabel"] {
+    color: var(--kisan-muted) !important;
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+[data-testid="stMetricValue"] {
+    color: var(--kisan-green) !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 1.5rem !important;
+    font-weight: 500 !important;
+}
+[data-testid="stMetricDelta"] { font-size: 0.8rem !important; }
+
+/* ── ALERTS ── */
+[data-testid="stAlert"] {
+    border-radius: var(--radius) !important;
+    border-width: 1px !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+.stSuccess {
+    background: rgba(34,197,94,0.08) !important;
+    border-color: rgba(34,197,94,0.35) !important;
+    color: #86efac !important;
+}
+.stError {
+    background: rgba(239,68,68,0.08) !important;
+    border-color: rgba(239,68,68,0.35) !important;
+    color: #fca5a5 !important;
+}
+.stWarning {
+    background: rgba(245,158,11,0.08) !important;
+    border-color: rgba(245,158,11,0.35) !important;
+    color: #fde68a !important;
+}
+.stInfo {
+    background: rgba(34,197,94,0.05) !important;
+    border-color: rgba(34,197,94,0.2) !important;
+    color: #86efac !important;
+}
+
+/* ── PROGRESS BAR ── */
+[data-testid="stProgressBar"] > div > div {
+    background: var(--kisan-green) !important;
+    border-radius: 99px !important;
+}
+[data-testid="stProgressBar"] > div {
+    background: var(--kisan-card) !important;
+    border-radius: 99px !important;
+    border: 1px solid var(--kisan-border) !important;
+}
+
+/* ── DIVIDER ── */
+hr {
+    border-color: var(--kisan-border) !important;
+    margin: 1.4rem 0 !important;
+}
+
+/* ── FILE UPLOADER ── */
+[data-testid="stFileUploader"] {
+    background: var(--kisan-card) !important;
+    border: 1.5px dashed var(--kisan-border-hard) !important;
+    border-radius: var(--radius) !important;
+    padding: 1rem !important;
+}
+[data-testid="stFileUploader"]:hover {
+    border-color: var(--kisan-green) !important;
+    background: rgba(34,197,94,0.04) !important;
+}
+[data-testid="stFileUploaderDropzone"] * { color: var(--kisan-muted) !important; }
+
+/* ── EXPANDER ── */
+[data-testid="stExpander"] {
+    background: var(--kisan-card) !important;
+    border: 1px solid var(--kisan-border) !important;
+    border-radius: var(--radius) !important;
+}
+[data-testid="stExpander"] summary {
+    color: var(--kisan-green) !important;
+    font-weight: 600 !important;
+}
+
+/* ── AUDIO PLAYER ── */
+audio {
+    width: 100% !important;
+    border-radius: var(--radius-sm) !important;
+    filter: invert(0.85) hue-rotate(85deg) !important;
+}
+
+/* ── DATAFRAME / TABLE ── */
+[data-testid="stDataFrame"], [data-testid="stTable"] {
+    border-radius: var(--radius) !important;
+    overflow: hidden !important;
+    border: 1px solid var(--kisan-border) !important;
+}
+
+/* ── SPINNER ── */
+[data-testid="stSpinner"] { color: var(--kisan-green) !important; }
+.stSpinner > div { border-top-color: var(--kisan-green) !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--kisan-surface); }
+::-webkit-scrollbar-thumb { background: var(--kisan-green-dim); border-radius: 2px; }
+
+/* ── CHART ── */
+[data-testid="stVegaLiteChart"] canvas,
+[data-testid="stArrowVegaLiteChart"] { border-radius: var(--radius) !important; }
+
+/* ── SELECTION HIGHLIGHT ── */
+::selection { background: rgba(34,197,94,0.25) !important; }
+
+/* ── HIDE STREAMLIT BRANDING ── */
+#MainMenu, footer, [data-testid="stToolbar"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -607,10 +917,37 @@ def analyze_audio_spectrum(audio_bytes, filename):
 
 
 
-# ── Header ────────────────────────────────────────────────────────────────────
-st.title("🌾 " + T("Smart Crop Advisory System"))
-st.caption(T("AI-powered advisory for small and marginal farmers"))
-st.divider()
+# ── Hero Header ───────────────────────────────────────────────────────────────
+st.markdown(f"""
+<div style="padding:1.8rem 0 1rem;border-bottom:1px solid rgba(34,197,94,0.15);margin-bottom:1.2rem">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+    <div style="width:48px;height:48px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);
+                border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px">🌾</div>
+    <div>
+      <div style="font-size:1.75rem;font-weight:700;color:#22C55E;letter-spacing:-0.03em;line-height:1.1">
+        KisanOS
+      </div>
+      <div style="font-size:0.82rem;color:#6B8F6B;font-weight:400;margin-top:2px">
+        {T("Smart Crop Advisory · AI-powered · 9 languages · 100M farmers")}
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
+                   color:#22C55E;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
+        RF 99.2%
+      </span>
+      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
+                   color:#22C55E;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
+        Acoustic 97.2%
+      </span>
+      <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);
+                   color:#F59E0B;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
+        FAO-56
+      </span>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
@@ -1495,4 +1832,18 @@ with tab7:
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
-st.caption(T("Built with ❤️ | Random Forest · Vision AI · Acoustic Analysis · Prophet · FAO-56 | Smart Crop Advisory System"))
+st.markdown("""
+<div style="border-top:1px solid rgba(34,197,94,0.15);margin-top:2rem;padding:1.5rem 0 0.5rem;
+            display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  <div style="font-size:12px;color:#6B8F6B">
+    Built for <span style="color:#22C55E;font-weight:600">100M Indian farmers</span> ·
+    Random Forest · Vision AI · Acoustic RF · Prophet · FAO-56
+  </div>
+  <div style="display:flex;gap:6px">
+    <span style="background:rgba(34,197,94,0.08);color:#22C55E;padding:2px 8px;
+                 border-radius:10px;font-size:11px;border:1px solid rgba(34,197,94,0.2)">v2.0</span>
+    <span style="background:rgba(34,197,94,0.08);color:#22C55E;padding:2px 8px;
+                 border-radius:10px;font-size:11px;border:1px solid rgba(34,197,94,0.2)">RNS Institute of Technology</span>
+  </div>
+</div>
+""", unsafe_allow_html=True)
