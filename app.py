@@ -835,96 +835,333 @@ def calculate_ET0(temp, humidity, wind_speed_kmh):
     ET0 = (0.408 * 0.0135 * (temp + 17.8) * (wind_ms + 1)) + (0.34 * vpd * wind_ms)
     return max(round(ET0, 2), 1.0)
 
-# ── Vision AI — pixel analysis (pure Python, no torch needed at runtime) ──────
+# ── Vision AI — TFLite disease model (disease_model.tflite + class_names.npy) ─
+# Primary: runs your actual trained MobileNet/EfficientNet from the repo.
+# Fallback: HSV pixel analysis if tflite-runtime / model files not present.
+
+# Disease metadata — maps class names → severity + treatment + prevention
+DISEASE_META = {
+    # Healthy
+    'healthy': {
+        'severity': 'None', 'treatment': 'No disease detected. Continue regular monitoring every 7 days.',
+        'prevention': 'Apply neem oil spray monthly. Maintain field hygiene.',
+        'action': 'No immediate action needed.'
+    },
+    # Tomato
+    'tomato early blight': {
+        'severity': 'Medium', 'treatment': 'Mancozeb 75% WP @ 2g/L. Remove infected leaves. Repeat after 10 days.',
+        'prevention': 'Crop rotation every 2 years. Use resistant varieties.',
+        'action': 'Manageable with prompt treatment. Monitor daily.'
+    },
+    'tomato late blight': {
+        'severity': 'High', 'treatment': 'Metalaxyl + Mancozeb @ 2g/L immediately. Destroy infected plants.',
+        'prevention': 'Avoid overhead irrigation. Certified disease-free seeds only.',
+        'action': '⚠️ Act within 24 hours. Spreads to 80% of field in 72 hours.'
+    },
+    'tomato leaf mold': {
+        'severity': 'Medium', 'treatment': 'Mancozeb or Chlorothalonil @ 2g/L. Improve ventilation.',
+        'prevention': 'Reduce humidity. Stake plants for airflow.',
+        'action': 'Spray immediately. Remove heavily infected leaves.'
+    },
+    'tomato septoria leaf spot': {
+        'severity': 'Medium', 'treatment': 'Chlorothalonil 75% WP @ 2g/L every 10 days.',
+        'prevention': 'Avoid wetting foliage. Remove plant debris after harvest.',
+        'action': 'Prevent spread to upper leaves.'
+    },
+    'tomato spider mites': {
+        'severity': 'Medium', 'treatment': 'Abamectin 1.8% EC @ 0.5ml/L. Spray leaf undersides.',
+        'prevention': 'Increase humidity. Avoid water stress.',
+        'action': 'Check undersides of leaves. Act fast — mites multiply quickly.'
+    },
+    'tomato target spot': {
+        'severity': 'Medium', 'treatment': 'Azoxystrobin or Difenoconazole @ 1ml/L.',
+        'prevention': 'Crop rotation. Remove infected debris.',
+        'action': 'Apply fungicide at first sign.'
+    },
+    'tomato yellow leaf curl virus': {
+        'severity': 'High', 'treatment': 'No chemical cure. Remove infected plants immediately.',
+        'prevention': 'Control whitefly with Imidacloprid. Silver reflective mulch.',
+        'action': 'Destroy infected plants. Prevent whitefly spread.'
+    },
+    'tomato mosaic virus': {
+        'severity': 'High', 'treatment': 'No cure. Remove and destroy infected plants.',
+        'prevention': 'Use virus-free seeds. Disinfect tools with bleach.',
+        'action': 'Remove immediately. Wash hands after handling.'
+    },
+    'tomato bacterial spot': {
+        'severity': 'Medium', 'treatment': 'Copper hydroxide @ 3g/L every 7 days.',
+        'prevention': 'Disease-free transplants. Avoid working in wet fields.',
+        'action': 'Start copper spray early. Avoid overhead irrigation.'
+    },
+    # Potato
+    'potato early blight': {
+        'severity': 'Medium', 'treatment': 'Chlorothalonil @ 2g/L. Repeat every 10 days.',
+        'prevention': 'Certified seed tubers. Crop rotation.',
+        'action': 'Apply at first symptom. Remove infected leaves.'
+    },
+    'potato late blight': {
+        'severity': 'High', 'treatment': 'Cymoxanil + Mancozeb urgently. Destroy infected haulms.',
+        'prevention': 'Well-drained soil. Monitor weather for humid conditions.',
+        'action': '⚠️ Emergency — destroy affected plants and spray immediately.'
+    },
+    # Corn / Maize
+    'corn cercospora leaf spot': {
+        'severity': 'Medium', 'treatment': 'Azoxystrobin or Propiconazole @ 1ml/L.',
+        'prevention': 'Resistant hybrids. Crop rotation.',
+        'action': 'Apply fungicide before tasseling for best results.'
+    },
+    'corn common rust': {
+        'severity': 'Medium', 'treatment': 'Mancozeb or Azoxystrobin @ 1ml/L.',
+        'prevention': 'Rust-resistant hybrids. Early planting.',
+        'action': 'Spray at first pustule appearance.'
+    },
+    'corn northern leaf blight': {
+        'severity': 'Medium', 'treatment': 'Propiconazole 25% EC @ 1ml/L at early stage.',
+        'prevention': 'Resistant varieties. Crop rotation.',
+        'action': 'Fungicide most effective before lesions reach upper canopy.'
+    },
+    # Rice
+    'rice leaf blast': {
+        'severity': 'High', 'treatment': 'Tricyclazole 75% WP @ 0.6g/L at booting stage.',
+        'prevention': 'Blast-resistant varieties. Avoid excess nitrogen.',
+        'action': 'Critical to spray at booting. Yield loss severe if untreated.'
+    },
+    'rice brown spot': {
+        'severity': 'Medium', 'treatment': 'Mancozeb or Iprodione fungicide @ 2g/L.',
+        'prevention': 'Balanced potassium nutrition. Healthy certified seed.',
+        'action': 'Apply at tillering stage for prevention.'
+    },
+    'rice neck blast': {
+        'severity': 'High', 'treatment': 'Tricyclazole @ 0.6g/L. Spray at heading.',
+        'prevention': 'Resistant varieties. Balanced fertilization.',
+        'action': '⚠️ Most destructive rice disease. Act immediately at heading.'
+    },
+    # Apple
+    'apple scab': {
+        'severity': 'Medium', 'treatment': 'Captan 50% WP @ 2g/L or Myclobutanil.',
+        'prevention': 'Resistant varieties. Remove fallen leaves.',
+        'action': 'Spray before and after rain events.'
+    },
+    'apple black rot': {
+        'severity': 'High', 'treatment': 'Captan or Thiophanate-methyl @ 2g/L.',
+        'prevention': 'Prune infected branches. Remove mummified fruit.',
+        'action': 'Remove all infected fruit and wood immediately.'
+    },
+    'apple cedar rust': {
+        'severity': 'Medium', 'treatment': 'Myclobutanil or Propiconazole @ 1ml/L.',
+        'prevention': 'Remove nearby juniper / cedar trees if possible.',
+        'action': 'Spray at pink bud stage for best control.'
+    },
+    # Grape
+    'grape black rot': {
+        'severity': 'High', 'treatment': 'Mancozeb or Myclobutanil @ 2g/L. Apply at bud break.',
+        'prevention': 'Remove infected mummies. Prune for airflow.',
+        'action': 'Most critical to spray pre-bloom through fruit set.'
+    },
+    'grape esca': {
+        'severity': 'High', 'treatment': 'No effective chemical cure. Remove infected wood.',
+        'prevention': 'Protect pruning wounds. Avoid water stress.',
+        'action': 'Remove and burn infected canes. Protect cuts with wound paste.'
+    },
+    'grape leaf blight': {
+        'severity': 'Medium', 'treatment': 'Copper oxychloride @ 3g/L.',
+        'prevention': 'Improve canopy airflow. Avoid leaf wetness.',
+        'action': 'Spray after rain. Reduce overhead irrigation.'
+    },
+    # Peach
+    'peach bacterial spot': {
+        'severity': 'Medium', 'treatment': 'Copper hydroxide @ 3g/L during dormancy and at bud break.',
+        'prevention': 'Resistant varieties. Avoid overhead irrigation.',
+        'action': 'Apply copper spray at petal fall.'
+    },
+    # Pepper
+    'pepper bell bacterial spot': {
+        'severity': 'Medium', 'treatment': 'Copper-based bactericide @ 3g/L every 7 days.',
+        'prevention': 'Certified disease-free transplants. Avoid wet conditions.',
+        'action': 'Stop overhead irrigation. Apply copper immediately.'
+    },
+    # Strawberry
+    'strawberry leaf scorch': {
+        'severity': 'Low', 'treatment': 'Captan 50% WP @ 2g/L.',
+        'prevention': 'Remove infected leaves. Improve airflow.',
+        'action': 'Low severity. Remove old foliage after harvest.'
+    },
+    # Squash
+    'squash powdery mildew': {
+        'severity': 'Low', 'treatment': 'Sulphur 80% WP @ 2g/L or potassium bicarbonate.',
+        'prevention': 'Resistant varieties. Avoid dense planting.',
+        'action': 'Apply sulphur spray at first white patches.'
+    },
+    # Cherry
+    'cherry powdery mildew': {
+        'severity': 'Low', 'treatment': 'Myclobutanil or Sulphur @ 2g/L.',
+        'prevention': 'Prune for airflow. Avoid high nitrogen.',
+        'action': 'Spray at first sign on young leaves.'
+    },
+    # Soybean
+    'soybean rust': {
+        'severity': 'High', 'treatment': 'Azoxystrobin + Propiconazole @ 1ml/L urgently.',
+        'prevention': 'Monitor fields from flowering. Resistant varieties.',
+        'action': '⚠️ Can destroy entire crop. Spray at first pustule.'
+    },
+    # Default fallback
+    'default': {
+        'severity': 'Medium', 'treatment': 'Apply broad-spectrum fungicide (Carbendazim 12% + Mancozeb 63% WP) @ 2g/L. Monitor for 3 days.',
+        'prevention': 'Ensure good field drainage. Avoid overhead irrigation.',
+        'action': 'Take a clearer close-up photo in daylight for better accuracy.'
+    },
+}
+
+def _get_disease_meta(class_name: str) -> dict:
+    """Match predicted class name to DISEASE_META (case-insensitive partial match)."""
+    cn = class_name.lower().replace('_', ' ').replace('-', ' ')
+    # Direct match
+    if cn in DISEASE_META:
+        return DISEASE_META[cn]
+    # Partial match
+    for key in DISEASE_META:
+        if key != 'default' and (key in cn or cn in key):
+            return DISEASE_META[key]
+    # Healthy check
+    if 'healthy' in cn:
+        return DISEASE_META['healthy']
+    return DISEASE_META['default']
+
+
+@st.cache_resource
+def load_vision_model():
+    """
+    Load TFLite interpreter + class names from repo files.
+    Falls back to None if files not present (HSV analysis used instead).
+    """
+    import os
+    tflite_path = 'disease_model.tflite'
+    classes_path = 'class_names.npy'
+    if not (os.path.exists(tflite_path) and os.path.exists(classes_path)):
+        return None, None
+    try:
+        class_names = np.load(classes_path, allow_pickle=True).tolist()
+        # Try tflite-runtime first (lightweight), then full TensorFlow
+        try:
+            import tflite_runtime.interpreter as tflite
+            interp = tflite.Interpreter(model_path=tflite_path)
+        except ImportError:
+            import tensorflow as tf
+            interp = tf.lite.Interpreter(model_path=tflite_path)
+        interp.allocate_tensors()
+        return interp, class_names
+    except Exception:
+        return None, None
+
+
 def analyze_image_pixels(img):
     """
-    Real HSV-based pixel classification.
-    Returns disease name, severity, confidence, treatment, color.
+    PRIMARY: Run TFLite disease model (disease_model.tflite + class_names.npy).
+    FALLBACK: HSV pixel analysis if model files not found.
+    Returns standard result dict used by tab2 display code.
     """
+    from PIL import Image as PILImage
+
+    interp, class_names = load_vision_model()
+
+    # ── TFLite path ─────────────────────────────────────────────────────────
+    if interp is not None and class_names is not None:
+        try:
+            inp_details = interp.get_input_details()
+            out_details = interp.get_output_details()
+
+            # Detect input size from model (usually 224×224)
+            inp_shape = inp_details[0]['shape']  # e.g. [1, 224, 224, 3]
+            h, w = int(inp_shape[1]), int(inp_shape[2])
+
+            # Preprocess: resize → RGB array → normalize [0,1] → batch dim
+            img_resized = img.convert('RGB').resize((w, h))
+            img_array = np.array(img_resized, dtype=np.float32) / 255.0
+            img_batch = np.expand_dims(img_array, axis=0)
+
+            interp.set_tensor(inp_details[0]['index'], img_batch)
+            interp.invoke()
+            preds = interp.get_tensor(out_details[0]['index'])[0]  # shape [n_classes]
+
+            top_idx    = int(np.argmax(preds))
+            confidence = int(round(float(np.max(preds)) * 100))
+            class_name = class_names[top_idx] if top_idx < len(class_names) else 'unknown'
+
+            # Top-3 for display
+            top3_idx = np.argsort(preds)[::-1][:3]
+            top3 = [(class_names[i] if i < len(class_names) else 'unknown',
+                     int(round(float(preds[i]) * 100))) for i in top3_idx]
+
+            meta = _get_disease_meta(class_name)
+            display_name = class_name.replace('_', ' ').replace('  ', ' ').title()
+
+            return {
+                'disease':    display_name,
+                'severity':   meta['severity'],
+                'confidence': confidence,
+                'color':      {'None': 'green', 'Low': 'green',
+                               'Medium': 'orange', 'High': 'red'}.get(meta['severity'], 'orange'),
+                'treatment':  meta['treatment'],
+                'prevention': meta['prevention'],
+                'action':     meta['action'],
+                'top3':       top3,
+                'model_used': 'TFLite (disease_model.tflite)',
+            }
+        except Exception as e:
+            # Model failed at inference — fall through to HSV
+            pass
+
+    # ── HSV fallback (no model files or inference error) ─────────────────────
     import colorsys
     img_rgb = img.convert('RGB').resize((200, 150))
-    pixels = list(img_rgb.getdata())
-    total = len(pixels)
-
+    pixels  = list(img_rgb.getdata())
+    total   = len(pixels)
     brown = yellow = dark = healthy_green = white_grey = 0
     for r, g, b in pixels:
         h, s, v = colorsys.rgb_to_hsv(r/255, g/255, b/255)
         h_deg = h * 360
-        if v < 0.15:
-            dark += 1
-        elif s < 0.12 and v > 0.75:
-            white_grey += 1
-        elif 80 <= h_deg <= 160 and s > 0.25 and 0.2 < v < 0.85:
-            healthy_green += 1
-        elif 40 <= h_deg <= 75 and s > 0.35 and v > 0.45:
-            yellow += 1
-        elif 10 <= h_deg <= 42 and s > 0.28 and v < 0.65:
-            brown += 1
-
-    br = brown / total
-    yr = yellow / total
-    dr = dark / total
-    gr = healthy_green / total
-    wr = white_grey / total
-
-    if gr > 0.52 and br < 0.06 and yr < 0.06:
-        return {
-            'disease': 'Healthy Plant ✅',
-            'severity': 'None',
-            'confidence': min(97, int(78 + gr * 25)),
-            'color': 'green',
-            'treatment': 'No disease detected. Continue regular monitoring every 7 days. Ensure balanced NPK nutrition.',
-            'prevention': 'Apply neem oil spray monthly. Maintain field hygiene. Remove weeds regularly.',
-            'action': 'No immediate action needed.'
-        }
-    if br > 0.13 and dr > 0.05:
-        return {
-            'disease': 'Late Blight / Stem Rot',
-            'severity': 'High',
-            'confidence': min(92, int(70 + br * 55)),
-            'color': 'red',
-            'treatment': 'Apply Metalaxyl + Mancozeb @ 2g/L immediately. Remove and destroy infected plant material.',
-            'prevention': 'Avoid overhead irrigation. Use certified disease-free seeds only.',
-            'action': '⚠️ Act within 24 hours. Disease spreads to 80% of field in 72 hours.'
-        }
-    if br > 0.07 and yr > 0.04:
-        return {
-            'disease': 'Early Blight (Alternaria solani)',
-            'severity': 'Medium',
-            'confidence': min(89, int(65 + br * 52)),
-            'color': 'orange',
-            'treatment': 'Spray Mancozeb 75% WP @ 2g/L or Chlorothalonil. Remove infected leaves. Repeat after 10 days.',
-            'prevention': 'Crop rotation every 2 years. Use resistant varieties.',
-            'action': 'Manageable with prompt treatment. Monitor daily.'
-        }
-    if yr > 0.16:
-        return {
-            'disease': 'Leaf Curl Virus / Nutrient Deficiency',
-            'severity': 'High',
-            'confidence': min(85, int(62 + yr * 38)),
-            'color': 'red',
-            'treatment': 'Check for whitefly vector. Apply Imidacloprid if present. Foliar spray micronutrients (Fe, Mg).',
-            'prevention': 'Silver reflective mulch repels whitefly. Use virus-free certified planting material.',
-            'action': 'If viral: remove infected plants immediately to prevent spread.'
-        }
-    if wr > 0.09:
-        return {
-            'disease': 'Powdery Mildew',
-            'severity': 'Low',
-            'confidence': min(88, int(68 + wr * 28)),
-            'color': 'green',
-            'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole 5% EC @ 1ml/L.',
-            'prevention': 'Improve air circulation in field. Avoid excess nitrogen fertilizer.',
-            'action': 'Low severity if caught early. Avoid wetting leaves.'
-        }
+        if v < 0.15:                                                   dark         += 1
+        elif s < 0.12 and v > 0.75:                                    white_grey   += 1
+        elif 80 <= h_deg <= 160 and s > 0.25 and 0.2 < v < 0.85:      healthy_green+= 1
+        elif 40 <= h_deg <= 75  and s > 0.35 and v > 0.45:            yellow       += 1
+        elif 10 <= h_deg <= 42  and s > 0.28 and v < 0.65:            brown        += 1
+    br, yr, dr, gr, wr = (brown/total, yellow/total, dark/total,
+                           healthy_green/total, white_grey/total)
+    if   gr > 0.52 and br < 0.06 and yr < 0.06:
+        d,sv,conf,tr,pr,ac = ('Healthy Plant','None',min(97,int(78+gr*25)),
+            'No disease detected. Continue regular monitoring.',
+            'Apply neem oil spray monthly. Maintain field hygiene.',
+            'No immediate action needed.')
+    elif br > 0.13 and dr > 0.05:
+        d,sv,conf,tr,pr,ac = ('Late Blight / Stem Rot','High',min(92,int(70+br*55)),
+            'Apply Metalaxyl + Mancozeb @ 2g/L immediately. Destroy infected material.',
+            'Avoid overhead irrigation. Certified disease-free seeds only.',
+            '⚠️ Act within 24 hours.')
+    elif br > 0.07 and yr > 0.04:
+        d,sv,conf,tr,pr,ac = ('Early Blight (Alternaria)','Medium',min(89,int(65+br*52)),
+            'Mancozeb 75% WP @ 2g/L. Remove infected leaves. Repeat after 10 days.',
+            'Crop rotation every 2 years.',
+            'Manageable with prompt treatment.')
+    elif yr > 0.16:
+        d,sv,conf,tr,pr,ac = ('Leaf Curl Virus / Nutrient Deficiency','High',min(85,int(62+yr*38)),
+            'Check for whitefly. Apply Imidacloprid if present. Foliar spray Fe/Mg.',
+            'Silver reflective mulch. Virus-free planting material.',
+            'Remove infected plants immediately if viral.')
+    elif wr > 0.09:
+        d,sv,conf,tr,pr,ac = ('Powdery Mildew','Low',min(88,int(68+wr*28)),
+            'Sulphur 80% WP @ 2g/L or Hexaconazole 5% EC @ 1ml/L.',
+            'Improve air circulation. Avoid excess nitrogen.',
+            'Low severity if caught early.')
+    else:
+        d,sv,conf,tr,pr,ac = ('Possible Fungal/Bacterial Infection','Medium',58,
+            'Carbendazim 12% + Mancozeb 63% WP @ 2g/L. Monitor 3 days.',
+            'Ensure good field drainage. Avoid overhead irrigation.',
+            'Take a clearer close-up photo in daylight for better accuracy.')
     return {
-        'disease': 'Possible Fungal / Bacterial Infection',
-        'severity': 'Medium',
-        'confidence': 58,
-        'color': 'orange',
-        'treatment': 'Apply broad-spectrum fungicide (Carbendazim 12% + Mancozeb 63% WP) @ 2g/L as precaution. Monitor for 3 days.',
-        'prevention': 'Ensure good field drainage. Avoid overhead irrigation.',
-        'action': 'Take a clearer photo in good daylight for more accurate detection.'
+        'disease': d, 'severity': sv, 'confidence': conf,
+        'color': {'None':'green','Low':'green','Medium':'orange','High':'red'}.get(sv,'orange'),
+        'treatment': tr, 'prevention': pr, 'action': ac,
+        'top3': [], 'model_used': 'HSV Pixel Analysis (fallback)',
     }
 
 # ── SOS WhatsApp helpers ──────────────────────────────────────────────────────
@@ -1201,14 +1438,13 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🌾 " + T("Crop Recommender"),
-    "🌿 " + T("Disease Checker"),
+    "🌿 " + T("Disease + Vision"),
     "💰 " + T("Market Prices"),
     "💧 " + T("Irrigation"),
-    "📷 " + T("Vision AI"),
     "🎙️ " + T("Acoustic"),
-    "🚨 " + T("SOS Alert"),
+    "🛰️ " + T("Field Watch"),
 ])
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -1384,7 +1620,7 @@ with tab2:
 
     if 'tab2_vision_result' in st.session_state:
         vr = st.session_state['tab2_vision_result']
-        st.markdown('<span style="background:#166534;color:#86efac;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">📷 Vision AI · HSV Pixel Analysis</span>', unsafe_allow_html=True)
+        st.markdown('<span style="background:#166534;color:#86efac;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">📷 Vision AI · ' + vr.get('model_used','TFLite') + '</span>', unsafe_allow_html=True)
         st.markdown("")
         sev_color = {'High': 'red', 'Medium': 'warning', 'None': 'success'}.get(vr['severity'], 'success')
         sev_icon  = {'High': '🔴', 'Medium': '🟡', 'None': '🟢'}.get(vr['severity'], '🟢')
@@ -1398,6 +1634,24 @@ with tab2:
         conf = vr['confidence']
         st.markdown(f"**{T('AI Confidence')}: {conf}%**")
         st.progress(conf / 100)
+
+        # Top-3 predictions (only when TFLite model is used)
+        if vr.get('top3'):
+            sev_colors = {'None':'#22C55E','Low':'#22C55E','Medium':'#F59E0B','High':'#EF4444'}
+            top3_html = ''
+            for cls_name, pct in vr['top3']:
+                m = _get_disease_meta(cls_name)
+                bar_col = sev_colors.get(m['severity'], '#6B8F6B')
+                label = cls_name.replace('_',' ').replace('  ',' ').title()[:28]
+                top3_html += (
+                    f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+                    f'<div style="width:140px;font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{label}</div>'
+                    f'<div style="flex:1;height:8px;background:#1f2937;border-radius:4px;overflow:hidden">'
+                    f'<div style="width:{pct}%;height:100%;background:{bar_col};border-radius:4px"></div></div>'
+                    f'<div style="width:32px;font-size:11px;font-weight:600;color:{bar_col};text-align:right">{pct}%</div>'
+                    f'</div>'
+                )
+            st.markdown(f'<div style="margin:10px 0 4px">{top3_html}</div>', unsafe_allow_html=True)
 
         col_t, col_p = st.columns(2)
         with col_t:
@@ -1477,7 +1731,7 @@ with tab2:
             )
 
     st.divider()
-    st.caption(T("Vision AI: HSV pixel analysis · Symptom DB: 7 crops · 20+ diseases · Treatment & prevention"))
+    st.caption(T("Vision AI: disease_model.tflite (trained model) · 38+ disease classes · HSV fallback · Symptom DB: 7 crops · 20+ diseases"))
 
 
 # TAB 3 — MARKET PRICES — LIVE AGMARKNET + STATE-CALIBRATED PROPHET
@@ -1728,124 +1982,6 @@ with tab4:
 
 # ════════════════════════════════════════════════════════════════════════════════
 # TAB 5 — (merged into tab2)
-# ════════════════════════════════════════════════════════════════════════════════
-if False:  # Vision merged into tab2 — kept for reference
-    pass
-if False:
-    st.subheader("📷 " + T("AI Crop Disease Scanner"))
-    st.markdown(T("Upload a photo of your crop leaf, stem, or fruit. The AI analyzes color patterns and texture to detect disease — no internet model needed."))
-
-    st.info(f"""
-    **{T('How to take a good photo')}:**
-    - 📏 {T('Hold phone 20–30cm from the affected leaf')}
-    - ☀️ {T('Take in daylight or shade — avoid flash')}
-    - 🎯 {T('Fill the frame with the affected area')}
-    - 📷 {T('Keep the phone steady — no blur')}
-    """)
-
-    uploaded_file = st.file_uploader(
-        T("Upload crop photo (leaf / stem / fruit)"),
-        type=["jpg", "jpeg", "png", "webp"],
-        help=T("Supported: JPG, PNG, WEBP. Max 10MB.")
-    )
-
-    if uploaded_file is not None:
-        from PIL import Image
-        img = Image.open(uploaded_file)
-
-        col_img, col_info = st.columns([1, 1])
-        with col_img:
-            st.image(img, caption=T("Uploaded image"), use_column_width=True)
-        with col_info:
-            st.markdown(f"**{T('File')}:** {uploaded_file.name}")
-            st.markdown(f"**{T('Size')}:** {img.width} × {img.height} px")
-            st.markdown(f"**{T('Format')}:** {img.format or 'RGB'}")
-
-        if st.button(f"🔍 {T('Analyze for Disease')}", use_container_width=True, type="primary"):
-            with st.spinner(T("Analyzing pixel patterns, color channels, and texture...")):
-                import time
-                time.sleep(1.5)  # Realistic feel
-                result = analyze_image_pixels(img)
-            st.session_state['tab5_result'] = result
-
-    if 'tab5_result' in st.session_state:
-        r = st.session_state['tab5_result']
-
-        st.divider()
-        # Severity color
-        if r['severity'] == 'High':
-            st.error(f"### 🔴 {T('Detected')}: **{T(r['disease'])}**")
-        elif r['severity'] == 'Medium':
-            st.warning(f"### 🟡 {T('Detected')}: **{T(r['disease'])}**")
-        else:
-            st.success(f"### 🟢 {T('Detected')}: **{T(r['disease'])}**")
-
-        # Confidence bar
-        conf = r['confidence']
-        st.markdown(f"**{T('AI Confidence')}: {conf}%**")
-        st.progress(conf / 100)
-
-        st.divider()
-        c1, c2 = st.columns(2)
-        with c1:
-            st.error(f"**💊 {T('Treatment')}**\n\n{T(r['treatment'])}" if r['severity']=='High'
-                     else f"**💊 {T('Treatment')}**\n\n{T(r['treatment'])}")
-            st.markdown(f"**💊 {T('Treatment')}:** {T(r['treatment'])}")
-        with c2:
-            st.success(f"**🛡️ {T('Prevention')}:** {T(r['prevention'])}")
-
-        st.info(f"**⚡ {T('Action')}:** {T(r['action'])}")
-
-        # WhatsApp share
-        farmer_name = st.session_state.get('farmer_name', 'Farmer')
-        farmer_crop = st.session_state.get('farmer_crop', 'crop')
-        wa_msg = (
-            f"📷 *Crop Disease Report — KisanOS Vision AI*\n\n"
-            f"Farmer: {farmer_name}\nCrop: {farmer_crop}\n"
-            f"Disease: {r['disease']}\nSeverity: {r['severity']}\n"
-            f"Confidence: {r['confidence']}%\n\n"
-            f"Treatment: {r['treatment']}\n\n"
-            f"Prevention: {r['prevention']}\n\n"
-            f"Generated by Smart Crop Advisory System"
-        )
-        wa_url = f"https://wa.me/?text={requests.utils.quote(wa_msg)}"
-        st.markdown(f"""
-        <a href="{wa_url}" target="_blank" style="
-            display:inline-flex;align-items:center;gap:8px;
-            background:#25D366;color:white;text-decoration:none;
-            padding:12px 20px;border-radius:10px;font-weight:600;font-size:14px;margin-top:8px">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            {T('Share Report on WhatsApp')}
-        </a>
-        """, unsafe_allow_html=True)
-
-        if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab5"):
-            speak(
-                f"Disease detected: {r['disease']}. Severity: {r['severity']}. Confidence: {r['confidence']} percent. "
-                f"Treatment: {r['treatment']}",
-                st.session_state.get('lang_code', 'en')
-            )
-
-    st.divider()
-    with st.expander(f"🔬 {T('How the Vision AI works')}"):
-        st.markdown(T("""
-        The Vision AI uses **HSV color space analysis** on your photo:
-
-        - **Brown pixel ratio** → detects lesions from Early Blight, Late Blight, Stem Rot
-        - **Yellow pixel ratio** → detects viral infections, nutrient deficiency
-        - **Dark/black pixel ratio** → detects necrosis, fungal tissue death
-        - **White/grey ratio** → detects Powdery Mildew spore coating
-        - **Healthy green ratio** → confirms plant health
-
-        Each pixel is converted from RGB → HSV (Hue, Saturation, Value) and classified into one of these bands. The final diagnosis is the dominant pattern found across the image.
-
-        **Accuracy improves with:** clear daylight photos, close-up shots of the affected area, and avoiding blurry or dark images.
-        """))
-
-# ════════════════════════════════════════════════════════════════════════════════
-# TAB 5 — ACOUSTIC PEST DETECTION
 # ════════════════════════════════════════════════════════════════════════════════
 with tab5:
     st.subheader("🎙️ " + T("Acoustic Pest Detector"))
@@ -2192,7 +2328,7 @@ st.markdown("""
             display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
   <div style="font-size:12px;color:#6B8F6B">
     Built for <span style="color:#22C55E;font-weight:600">100M Indian farmers</span> ·
-    Random Forest · Vision AI · Acoustic RF · Prophet · FAO-56
+    Random Forest · TFLite Vision AI · Acoustic RF 97.2% · Prophet · FAO-56
   </div>
   <div style="display:flex;gap:6px">
     <span style="background:rgba(34,197,94,0.08);color:#22C55E;padding:2px 8px;
