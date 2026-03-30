@@ -1032,8 +1032,10 @@ def _get_disease_meta(class_name: str) -> dict:
 def load_vision_model():
     """
     Load disease model + class names from repo files.
-    Tries: tensorflow (tf.lite) → keras → h5 direct → None (HSV fallback).
-    tflite-runtime is NOT used — it has no Python 3.14 wheels.
+    tensorflow is imported at runtime only — NOT in requirements.txt.
+    Python 3.14 on Streamlit Cloud: tensorflow not yet available → HSV fallback.
+    When tensorflow IS available (Python ≤3.12 or future 3.14 build):
+      tries tf.lite.Interpreter (tflite) then tf.keras (h5).
     """
     import os
     tflite_path  = 'disease_model.tflite'
@@ -1045,24 +1047,29 @@ def load_vision_model():
 
     class_names = np.load(classes_path, allow_pickle=True).tolist()
 
-    # ── Option 1: TFLite via tensorflow (supports Python 3.14) ────────────
-    if os.path.exists(tflite_path):
-        try:
-            import tensorflow as tf
-            interp = tf.lite.Interpreter(model_path=tflite_path)
-            interp.allocate_tensors()
-            return interp, class_names
-        except Exception:
-            pass
+    # ── Try tensorflow (soft optional — not in requirements.txt) ──────────
+    try:
+        import tensorflow as tf  # noqa: F401
 
-    # ── Option 2: Full Keras .h5 model ────────────────────────────────────
-    if os.path.exists(h5_path):
-        try:
-            import tensorflow as tf
-            model = tf.keras.models.load_model(h5_path, compile=False)
-            return model, class_names
-        except Exception:
-            pass
+        # Option 1: TFLite interpreter
+        if os.path.exists(tflite_path):
+            try:
+                interp = tf.lite.Interpreter(model_path=tflite_path)
+                interp.allocate_tensors()
+                return interp, class_names
+            except Exception:
+                pass
+
+        # Option 2: Keras .h5 model
+        if os.path.exists(h5_path):
+            try:
+                model = tf.keras.models.load_model(h5_path, compile=False)
+                return model, class_names
+            except Exception:
+                pass
+
+    except ImportError:
+        pass  # tensorflow not installed — HSV fallback will be used
 
     return None, None
 
@@ -1750,7 +1757,7 @@ with tab2:
             )
 
     st.divider()
-    st.caption(T("Vision AI: disease_model.tflite (trained model) · 38+ disease classes · HSV fallback · Symptom DB: 7 crops · 20+ diseases"))
+    st.caption(T("Vision AI: disease_model.tflite/h5 when TensorFlow available · HSV pixel analysis fallback · Symptom DB: 7 crops · 20+ diseases"))
 
 
 # TAB 3 — MARKET PRICES — LIVE AGMARKNET + STATE-CALIBRATED PROPHET
