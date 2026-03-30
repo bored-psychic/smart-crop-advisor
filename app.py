@@ -1031,85 +1031,104 @@ def _get_disease_meta(class_name: str) -> dict:
 @st.cache_resource
 def load_vision_model():
     """
-    Load TFLite interpreter + class names from repo files.
-    Falls back to None if files not present (HSV analysis used instead).
+    Load disease model + class names from repo files.
+    Tries: tensorflow (tf.lite) → keras → h5 direct → None (HSV fallback).
+    tflite-runtime is NOT used — it has no Python 3.14 wheels.
     """
     import os
-    tflite_path = 'disease_model.tflite'
+    tflite_path  = 'disease_model.tflite'
+    h5_path      = 'disease_model.h5'
     classes_path = 'class_names.npy'
-    if not (os.path.exists(tflite_path) and os.path.exists(classes_path)):
+
+    if not os.path.exists(classes_path):
         return None, None
-    try:
-        class_names = np.load(classes_path, allow_pickle=True).tolist()
-        # Try tflite-runtime first (lightweight), then full TensorFlow
+
+    class_names = np.load(classes_path, allow_pickle=True).tolist()
+
+    # ── Option 1: TFLite via tensorflow (supports Python 3.14) ────────────
+    if os.path.exists(tflite_path):
         try:
-            import tflite_runtime.interpreter as tflite
-            interp = tflite.Interpreter(model_path=tflite_path)
-        except ImportError:
             import tensorflow as tf
             interp = tf.lite.Interpreter(model_path=tflite_path)
-        interp.allocate_tensors()
-        return interp, class_names
-    except Exception:
-        return None, None
+            interp.allocate_tensors()
+            return interp, class_names
+        except Exception:
+            pass
+
+    # ── Option 2: Full Keras .h5 model ────────────────────────────────────
+    if os.path.exists(h5_path):
+        try:
+            import tensorflow as tf
+            model = tf.keras.models.load_model(h5_path, compile=False)
+            return model, class_names
+        except Exception:
+            pass
+
+    return None, None
 
 
 def analyze_image_pixels(img):
     """
-    PRIMARY: Run TFLite disease model (disease_model.tflite + class_names.npy).
-    FALLBACK: HSV pixel analysis if model files not found.
-    Returns standard result dict used by tab2 display code.
+    PRIMARY: disease_model.tflite (via tf.lite) or disease_model.h5 (Keras).
+    FALLBACK: HSV pixel analysis — no external dependencies needed.
     """
     from PIL import Image as PILImage
 
-    interp, class_names = load_vision_model()
+    model_obj, class_names = load_vision_model()
 
-    # ── TFLite path ─────────────────────────────────────────────────────────
-    if interp is not None and class_names is not None:
+    # ── Model inference (TFLite interpreter OR Keras model) ─────────────────
+    if model_obj is not None and class_names is not None:
         try:
-            inp_details = interp.get_input_details()
-            out_details = interp.get_output_details()
+            # Detect whether we got a TFLite Interpreter or a Keras model
+            is_tflite = hasattr(model_obj, 'get_input_details')
 
-            # Detect input size from model (usually 224×224)
-            inp_shape = inp_details[0]['shape']  # e.g. [1, 224, 224, 3]
-            h, w = int(inp_shape[1]), int(inp_shape[2])
-
-            # Preprocess: resize → RGB array → normalize [0,1] → batch dim
-            img_resized = img.convert('RGB').resize((w, h))
-            img_array = np.array(img_resized, dtype=np.float32) / 255.0
-            img_batch = np.expand_dims(img_array, axis=0)
-
-            interp.set_tensor(inp_details[0]['index'], img_batch)
-            interp.invoke()
-            preds = interp.get_tensor(out_details[0]['index'])[0]  # shape [n_classes]
+            if is_tflite:
+                inp_details = model_obj.get_input_details()
+                out_details = model_obj.get_output_details()
+                inp_shape   = inp_details[0]['shape']      # [1, H, W, 3]
+                h, w        = int(inp_shape[1]), int(inp_shape[2])
+                img_resized = img.convert('RGB').resize((w, h))
+                img_array   = np.array(img_resized, dtype=np.float32) / 255.0
+                img_batch   = np.expand_dims(img_array, axis=0)
+                model_obj.set_tensor(inp_details[0]['index'], img_batch)
+                model_obj.invoke()
+                preds       = model_obj.get_tensor(out_details[0]['index'])[0]
+                model_label = 'TFLite (disease_model.tflite)'
+            else:
+                # Keras / h5 model
+                inp_shape   = model_obj.input_shape   # (None, H, W, 3)
+                h, w        = int(inp_shape[1]), int(inp_shape[2])
+                img_resized = img.convert('RGB').resize((w, h))
+                img_array   = np.array(img_resized, dtype=np.float32) / 255.0
+                img_batch   = np.expand_dims(img_array, axis=0)
+                preds       = model_obj.predict(img_batch, verbose=0)[0]
+                model_label = 'Keras (disease_model.h5)'
 
             top_idx    = int(np.argmax(preds))
             confidence = int(round(float(np.max(preds)) * 100))
             class_name = class_names[top_idx] if top_idx < len(class_names) else 'unknown'
 
-            # Top-3 for display
             top3_idx = np.argsort(preds)[::-1][:3]
             top3 = [(class_names[i] if i < len(class_names) else 'unknown',
                      int(round(float(preds[i]) * 100))) for i in top3_idx]
 
-            meta = _get_disease_meta(class_name)
+            meta         = _get_disease_meta(class_name)
             display_name = class_name.replace('_', ' ').replace('  ', ' ').title()
 
             return {
                 'disease':    display_name,
                 'severity':   meta['severity'],
                 'confidence': confidence,
-                'color':      {'None': 'green', 'Low': 'green',
-                               'Medium': 'orange', 'High': 'red'}.get(meta['severity'], 'orange'),
+                'color':      {'None':'green','Low':'green',
+                               'Medium':'orange','High':'red'}.get(meta['severity'],'orange'),
                 'treatment':  meta['treatment'],
                 'prevention': meta['prevention'],
                 'action':     meta['action'],
                 'top3':       top3,
-                'model_used': 'TFLite (disease_model.tflite)',
+                'model_used': model_label,
             }
-        except Exception as e:
-            # Model failed at inference — fall through to HSV
-            pass
+        except Exception:
+            pass  # fall through to HSV
 
     # ── HSV fallback (no model files or inference error) ─────────────────────
     import colorsys
