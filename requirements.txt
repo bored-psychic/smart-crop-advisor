@@ -8,4 +8,6 @@ pystan
 requests
 deep-translator
 gtts
-tflite-runtime
+scipy
+tensorflow
+ 
