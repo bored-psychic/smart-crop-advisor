@@ -802,8 +802,34 @@ audio {
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar — farmer profile only ────────────────────────────────────────────
+# ── Sidebar — language + farmer profile ──────────────────────────────────────
 with st.sidebar:
+    st.markdown("## 🌐 Language / भाषा")
+    _lang_options = list(LANGUAGES.keys())
+    _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
+    _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
+    selected_lang = st.selectbox(
+        "Select Language",
+        _lang_options,
+        index=_saved_idx,
+        key="lang_selector_sidebar",
+    )
+    new_lang_code = LANGUAGES[selected_lang]
+    prev_lang     = st.session_state.get('lang_code', 'en')
+    if new_lang_code != prev_lang:
+        st.session_state['lang_code']           = new_lang_code
+        st.session_state['_selected_lang_name'] = selected_lang
+        if new_lang_code != 'en':
+            with st.spinner("Loading language..."):
+                T_batch(UI_STRINGS, new_lang_code)
+        st.rerun()
+    else:
+        st.session_state['lang_code']           = new_lang_code
+        st.session_state['_selected_lang_name'] = selected_lang
+    if selected_lang != 'English':
+        st.success(f"✅ {selected_lang}")
+    st.divider()
+
     st.markdown("### 👤 Farmer Profile")
     st.session_state['farmer_name']    = st.text_input("Your Name",         value=st.session_state.get('farmer_name', ''),    placeholder="e.g. Ramesh Kumar")
     st.session_state['farmer_village'] = st.text_input("Village / District", value=st.session_state.get('farmer_village', ''), placeholder="e.g. Bellary, Karnataka")
@@ -1534,44 +1560,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Language Selector — always visible in main page ───────────────────────────
-LANG_FLAGS = {
-    'English':            '🇬🇧',
-    'हिंदी (Hindi)':      '🇮🇳',
-    'తెలుగు (Telugu)':    '🇮🇳',
-    'தமிழ் (Tamil)':      '🇮🇳',
-    'ಕನ್ನಡ (Kannada)':    '🇮🇳',
-    'मराठी (Marathi)':    '🇮🇳',
-    'বাংলা (Bengali)':    '🇮🇳',
-    'ગુજરાતી (Gujarati)': '🇮🇳',
-    'ਪੰਜਾਬੀ (Punjabi)':   '🇮🇳',
-}
-
-_lang_col, _dummy = st.columns([2, 3])
-with _lang_col:
-    _lang_options = list(LANGUAGES.keys())
-    _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
-    _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
-
-    selected_lang = st.selectbox(
-        "🌐 Language / भाषा / ಭಾಷೆ",
-        _lang_options,
-        index=_saved_idx,
-        key="lang_selector_main",
-    )
-    new_lang_code = LANGUAGES[selected_lang]
-    prev_lang     = st.session_state.get('lang_code', 'en')
-
-    if new_lang_code != prev_lang:
-        st.session_state['lang_code']          = new_lang_code
-        st.session_state['_selected_lang_name'] = selected_lang
-        if new_lang_code != 'en':
-            with st.spinner(f"🌐 Loading {selected_lang}..."):
-                T_batch(UI_STRINGS, new_lang_code)
-        st.rerun()
-    else:
-        st.session_state['lang_code']          = new_lang_code
-        st.session_state['_selected_lang_name'] = selected_lang
-
 st.divider()
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -1597,19 +1585,44 @@ with tab1:
         lang = st.session_state.get('lang_code', 'en')
         speak(TAB1_INSTRUCTIONS.get(lang, TAB1_INSTRUCTIONS['en']), lang)
 
+    # ── Location auto-fill ────────────────────────────────────────────────────
+    st.markdown(f"**📍 {T('Auto-fill Climate from Location')}**")
+    loc_col1, loc_col2 = st.columns([3, 1])
+    with loc_col1:
+        t1_city = st.text_input(
+            T("Enter your city to auto-fill temperature, humidity & rainfall"),
+            placeholder="e.g. Bengaluru, Nagpur, Warangal",
+            key="t1_city"
+        )
+    with loc_col2:
+        t1_fetch = st.button("📡 " + T("Get Weather"), key="t1_fetch_weather", use_container_width=True)
+
+    if t1_fetch and t1_city.strip():
+        _w = get_weather(t1_city.strip())
+        if _w:
+            st.session_state['t1_temp']     = min(max(float(_w['temp']), 8.0), 45.0)
+            st.session_state['t1_humidity'] = min(max(float(_w['humidity']), 14.0), 100.0)
+            st.session_state['t1_rainfall'] = min(max(float(_w.get('rainfall', 0)) * 365, 20.0), 300.0)
+            st.success(f"✅ {_w['city']}: {_w['temp']}°C · {_w['humidity']}% humidity · {_w['description']}")
+        else:
+            st.error(T("City not found. Check spelling and try again."))
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"**🧪 {T('Soil Nutrients')}**")
-        N = st.slider(T("Nitrogen (N) — kg/ha"), 0, 140, 90)
-        P = st.slider(T("Phosphorus (P) — kg/ha"), 5, 145, 42)
-        K = st.slider(T("Potassium (K) — kg/ha"), 5, 205, 43)
+        N  = st.slider(T("Nitrogen (N) — kg/ha"),   0,   140, 90)
+        P  = st.slider(T("Phosphorus (P) — kg/ha"),  5,   145, 42)
+        K  = st.slider(T("Potassium (K) — kg/ha"),   5,   205, 43)
         ph = st.slider(T("Soil pH"), 3.5, 9.5, 6.5, step=0.1)
 
     with col2:
         st.markdown(f"**🌦️ {T('Climate Conditions')}**")
-        temperature = st.slider(T("Temperature (°C)"), 8.0, 45.0, 25.0, step=0.5)
-        humidity = st.slider(T("Humidity (%)"), 14.0, 100.0, 80.0, step=0.5)
-        rainfall = st.slider(T("Rainfall (mm)"), 20.0, 300.0, 200.0, step=5.0)
+        temperature = st.slider(T("Temperature (°C)"), 8.0, 45.0,
+                                st.session_state.get('t1_temp', 25.0), step=0.5)
+        humidity    = st.slider(T("Humidity (%)"), 14.0, 100.0,
+                                st.session_state.get('t1_humidity', 80.0), step=0.5)
+        rainfall    = st.slider(T("Rainfall (mm)"), 20.0, 300.0,
+                                st.session_state.get('t1_rainfall', 200.0), step=5.0)
 
     st.divider()
 
@@ -1677,65 +1690,160 @@ with tab1:
             st.table(summary)
 
 # ════════════════════════════════════════════════════════════════════════════════
-# TAB 2 — DISEASE + VISION AI (MERGED — Vision is Primary)
+
+# ════════════════════════════════════════════════════════════════════════════════
+# TAB 2 — DISEASE + PEST + VISION AI
 # ════════════════════════════════════════════════════════════════════════════════
 with tab2:
     lang = st.session_state.get('lang_code', 'en')
 
-    st.markdown(f"### 📷 {T('Crop Disease & Vision AI')}")
-    st.markdown(T("Upload a leaf photo for instant AI diagnosis — or use the symptom checker below."))
+    st.markdown(f"### 🌿 {T('Crop Disease, Pest & Vision AI')}")
+    st.markdown(T("Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below."))
 
     if st.button("🔊 " + T("Read Instructions Aloud"), key="read_q_tab2"):
         speak(TAB2_SPEAK.get(lang, TAB2_SPEAK['en']), lang)
 
-    # ── VISION AI — PRIMARY ──────────────────────────────────────────────────
-    st.markdown(f"#### 📸 {T('Method 1 — Photo Diagnosis (Recommended)')}")
-
+    # ── Full disease database — all 22+ crops ────────────────────────────────
     DISEASE_DB = {
         'Tomato': {
-            'Yellow leaves + brown spots': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Apply Mancozeb 75% WP @ 2g/L. Remove infected leaves.', 'prevention': 'Crop rotation every 2 years. Use resistant varieties.', 'severity': 'Medium'},
-            'Dark brown patches + white mold': {'disease': 'Late Blight (Phytophthora infestans)', 'treatment': 'Apply Metalaxyl + Mancozeb immediately. Destroy infected plants.', 'prevention': 'Avoid overhead irrigation. Use certified disease-free seeds.', 'severity': 'High'},
-            'Curling yellow leaves + stunted growth': {'disease': 'Tomato Yellow Leaf Curl Virus', 'treatment': 'No cure. Remove infected plants immediately to prevent spread.', 'prevention': 'Control whitefly population. Use silver reflective mulch.', 'severity': 'High'},
-            'Small dark spots with yellow halo': {'disease': 'Bacterial Spot (Xanthomonas)', 'treatment': 'Spray copper hydroxide @ 3g/L every 7 days.', 'prevention': 'Use disease-free transplants. Avoid working in wet conditions.', 'severity': 'Medium'},
-            'White powdery coating on leaves': {'disease': 'Powdery Mildew (Leveillula taurica)', 'treatment': 'Apply Sulphur 80% WP @ 2g/L or Hexaconazole.', 'prevention': 'Improve air circulation. Avoid excess nitrogen.', 'severity': 'Low'},
+            'Yellow leaves + brown spots': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Mancozeb 75% WP @ 2g/L. Remove infected leaves. Repeat after 10 days.', 'prevention': 'Crop rotation every 2 years. Use resistant varieties.', 'severity': 'Medium', 'type': 'Disease'},
+            'Dark brown patches + white mold undersides': {'disease': 'Late Blight (Phytophthora infestans)', 'treatment': 'Metalaxyl + Mancozeb @ 2g/L immediately. Destroy infected plants.', 'prevention': 'Avoid overhead irrigation. Certified disease-free seeds.', 'severity': 'High', 'type': 'Disease'},
+            'Curling yellow leaves + stunted growth': {'disease': 'Tomato Yellow Leaf Curl Virus', 'treatment': 'No cure. Remove infected plants immediately.', 'prevention': 'Control whitefly. Silver reflective mulch.', 'severity': 'High', 'type': 'Disease'},
+            'Small dark spots with yellow halo': {'disease': 'Bacterial Spot (Xanthomonas)', 'treatment': 'Copper hydroxide @ 3g/L every 7 days.', 'prevention': 'Disease-free transplants. Avoid wet fieldwork.', 'severity': 'Medium', 'type': 'Disease'},
+            'White powdery coating on leaves': {'disease': 'Powdery Mildew (Leveillula taurica)', 'treatment': 'Sulphur 80% WP @ 2g/L or Hexaconazole.', 'prevention': 'Improve air circulation. Avoid excess nitrogen.', 'severity': 'Low', 'type': 'Disease'},
+            'Tiny white flying insects under leaves': {'disease': 'Whitefly (Bemisia tabaci)', 'treatment': 'Buprofezin 25 SC @ 1.0 L/ha or Diafenthiuron 50 WP. Neem oil 0.5%.', 'prevention': 'Yellow sticky traps. Silver reflective mulch. Remove infested leaves.', 'severity': 'Medium', 'type': 'Pest'},
+            'Mines/tunnels in leaves': {'disease': 'Serpentine Leaf Miner (Liriomyza trifolii)', 'treatment': 'Cyantraniliprole 10.26 OD @ 15ml/10L or Spinosad 45 SC @ 0.3ml/L.', 'prevention': 'Remove heavily mined leaves. Use yellow sticky traps.', 'severity': 'Medium', 'type': 'Pest'},
         },
         'Potato': {
-            'Brown lesions with yellow border': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Apply Chlorothalonil @ 2g/L. Repeat every 10 days.', 'prevention': 'Use certified seed tubers. Practice crop rotation.', 'severity': 'Medium'},
-            'Water-soaked dark patches spreading fast': {'disease': 'Late Blight (Phytophthora infestans)', 'treatment': 'Apply Cymoxanil + Mancozeb urgently. Destroy infected haulms.', 'prevention': 'Plant in well-drained soil. Monitor weather forecasts.', 'severity': 'High'},
-            'Yellowing from bottom leaves upward': {'disease': 'Potato Virus Y (PVY)', 'treatment': 'No cure. Rogue out infected plants.', 'prevention': 'Use virus-free certified seed. Control aphid vectors.', 'severity': 'High'},
+            'Brown lesions with yellow border on leaves': {'disease': 'Early Blight (Alternaria solani)', 'treatment': 'Chlorothalonil @ 2g/L. Repeat every 10 days.', 'prevention': 'Certified seed tubers. Crop rotation.', 'severity': 'Medium', 'type': 'Disease'},
+            'Water-soaked dark patches spreading fast': {'disease': 'Late Blight (Phytophthora infestans)', 'treatment': 'Cymoxanil + Mancozeb urgently. Destroy infected haulms.', 'prevention': 'Well-drained soil. Monitor weather.', 'severity': 'High', 'type': 'Disease'},
+            'Yellowing from bottom leaves upward': {'disease': 'Potato Virus Y (PVY)', 'treatment': 'No cure. Rogue out infected plants.', 'prevention': 'Virus-free seed. Control aphid vectors.', 'severity': 'High', 'type': 'Disease'},
         },
         'Rice': {
-            'Diamond-shaped lesions with grey center': {'disease': 'Rice Blast (Magnaporthe oryzae)', 'treatment': 'Apply Tricyclazole 75% WP @ 0.6g/L at booting stage.', 'prevention': 'Use blast-resistant varieties. Avoid excess nitrogen.', 'severity': 'High'},
-            'Yellow-orange stripes on leaves': {'disease': 'Bacterial Leaf Blight (Xanthomonas oryzae)', 'treatment': 'Apply copper-based bactericide. Drain fields temporarily.', 'prevention': 'Use resistant varieties. Balanced fertilization.', 'severity': 'High'},
-            'Brown spots with yellow halo': {'disease': 'Brown Spot (Cochliobolus miyabeanus)', 'treatment': 'Apply Mancozeb or Iprodione fungicide.', 'prevention': 'Balanced potassium nutrition. Use healthy seeds.', 'severity': 'Medium'},
+            'Diamond-shaped lesions with grey center': {'disease': 'Rice Blast (Magnaporthe oryzae)', 'treatment': 'Tricyclazole 75% WP @ 0.6g/L at booting stage.', 'prevention': 'Blast-resistant varieties. Avoid excess nitrogen.', 'severity': 'High', 'type': 'Disease'},
+            'Yellow-orange stripes on leaf margins': {'disease': 'Bacterial Leaf Blight (Xanthomonas oryzae)', 'treatment': 'Copper-based bactericide. Drain fields temporarily.', 'prevention': 'Resistant varieties. Balanced fertilization.', 'severity': 'High', 'type': 'Disease'},
+            'Brown spots with yellow halo': {'disease': 'Brown Spot (Cochliobolus miyabeanus)', 'treatment': 'Mancozeb or Iprodione fungicide.', 'prevention': 'Balanced K nutrition. Healthy seeds.', 'severity': 'Medium', 'type': 'Disease'},
+            'Dead heart / wilting tillers': {'disease': 'Yellow Stem Borer (Scirpophaga incertulas)', 'treatment': 'Cartap Hydrochloride 4G @ 12-15 kg/ha. NSKE 5%.', 'prevention': 'Pheromone traps. Avoid excess nitrogen.', 'severity': 'High', 'type': 'Pest'},
+            'Yellowing + plant collapse (hopperburn)': {'disease': 'Brown Planthopper (Nilaparvata lugens)', 'treatment': 'Pymetrozine 50 WG @ 200g/ha or Buprofezin 25 SC @ 1.0 L/ha.', 'prevention': 'Resistant varieties. Avoid excess nitrogen. Light traps.', 'severity': 'High', 'type': 'Pest'},
+            'Leaves folded lengthwise with feeding damage': {'disease': 'Leaf Folder (Cnaphalocrocis medinalis)', 'treatment': 'Chlorantraniliprole 18.5 SC @ 150 ml/ha or Bt spray.', 'prevention': 'Light traps. Avoid continuous flooding.', 'severity': 'Medium', 'type': 'Pest'},
         },
         'Maize': {
-            'Orange powdery pustules on leaves': {'disease': 'Common Rust (Puccinia sorghi)', 'treatment': 'Apply Mancozeb or Azoxystrobin @ 1ml/L.', 'prevention': 'Use rust-resistant hybrids. Early planting.', 'severity': 'Medium'},
-            'Long grey-green lesions on leaves': {'disease': 'Northern Leaf Blight (Exserohilum turcicum)', 'treatment': 'Apply Propiconazole fungicide at early stage.', 'prevention': 'Crop rotation. Use resistant varieties.', 'severity': 'Medium'},
-            'Galls/tumors on plant parts': {'disease': 'Common Smut (Ustilago maydis)', 'treatment': 'No chemical cure. Remove and destroy galls before they burst.', 'prevention': 'Avoid mechanical injury. Seed treatment with fungicide.', 'severity': 'Medium'},
+            'Orange powdery pustules on leaves': {'disease': 'Common Rust (Puccinia sorghi)', 'treatment': 'Mancozeb or Azoxystrobin @ 1ml/L.', 'prevention': 'Rust-resistant hybrids. Early planting.', 'severity': 'Medium', 'type': 'Disease'},
+            'Long grey-green lesions on leaves': {'disease': 'Northern Leaf Blight (Exserohilum turcicum)', 'treatment': 'Propiconazole fungicide at early stage.', 'prevention': 'Resistant varieties. Crop rotation.', 'severity': 'Medium', 'type': 'Disease'},
+            'Galls/tumors on plant parts': {'disease': 'Common Smut (Ustilago maydis)', 'treatment': 'No chemical cure. Remove and destroy galls before they burst.', 'prevention': 'Avoid mechanical injury. Seed treatment.', 'severity': 'Medium', 'type': 'Disease'},
+            'Ragged leaf feeding + frass in whorl': {'disease': 'Fall Armyworm (Spodoptera frugiperda)', 'treatment': 'Chlorantraniliprole 18.5 SC @ 0.4ml/L or Spinetoram 11.7 SC @ 0.5ml/L. Metarhizium anisopliae bio-spray.', 'prevention': 'Pheromone traps. Early sowing. Intercrop with beans.', 'severity': 'High', 'type': 'Pest'},
         },
         'Wheat': {
-            'Yellow stripes along leaf veins': {'disease': 'Yellow/Stripe Rust (Puccinia striiformis)', 'treatment': 'Apply Propiconazole 25% EC @ 1ml/L urgently.', 'prevention': 'Use resistant varieties. Early sowing.', 'severity': 'High'},
-            'Orange-brown pustules scattered on leaves': {'disease': 'Brown/Leaf Rust (Puccinia triticina)', 'treatment': 'Apply Tebuconazole or Propiconazole fungicide.', 'prevention': 'Balanced nitrogen. Use tolerant varieties.', 'severity': 'Medium'},
-            'Black powdery pustules on stems': {'disease': 'Stem/Black Rust (Puccinia graminis)', 'treatment': 'Apply Mancozeb + Propiconazole immediately.', 'prevention': 'Use Ug99-resistant varieties. Early detection critical.', 'severity': 'High'},
+            'Yellow stripes along leaf veins': {'disease': 'Yellow/Stripe Rust (Puccinia striiformis)', 'treatment': 'Propiconazole 25% EC @ 1ml/L urgently.', 'prevention': 'Resistant varieties. Early sowing.', 'severity': 'High', 'type': 'Disease'},
+            'Orange-brown pustules scattered on leaves': {'disease': 'Brown/Leaf Rust (Puccinia triticina)', 'treatment': 'Tebuconazole or Propiconazole fungicide.', 'prevention': 'Balanced nitrogen. Tolerant varieties.', 'severity': 'Medium', 'type': 'Disease'},
+            'Black powdery pustules on stems': {'disease': 'Stem/Black Rust (Puccinia graminis)', 'treatment': 'Mancozeb + Propiconazole immediately.', 'prevention': 'Ug99-resistant varieties. Early detection critical.', 'severity': 'High', 'type': 'Disease'},
         },
         'Cotton': {
-            'Wilting + internal stem discoloration': {'disease': 'Fusarium Wilt (Fusarium oxysporum)', 'treatment': 'No effective cure. Remove infected plants. Soil solarization.', 'prevention': 'Use wilt-resistant varieties. Crop rotation with cereals.', 'severity': 'High'},
-            'Angular water-soaked leaf spots': {'disease': 'Bacterial Blight (Xanthomonas citri)', 'treatment': 'Apply copper oxychloride @ 3g/L. Avoid overhead irrigation.', 'prevention': 'Use certified disease-free seeds. Balanced nutrition.', 'severity': 'Medium'},
+            'Wilting + internal stem discoloration': {'disease': 'Fusarium Wilt (Fusarium oxysporum)', 'treatment': 'No cure. Remove infected plants. Soil solarization.', 'prevention': 'Wilt-resistant varieties. Crop rotation with cereals.', 'severity': 'High', 'type': 'Disease'},
+            'Angular water-soaked leaf spots': {'disease': 'Bacterial Blight (Xanthomonas citri)', 'treatment': 'Copper oxychloride @ 3g/L. Avoid overhead irrigation.', 'prevention': 'Certified disease-free seeds. Balanced nutrition.', 'severity': 'Medium', 'type': 'Disease'},
+            'Pink larvae inside bolls': {'disease': 'Pink Bollworm (Pectinophora gossypiella)', 'treatment': 'Chlorpyrifos 50% + Cypermethrin 5% EC @ 2ml/L. PBW pheromone traps.', 'prevention': 'Destroy crop residue. Pheromone traps early in season.', 'severity': 'High', 'type': 'Pest'},
+            'Small greenish insects on tender shoots': {'disease': 'Cotton Aphid (Aphis gossypii)', 'treatment': 'Acetamiprid 20 SP @ 50g/ha or Imidacloprid 17.8 SL @ 100-125 ml/ha. NSKE 5%.', 'prevention': 'Natural enemies (ladybird beetles). Avoid excess nitrogen.', 'severity': 'Medium', 'type': 'Pest'},
+            'Wedge-shaped insects jumping when disturbed': {'disease': 'Cotton Jassid / Leafhopper (Amrasca biguttula)', 'treatment': 'Acetamiprid 20 SP @ 50-60g/ha or Fipronil 5 SC @ 1.5-2.0 L/ha.', 'prevention': 'Hairy varieties. Monitor from seedling stage.', 'severity': 'Medium', 'type': 'Pest'},
+            'Greenish caterpillar eating bolls and flowers': {'disease': 'Cotton Bollworm (Helicoverpa armigera)', 'treatment': 'Indoxacarb 14.5 SC @ 1ml/L or Spinosad 45 SC @ 0.4ml/L. NPV @ 250 LE/ha.', 'prevention': 'Pheromone traps. Intercropping with pigeonpea.', 'severity': 'High', 'type': 'Pest'},
         },
         'Banana': {
-            'Yellow streaks on young leaves': {'disease': 'Banana Bunchy Top Virus (BBTV)', 'treatment': 'No cure. Destroy infected plants immediately.', 'prevention': 'Use virus-free tissue culture plants. Control aphids.', 'severity': 'High'},
-            'Black streaks inside stem + wilting': {'disease': 'Panama Wilt / Fusarium Wilt', 'treatment': 'No chemical cure. Destroy infected plants. Long fallow period.', 'prevention': 'Use resistant Cavendish varieties. Clean tools between plants.', 'severity': 'High'},
+            'Yellow streaks on young leaves': {'disease': 'Banana Bunchy Top Virus (BBTV)', 'treatment': 'No cure. Destroy infected plants immediately.', 'prevention': 'Virus-free tissue culture plants. Control aphids.', 'severity': 'High', 'type': 'Disease'},
+            'Black streaks inside stem + wilting': {'disease': 'Panama Wilt / Fusarium Wilt', 'treatment': 'No chemical cure. Destroy infected plants. Long fallow period.', 'prevention': 'Resistant Cavendish varieties. Clean tools between plants.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Chickpea': {
+            'Wilting + brown discoloration at soil level': {'disease': 'Fusarium Wilt (Fusarium oxysporum f.sp. ciceri)', 'treatment': 'Seed treatment with Carbendazim 2g/kg. Soil application of Trichoderma.', 'prevention': 'Resistant varieties. Deep summer ploughing.', 'severity': 'High', 'type': 'Disease'},
+            'Angular water-soaked spots on pods/leaves': {'disease': 'Ascochyta Blight (Ascochyta rabiei)', 'treatment': 'Mancozeb 75% WP @ 2g/L. Spray at first sign.', 'prevention': 'Certified disease-free seed. Avoid overhead irrigation.', 'severity': 'High', 'type': 'Disease'},
+            'Greenish caterpillar boring into pods': {'disease': 'Gram Pod Borer (Helicoverpa armigera)', 'treatment': 'Indoxacarb 14.5 SC @ 1ml/L or Quinalphos 25 EC @ 2 L/ha. NPV @ 250 LE/ha.', 'prevention': 'Pheromone traps. Intercropping with coriander.', 'severity': 'High', 'type': 'Pest'},
+        },
+        'Groundnut': {
+            'Circular brown spots with yellow halo': {'disease': 'Early Leaf Spot (Cercospora arachidicola)', 'treatment': 'Chlorothalonil or Mancozeb @ 2g/L every 10 days.', 'prevention': 'Crop rotation. Remove crop debris.', 'severity': 'Medium', 'type': 'Disease'},
+            'Dark brown to black spots without halo': {'disease': 'Late Leaf Spot (Phaeoisariopsis personata)', 'treatment': 'Carbendazim 50 WP @ 1g/L or Propiconazole 25 EC @ 1ml/L.', 'prevention': 'Resistant varieties. Balanced nutrition.', 'severity': 'Medium', 'type': 'Disease'},
+            'Gregarious caterpillars skeletonizing leaves': {'disease': 'Tobacco Caterpillar (Spodoptera litura)', 'treatment': 'Chlorantraniliprole 18.5 SC @ 150 ml/ha or Emamectin 5% SG @ 200g/ha.', 'prevention': 'Pheromone traps. Hand-picking egg masses.', 'severity': 'High', 'type': 'Pest'},
+        },
+        'Soybean': {
+            'Reddish-brown pustules on leaf undersides': {'disease': 'Soybean Rust (Phakopsora pachyrhizi)', 'treatment': 'Azoxystrobin + Propiconazole @ 1ml/L urgently.', 'prevention': 'Monitor from flowering. Resistant varieties.', 'severity': 'High', 'type': 'Disease'},
+            'Brown caterpillar defoliating leaves': {'disease': 'Tobacco Caterpillar (Spodoptera litura)', 'treatment': 'Chlorantraniliprole 18.5 SC @ 150 ml/ha. Steinernema carpocapsae nematode.', 'prevention': 'Pheromone traps. Early detection critical.', 'severity': 'High', 'type': 'Pest'},
+        },
+        'Mustard': {
+            'Greenish-yellow aphids on pods + leaves': {'disease': 'Mustard Aphid (Lipaphis erysimi)', 'treatment': 'Dimethoate 30 EC @ 300-500 ml/ha or Imidacloprid 17.8 SL @ 100 ml/ha.', 'prevention': 'Early sowing. Cow urine 3-4% solution spray.', 'severity': 'High', 'type': 'Pest'},
+            'Yellowing + white rust pustules on leaves': {'disease': 'White Rust (Albugo candida)', 'treatment': 'Mancozeb 75% WP @ 2g/L at first symptom.', 'prevention': 'Resistant varieties. Avoid dense planting.', 'severity': 'Medium', 'type': 'Disease'},
+        },
+        'Sugarcane': {
+            'Red rot inside stalk (vinegar smell)': {'disease': 'Red Rot (Colletotrichum falcatum)', 'treatment': 'No chemical cure. Destroy infected stools. Use disease-free setts.', 'prevention': 'Resistant varieties. Hot water treatment of setts at 50°C for 2h.', 'severity': 'High', 'type': 'Disease'},
+            'White woolly aphids on leaves': {'disease': 'Sugarcane Woolly Aphid (Ceratovacuna lanigera)', 'treatment': 'Buprofezin 25 SC @ 1.0 L/ha or Imidacloprid 17.8 SL @ 125 ml/ha.', 'prevention': 'Conserve natural enemies (Aphelinus). Avoid dust.', 'severity': 'Medium', 'type': 'Pest'},
+        },
+        'Mango': {
+            'Mummified blackened inflorescences': {'disease': 'Mango Malformation (Fusarium mangiferae)', 'treatment': 'No complete cure. Remove and destroy malformed parts. NAA spray 200ppm.', 'prevention': 'Avoid injury. Certified nursery plants.', 'severity': 'High', 'type': 'Disease'},
+            'Small jumping insects on flowers': {'disease': 'Mango Hopper (Idioscopus spp.)', 'treatment': 'Imidacloprid 17.8 SL @ 100 ml/ha or Acephate 75 SP @ 1.5g/L.', 'prevention': 'Spray at bud burst and flowering. Remove weeds.', 'severity': 'High', 'type': 'Pest'},
+            'Maggot in fruit (puncture marks on skin)': {'disease': 'Fruit Fly (Bactrocera dorsalis)', 'treatment': 'Methyl eugenol traps 5-6 per acre. Spinosad 45 SC @ 0.4ml/L. Malathion 50 EC bait spray.', 'prevention': 'Collect and destroy fallen fruit daily. Bag developing fruits.', 'severity': 'High', 'type': 'Pest'},
+        },
+        'Brinjal': {
+            'Wilting shoot tips + fruit bored': {'disease': 'Shoot and Fruit Borer (Leucinodes orbonalis)', 'treatment': 'Emamectin benzoate 5% SG @ 4g/10L or Spinosad 45 SC @ 4ml/10L. NSKE 5%.', 'prevention': 'Remove and destroy bored shoots weekly. Pheromone traps.', 'severity': 'High', 'type': 'Pest'},
+            'Purplish lesions on stem — plant wilts': {'disease': 'Phomopsis Blight (Phomopsis vexans)', 'treatment': 'Carbendazim 50 WP @ 1g/L + Mancozeb 75 WP @ 2g/L.', 'prevention': 'Crop rotation. Remove infected plant debris.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Chilli': {
+            'Galls on flower buds': {'disease': 'Chilli Gall Midge (Asphondylia capparis)', 'treatment': 'Fipronil 5 SC @ 1.5 L/ha or Cartap 50 SP @ 500g/ha. Clip and destroy galls.', 'prevention': 'Early detection. Remove infested buds.', 'severity': 'Medium', 'type': 'Pest'},
+            'Leaf curl + fruit deformation': {'disease': 'Chilli Leaf Curl Virus (CLCuV)', 'treatment': 'No cure. Remove infected plants. Control thrips/mites as vectors.', 'prevention': 'Use certified seedlings. Reflective mulch.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Cabbage': {
+            'Diamond-shaped holes + small worms under leaves': {'disease': 'Diamondback Moth (Plutella xylostella)', 'treatment': 'Chlorantraniliprole 18.5 SC @ 150 ml/ha. NSPPF (ICAR neem formulation).', 'prevention': 'Rotation with non-Brassica crops. Natural enemies (Cotesia plutellae).', 'severity': 'High', 'type': 'Pest'},
+            'Slimy black rot at leaf margins': {'disease': 'Black Rot (Xanthomonas campestris)', 'treatment': 'Copper hydroxide 53.8 WP @ 2g/L. Remove infected leaves.', 'prevention': 'Certified disease-free seed. Avoid overhead irrigation.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Apple': {
+            'Olive-green scab on leaves and fruit': {'disease': 'Apple Scab (Venturia inaequalis)', 'treatment': 'Captan 50% WP @ 2g/L or Myclobutanil from bud break.', 'prevention': 'Resistant varieties. Remove fallen leaves.', 'severity': 'Medium', 'type': 'Disease'},
+            'Brown/black cankers on fruit': {'disease': 'Apple Black Rot (Botryosphaeria obtusa)', 'treatment': 'Captan or Thiophanate-methyl @ 2g/L.', 'prevention': 'Prune infected branches. Remove mummified fruit.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Grape': {
+            'Downy white growth on leaf undersides': {'disease': 'Downy Mildew (Plasmopara viticola)', 'treatment': 'Fosetyl-Al 80 WP @ 2.5g/L or Metalaxyl + Mancozeb @ 2g/L.', 'prevention': 'Prune for airflow. Spray preventively before rains.', 'severity': 'High', 'type': 'Disease'},
+            'Powdery white coating on young shoots/berries': {'disease': 'Powdery Mildew (Uncinula necator)', 'treatment': 'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L.', 'prevention': 'Prune dense canopy. Avoid excess nitrogen.', 'severity': 'Medium', 'type': 'Disease'},
+        },
+        'Coconut': {
+            'Crown rot + bud death': {'disease': 'Bud Rot (Phytophthora palmivora)', 'treatment': 'Pour Bordeaux mixture 1% into crown. Remove and destroy infected tissue.', 'prevention': 'Avoid water stagnation. Drain field.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Coffee': {
+            'Orange powdery pustules on leaf undersides': {'disease': 'Coffee Leaf Rust (Hemileia vastatrix)', 'treatment': 'Copper hydroxide or Propiconazole 25 EC @ 1ml/L.', 'prevention': 'Rust-resistant varieties. Prune for airflow.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Stored Grains': {
+            'Small reddish-brown weevils in grain': {'disease': 'Rice/Maize Weevil (Sitophilus spp.)', 'treatment': 'Malathion 5% Dust or Phosphine fumigation tablets.', 'prevention': 'Clean storage. Moisture <13%. Hermetic bags.', 'severity': 'High', 'type': 'Pest'},
+            'Small cylindrical brown beetles boring grain': {'disease': 'Lesser Grain Borer (Rhyzopertha dominica)', 'treatment': 'Deltamethrin 2.8 EC or Phosphine fumigation.', 'prevention': 'Clean storage. Mix with neem leaves.', 'severity': 'High', 'type': 'Pest'},
+            'Webbing + caterpillars in stored grain': {'disease': 'Indian Meal Moth (Plodia interpunctella)', 'treatment': 'Bacillus thuringiensis (Bt) spray. Pheromone traps for monitoring.', 'prevention': 'Sealed storage. Remove infested material.', 'severity': 'Medium', 'type': 'Pest'},
+            'Small brownish beetles in stored pulses': {'disease': 'Pulse Beetle (Callosobruchus maculatus)', 'treatment': 'Neem oil coating 5 ml/kg seed. Malathion 5% Dust. Phosphine fumigation.', 'prevention': 'Sun-dry grain before storage. Use airtight containers.', 'severity': 'Medium', 'type': 'Pest'},
+        },
+        'Pigeonpea': {
+            'Wilting + dry root rot': {'disease': 'Fusarium Wilt (Fusarium udum)', 'treatment': 'Seed treatment with Trichoderma viride @ 4g/kg.', 'prevention': 'Resistant varieties. Crop rotation.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Lentil': {
+            'Grey mold on stems and pods in humid weather': {'disease': 'Botrytis Grey Mold (Botrytis cinerea)', 'treatment': 'Carbendazim 50 WP @ 1g/L at flowering.', 'prevention': 'Avoid dense planting. Remove infected debris.', 'severity': 'Medium', 'type': 'Disease'},
+        },
+        'Papaya': {
+            'Mosaic + leaf distortion': {'disease': 'Papaya Ring Spot Virus (PRSV)', 'treatment': 'No cure. Uproot and destroy infected plants.', 'prevention': 'Plant certified virus-free seedlings. Control aphids.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Orange': {
+            'Yellow mottling + leaf drop': {'disease': 'Citrus Greening / HLB (Candidatus Liberibacter)', 'treatment': 'No cure. Remove and destroy infected trees. Doxycycline trunk injection slows spread.', 'prevention': 'Certified nursery plants. Control psyllid vector. Remove infected trees promptly.', 'severity': 'High', 'type': 'Disease'},
+        },
+        'Watermelon': {
+            'Powdery white patches on leaves': {'disease': 'Powdery Mildew (Podosphaera xanthii)', 'treatment': 'Sulphur 80 WP @ 2g/L or Trifloxystrobin 25 WG @ 0.5g/L.', 'prevention': 'Resistant varieties. Avoid dense planting.', 'severity': 'Low', 'type': 'Disease'},
+        },
+        'Jute': {
+            'Black ants on stem + tunneling': {'disease': 'Jute Semilooper (Anomis sabulifera)', 'treatment': 'Malathion 50 EC @ 1ml/L or Quinalphos 25 EC @ 1ml/L.', 'prevention': 'Early sowing. Remove weeds.', 'severity': 'Medium', 'type': 'Pest'},
         },
     }
 
-    selected_crop_v = st.selectbox(f"🌱 {T('Select Crop for Diagnosis')}", sorted(DISEASE_DB.keys()), key="v2_crop")
+    # ── METHOD 1: VISION AI (Primary) ─────────────────────────────────────────
+    st.markdown(f"#### 📸 {T('Method 1 — Photo Diagnosis (Recommended)')}")
+
+    _all_crops_d = sorted(DISEASE_DB.keys())
+    selected_crop_v = st.selectbox(
+        f"🌱 {T('Select Crop for Diagnosis')}",
+        _all_crops_d,
+        key="v2_crop"
+    )
 
     vision_file = st.file_uploader(
         T("Upload leaf / stem / fruit photo"),
         type=["jpg", "jpeg", "png", "webp"],
         key="tab2_vision_upload",
-        help=T("Clear daylight photo, close-up of affected area, no blur.")
+        help=T("Clear daylight photo, close-up of affected area.")
     )
 
     if vision_file is not None:
@@ -1747,32 +1855,30 @@ with tab2:
         with col_v2:
             st.markdown(f"**{T('File')}:** `{vision_file.name}`")
             st.markdown(f"**{T('Dimensions')}:** {v_img.width}×{v_img.height}px")
-            st.info(f"**{T('Best results')}:** ☀️ {T('daylight')} · 🎯 {T('close-up on lesion')} · 📷 {T('sharp, no blur')}")
+            st.info(f"☀️ {T('Daylight')} · 🎯 {T('Close-up on affected area')} · 📷 {T('Sharp, no blur')}")
 
         if st.button(f"🔍 {T('Diagnose from Photo')}", use_container_width=True, type="primary", key="tab2_vision_btn"):
-            with st.spinner(T("Analyzing HSV color channels and texture patterns...")):
+            with st.spinner(T("Analyzing pixel patterns...")):
                 import time; time.sleep(1.0)
                 v_result = analyze_image_pixels(v_img)
             st.session_state['tab2_vision_result'] = v_result
 
     if 'tab2_vision_result' in st.session_state:
         vr = st.session_state['tab2_vision_result']
-        st.markdown('<span style="background:#166534;color:#86efac;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">📷 Vision AI · ' + vr.get('model_used','TFLite') + '</span>', unsafe_allow_html=True)
+        model_badge = vr.get('model_used', 'Vision AI')
+        st.markdown(f'<span style="background:#166534;color:#86efac;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">📷 {model_badge}</span>', unsafe_allow_html=True)
         st.markdown("")
-        sev_color = {'High': 'red', 'Medium': 'warning', 'None': 'success'}.get(vr['severity'], 'success')
-        sev_icon  = {'High': '🔴', 'Medium': '🟡', 'None': '🟢'}.get(vr['severity'], '🟢')
         if vr['severity'] == 'High':
-            st.error(f"### {sev_icon} {T('Detected')}: **{T(vr['disease'])}**")
+            st.error(f"### 🔴 {T('Detected')}: **{T(vr['disease'])}**")
         elif vr['severity'] == 'Medium':
-            st.warning(f"### {sev_icon} {T('Detected')}: **{T(vr['disease'])}**")
+            st.warning(f"### 🟡 {T('Detected')}: **{T(vr['disease'])}**")
         else:
-            st.success(f"### {sev_icon} {T('Detected')}: **{T(vr['disease'])}**")
+            st.success(f"### 🟢 {T('Detected')}: **{T(vr['disease'])}**")
 
         conf = vr['confidence']
         st.markdown(f"**{T('AI Confidence')}: {conf}%**")
         st.progress(conf / 100)
 
-        # Top-3 predictions (only when TFLite model is used)
         if vr.get('top3'):
             sev_colors = {'None':'#22C55E','Low':'#22C55E','Medium':'#F59E0B','High':'#EF4444'}
             top3_html = ''
@@ -1780,14 +1886,11 @@ with tab2:
                 m = _get_disease_meta(cls_name)
                 bar_col = sev_colors.get(m['severity'], '#6B8F6B')
                 label = cls_name.replace('_',' ').replace('  ',' ').title()[:28]
-                top3_html += (
-                    f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+                top3_html += (f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
                     f'<div style="width:140px;font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{label}</div>'
                     f'<div style="flex:1;height:8px;background:#1f2937;border-radius:4px;overflow:hidden">'
                     f'<div style="width:{pct}%;height:100%;background:{bar_col};border-radius:4px"></div></div>'
-                    f'<div style="width:32px;font-size:11px;font-weight:600;color:{bar_col};text-align:right">{pct}%</div>'
-                    f'</div>'
-                )
+                    f'<div style="width:32px;font-size:11px;font-weight:600;color:{bar_col};text-align:right">{pct}%</div></div>')
             st.markdown(f'<div style="margin:10px 0 4px">{top3_html}</div>', unsafe_allow_html=True)
 
         col_t, col_p = st.columns(2)
@@ -1798,11 +1901,9 @@ with tab2:
         st.caption(f"⚡ {T(vr['action'])}")
 
         if st.button("🔊 " + T("Read Vision Result"), key="speak_tab2_vision"):
-            speak(
-                f"{T('Vision AI detected')}: {vr['disease']}. {T('Severity')}: {vr['severity']}. "
-                f"{T('Confidence')}: {conf} {T('percent')}. {T('Treatment')}: {vr['treatment']}",
-                lang
-            )
+            speak(f"{T('Vision AI detected')}: {vr['disease']}. {T('Severity')}: {vr['severity']}. "
+                  f"{T('Confidence')}: {conf} {T('percent')}. {T('Treatment')}: {vr['treatment']}", lang)
+
         if vr['severity'] != 'None':
             farmer_name = st.session_state.get('farmer_name', 'Farmer')
             wa_msg = (f"📷 *Vision AI Report — KisanOS*\n\nFarmer: {farmer_name}\nCrop: {selected_crop_v}\n"
@@ -1811,64 +1912,83 @@ with tab2:
             wa_url = f"https://wa.me/?text={requests.utils.quote(wa_msg)}"
             st.markdown(f'<a href="{wa_url}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;margin-top:6px">📤 {T("Share on WhatsApp")}</a>', unsafe_allow_html=True)
 
-    # ── SYMPTOM CHECKER — SECONDARY ─────────────────────────────────────────
+    # ── METHOD 2: SYMPTOM + PEST CHECKER (Secondary) ──────────────────────────
     st.divider()
-    st.markdown(f"#### 🔬 {T('Method 2 — Symptom Checker')}")
-    st.caption(T("Use this if you cannot take a photo or want to confirm a diagnosis."))
+    st.markdown(f"#### 🔬 {T('Method 2 — Symptom / Pest Checker')}")
+    st.caption(T("Covers diseases AND pests. All 26+ crops included."))
 
-    SEVERITY_BG = {'High': '#EF4444', 'Medium': '#F59E0B', 'Low': '#22C55E'}
+    SEVERITY_BG   = {'High': '#EF4444', 'Medium': '#F59E0B', 'Low': '#22C55E'}
     SEVERITY_ICON = {'High': '🔴', 'Medium': '🟡', 'Low': '🟢'}
+    TYPE_ICON     = {'Disease': '🦠', 'Pest': '🐛'}
 
-    col1, col2 = st.columns(2)
-    with col1:
+    # Filter options
+    fcol1, fcol2, fcol3 = st.columns([2, 1, 1])
+    with fcol1:
         selected_crop = st.selectbox(f"🌱 {T('Crop')}", sorted(DISEASE_DB.keys()), key="symp_crop")
-    with col2:
-        symptoms_list = list(DISEASE_DB[selected_crop].keys())
-        selected_symptom = st.selectbox(f"🔍 {T('Symptom observed')}", symptoms_list, key="symp_symptom")
+    with fcol2:
+        filter_type = st.selectbox(T("Type"), ["All", "Disease", "Pest"], key="symp_type")
+    with fcol3:
+        filter_sev = st.selectbox(T("Severity"), ["All", "High", "Medium", "Low"], key="symp_sev")
 
-    # Disease reference cards for selected crop
-    disease_items = list(DISEASE_DB[selected_crop].items())
-    cols = st.columns(min(len(disease_items), 3))
-    for i, (symptom, data) in enumerate(disease_items):
-        with cols[i % 3]:
-            color = SEVERITY_BG[data['severity']]
-            icon = SEVERITY_ICON[data['severity']]
-            st.markdown(f"""
-            <div style="background:{color}15;border-left:3px solid {color};border-radius:8px;
-                        padding:10px;margin-bottom:8px;min-height:100px;">
-                <div style="font-size:12px;font-weight:600;color:{color}">{icon} {data['disease']}</div>
-                <div style="font-size:11px;color:#9ca3af;margin-top:4px;">🔍 {symptom}</div>
-            </div>""", unsafe_allow_html=True)
+    # Build filtered symptom list
+    all_items = list(DISEASE_DB[selected_crop].items())
+    if filter_type != "All":
+        all_items = [(s, d) for s, d in all_items if d.get('type', 'Disease') == filter_type]
+    if filter_sev != "All":
+        all_items = [(s, d) for s, d in all_items if d['severity'] == filter_sev]
 
-    if st.button(f"🔬 {T('Diagnose by Symptom')}", use_container_width=True, type="primary", key="symp_diagnose_btn"):
-        st.session_state['tab2_symp_result'] = {
-            'disease': DISEASE_DB[selected_crop][selected_symptom],
-            'crop': selected_crop, 'symptom': selected_symptom
-        }
+    if not all_items:
+        st.info(T("No entries match the selected filters."))
+    else:
+        symptoms_filtered = [s for s, _ in all_items]
+        selected_symptom = st.selectbox(f"🔍 {T('Symptom observed')}", symptoms_filtered, key="symp_symptom")
+
+        # Reference cards
+        cols = st.columns(min(len(all_items), 3))
+        for i, (symptom, data) in enumerate(all_items):
+            with cols[i % 3]:
+                color = SEVERITY_BG[data['severity']]
+                icon  = SEVERITY_ICON[data['severity']]
+                ticon = TYPE_ICON.get(data.get('type','Disease'), '🦠')
+                st.markdown(f"""
+                <div style="background:{color}15;border-left:3px solid {color};border-radius:8px;
+                            padding:10px;margin-bottom:8px;min-height:90px;">
+                  <div style="font-size:12px;font-weight:600;color:{color}">{icon} {ticon} {data['disease']}</div>
+                  <div style="font-size:10px;color:#9ca3af;margin-top:3px">{symptom[:55]}{'...' if len(symptom)>55 else ''}</div>
+                  <div style="font-size:10px;color:{color};margin-top:3px;font-weight:600">{data.get('type','Disease')} · {data['severity']}</div>
+                </div>""", unsafe_allow_html=True)
+
+        if st.button(f"🔬 {T('Diagnose by Symptom / Pest')}", use_container_width=True, type="primary", key="symp_diagnose_btn"):
+            st.session_state['tab2_symp_result'] = {
+                'disease': DISEASE_DB[selected_crop][selected_symptom],
+                'crop': selected_crop, 'symptom': selected_symptom
+            }
 
     if 'tab2_symp_result' in st.session_state:
-        result = st.session_state['tab2_symp_result']['disease']
+        result   = st.session_state['tab2_symp_result']['disease']
         severity = result['severity']
+        dtype    = result.get('type', 'Disease')
+        dicon    = TYPE_ICON.get(dtype, '🦠')
+
         if severity == 'High':
-            st.error(f"### 🔴 {T(result['disease'])}\n**{T('Severity')}: {T('HIGH — Act immediately!')}**")
+            st.error(f"### 🔴 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('HIGH — Act immediately!')}**")
         elif severity == 'Medium':
-            st.warning(f"### 🟡 {T(result['disease'])}\n**{T('Severity')}: {T('MEDIUM — Monitor closely')}**")
+            st.warning(f"### 🟡 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('MEDIUM — Monitor closely')}**")
         else:
-            st.info(f"### 🟢 {T(result['disease'])}\n**{T('Severity')}: {T('LOW — Manageable')}**")
+            st.info(f"### 🟢 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('LOW — Manageable')}**")
+
         col1, col2 = st.columns(2)
         with col1:
             st.info(f"**💊 {T('Treatment')}:** {T(result['treatment'])}")
         with col2:
             st.success(f"**🛡️ {T('Prevention')}:** {T(result['prevention'])}")
+
         if st.button("🔊 " + T("Read Result Aloud"), key="speak_tab2_symp"):
-            speak(
-                f"{T('Disease')}: {result['disease']}. {T('Severity')}: {result['severity']}. "
-                f"{T('Treatment')}: {result['treatment']}. {T('Prevention')}: {result['prevention']}",
-                lang
-            )
+            speak(f"{dtype}: {result['disease']}. {T('Severity')}: {result['severity']}. "
+                  f"{T('Treatment')}: {result['treatment']}. {T('Prevention')}: {result['prevention']}", lang)
 
     st.divider()
-    st.caption(T("Vision AI: disease_model.tflite/h5 when TensorFlow available · HSV pixel analysis fallback · Symptom DB: 7 crops · 20+ diseases"))
+    st.caption(T("Vision AI: disease_model.tflite/h5 when TensorFlow available · 26+ crops · 50+ diseases & pests · CSV pest database integrated"))
 
 
 # TAB 3 — MARKET PRICES — LIVE AGMARKNET + STATE-CALIBRATED PROPHET
