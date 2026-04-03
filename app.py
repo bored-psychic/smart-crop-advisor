@@ -802,37 +802,18 @@ audio {
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+# ── Sidebar — farmer profile only ────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### 🌐 Language / भाषा")
-    selected_lang = st.selectbox("Select Language", list(LANGUAGES.keys()), index=0)
-    new_lang_code = LANGUAGES[selected_lang]
-
-    # Detect language change — pre-translate all UI strings in one batch
-    prev_lang = st.session_state.get('lang_code', 'en')
-    if new_lang_code != prev_lang:
-        st.session_state['lang_code'] = new_lang_code
-        if new_lang_code != 'en':
-            with st.spinner("🌐 Loading language..."):
-                T_batch(UI_STRINGS, new_lang_code)
-    else:
-        st.session_state['lang_code'] = new_lang_code
-
-    if selected_lang != 'English':
-        st.success(f"✅ {selected_lang} selected")
-    st.divider()
-
     st.markdown("### 👤 Farmer Profile")
-    st.session_state['farmer_name'] = st.text_input("Your Name", value=st.session_state.get('farmer_name', ''), placeholder="e.g. Ramesh Kumar")
+    st.session_state['farmer_name']    = st.text_input("Your Name",         value=st.session_state.get('farmer_name', ''),    placeholder="e.g. Ramesh Kumar")
     st.session_state['farmer_village'] = st.text_input("Village / District", value=st.session_state.get('farmer_village', ''), placeholder="e.g. Bellary, Karnataka")
-    st.session_state['farmer_crop'] = st.text_input("Main Crop", value=st.session_state.get('farmer_crop', ''), placeholder="e.g. Cotton, 2 acres")
+    st.session_state['farmer_crop']    = st.text_input("Main Crop",          value=st.session_state.get('farmer_crop', ''),    placeholder="e.g. Cotton, 2 acres")
     st.divider()
-
     st.markdown("### 📱 Quick Links")
     st.markdown("🌾 [Live App](https://smart-crop-advisor-pryetrqjrna69seh6ne4uq.streamlit.app)")
     st.markdown("💻 [GitHub](https://github.com/bored-psychic/smart-crop-advisor)")
     st.divider()
-    st.caption("Smart Crop Advisory System\nBuilt with ❤️ for Indian Farmers")
+    st.caption("KisanOS · Smart Crop Advisory\nBuilt with ❤️ for Indian Farmers")
 
 # ── Load models ───────────────────────────────────────────────────────────────
 @st.cache_resource
@@ -1534,36 +1515,64 @@ def analyze_audio_spectrum(audio_bytes, filename):
 
 
 # ── Hero Header ───────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div style="padding:1.8rem 0 1rem;border-bottom:1px solid rgba(34,197,94,0.15);margin-bottom:1.2rem">
-  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+st.markdown("""
+<div style="padding:1.8rem 0 0.8rem;border-bottom:1px solid rgba(34,197,94,0.15);margin-bottom:0.8rem">
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <div style="width:48px;height:48px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);
-                border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px">🌾</div>
-    <div>
-      <div style="font-size:1.75rem;font-weight:700;color:#22C55E;letter-spacing:-0.03em;line-height:1.1">
-        KisanOS
-      </div>
-      <div style="font-size:0.82rem;color:#6B8F6B;font-weight:400;margin-top:2px">
-        {T("Smart Crop Advisory · AI-powered · 9 languages · 100M farmers")}
-      </div>
+                border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🌾</div>
+    <div style="flex:1;min-width:140px">
+      <div style="font-size:1.75rem;font-weight:700;color:#22C55E;letter-spacing:-0.03em;line-height:1.1">KisanOS</div>
+      <div style="font-size:0.78rem;color:#6B8F6B;font-weight:400;margin-top:2px">Smart Crop Advisory · AI-powered · 100M farmers</div>
     </div>
-    <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
-                   color:#22C55E;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
-        RF 99.2%
-      </span>
-      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
-                   color:#22C55E;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
-        Acoustic 97.2%
-      </span>
-      <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);
-                   color:#F59E0B;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600">
-        FAO-56
-      </span>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#22C55E;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600">RF 99.2%</span>
+      <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#22C55E;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600">Acoustic 97.2%</span>
+      <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#F59E0B;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600">FAO-56</span>
     </div>
   </div>
 </div>
 """, unsafe_allow_html=True)
+
+# ── Language Selector — always visible in main page ───────────────────────────
+LANG_FLAGS = {
+    'English':            '🇬🇧',
+    'हिंदी (Hindi)':      '🇮🇳',
+    'తెలుగు (Telugu)':    '🇮🇳',
+    'தமிழ் (Tamil)':      '🇮🇳',
+    'ಕನ್ನಡ (Kannada)':    '🇮🇳',
+    'मराठी (Marathi)':    '🇮🇳',
+    'বাংলা (Bengali)':    '🇮🇳',
+    'ગુજરાતી (Gujarati)': '🇮🇳',
+    'ਪੰਜਾਬੀ (Punjabi)':   '🇮🇳',
+}
+
+_lang_col, _dummy = st.columns([2, 3])
+with _lang_col:
+    _lang_options = list(LANGUAGES.keys())
+    _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
+    _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
+
+    selected_lang = st.selectbox(
+        "🌐 Language / भाषा / ಭಾಷೆ",
+        _lang_options,
+        index=_saved_idx,
+        key="lang_selector_main",
+    )
+    new_lang_code = LANGUAGES[selected_lang]
+    prev_lang     = st.session_state.get('lang_code', 'en')
+
+    if new_lang_code != prev_lang:
+        st.session_state['lang_code']          = new_lang_code
+        st.session_state['_selected_lang_name'] = selected_lang
+        if new_lang_code != 'en':
+            with st.spinner(f"🌐 Loading {selected_lang}..."):
+                T_batch(UI_STRINGS, new_lang_code)
+        st.rerun()
+    else:
+        st.session_state['lang_code']          = new_lang_code
+        st.session_state['_selected_lang_name'] = selected_lang
+
+st.divider()
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
