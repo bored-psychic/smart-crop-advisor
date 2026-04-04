@@ -489,7 +489,8 @@ def fetch_field_watch(city, lat=None, lon=None):
 st.set_page_config(
     page_title="KisanOS · Smart Crop Advisory",
     page_icon="🌾",
-    layout="centered"
+    layout="centered",
+    initial_sidebar_state="expanded",
 )
 
 # ── Global CSS — full visual overhaul ─────────────────────────────────────────
@@ -797,19 +798,48 @@ audio {
 /* ── SELECTION HIGHLIGHT ── */
 ::selection { background: rgba(34,197,94,0.25) !important; }
 
-/* ── HIDE STREAMLIT BRANDING ── */
+/* ── HIDE STREAMLIT BRANDING (keep sidebar toggle!) ── */
 #MainMenu, footer, [data-testid="stToolbar"] { display: none !important; }
+
+/* ── SIDEBAR TOGGLE — always visible ── */
+[data-testid="collapsedControl"],
+button[kind="header"],
+[data-testid="stSidebarCollapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ── SIDEBAR — force minimum width, always show ── */
+[data-testid="stSidebar"] {
+    min-width: 240px !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* ── LANGUAGE SELECTOR — highlight it in sidebar ── */
+[data-testid="stSidebar"] .stSelectbox:first-of-type > div > div {
+    border-color: rgba(34,197,94,0.5) !important;
+    background: rgba(34,197,94,0.08) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ── Sidebar — language + farmer profile ──────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🌐 Language / भाषा")
+    st.markdown("""
+    <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);
+                border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700;color:#22C55E;margin-bottom:2px">🌐 Language / भाषा</div>
+      <div style="font-size:11px;color:#6B8F6B">ಭಾಷೆ · மொழி · ভাষা · ભાષા · ਭਾਸ਼ਾ</div>
+    </div>
+    """, unsafe_allow_html=True)
+
     _lang_options = list(LANGUAGES.keys())
     _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
     _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
     selected_lang = st.selectbox(
-        "Select Language",
+        "Select / चुनें / ಆಯ್ಕೆ",
         _lang_options,
         index=_saved_idx,
         key="lang_selector_sidebar",
@@ -827,7 +857,7 @@ with st.sidebar:
         st.session_state['lang_code']           = new_lang_code
         st.session_state['_selected_lang_name'] = selected_lang
     if selected_lang != 'English':
-        st.success(f"✅ {selected_lang}")
+        st.success(f"✅ {selected_lang} selected")
     st.divider()
 
     st.markdown("### 👤 Farmer Profile")
@@ -1559,8 +1589,17 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Language Selector — always visible in main page ───────────────────────────
-st.divider()
+# ── Language hint strip ───────────────────────────────────────────────────────
+_cur_lang = st.session_state.get('_selected_lang_name', 'English')
+st.markdown(f"""
+<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;
+            background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);
+            border-radius:10px;margin-bottom:8px;flex-wrap:wrap">
+  <span style="font-size:13px;color:#6B8F6B">🌐 Language:</span>
+  <span style="font-size:13px;font-weight:600;color:#22C55E">{_cur_lang}</span>
+  <span style="font-size:12px;color:#6B8F6B;margin-left:4px">← Change in the left sidebar ☰</span>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
