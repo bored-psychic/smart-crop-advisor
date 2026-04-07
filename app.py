@@ -825,41 +825,8 @@ button[kind="header"],
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar — language + farmer profile ──────────────────────────────────────
+# ── Sidebar — farmer profile only ────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("""
-    <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);
-                border-radius:10px;padding:12px 14px;margin-bottom:12px">
-      <div style="font-size:16px;font-weight:700;color:#22C55E;margin-bottom:2px">🌐 Language / भाषा</div>
-      <div style="font-size:11px;color:#6B8F6B">ಭಾಷೆ · மொழி · ভাষা · ભાષા · ਭਾਸ਼ਾ</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    _lang_options = list(LANGUAGES.keys())
-    _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
-    _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
-    selected_lang = st.selectbox(
-        "Select / चुनें / ಆಯ್ಕೆ",
-        _lang_options,
-        index=_saved_idx,
-        key="lang_selector_sidebar",
-    )
-    new_lang_code = LANGUAGES[selected_lang]
-    prev_lang     = st.session_state.get('lang_code', 'en')
-    if new_lang_code != prev_lang:
-        st.session_state['lang_code']           = new_lang_code
-        st.session_state['_selected_lang_name'] = selected_lang
-        if new_lang_code != 'en':
-            with st.spinner("Loading language..."):
-                T_batch(UI_STRINGS, new_lang_code)
-        st.rerun()
-    else:
-        st.session_state['lang_code']           = new_lang_code
-        st.session_state['_selected_lang_name'] = selected_lang
-    if selected_lang != 'English':
-        st.success(f"✅ {selected_lang} selected")
-    st.divider()
-
     st.markdown("### 👤 Farmer Profile")
     st.session_state['farmer_name']    = st.text_input("Your Name",         value=st.session_state.get('farmer_name', ''),    placeholder="e.g. Ramesh Kumar")
     st.session_state['farmer_village'] = st.text_input("Village / District", value=st.session_state.get('farmer_village', ''), placeholder="e.g. Bellary, Karnataka")
@@ -1589,17 +1556,30 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Language hint strip ───────────────────────────────────────────────────────
-_cur_lang = st.session_state.get('_selected_lang_name', 'English')
-st.markdown(f"""
-<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;
-            background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);
-            border-radius:10px;margin-bottom:8px;flex-wrap:wrap">
-  <span style="font-size:13px;color:#6B8F6B">🌐 Language:</span>
-  <span style="font-size:13px;font-weight:600;color:#22C55E">{_cur_lang}</span>
-  <span style="font-size:12px;color:#6B8F6B;margin-left:4px">← Change in the left sidebar ☰</span>
-</div>
-""", unsafe_allow_html=True)
+# ── Language selector — IN MAIN PAGE, always visible ─────────────────────────
+_lang_col, _spacer = st.columns([1, 2])
+with _lang_col:
+    _lang_options = list(LANGUAGES.keys())
+    _saved_lang   = st.session_state.get('_selected_lang_name', 'English')
+    _saved_idx    = _lang_options.index(_saved_lang) if _saved_lang in _lang_options else 0
+    _sel = st.selectbox(
+        "🌐 Language / भाषा / ಭಾಷೆ",
+        _lang_options,
+        index=_saved_idx,
+        key="lang_main",
+    )
+    _new_code = LANGUAGES[_sel]
+    _prev     = st.session_state.get('lang_code', 'en')
+    if _new_code != _prev:
+        st.session_state['lang_code']           = _new_code
+        st.session_state['_selected_lang_name'] = _sel
+        if _new_code != 'en':
+            with st.spinner(f"Loading {_sel}..."):
+                T_batch(UI_STRINGS, _new_code)
+        st.rerun()
+    else:
+        st.session_state['lang_code']           = _new_code
+        st.session_state['_selected_lang_name'] = _sel
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
