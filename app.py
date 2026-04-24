@@ -798,23 +798,17 @@ audio {
 /* ── SELECTION HIGHLIGHT ── */
 ::selection { background: rgba(34,197,94,0.25) !important; }
 
-/* ── HIDE STREAMLIT BRANDING (keep sidebar toggle!) ── */
-#MainMenu, footer, [data-testid="stToolbar"] { display: none !important; }
+/* ── HIDE STREAMLIT BRANDING (keep header + toolbar so toggle survives) ── */
+#MainMenu, footer { display: none !important; }
 
-/* ── SIDEBAR TOGGLE — always visible ── */
-[data-testid="collapsedControl"],
-button[kind="header"],
-[data-testid="stSidebarCollapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* ── SIDEBAR — force minimum width, always show ── */
-[data-testid="stSidebar"] {
-    min-width: 240px !important;
+/* ── STREAMLIT HEADER — must stay visible, it hosts the collapsed-sidebar toggle ── */
+.stApp > header,
+[data-testid="stHeader"] {
+    background: transparent !important;
     display: block !important;
     visibility: visible !important;
+    height: auto !important;
+    z-index: 100 !important;
 }
 
 /* ── LANGUAGE SELECTOR — highlight it in sidebar ── */
@@ -824,6 +818,51 @@ button[kind="header"],
 }
 </style>
 """, unsafe_allow_html=True)
+
+# ── Custom floating sidebar toggle (always visible, drives Streamlit's native collapse) ───
+import streamlit.components.v1 as _components
+_components.html("""
+<style>
+  #kisan-sb-toggle {
+    position: fixed; top: 12px; left: 12px; z-index: 2147483647;
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #111811; border: 1px solid rgba(34,197,94,0.5);
+    color: #22C55E; font-size: 22px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    font-family: system-ui, sans-serif;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #kisan-sb-toggle:hover { background: #161E16; border-color: #22C55E; }
+</style>
+<script>
+(function() {
+  const doc = window.parent.document;
+  if (doc.getElementById('kisan-sb-toggle')) return;
+  const btn = doc.createElement('button');
+  btn.id = 'kisan-sb-toggle';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Toggle sidebar');
+  btn.textContent = '\u2630';
+  btn.addEventListener('click', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    const selectors = [
+      '[data-testid="stSidebarCollapsedControl"] button',
+      '[data-testid="stSidebarCollapsedControl"]',
+      '[data-testid="stSidebarCollapseButton"] button',
+      '[data-testid="stSidebarCollapseButton"]',
+      '[data-testid="collapsedControl"]',
+      'button[kind="header"]'
+    ];
+    for (const sel of selectors) {
+      const el = doc.querySelector(sel);
+      if (el) { el.click(); return; }
+    }
+  });
+  doc.body.appendChild(btn);
+})();
+</script>
+""", height=0)
 
 # ── Sidebar — farmer profile only ────────────────────────────────────────────
 with st.sidebar:
