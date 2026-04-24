@@ -819,47 +819,51 @@ audio {
 </style>
 """, unsafe_allow_html=True)
 
-# ── Custom floating sidebar toggle (always visible, drives Streamlit's native collapse) ───
+# ── Persistent sidebar toggle — injected into parent <head> so it survives reruns ───
 import streamlit.components.v1 as _components
 _components.html("""
-<style>
-  #kisan-sb-toggle {
-    position: fixed; top: 12px; left: 12px; z-index: 2147483647;
-    width: 40px; height: 40px; border-radius: 10px;
-    background: #111811; border: 1px solid rgba(34,197,94,0.5);
-    color: #22C55E; font-size: 22px; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    font-family: system-ui, sans-serif;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  #kisan-sb-toggle:hover { background: #161E16; border-color: #22C55E; }
-</style>
 <script>
 (function() {
-  const doc = window.parent.document;
-  if (doc.getElementById('kisan-sb-toggle')) return;
-  const btn = doc.createElement('button');
-  btn.id = 'kisan-sb-toggle';
-  btn.type = 'button';
-  btn.setAttribute('aria-label', 'Toggle sidebar');
-  btn.textContent = '\u2630';
-  btn.addEventListener('click', function(e) {
-    e.preventDefault(); e.stopPropagation();
-    const selectors = [
-      '[data-testid="stSidebarCollapsedControl"] button',
-      '[data-testid="stSidebarCollapsedControl"]',
-      '[data-testid="stSidebarCollapseButton"] button',
-      '[data-testid="stSidebarCollapseButton"]',
-      '[data-testid="collapsedControl"]',
-      'button[kind="header"]'
-    ];
-    for (const sel of selectors) {
-      const el = doc.querySelector(sel);
-      if (el) { el.click(); return; }
-    }
-  });
-  doc.body.appendChild(btn);
+  var doc = window.parent.document;
+
+  // Only inject the persistent script once per page load
+  if (doc.getElementById('kisan-toggle-script')) return;
+
+  var s = doc.createElement('script');
+  s.id = 'kisan-toggle-script';
+  s.textContent = [
+    "(function() {",
+    "  var d = document;",
+
+    // Inject CSS into head once
+    "  if (!d.getElementById('kisan-toggle-style')) {",
+    "    var style = d.createElement('style');",
+    "    style.id = 'kisan-toggle-style';",
+    "    style.textContent = '#kisan-sb-btn{position:fixed;top:12px;left:12px;z-index:2147483647;width:38px;height:38px;border-radius:8px;background:#111811;border:1.5px solid rgba(34,197,94,0.6);color:#22C55E;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.6);transition:border-color .15s,background .15s}#kisan-sb-btn:hover{background:#161E16;border-color:#22C55E}';",
+    "    d.head.appendChild(style);",
+    "  }",
+
+    // Create button once, re-add if removed
+    "  function ensureBtn() {",
+    "    if (d.getElementById('kisan-sb-btn')) return;",
+    "    var btn = d.createElement('button');",
+    "    btn.id = 'kisan-sb-btn';",
+    "    btn.setAttribute('aria-label','Toggle sidebar');",
+    "    btn.innerHTML = '&#9776;';",
+    "    btn.onclick = function(e) {",
+    "      e.preventDefault(); e.stopPropagation();",
+    "      var sels = ['[data-testid=\"stSidebarCollapsedControl\"] button','[data-testid=\"stSidebarCollapsedControl\"]','[data-testid=\"stSidebarCollapseButton\"] button','[data-testid=\"stSidebarCollapseButton\"]','[data-testid=\"collapsedControl\"]'];",
+    "      for (var i=0;i<sels.length;i++) { var el=d.querySelector(sels[i]); if(el){el.click();return;} }",
+    "    };",
+    "    d.body.appendChild(btn);",
+    "  }",
+
+    // MutationObserver keeps the button alive through Streamlit reruns
+    "  ensureBtn();",
+    "  new MutationObserver(ensureBtn).observe(d.body, {childList:true, subtree:false});",
+    "})();"
+  ].join('');
+  doc.head.appendChild(s);
 })();
 </script>
 """, height=0)
