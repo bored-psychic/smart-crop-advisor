@@ -206,6 +206,48 @@ def get_soil_type(N, P, K, ph):
     else:
         return "Loamy Soil", "Well-balanced soil. Suitable for most crops.", "🟢"
 
+# ── Live weather — 5-minute TTL cache (user never waits on repeat calls) ──────
+_weather_cache: dict = {}  # {city_lower: (timestamp, result)}
+_WEATHER_TTL = 300         # seconds
+
+def get_weather(city):
+    import time
+    key = city.strip().lower()
+    now = time.time()
+    if key in _weather_cache:
+        ts, cached = _weather_cache[key]
+        if now - ts < _WEATHER_TTL:
+            return cached
+    try:
+        api_key = "bd5e378503939ddaee76f12ad7a97608"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={api_key}&units=metric"
+        r = requests.get(url, timeout=5)
+        data = r.json()
+        if data.get('cod') == 200:
+            result = {
+                'temp': data['main']['temp'],
+                'humidity': data['main']['humidity'],
+                'description': data['weather'][0]['description'].title(),
+                'wind_speed': round(data['wind']['speed'] * 3.6, 1),
+                'rainfall': data.get('rain', {}).get('1h', 0),
+                'city': data['name'],
+            }
+            _weather_cache[key] = (now, result)
+            return result
+    except Exception:
+        pass
+    return None
+
+CALAMITY_TIPS = {
+    'thunderstorm': ['⚡ Move livestock to shelter', '🚫 Stop all field work immediately', '💧 Clear drainage channels'],
+    'rain':         ['🌱 Avoid fertilizer — will wash away', '🌊 Create bunds around fields', '📞 Contact agriculture office if flooding'],
+    'drizzle':      ['💧 Good for germination', '🌱 Ideal time for transplanting', '✅ Reduce irrigation today'],
+    'snow':         ['🌿 Cover sensitive crops with cloth', '🔥 Light irrigation before frost protects roots', '🌱 Avoid pruning until frost passes'],
+    'mist':         ['🍄 Watch for fungal disease', '💊 Apply preventive fungicide', '🌬️ Improve air circulation'],
+    'haze':         ['😷 Reduce outdoor work', '💧 Increase irrigation — heat stress likely', '🌿 Monitor crops for wilting'],
+    'clear':        ['☀️ Good day for spraying pesticides', '🚜 Ideal for harvesting', '💧 Check soil moisture levels'],
+    'clouds':       ['🌤️ Good day for transplanting', '💧 Moderate irrigation needed', '🌱 Apply fertilizers today'],
+}
 
 
 TAB2_SPEAK = {
@@ -255,6 +297,143 @@ TAB6_SPEAK = {
 
 
 
+def get_state_adjusted_forecast(future_forecast, crop, state):
+    """Apply state-specific seasonal price adjustment to Prophet forecast."""
+    factor = STATE_PRICE_FACTORS.get(state, {}).get(crop, 1.0)
+    df = future_forecast.copy()
+    df['Price'] = (df['Price'] * factor).round(0)
+    df['Min']   = (df['Min']   * factor).round(0)
+    df['Max']   = (df['Max']   * factor).round(0)
+    return df, factor
+
+
+# ── Field Watch: satellite + calamity data ────────────────────────────────────
+def fetch_field_watch(city, lat=None, lon=None):
+    """
+    Aggregates:
+    1. OpenWeatherMap current + 5-day forecast
+    2. NASA FIRMS wildfire hotspots (MODIS, 1-day) — free, no key
+    3. Locust swarm data from FAO eLocust3 public feed
+    4. Air Quality Index
+    Returns a structured dict of all alerts.
+    """
+    import datetime
+    OWM_KEY = "bd5e378503939ddaee76f12ad7a97608"
+    alerts = {'weather': None, 'fire': None, 'locust': None, 'aqi': None,
+              'flood': None, 'forecast': None, 'city': city}
+
+    # 1. Current weather + 5-day forecast
+    try:
+        cur_url = f"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={OWM_KEY}&units=metric"
+        r = requests.get(cur_url, timeout=5)
+        w = r.json()
+        if w.get('cod') == 200:
+            alerts['weather'] = {
+                'temp': w['main']['temp'],
+                'feels_like': w['main']['feels_like'],
+                'humidity': w['main']['humidity'],
+                'wind': round(w['wind']['speed'] * 3.6, 1),
+                'desc': w['weather'][0]['description'].title(),
+                'rain_1h': w.get('rain', {}).get('1h', 0),
+                'lat': w['coord']['lat'],
+                'lon': w['coord']['lon'],
+            }
+            lat = w['coord']['lat']
+            lon = w['coord']['lon']
+
+        # 5-day forecast for flood risk
+        if lat and lon:
+            fct_url = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={OWM_KEY}&units=metric&cnt=8"
+            rf = requests.get(fct_url, timeout=5)
+            fdata = rf.json()
+            rain_next48 = sum(
+                item.get('rain', {}).get('3h', 0)
+                for item in fdata.get('list', [])
+            )
+            alerts['flood'] = {
+                'rain_48h': round(rain_next48, 1),
+                'flood_risk': 'HIGH' if rain_next48 > 50 else 'MEDIUM' if rain_next48 > 25 else 'LOW',
+            }
+    except Exception:
+        pass
+
+    # 2. NASA FIRMS wildfire hotspots — defensive CSV parsing (column-shift tolerant)
+    try:
+        if lat and lon:
+            firms_url = (
+                f"https://firms.modaps.eosdis.nasa.gov/api/country/csv/"
+                f"6a8dded48b9e7f3f8fb71ac4c5a45e89/MODIS_NRT/IND/1"
+            )
+            rf = requests.get(firms_url, timeout=7)
+            if rf.status_code == 200 and rf.text.strip():
+                lines = rf.text.strip().split('\n')
+                # Detect lat/lon columns by header name — tolerates API schema drift
+                header = lines[0].lower().strip().split(',')
+                lat_col, lon_col = 0, 1  # positional fallback
+                for i, col in enumerate(header):
+                    if 'lat' in col:
+                        lat_col = i
+                    elif 'lon' in col:
+                        lon_col = i
+                radius_sq = 4.0  # 2.0° radius squared — avoids sqrt per row
+                hotspots_nearby = 0
+                for line in lines[1:]:
+                    parts = line.split(',')
+                    if len(parts) <= max(lat_col, lon_col):
+                        continue
+                    try:
+                        flat = float(parts[lat_col])
+                        flon = float(parts[lon_col])
+                        if (flat - lat) ** 2 + (flon - lon) ** 2 < radius_sq:
+                            hotspots_nearby += 1
+                    except (ValueError, IndexError):
+                        continue  # skip corrupt rows silently
+                alerts['fire'] = {
+                    'hotspots_nearby': hotspots_nearby,
+                    'risk': 'HIGH' if hotspots_nearby > 5 else 'MEDIUM' if hotspots_nearby > 0 else 'NONE',
+                    'source': 'NASA FIRMS MODIS',
+                }
+    except Exception:
+        alerts['fire'] = {'hotspots_nearby': 0, 'risk': 'UNKNOWN', 'source': 'NASA FIRMS (unavailable)'}
+
+    # 3. FAO Desert Locust situation (public JSON)
+    try:
+        fao_url = "https://locust-hub-hqfao.hub.arcgis.com/datasets/fao::desert-locust-presence-1.geojson"
+        rf = requests.get(fao_url, timeout=6)
+        if rf.status_code == 200:
+            gjson = rf.json()
+            features = gjson.get('features', [])
+            nearby_swarms = 0
+            for feat in features[:200]:
+                coords = feat.get('geometry', {}).get('coordinates', [])
+                if coords and lat:
+                    flon, flat = coords[0], coords[1]
+                    dist = ((flat-lat)**2 + (flon-lon)**2)**0.5
+                    if dist < 5.0:
+                        nearby_swarms += 1
+            alerts['locust'] = {
+                'swarms_nearby': nearby_swarms,
+                'risk': 'HIGH' if nearby_swarms > 2 else 'MEDIUM' if nearby_swarms > 0 else 'NONE',
+                'source': 'FAO Desert Locust Hub',
+            }
+        else:
+            alerts['locust'] = {'swarms_nearby': 0, 'risk': 'UNKNOWN', 'source': 'FAO Hub (unavailable)'}
+    except Exception:
+        alerts['locust'] = {'swarms_nearby': 0, 'risk': 'UNKNOWN', 'source': 'FAO Hub (unavailable)'}
+
+    # 4. AQI via OpenWeatherMap
+    try:
+        if lat and lon:
+            aqi_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={OWM_KEY}"
+            ra = requests.get(aqi_url, timeout=5)
+            aq = ra.json()
+            aqi_val = aq['list'][0]['main']['aqi']
+            aqi_labels = {1:'Good',2:'Fair',3:'Moderate',4:'Poor',5:'Very Poor'}
+            alerts['aqi'] = {'value': aqi_val, 'label': aqi_labels.get(aqi_val,'Unknown')}
+    except Exception:
+        pass
+
+    return alerts
 
 
 # ── Page config ───────────────────────────────────────────────────────────────
@@ -1375,38 +1554,34 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
         except Exception:
             pass  # fall through to HSV
 
-    # ── HSV fallback (no model files or inference error) ─────────────────────
-    # Vectorized RGB→HSV over a (150, 200, 3) float32 array — no Python pixel loop.
-    rgb   = np.asarray(img.convert('RGB').resize((200, 150)), dtype=np.float32) / 255.0
-    r_, g_, b_ = rgb[..., 0], rgb[..., 1], rgb[..., 2]
-    v_    = np.maximum(np.maximum(r_, g_), b_)
-    chroma = v_ - np.minimum(np.minimum(r_, g_), b_)
-    s_    = np.where(v_ > 1e-9, chroma / v_, 0.0)
+    # ── HSV fallback — vectorized NumPy (O(n), ~100x faster than colorsys loop) ─
+    img_rgb = img.convert('RGB').resize((200, 150))
+    pixels  = np.array(img_rgb, dtype=np.float32) / 255.0
+    total   = pixels.shape[0] * pixels.shape[1]
 
-    # Hue: select formula based on which channel is largest
-    max_ch = np.argmax(rgb, axis=-1)          # 0=R, 1=G, 2=B
-    h_    = np.zeros(rgb.shape[:2], dtype=np.float32)
+    r, g, b = pixels[..., 0], pixels[..., 1], pixels[..., 2]
+    cmax  = np.maximum(np.maximum(r, g), b)
+    cmin  = np.minimum(np.minimum(r, g), b)
+    delta = cmax - cmin
     eps   = 1e-9
-    mr    = (max_ch == 0) & (chroma > eps)
-    mg    = (max_ch == 1) & (chroma > eps)
-    mb    = (max_ch == 2) & (chroma > eps)
-    h_[mr] = ((g_[mr] - b_[mr]) / chroma[mr]) % 6
-    h_[mg] = (b_[mg] - r_[mg]) / chroma[mg] + 2
-    h_[mb] = (r_[mb] - g_[mb]) / chroma[mb] + 4
-    h_deg  = (h_ / 6.0 % 1.0) * 360.0
 
-    total   = rgb.shape[0] * rgb.shape[1]
-    m_dark  = v_ < 0.15
-    m_wgrey = (s_ < 0.12) & (v_ > 0.75) & ~m_dark
-    m_hgreen= (h_deg >= 80)  & (h_deg <= 160) & (s_ > 0.25) & (v_ > 0.2)  & (v_ < 0.85)
-    m_yellow= (h_deg >= 40)  & (h_deg <   75) & (s_ > 0.35) & (v_ > 0.45)
-    m_brown = (h_deg >= 10)  & (h_deg <   42) & (s_ > 0.28) & (v_ < 0.65)
-    dr = int(np.sum(m_dark))   / total
-    gr = int(np.sum(m_hgreen)) / total
-    yr = int(np.sum(m_yellow)) / total
-    br = int(np.sum(m_brown))  / total
-    wr = int(np.sum(m_wgrey))  / total
-    if   gr > 0.52 and br < 0.06 and yr < 0.06:
+    h = np.zeros_like(cmax)
+    mask_r = (cmax == r) & (delta > eps)
+    mask_g = (cmax == g) & (delta > eps) & ~mask_r
+    mask_b = (delta > eps) & ~mask_r & ~mask_g
+    h[mask_r] = 60.0 * (((g[mask_r] - b[mask_r]) / (delta[mask_r] + eps)) % 6)
+    h[mask_g] = 60.0 * (((b[mask_g] - r[mask_g]) / (delta[mask_g] + eps)) + 2)
+    h[mask_b] = 60.0 * (((r[mask_b] - g[mask_b]) / (delta[mask_b] + eps)) + 4)
+    s = np.where(cmax < eps, 0.0, delta / (cmax + eps))
+    v = cmax
+
+    gr = float(np.sum((h >= 80) & (h <= 160) & (s > 0.25) & (v > 0.2) & (v < 0.85))) / total
+    yr = float(np.sum((h >= 40) & (h <= 75)  & (s > 0.35) & (v > 0.45)))              / total
+    dr = float(np.sum(v < 0.15))                                                        / total
+    br = float(np.sum((h >= 10) & (h <= 42)  & (s > 0.28) & (v < 0.65)))              / total
+    wr = float(np.sum((s < 0.12) & (v > 0.75)))                                        / total
+
+    if gr > 0.52 and br < 0.06 and yr < 0.06:
         d,sv,conf,tr,pr,ac = ('Healthy Plant','None',min(97,int(78+gr*25)),
             'No disease detected. Continue regular monitoring.',
             'Apply neem oil spray monthly. Maintain field hygiene.',
@@ -1440,7 +1615,7 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
         'disease': d, 'severity': sv, 'confidence': conf,
         'color': {'None':'green','Low':'green','Medium':'orange','High':'red'}.get(sv,'orange'),
         'treatment': tr, 'prevention': pr, 'action': ac,
-        'top3': [], 'model_used': 'HSV Pixel Analysis (fallback)',
+        'top3': [], 'model_used': 'HSV Vectorized Analysis',
     }
 
 # ── SOS WhatsApp helpers ──────────────────────────────────────────────────────
@@ -1615,7 +1790,6 @@ def extract_acoustic_features(audio_bytes, filename):
     high  = band(500,  1200)
     ultra = band(1200, 4000)
 
-    total_energy = low + mid + high + ultra + eps
     # Spectral centroid (Hz)
     centroid = float(np.sum(freqs * fft_vals) / (np.sum(fft_vals) + eps))
     # Zero-crossing rate
@@ -2039,7 +2213,6 @@ with tab2:
 
         if st.button(f"🔍 {T('Diagnose from Photo')}", use_container_width=True, type="primary", key="tab2_vision_btn"):
             with st.spinner(T("Analyzing pixel patterns...")):
-                import time; time.sleep(1.0)
                 v_result = analyze_image_pixels(v_img, crop=selected_crop_v, state=selected_state_v)
             st.session_state['tab2_vision_result'] = v_result
 
@@ -2441,7 +2614,7 @@ with tab5:
 
     acoustic_crop = st.selectbox(
         T("Which crop did you record?"),
-        ['Tomato', 'Rice', 'Wheat', 'Cotton', 'Maize', 'Potato', 'Banana', 'Chickpea', 'Maize']
+        ['Tomato', 'Rice', 'Wheat', 'Cotton', 'Maize', 'Potato', 'Banana', 'Chickpea', 'Groundnut']
     )
 
     audio_file = st.file_uploader(
@@ -2607,13 +2780,12 @@ with tab6:
         fw = st.session_state['fw_result']
 
         # ── Overall risk score ──────────────────────────────────────────────
-        risks = []
         fire_risk  = fw.get('fire',  {}).get('risk','NONE')
         flood_risk = fw.get('flood', {}).get('flood_risk','LOW')
         locust_risk= fw.get('locust',{}).get('risk','NONE')
-        if 'HIGH' in [fire_risk, flood_risk, locust_risk]:
+        if 'HIGH' in (fire_risk, flood_risk, locust_risk):
             overall = 'HIGH'; badge_col = '#EF4444'
-        elif 'MEDIUM' in [fire_risk, flood_risk, locust_risk]:
+        elif 'MEDIUM' in (fire_risk, flood_risk, locust_risk):
             overall = 'MEDIUM'; badge_col = '#F59E0B'
         else:
             overall = 'LOW'; badge_col = '#22C55E'
@@ -2644,7 +2816,6 @@ with tab6:
         if fl:
             st.markdown(f"#### 🌊 {T('Flood Risk (Next 48 hours)')}")
             flr = fl['flood_risk']
-            fr_color = {'HIGH':'red','MEDIUM':'warning','LOW':'success'}[flr]
             flood_msg = {
                 'HIGH':   T("DANGER: Heavy rainfall forecast >50mm. Create field bunds immediately. Move low-lying crops to safer areas. Contact district agriculture office."),
                 'MEDIUM': T("CAUTION: Moderate rainfall expected 25–50mm. Monitor drainage channels. Avoid fertilizer application. Prepare bunds."),

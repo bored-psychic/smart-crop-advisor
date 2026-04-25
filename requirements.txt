@@ -1,3 +1,4 @@
+# ── Core ML ──────────────────────────────────────
 streamlit
 scikit-learn
 numpy
@@ -5,9 +6,18 @@ pandas
 pillow
 prophet
 pystan
+scipy
+
+# ── Translation / Speech ────────────────────────
 requests
 httpx
 deep-translator
 gtts
-scipy
- 
+
+# ── FastAPI Backend ─────────────────────────────
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-dotenv
+httpx
+python-multipart
