@@ -9,120 +9,15 @@ from backend_client import (
     get_weather, get_live_mandi_price, fetch_field_watch,
     get_state_adjusted_forecast, CALAMITY_TIPS, INDIA_STATES, STATE_PRICE_FACTORS,
 )
+from core.language import (
+    T, activate, LANGUAGES,
+    TAB1_INSTRUCTIONS, TAB2_INSTRUCTIONS, TAB3_INSTRUCTIONS, TAB4_INSTRUCTIONS,
+    TAB2_SPEAK, TAB3_SPEAK, TAB5_SPEAK, TAB6_SPEAK,
+)
 
-# ── Language support ──────────────────────────────────────────────────────────
-LANGUAGES = {
-    'English': 'en',
-    'हिंदी (Hindi)': 'hi',
-    'తెలుగు (Telugu)': 'te',
-    'தமிழ் (Tamil)': 'ta',
-    'ಕನ್ನಡ (Kannada)': 'kn',
-    'मराठी (Marathi)': 'mr',
-    'বাংলা (Bengali)': 'bn',
-    'ગુજરાતી (Gujarati)': 'gu',
-    'ਪੰਜਾਬੀ (Punjabi)': 'pa',
-}
-
-def T(text):
-    """
-    Translate text to the selected language.
-    Uses session-state cache — each unique string is translated only once per session.
-    This prevents rate-limiting from repeated GoogleTranslator calls on every render.
-    """
-    lang = st.session_state.get('lang_code', 'en')
-    if lang == 'en' or not text:
-        return text
-    cache_key = f'_tcache_{lang}'
-    if cache_key not in st.session_state:
-        st.session_state[cache_key] = {}
-    cache = st.session_state[cache_key]
-    text_str = str(text)
-    if text_str in cache:
-        return cache[text_str]
-    try:
-        from deep_translator import GoogleTranslator
-        result = GoogleTranslator(source='en', target=lang).translate(text_str)
-        cache[text_str] = result if result else text_str
-        return cache[text_str]
-    except Exception:
-        cache[text_str] = text_str
-        return text_str
-
-
-def T_batch(strings: list, lang: str) -> dict:
-    """
-    Translate a list of strings in bulk, returning {original: translated}.
-    Called once when the language changes to pre-populate the cache.
-    """
-    if lang == 'en':
-        return {s: s for s in strings}
-    cache_key = f'_tcache_{lang}'
-    if cache_key not in st.session_state:
-        st.session_state[cache_key] = {}
-    cache = st.session_state[cache_key]
-    # Only translate strings not yet in cache
-    to_translate = [s for s in strings if str(s) not in cache]
-    if to_translate:
-        try:
-            from deep_translator import GoogleTranslator
-            translator = GoogleTranslator(source='en', target=lang)
-            for s in to_translate:
-                try:
-                    result = translator.translate(str(s))
-                    cache[str(s)] = result if result else str(s)
-                except Exception:
-                    cache[str(s)] = str(s)
-        except Exception:
-            for s in to_translate:
-                cache[str(s)] = str(s)
-    return cache
-
-
-# All static UI strings — pre-translated when language changes
-UI_STRINGS = [
-    "Crop Recommender", "Disease + Vision", "Market Prices", "Irrigation",
-    "Acoustic", "Field Watch", "Find the best crop for your field",
-    "Enter your soil and climate details below.", "Read Instructions Aloud",
-    "Soil Nutrients", "Climate Conditions", "Nitrogen (N) — kg/ha",
-    "Phosphorus (P) — kg/ha", "Potassium (K) — kg/ha", "Soil pH",
-    "Temperature (°C)", "Humidity (%)", "Rainfall (mm)",
-    "Get Crop Recommendation", "Best Crop", "confidence", "Tip",
-    "Detected Soil Type", "Soil Advice", "Read Result Aloud", "Other Options",
-    "Confidence Across Top 8 Crops", "Your Input Summary", "Parameter", "Value",
-    "Crop Disease & Vision AI",
-    "Upload a photo of your crop for instant AI diagnosis — or use the symptom checker below.",
-    "Method 1 — Photo Diagnosis (Recommended)", "Method 2 — Symptom Checker",
-    "Select Crop for Diagnosis", "Upload leaf / stem / fruit photo",
-    "Diagnose from Photo", "AI Confidence", "Treatment", "Prevention",
-    "Vision AI Detected", "Detected", "Share on WhatsApp",
-    "Use this if you cannot take a photo or want to confirm a diagnosis.",
-    "Crop", "Symptom observed", "Diagnose by Symptom",
-    "Live Mandi Prices",
-    "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.",
-    "Read Instructions", "Your State", "Forecast horizon (days)",
-    "Get Live Price + Forecast", "Best Price", "Lowest Price", "Avg / 30d",
-    "Wait to sell", "Sell now", "Read Market Advice", "Price Forecast Chart",
-    "Full Forecast Table", "Smart Irrigation & Fertilizer Advisor",
-    "Get precise water and fertilizer recommendations based on your crop and weather.",
-    "Live Weather (Auto-fill)", "Enter your city name", "Temp", "Humidity",
-    "Wind", "Rain 1h", "Crop Details", "Growth Stage", "Field Area (acres)",
-    "Rainfall in last 3 days (mm)", "Today Weather", "Get Irrigation Advice",
-    "Water Need", "Net Irrigation", "Total Water", "for", "acre(s)",
-    "No irrigation needed today!", "Recent rainfall is sufficient.",
-    "Light irrigation recommended", "Apply", "Irrigation urgently needed",
-    "Fertilizer Recommendation", "Acoustic Pest Detector",
-    "Which crop did you record?", "Upload field audio recording",
-    "Analyze for Pests", "Detection Confidence", "Dominant Frequency",
-    "Signal Energy", "Spectral Pattern", "Risk Level", "Recommended Action",
-    "Share Pest Alert on WhatsApp", "Read Result Aloud",
-    "Field Watch — Satellite Intelligence",
-    "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place.",
-    "Your City / Nearest Town", "WhatsApp numbers to notify (one per line, with 91)",
-    "Farmer Name", "Your Crop", "Scan My Field Now", "Overall Field Risk",
-    "Current Weather", "Flood Risk (Next 48 hours)", "Wildfire / Field Fire Alert",
-    "Desert Locust Alert", "Air Quality", "Read Field Alert Summary",
-    "Send Field Alert to Contacts", "Emergency Helplines",
-]
+# Activate the correct language bundle for this Streamlit run.
+# T() is now a pure dict lookup — no network, no session-state cache needed.
+activate(st.session_state.get('lang_code', 'en'))
 
 def speak(text, lang_code='en'):
     try:
@@ -1894,16 +1789,10 @@ with _lang_col:
     )
     _new_code = LANGUAGES[_sel]
     _prev     = st.session_state.get('lang_code', 'en')
+    st.session_state['lang_code']           = _new_code
+    st.session_state['_selected_lang_name'] = _sel
     if _new_code != _prev:
-        st.session_state['lang_code']           = _new_code
-        st.session_state['_selected_lang_name'] = _sel
-        if _new_code != 'en':
-            with st.spinner(f"Loading {_sel}..."):
-                T_batch(UI_STRINGS, _new_code)
-        st.rerun()
-    else:
-        st.session_state['lang_code']           = _new_code
-        st.session_state['_selected_lang_name'] = _sel
+        st.rerun()  # rerun re-calls activate() at the top — instant, no spinner needed
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
