@@ -6,6 +6,7 @@ pillow
 prophet
 pystan
 requests
+httpx
 deep-translator
 gtts
 scipy
