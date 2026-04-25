@@ -3,9 +3,12 @@ import pickle
 import numpy as np
 import pandas as pd
 import json
-import requests
 import base64
 from io import BytesIO
+from backend_client import (
+    get_weather, get_live_mandi_price, fetch_field_watch,
+    get_state_adjusted_forecast, CALAMITY_TIPS, INDIA_STATES, STATE_PRICE_FACTORS,
+)
 
 # ── Language support ──────────────────────────────────────────────────────────
 LANGUAGES = {
@@ -292,79 +295,6 @@ TAB6_SPEAK = {
     'pa': "ਇਹ ਤੁਹਾਡਾ ਫੀਲਡ ਵਾਚ ਹੈ। ਇਹ ਤੁਹਾਡੀ ਜਗ੍ਹਾ ਲਈ ਲਾਈਵ ਸੈਟੇਲਾਈਟ ਮੌਸਮ, ਜੰਗਲੀ ਅੱਗ, ਹੜ੍ਹ ਚੇਤਾਵਨੀ ਅਤੇ ਟਿੱਡੀ ਦਲ ਡੇਟਾ ਜਾਂਚਦਾ ਹੈ।",
 }
 
-# Agmarknet state→mandi_code mapping + crop price calibration
-INDIA_STATES = [
-    "Andhra Pradesh","Assam","Bihar","Chhattisgarh","Gujarat","Haryana",
-    "Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh",
-    "Maharashtra","Odisha","Punjab","Rajasthan","Tamil Nadu","Telangana",
-    "Uttar Pradesh","Uttarakhand","West Bengal",
-]
-
-# State-crop seasonal price adjustment factors (vs national baseline)
-# Based on APMC seasonal patterns from Agmarknet historical data
-STATE_PRICE_FACTORS = {
-    "Punjab":          {"Wheat":1.08,"Rice":1.05,"Maize":0.98,"Cotton":1.02,"Potato":0.94},
-    "Haryana":         {"Wheat":1.06,"Rice":1.03,"Maize":0.97,"Cotton":1.01,"Potato":0.95},
-    "Uttar Pradesh":   {"Wheat":1.04,"Rice":1.02,"Maize":1.00,"Sugarcane":1.10,"Potato":1.12},
-    "Maharashtra":     {"Cotton":1.15,"Onion":1.20,"Soybean":1.08,"Grape":1.25,"Orange":1.18},
-    "Karnataka":       {"Coffee":1.22,"Cotton":1.10,"Maize":1.05,"Tomato":1.08,"Mango":1.15},
-    "Andhra Pradesh":  {"Rice":1.06,"Cotton":1.08,"Chilli":1.30,"Maize":1.04,"Tomato":1.10},
-    "Telangana":       {"Rice":1.04,"Cotton":1.09,"Maize":1.06,"Tomato":1.12,"Soybean":1.07},
-    "Tamil Nadu":      {"Rice":1.07,"Banana":1.18,"Coconut":1.22,"Cotton":1.05,"Groundnut":1.15},
-    "Gujarat":         {"Cotton":1.12,"Groundnut":1.18,"Cumin":1.35,"Castor":1.20,"Wheat":1.02},
-    "Madhya Pradesh":  {"Soybean":1.14,"Wheat":1.05,"Chickpea":1.10,"Maize":1.02,"Tomato":0.98},
-    "Rajasthan":       {"Wheat":1.03,"Mustard":1.15,"Cumin":1.28,"Barley":1.08,"Cotton":1.06},
-    "West Bengal":     {"Rice":1.08,"Potato":1.15,"Jute":1.25,"Banana":1.10,"Mustard":1.12},
-    "Bihar":           {"Rice":1.05,"Wheat":1.03,"Maize":1.08,"Potato":1.18,"Litchi":1.40},
-    "Odisha":          {"Rice":1.06,"Potato":1.10,"Tomato":1.05,"Banana":1.08,"Jute":1.15},
-    "Kerala":          {"Coconut":1.30,"Rubber":1.45,"Banana":1.20,"Pepper":1.50,"Cardamom":1.60},
-}
-
-def get_live_mandi_price(crop, state):
-    """
-    Fetch live Agmarknet price via data.gov.in API.
-    Falls back to calibrated Prophet forecast + state adjustment if API unavailable.
-    Returns: {today_price, week_avg, month_avg, trend, state_factor, source}
-    """
-    import datetime
-    today = datetime.date.today()
-
-    # Try data.gov.in Agmarknet API (free, no key needed)
-    try:
-        crop_clean = crop.replace(' ','%20')
-        state_clean = state.replace(' ','%20')
-        url = (
-            f"https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
-            f"?api-key=579b464db66ec23bdd000001cdd3946e44ce4aab825747b0bc4f6e0d"
-            f"&format=json&limit=10"
-            f"&filters%5Bcommodity%5D={crop_clean}"
-            f"&filters%5Bstate%5D={state_clean}"
-        )
-        r = requests.get(url, timeout=6)
-        data = r.json()
-        records = data.get('records', [])
-        if records:
-            prices = []
-            for rec in records:
-                try:
-                    prices.append(float(rec.get('modal_price', 0) or rec.get('max_price', 0)))
-                except:
-                    pass
-            if prices:
-                today_price = sum(prices) / len(prices)
-                state_f = STATE_PRICE_FACTORS.get(state, {}).get(crop, 1.0)
-                return {
-                    'today_price': round(today_price, 0),
-                    'source': 'Agmarknet Live',
-                    'mandis_checked': len(prices),
-                    'state_factor': state_f,
-                    'live': True,
-                }
-    except Exception:
-        pass
-
-    # Fallback: Prophet model + state calibration
-    return None
 
 
 def get_state_adjusted_forecast(future_forecast, crop, state):
@@ -819,23 +749,17 @@ audio {
 /* ── SELECTION HIGHLIGHT ── */
 ::selection { background: rgba(34,197,94,0.25) !important; }
 
-/* ── HIDE STREAMLIT BRANDING (keep sidebar toggle!) ── */
-#MainMenu, footer, [data-testid="stToolbar"] { display: none !important; }
+/* ── HIDE STREAMLIT BRANDING (keep header + toolbar so toggle survives) ── */
+#MainMenu, footer { display: none !important; }
 
-/* ── SIDEBAR TOGGLE — always visible ── */
-[data-testid="collapsedControl"],
-button[kind="header"],
-[data-testid="stSidebarCollapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* ── SIDEBAR — force minimum width, always show ── */
-[data-testid="stSidebar"] {
-    min-width: 240px !important;
+/* ── STREAMLIT HEADER — must stay visible, it hosts the collapsed-sidebar toggle ── */
+.stApp > header,
+[data-testid="stHeader"] {
+    background: transparent !important;
     display: block !important;
     visibility: visible !important;
+    height: auto !important;
+    z-index: 100 !important;
 }
 
 /* ── LANGUAGE SELECTOR — highlight it in sidebar ── */
@@ -845,6 +769,55 @@ button[kind="header"],
 }
 </style>
 """, unsafe_allow_html=True)
+
+# ── Persistent sidebar toggle — injected into parent <head> so it survives reruns ───
+import streamlit.components.v1 as _components
+_components.html("""
+<script>
+(function() {
+  var doc = window.parent.document;
+
+  // Only inject the persistent script once per page load
+  if (doc.getElementById('kisan-toggle-script')) return;
+
+  var s = doc.createElement('script');
+  s.id = 'kisan-toggle-script';
+  s.textContent = [
+    "(function() {",
+    "  var d = document;",
+
+    // Inject CSS into head once
+    "  if (!d.getElementById('kisan-toggle-style')) {",
+    "    var style = d.createElement('style');",
+    "    style.id = 'kisan-toggle-style';",
+    "    style.textContent = '#kisan-sb-btn{position:fixed;top:12px;left:12px;z-index:2147483647;width:38px;height:38px;border-radius:8px;background:#111811;border:1.5px solid rgba(34,197,94,0.6);color:#22C55E;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.6);transition:border-color .15s,background .15s}#kisan-sb-btn:hover{background:#161E16;border-color:#22C55E}';",
+    "    d.head.appendChild(style);",
+    "  }",
+
+    // Create button once, re-add if removed
+    "  function ensureBtn() {",
+    "    if (d.getElementById('kisan-sb-btn')) return;",
+    "    var btn = d.createElement('button');",
+    "    btn.id = 'kisan-sb-btn';",
+    "    btn.setAttribute('aria-label','Toggle sidebar');",
+    "    btn.innerHTML = '&#9776;';",
+    "    btn.onclick = function(e) {",
+    "      e.preventDefault(); e.stopPropagation();",
+    "      var sels = ['[data-testid=\"stSidebarCollapsedControl\"] button','[data-testid=\"stSidebarCollapsedControl\"]','[data-testid=\"stSidebarCollapseButton\"] button','[data-testid=\"stSidebarCollapseButton\"]','[data-testid=\"collapsedControl\"]'];",
+    "      for (var i=0;i<sels.length;i++) { var el=d.querySelector(sels[i]); if(el){el.click();return;} }",
+    "    };",
+    "    d.body.appendChild(btn);",
+    "  }",
+
+    // MutationObserver keeps the button alive through Streamlit reruns
+    "  ensureBtn();",
+    "  new MutationObserver(ensureBtn).observe(d.body, {childList:true, subtree:false});",
+    "})();"
+  ].join('');
+  doc.head.appendChild(s);
+})();
+</script>
+""", height=0)
 
 # ── Sidebar — farmer profile only ────────────────────────────────────────────
 with st.sidebar:
@@ -1131,6 +1104,200 @@ DISEASE_META = {
         'prevention': 'Monitor fields from flowering. Resistant varieties.',
         'action': '⚠️ Can destroy entire crop. Spray at first pustule.'
     },
+    # Rice specialist outputs ('blast' / 'brown spot' / 'leaf smut')
+    # NOTE: keys must be substrings of the specialist class name after underscore→space transform.
+    # 'rice leaf blast' and 'rice neck blast' already exist above for the general model;
+    # the specialist outputs the bare label 'blast', which falls through those longer keys.
+    'blast': {
+        'severity': 'High', 'treatment': 'Tricyclazole 75% WP @ 0.6 g/L. Spray at booting stage.',
+        'prevention': 'Blast-resistant varieties. Avoid excess nitrogen. Healthy certified seed.',
+        'action': '⚠️ Critical window: spray at booting. Yield loss severe if untreated.',
+    },
+    'brown spot': {
+        'severity': 'Medium', 'treatment': 'Mancozeb 75% WP @ 2 g/L or Iprodione @ 1 g/L.',
+        'prevention': 'Balanced potassium nutrition. Healthy certified seed.',
+        'action': 'Apply at tillering. Check potassium deficiency as a co-factor.',
+    },
+    'leaf smut': {
+        'severity': 'Low', 'treatment': 'Propiconazole 25% EC @ 1 ml/L at panicle initiation.',
+        'prevention': 'Use smut-free certified seed. Seed treatment with Carboxin.',
+        'action': 'Low severity — monitor yield impact before committing to spray.',
+    },
+    # Maize specialist outputs ('common rust' / 'gray leaf spot' / 'northern leaf blight')
+    # 'corn common rust', 'corn cercospora leaf spot', 'corn northern leaf blight' exist above
+    # but their keys are too long to match the bare specialist output labels.
+    'common rust': {
+        'severity': 'Medium', 'treatment': 'Mancozeb 75% WP @ 2 g/L or Azoxystrobin @ 1 ml/L.',
+        'prevention': 'Rust-resistant hybrids. Early planting to escape peak rust season.',
+        'action': 'Spray at first pustule appearance. Most effective before tasseling.',
+    },
+    'gray leaf spot': {
+        'severity': 'Medium', 'treatment': 'Azoxystrobin 23% SC @ 1 ml/L or Propiconazole 25% EC @ 1 ml/L.',
+        'prevention': 'Resistant hybrids. Crop rotation. Reduce crop residue.',
+        'action': 'Apply fungicide before tasseling for best canopy protection.',
+    },
+    'northern leaf blight': {
+        'severity': 'Medium', 'treatment': 'Propiconazole 25% EC @ 1 ml/L at early lesion stage.',
+        'prevention': 'Resistant varieties. Crop rotation. Remove infected crop debris.',
+        'action': 'Fungicide most effective before lesions reach the upper canopy.',
+    },
+    # Chickpea / Pulse specialist outputs
+    # 'fusarium wilt' MUST appear before 'wilt' — 'wilt' is a substring of 'fusarium wilt'
+    'fusarium wilt': {
+        'severity': 'High',
+        'treatment': 'No effective in-season chemical cure. Drench soil around stem base with '
+                     'Carbendazim 50% WP @ 1 g/L. Apply Trichoderma viride @ 4 g/kg seed '
+                     'for next season.',
+        'prevention': 'Use wilt-resistant varieties. Trichoderma seed treatment. '
+                      'Long crop rotation (3–4 years) with non-host crops.',
+        'action': '⚠️ Uproot and destroy wilted plants to prevent soil inoculum build-up.',
+    },
+    'ascochyta blight': {
+        'severity': 'High',
+        'treatment': 'Mancozeb 75% WP @ 2.5 g/L or Chlorothalonil 75% WP @ 2 g/L every 10 days.',
+        'prevention': 'Use blight-tolerant varieties. Avoid overhead irrigation. Certified seed.',
+        'action': '⚠️ Spreads rapidly in cool humid weather. Spray at first spot appearance.',
+    },
+    'dry root rot': {
+        'severity': 'High',
+        'treatment': 'No in-season chemical cure. Remove affected plants. '
+                     'Trichoderma harzianum soil application @ 2.5 kg/ha.',
+        'prevention': 'Avoid water stress. Good drainage. Deep summer ploughing. '
+                      'Seed treatment with Thiram 75% WP @ 3 g/kg.',
+        'action': 'Remove and destroy affected plants. Do not replant the same crop in infected soil.',
+    },
+    # Pigeonpea / Lentil specialist outputs
+    'sterility mosaic': {
+        'severity': 'High',
+        'treatment': 'No chemical cure (viral disease). Rogue out and destroy infected plants '
+                     'immediately. Control mite vector (Aceria cajani) with wettable sulfur '
+                     '50% WP @ 3 g/L or Dicofol 18.5% EC @ 2 ml/L.',
+        'prevention': 'SMD-resistant varieties (ICPL 87, Maruti, Asha). '
+                      'Remove infected volunteer plants. Spray sulfur at 30 and 45 days after sowing.',
+        'action': '⚠️ Can cause 95–100% yield loss. Remove infected plants before mites spread.',
+    },
+    # 'wilt' catches pigeonpea Fusarium udum; 'fusarium wilt' (above) catches chickpea F. oxysporum
+    'wilt': {
+        'severity': 'High',
+        'treatment': 'No effective in-season cure. Uproot and destroy wilted plants. '
+                     'Carbendazim 50% WP @ 2 g/kg seed treatment for next crop.',
+        'prevention': 'Wilt-resistant pigeonpea varieties (ICPL 84031, Pusa 992). '
+                      'Trichoderma viride seed treatment. Avoid waterlogged soils.',
+        'action': 'Remove wilted plants immediately to reduce soil inoculum load.',
+    },
+    # 'rust' key — appears AFTER 'soybean rust' so the longer key takes priority for cn='soybean rust'
+    'rust': {
+        'severity': 'Medium',
+        'treatment': 'Propiconazole 25% EC @ 1 ml/L or Mancozeb 75% WP @ 2 g/L every 10–14 days.',
+        'prevention': 'Early sowing to avoid peak rust season. Resistant varieties. '
+                      'Remove infected plant debris after harvest.',
+        'action': 'Spray at first pustule appearance. Re-spray after 10 days if rain occurs.',
+    },
+    # Fruit & Industrial master outputs
+    # Keys are substrings of master class labels (underscore→space transform applied).
+    # Ordered so longer/more-specific keys come before their substrings.
+    'mango anthracnose': {
+        'severity': 'High',
+        'treatment': 'Carbendazim 50% WP @ 1 g/L or Mancozeb 75% WP @ 2.5 g/L. '
+                     'Start at pre-bloom and repeat every 10–14 days.',
+        'prevention': 'Prune and destroy infected shoots. Apply copper oxychloride '
+                      '@ 3 g/L at bud burst.',
+        'action': 'Pre-harvest sprays critical — post-harvest dip in hot water (52°C, 5 min).',
+    },
+    'mango powdery mildew': {
+        'severity': 'High',
+        'treatment': 'Wettable sulphur 80% WP @ 2 g/L or Hexaconazole 5% EC @ 1 ml/L at inflorescence stage.',
+        'prevention': 'Avoid dense canopy. Spray sulphur dust at panicle emergence.',
+        'action': '⚠️ Spray at first flower emergence — powdery mildew aborts flowers and causes 80% yield loss.',
+    },
+    'banana sigatoka': {
+        'severity': 'High',
+        'treatment': 'Propiconazole 25% EC @ 1 ml/L or Mancozeb 75% WP @ 2 g/L every 14 days.',
+        'prevention': 'Remove and destroy spotted leaves. Adequate spacing for airflow.',
+        'action': 'Spray at first small lesion. Critical for export-quality bunches.',
+    },
+    'citrus greening': {
+        'severity': 'High',
+        'treatment': 'No cure. Remove and destroy infected trees immediately. '
+                     'Control psyllid vector (Diaphorina citri) with Imidacloprid 17.8% SL @ 0.3 ml/L.',
+        'prevention': 'Use HLB-free certified planting material. Reflective silver mulch. '
+                      'Psyllid monitoring and control.',
+        'action': '⚠️ Huanglongbing (HLB) is incurable. Remove infected tree to protect orchard.',
+    },
+    'citrus canker': {
+        'severity': 'High',
+        'treatment': 'Copper oxychloride 50% WP @ 3 g/L every 15 days. '
+                     'Prune and destroy infected shoots.',
+        'prevention': 'Windbreaks. Certified disease-free nursery plants. Avoid wounding.',
+        'action': 'Do not move infected material. Disinfect pruning tools with bleach solution.',
+    },
+    'coffee rust': {
+        'severity': 'High',
+        'treatment': 'Propiconazole 25% EC @ 1 ml/L or Copper hydroxide @ 3 g/L. '
+                     'Spray undersides of leaves (primary sporulation site).',
+        'prevention': 'Shade management. Resistant varieties (Cauvery, S795 in Karnataka).',
+        'action': '⚠️ Hemileia vastatrix — can defoliate entire plantation. Spray at onset of monsoon.',
+    },
+    'cotton leaf curl': {
+        'severity': 'High',
+        'treatment': 'No chemical cure (viral). Control whitefly vector with '
+                     'Thiamethoxam 25% WG @ 0.3 g/L or Imidacloprid 17.8% SL @ 0.3 ml/L.',
+        'prevention': 'Bt cotton or CLCuV-tolerant varieties. Silver reflective mulch. '
+                      'Rogue out and destroy infected plants.',
+        'action': '⚠️ Cotton Leaf Curl Virus — yield loss up to 100%. Control whitefly immediately.',
+    },
+    'papaya ringspot': {
+        'severity': 'High',
+        'treatment': 'No chemical cure (PRSV). Remove and destroy infected plants immediately. '
+                     'Control aphid vector with Dimethoate 30% EC @ 1.5 ml/L.',
+        'prevention': 'Use PRSV-resistant varieties (Pusa Dwarf). Barrier crops of tall maize. '
+                      'Mineral oil spray to deter aphids.',
+        'action': 'Remove infected plants to prevent aphid transmission to healthy ones.',
+    },
+    'coconut bud rot': {
+        'severity': 'High',
+        'treatment': 'Remove and destroy rotting spear and bud tissue. '
+                     'Apply Bordeaux paste or Metalaxyl + Mancozeb @ 3 g/L into crown.',
+        'prevention': 'Avoid waterlogging. Proper drainage. Avoid injury to crown.',
+        'action': '⚠️ Bud rot kills the terminal bud — tree cannot recover. Act at first symptom.',
+    },
+    'pomegranate blight': {
+        'severity': 'High',
+        'treatment': 'Copper hydroxide 77% WP @ 3 g/L or Streptomycin sulphate @ 0.5 g/L. '
+                     'Apply at pre-blossom and post-setting.',
+        'prevention': 'Avoid waterlogging. Prune for aeration. Use healthy certified planting material.',
+        'action': '⚠️ Oily spot → fruit cracking → total loss. Spray at first symptom.',
+    },
+    # Catch-all for other fruit master outputs (mango_sooty_mould, coconut_root_wilt, etc.)
+    'mango': {
+        'severity': 'Medium',
+        'treatment': 'Apply Carbendazim 50% WP @ 1 g/L or Copper oxychloride @ 3 g/L.',
+        'prevention': 'Maintain orchard sanitation. Prune dead wood.',
+        'action': 'Take a clearer close-up and re-analyse. Consult local KVK if unsure.',
+    },
+    'banana': {
+        'severity': 'Medium',
+        'treatment': 'Apply Mancozeb 75% WP @ 2 g/L. Remove and destroy affected leaves.',
+        'prevention': 'Adequate plant spacing. Balanced fertilisation.',
+        'action': 'Monitor weekly. Remove heavily infected leaves.',
+    },
+    # Pulse — Mungbean / Blackgram
+    'yellow mosaic': {
+        'severity': 'High',
+        'treatment': 'No chemical cure. Rogue out and destroy infected plants immediately. '
+                     'Apply Imidacloprid 17.8% SL @ 0.3 ml/L or Thiamethoxam 25% WG @ 0.3 g/L '
+                     'to suppress whitefly vector (Bemisia tabaci).',
+        'prevention': 'Use YMD-resistant varieties (IPM 02-3, ML 818, Pant Urd-19). '
+                      'Silver reflective mulch. Remove infected volunteer plants.',
+        'action': '⚠️ YMD causes up to 100% yield loss. Remove and burn infected plants immediately. '
+                  'Spray whitefly control on adjacent healthy crop.',
+    },
+    'cercospora spot': {
+        'severity': 'Medium',
+        'treatment': 'Carbendazim 50% WP @ 1 g/L or Mancozeb 75% WP @ 2.5 g/L every 10 days.',
+        'prevention': 'Reduce leaf wetness. Avoid dense planting. Use healthy certified seed.',
+        'action': 'Spray at first appearance. Remove and destroy severely infected leaves.',
+    },
     # Default fallback
     'default': {
         'severity': 'Medium', 'treatment': 'Apply broad-spectrum fungicide (Carbendazim 12% + Mancozeb 63% WP) @ 2g/L. Monitor for 3 days.',
@@ -1201,12 +1368,135 @@ def load_vision_model():
     return None, None
 
 
-def analyze_image_pixels(img):
+def _run_tflite(interp, img, classes: list, model_label: str) -> dict:
+    """Shared TFLite inference helper used by all specialist and general models."""
+    inp  = interp.get_input_details()
+    out  = interp.get_output_details()
+    h, w = int(inp[0]['shape'][1]), int(inp[0]['shape'][2])
+    arr  = np.array(img.convert('RGB').resize((w, h)), dtype=np.float32) / 255.0
+    interp.set_tensor(inp[0]['index'], np.expand_dims(arr, 0))
+    interp.invoke()
+    preds      = interp.get_tensor(out[0]['index'])[0]
+    top_idx    = int(np.argmax(preds))
+    confidence = int(round(float(np.max(preds)) * 100))
+    class_name = classes[top_idx] if top_idx < len(classes) else 'unknown'
+    top3_idx   = np.argsort(preds)[::-1][:3]
+    top3       = [(classes[i] if i < len(classes) else 'unknown',
+                   int(round(float(preds[i]) * 100))) for i in top3_idx]
+    meta       = _get_disease_meta(class_name.replace('_', ' '))
+    display    = class_name.replace('_', ' ').replace('proxy', '').title().strip()
+    return {
+        'disease': display, 'severity': meta['severity'],
+        'confidence': confidence,
+        'color': {'None':'green','Low':'green','Medium':'orange','High':'red'}.get(
+            meta['severity'], 'orange'),
+        'treatment': meta['treatment'], 'prevention': meta['prevention'],
+        'action': meta['action'], 'top3': top3,
+        'model_used': model_label,
+    }
+
+
+def _annotate_result(result: dict, state: str) -> dict:
     """
-    PRIMARY: disease_model.tflite (via tf.lite) or disease_model.h5 (Keras).
-    FALLBACK: HSV pixel analysis — no external dependencies needed.
+    Add two advisory fields to any inference result dict:
+      low_confidence   : True when model confidence < 55% (try a better photo).
+      geographic_flag  : str | None — disease rarely seen in user's state.
+    Neither field overrides the model output; both are for display only.
+    """
+    from backend_client import get_geographic_flag
+    result['low_confidence']   = result.get('confidence', 100) < 55
+    result['geographic_flag']  = get_geographic_flag(result.get('disease', ''), state)
+    return result
+
+
+def analyze_image_pixels(img, crop: str = '', state: str = ''):
+    """
+    Routing:
+      'Rice'  + rice_model.tflite  → rice specialist (4 classes)
+      'Maize' + maize_model.tflite → maize specialist (4 classes)
+      anything else                → general PlantVillage model (38 classes)
+    FALLBACK: NumPy HSV pixel analysis (no ML dependencies needed).
     """
     from PIL import Image as PILImage
+    from models.vision_model import (
+        load_rice_model,                rice_model_available,
+        load_maize_model,               maize_model_available,
+        load_chickpea_model,            chickpea_model_available,
+        load_pulse_swarm_model,         pulse_swarm_model_available,
+        load_pigeonpea_lentil_model,    pigeonpea_lentil_model_available,
+        load_fruit_master_model,        fruit_master_model_available,
+    )
+
+    # ── Rice specialist ───────────────────────────────────────────────────────
+    if crop.lower() == 'rice' and rice_model_available():
+        rice_obj, rice_classes = load_rice_model()
+        if rice_obj is not None and rice_classes is not None:
+            try:
+                result = _run_tflite(rice_obj, img, rice_classes,
+                                     'Rice Specialist (rice_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
+
+    # ── Maize specialist ──────────────────────────────────────────────────────
+    if crop.lower() == 'maize' and maize_model_available():
+        maize_obj, maize_classes = load_maize_model()
+        if maize_obj is not None and maize_classes is not None:
+            try:
+                result = _run_tflite(maize_obj, img, maize_classes,
+                                     'Maize Specialist (maize_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
+
+    # ── Fruit & Industrial master (Mango, Banana, Coconut, Coffee, Cotton …) ──
+    _fruit_crops = ('mango', 'banana', 'pomegranate', 'grape', 'citrus',
+                    'orange', 'papaya', 'coconut', 'cotton', 'jute', 'coffee',
+                    'apple', 'grapes')
+    if any(x in crop.lower() for x in _fruit_crops) and fruit_master_model_available():
+        fm_obj, fm_classes = load_fruit_master_model()
+        if fm_obj is not None and fm_classes is not None:
+            try:
+                result = _run_tflite(fm_obj, img, fm_classes,
+                                     'Fruit Master (fruit_master_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
+
+    # ── Pigeonpea + Lentil specialist ─────────────────────────────────────────
+    # Matches: Pigeonpeas (selectbox), arhar, tur, lentil, masoor — all via substring
+    _pl_crops = ('pigeonpea', 'arhar', 'tur', 'lentil', 'masoor')
+    if any(x in crop.lower() for x in _pl_crops) and pigeonpea_lentil_model_available():
+        pl_obj, pl_classes = load_pigeonpea_lentil_model()
+        if pl_obj is not None and pl_classes is not None:
+            try:
+                result = _run_tflite(pl_obj, img, pl_classes,
+                                     'Pigeonpea + Lentil Specialist (pigeonpea_lentil_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
+
+    # ── Mungbean / Blackgram pulse swarm ─────────────────────────────────────
+    if crop.lower() in ('mungbean', 'blackgram') and pulse_swarm_model_available():
+        pulse_obj, pulse_classes = load_pulse_swarm_model()
+        if pulse_obj is not None and pulse_classes is not None:
+            try:
+                result = _run_tflite(pulse_obj, img, pulse_classes,
+                                     'Pulse Swarm Specialist (pulse_swarm_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
+
+    # ── Chickpea specialist ───────────────────────────────────────────────────
+    if crop.lower() in ('chickpea', 'chana', 'gram') and chickpea_model_available():
+        chick_obj, chick_classes = load_chickpea_model()
+        if chick_obj is not None and chick_classes is not None:
+            try:
+                result = _run_tflite(chick_obj, img, chick_classes,
+                                     'Chickpea Specialist (chickpea_model.tflite)')
+                return _annotate_result(result, state)
+            except Exception:
+                pass  # fall through to general model
 
     model_obj, class_names = load_vision_model()
 
@@ -1508,9 +1798,12 @@ def extract_acoustic_features(audio_bytes, filename):
     peak_bin = float(min(int(np.argmax(fft_vals) * 15 / (len(fft_vals) + 1)), 15))
     # Energy variance
     frame_size = 512
-    frames = [seg[i:i+frame_size] for i in range(0, len(seg)-frame_size, frame_size)]
-    energies = [float(np.mean(f**2)) for f in frames] if frames else [0.0]
-    variance = float(np.var(energies))
+    n_frames   = max((len(seg) - frame_size) // frame_size, 0)
+    if n_frames > 0:
+        frames_arr = seg[:n_frames * frame_size].reshape(n_frames, frame_size)
+        variance   = float(np.var(np.mean(frames_arr ** 2, axis=1)))
+    else:
+        variance = 0.0
 
     return [low, mid, high, ultra, centroid, zcr, peak_bin, variance]
 
@@ -1648,7 +1941,8 @@ with tab1:
         t1_fetch = st.button("📡 " + T("Get Weather"), key="t1_fetch_weather", use_container_width=True)
 
     if t1_fetch and t1_city.strip():
-        _w = get_weather(t1_city.strip())
+        with st.spinner(T("Fetching live weather...")):
+            _w = get_weather(t1_city.strip())
         if _w:
             st.session_state['t1_temp']     = min(max(float(_w['temp']), 8.0), 45.0)
             st.session_state['t1_humidity'] = min(max(float(_w['humidity']), 14.0), 100.0)
@@ -1889,6 +2183,16 @@ with tab2:
         key="v2_crop"
     )
 
+    _state_options = ['— Select State (optional) —'] + INDIA_STATES
+    selected_state_v = st.selectbox(
+        f"📍 {T('Your State')} ({T('for location-aware confidence check')})",
+        _state_options,
+        key="v2_state",
+        help=T("Some diseases are regionally rare. Selecting your state flags unlikely predictions.")
+    )
+    # Normalise: treat the placeholder as no-state
+    selected_state_v = '' if selected_state_v.startswith('—') else selected_state_v
+
     vision_file = st.file_uploader(
         T("Upload leaf / stem / fruit photo"),
         type=["jpg", "jpeg", "png", "webp"],
@@ -1909,7 +2213,7 @@ with tab2:
 
         if st.button(f"🔍 {T('Diagnose from Photo')}", use_container_width=True, type="primary", key="tab2_vision_btn"):
             with st.spinner(T("Analyzing pixel patterns...")):
-                v_result = analyze_image_pixels(v_img)
+                v_result = analyze_image_pixels(v_img, crop=selected_crop_v, state=selected_state_v)
             st.session_state['tab2_vision_result'] = v_result
 
     if 'tab2_vision_result' in st.session_state:
@@ -1927,6 +2231,12 @@ with tab2:
         conf = vr['confidence']
         st.markdown(f"**{T('AI Confidence')}: {conf}%**")
         st.progress(conf / 100)
+
+        if vr.get('low_confidence'):
+            st.warning(T("⚠️ Low confidence — try a clearer, well-lit close-up of the affected leaf."))
+
+        if vr.get('geographic_flag'):
+            st.info(f"📍 **{T('Location Note')}:** {vr['geographic_flag']}")
 
         if vr.get('top3'):
             sev_colors = {'None':'#22C55E','Low':'#22C55E','Medium':'#F59E0B','High':'#EF4444'}
@@ -2184,7 +2494,8 @@ with tab4:
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"))
     weather_data = None
     if city:
-        weather_data = get_weather(city)
+        with st.spinner(T("Fetching live weather...")):
+            weather_data = get_weather(city)
         if weather_data:
             wc1, wc2, wc3, wc4 = st.columns(4)
             wc1.metric("🌡️ " + T("Temp"), f"{weather_data['temp']}°C")
