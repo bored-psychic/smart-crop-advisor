@@ -1533,8 +1533,8 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
         except Exception:
             pass  # fall through to HSV
 
-    # ── HSV fallback — vectorized NumPy (O(n), ~100x faster than colorsys loop) ─
-    img_rgb = img.convert('RGB').resize((200, 150))
+    # ── HSV fallback — crop-aware vectorized NumPy ───────────────────────────
+    img_rgb = img.convert('RGB').resize((300, 200))
     pixels  = np.array(img_rgb, dtype=np.float32) / 255.0
     total   = pixels.shape[0] * pixels.shape[1]
 
@@ -1554,47 +1554,142 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
     s = np.where(cmax < eps, 0.0, delta / (cmax + eps))
     v = cmax
 
-    gr = float(np.sum((h >= 80) & (h <= 160) & (s > 0.25) & (v > 0.2) & (v < 0.85))) / total
-    yr = float(np.sum((h >= 40) & (h <= 75)  & (s > 0.35) & (v > 0.45)))              / total
-    dr = float(np.sum(v < 0.15))                                                        / total
-    br = float(np.sum((h >= 10) & (h <= 42)  & (s > 0.28) & (v < 0.65)))              / total
-    wr = float(np.sum((s < 0.12) & (v > 0.75)))                                        / total
+    # ── Colour ratio features ─────────────────────────────────────────────────
+    gr  = float(np.sum((h >= 80)  & (h <= 160) & (s > 0.25) & (v > 0.20) & (v < 0.85))) / total  # green (healthy)
+    yr  = float(np.sum((h >= 40)  & (h <= 75)  & (s > 0.35) & (v > 0.45)))              / total  # yellow (virus/nutrient)
+    dr  = float(np.sum(v < 0.15))                                                         / total  # very dark (necrosis)
+    br  = float(np.sum((h >= 10)  & (h <= 42)  & (s > 0.28) & (v < 0.65)))              / total  # brown (blight/rot)
+    wr  = float(np.sum((s < 0.12) & (v > 0.75)))                                         / total  # white/pale (mildew)
+    rr  = float(np.sum(((h <= 10) | (h >= 330)) & (s > 0.35) & (v > 0.30)))             / total  # red/crimson (red rot, rust)
+    orr = float(np.sum((h >= 15)  & (h <= 38)  & (s > 0.50) & (v > 0.50)))              / total  # orange (rust pustules)
+    pr  = float(np.sum((h >= 270) & (h <= 320) & (s > 0.25) & (v > 0.20)))              / total  # purple/pink (phomopsis, mosaic)
+    pk  = float(np.sum((h >= 320) & (h <= 355) & (s > 0.20) & (v > 0.50)))              / total  # pink (internal staining)
+    tan = float(np.sum((h >= 25)  & (h <= 45)  & (s > 0.15) & (s < 0.45) & (v > 0.55))) / total  # tan/beige (lesion halos)
+    blk = float(np.sum((s < 0.20) & (v < 0.12)))                                         / total  # black (smut, sooty mold)
 
-    if gr > 0.52 and br < 0.06 and yr < 0.06:
-        d,sv,conf,tr,pr,ac = ('Healthy Plant','None',min(97,int(78+gr*25)),
-            'No disease detected. Continue regular monitoring.',
+    crop_lc = crop.lower()
+
+    # ── Crop-aware priority rules ─────────────────────────────────────────────
+
+    # Sugarcane: red/pink internal staining → Red Rot (Colletotrichum falcatum)
+    if any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and (rr + pk) > 0.08:
+        d,sv,conf,tr,pr_,ac = (
+            'Sugarcane Red Rot (Colletotrichum falcatum)', 'High', min(91, int(72 + (rr+pk)*120)),
+            'No chemical cure once inside stalk. Uproot and destroy infected stools immediately. Do not use infected setts for planting.',
+            'Use disease-free certified setts. Hot water treatment at 50°C for 2h. Plant resistant varieties (Co 86032, CoLk 94184).',
+            '⚠️ Destroy infected stools — Red Rot spreads through waterlogging and infected setts.')
+
+    # Wheat/Maize: orange powdery pustules → Rust
+    elif any(x in crop_lc for x in ('wheat', 'maize', 'corn', 'barley', 'sorghum')) and orr > 0.06:
+        rust_type = 'Stem/Black Rust (Puccinia graminis)' if blk > 0.04 else \
+                    'Yellow/Stripe Rust (Puccinia striiformis)' if yr > 0.08 else \
+                    'Brown/Leaf Rust (Puccinia triticina)'
+        d,sv,conf,tr,pr_,ac = (
+            rust_type, 'High', min(90, int(70 + orr*130)),
+            'Propiconazole 25 EC @ 1ml/L or Tebuconazole 25.9 EC @ 1ml/L urgently. Do not delay.',
+            'Resistant varieties. Early sowing. Balanced nitrogen.',
+            '⚠️ Rust spreads at 1 km/hour in wind. Spray within 24h.')
+
+    # Cotton/Tomato/Brinjal: black smut pustules
+    elif blk > 0.12 and (s.mean() < 0.2):
+        d,sv,conf,tr,pr_,ac = (
+            'Smut / Sooty Mold (fungal)', 'Medium', min(84, int(68 + blk*80)),
+            'Copper oxychloride 50 WP @ 3g/L. Remove sooty leaves. Control insect vectors (scale, mealybug).',
+            'Control sucking insects that secrete honeydew. Prune for airflow.',
+            'Wash sooty mold off with soap water first, then spray copper.')
+
+    # Any crop: purple/pink lesions → Phomopsis, Anthracnose, stem canker
+    elif pr > 0.07 or (pk > 0.06 and gr < 0.35):
+        if 'rice' in crop_lc:
+            d,sv,conf,tr,pr_,ac = (
+                'Rice Sheath Blight (Rhizoctonia solani)', 'High', min(87, int(68 + pr*110)),
+                'Hexaconazole 5 EC @ 1ml/L or Propiconazole 25 EC @ 1ml/L at tillering stage.',
+                'Proper spacing. Avoid excess nitrogen. Drain standing water.',
+                'Spray at water line where sheath meets stem.')
+        else:
+            d,sv,conf,tr,pr_,ac = (
+                'Stem Canker / Phomopsis Blight (fungal)', 'High', min(85, int(65 + (pr+pk)*100)),
+                'Carbendazim 50 WP @ 1g/L + Mancozeb 75 WP @ 2g/L. Remove infected tissue.',
+                'Crop rotation. Remove infected debris. Drip irrigation.',
+                'Prune 15cm below visible lesion and apply Bordeaux paste.')
+
+    # Rice: diamond-shaped grey lesions → Blast
+    elif 'rice' in crop_lc and tan > 0.08 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Blast (Magnaporthe oryzae)', 'High', min(89, int(70 + tan*100)),
+            'Tricyclazole 75 WP @ 0.6g/L or Isoprothiolane 40 EC @ 1ml/L at booting stage.',
+            'Blast-resistant varieties. Avoid excess nitrogen. Silica fertilizer.',
+            '⚠️ Spray before heading — blast at neck causes complete grain loss.')
+
+    # Healthy: dominant green, minimal disease markers
+    elif gr > 0.50 and br < 0.06 and yr < 0.06 and rr < 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Healthy Plant', 'None', min(97, int(78 + gr*25)),
+            'No disease detected. Continue regular monitoring every 7 days.',
             'Apply neem oil spray monthly. Maintain field hygiene.',
             'No immediate action needed.')
+
+    # Late Blight / Stem Rot: dark + heavy brown
     elif br > 0.13 and dr > 0.05:
-        d,sv,conf,tr,pr,ac = ('Late Blight / Stem Rot','High',min(92,int(70+br*55)),
-            'Apply Metalaxyl + Mancozeb @ 2g/L immediately. Destroy infected material.',
+        d,sv,conf,tr,pr_,ac = (
+            'Late Blight / Stem Rot (Phytophthora)', 'High', min(92, int(70 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L immediately. Destroy infected material.',
             'Avoid overhead irrigation. Certified disease-free seeds only.',
-            '⚠️ Act within 24 hours.')
+            '⚠️ Act within 24 hours — Late Blight doubles every 3 days in humid weather.')
+
+    # Early Blight: brown lesions + yellow halo
     elif br > 0.07 and yr > 0.04:
-        d,sv,conf,tr,pr,ac = ('Early Blight (Alternaria)','Medium',min(89,int(65+br*52)),
-            'Mancozeb 75% WP @ 2g/L. Remove infected leaves. Repeat after 10 days.',
-            'Crop rotation every 2 years.',
-            'Manageable with prompt treatment.')
+        d,sv,conf,tr,pr_,ac = (
+            'Early Blight (Alternaria)', 'Medium', min(89, int(65 + br*52)),
+            'Mancozeb 75 WP @ 2g/L or Chlorothalonil 75 WP @ 2g/L. Repeat every 10 days.',
+            'Crop rotation every 2 years. Remove lower infected leaves.',
+            'Manageable with prompt treatment. Remove and destroy infected leaves.')
+
+    # Yellow dominance → virus or nutrient
     elif yr > 0.16:
-        d,sv,conf,tr,pr,ac = ('Leaf Curl Virus / Nutrient Deficiency','High',min(85,int(62+yr*38)),
-            'Check for whitefly. Apply Imidacloprid if present. Foliar spray Fe/Mg.',
-            'Silver reflective mulch. Virus-free planting material.',
-            'Remove infected plants immediately if viral.')
+        d,sv,conf,tr,pr_,ac = (
+            'Leaf Curl Virus / Nutrient Deficiency', 'High', min(85, int(62 + yr*38)),
+            'Check for whitefly (TYLCV vector). Apply Imidacloprid 17.8 SL @ 0.5ml/L. Foliar spray Fe/Mg sulfate.',
+            'Silver reflective mulch. Virus-free certified planting material.',
+            'Remove infected plants immediately if viral — no cure once infected.')
+
+    # Powdery Mildew: pale/white surface coating
     elif wr > 0.09:
-        d,sv,conf,tr,pr,ac = ('Powdery Mildew','Low',min(88,int(68+wr*28)),
-            'Sulphur 80% WP @ 2g/L or Hexaconazole 5% EC @ 1ml/L.',
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew', 'Low', min(88, int(68 + wr*28)),
+            'Sulphur 80 WP @ 2g/L or Hexaconazole 5 EC @ 1ml/L. Potassium bicarbonate 5g/L.',
             'Improve air circulation. Avoid excess nitrogen.',
-            'Low severity if caught early.')
+            'Low severity if caught early — spray in cool morning hours.')
+
+    # Orange rust: rust pustules without crop context
+    elif orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Rust Disease (Puccinia spp.)', 'High', min(88, int(68 + orr*130)),
+            'Propiconazole 25 EC @ 1ml/L urgently.',
+            'Resistant varieties. Balanced nitrogen.',
+            '⚠️ Rust spreads fast — spray immediately.')
+
+    # Red/crimson without crop context → Red Rot / Blood disease
+    elif rr > 0.07:
+        d,sv,conf,tr,pr_,ac = (
+            'Internal Stem Rot / Red Rot (fungal)', 'High', min(86, int(68 + rr*110)),
+            'Uproot and destroy infected plants. No chemical cure for internal rot. Soil drench with Carbendazim 50 WP @ 1g/L.',
+            'Use certified disease-free planting material. Crop rotation. Avoid waterlogging.',
+            '⚠️ Internal rot — do not replant in the same field this season.')
+
+    # Generic fallback — least informative
     else:
-        d,sv,conf,tr,pr,ac = ('Possible Fungal/Bacterial Infection','Medium',58,
-            'Carbendazim 12% + Mancozeb 63% WP @ 2g/L. Monitor 3 days.',
+        d,sv,conf,tr,pr_,ac = (
+            'Unidentified Infection — use Symptom Selector below', 'Medium', 52,
+            'Carbendazim 12% + Mancozeb 63% WP @ 2g/L as broad-spectrum cover. Monitor for 3 days.',
             'Ensure good field drainage. Avoid overhead irrigation.',
-            'Take a clearer close-up photo in daylight for better accuracy.')
+            'Take a close-up daylight photo of affected leaf/stem OR use the Symptom Selector below for accurate diagnosis.')
+
     return {
         'disease': d, 'severity': sv, 'confidence': conf,
         'color': {'None':'green','Low':'green','Medium':'orange','High':'red'}.get(sv,'orange'),
-        'treatment': tr, 'prevention': pr, 'action': ac,
-        'top3': [], 'model_used': 'HSV Vectorized Analysis',
+        'treatment': tr, 'prevention': pr_, 'action': ac,
+        'top3': [], 'model_used': f'HSV Crop-Aware Analysis ({crop or "General"})',
     }
 
 # ── SOS WhatsApp helpers ──────────────────────────────────────────────────────
@@ -2350,7 +2445,7 @@ with tab2:
             wa_msg = (f"📷 *Vision AI Report — KisanOS*\n\nFarmer: {farmer_name}\nCrop: {selected_crop_v}\n"
                       f"Disease: {vr['disease']}\nSeverity: {vr['severity']}\nConfidence: {conf}%\n\n"
                       f"Treatment: {vr['treatment']}\nPrevention: {vr['prevention']}")
-            wa_url = f"https://wa.me/?text={requests.utils.quote(wa_msg)}"
+            wa_url = f"https://wa.me/?text={__import__('urllib.parse', fromlist=['quote']).quote(wa_msg)}"
             st.markdown(f'<a href="{wa_url}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;margin-top:6px">📤 {T("Share on WhatsApp")}</a>', unsafe_allow_html=True)
 
     # ── METHOD 2: SYMPTOM + PEST CHECKER (Secondary) ──────────────────────────
@@ -2784,7 +2879,7 @@ with tab5:
                 f"Model: Random Forest · 97.2% CV accuracy · 8 pest classes\n"
                 f"Detected using KisanOS Acoustic AI"
             )
-            wa_url = f"https://wa.me/?text={requests.utils.quote(wa_msg)}"
+            wa_url = f"https://wa.me/?text={__import__('urllib.parse', fromlist=['quote']).quote(wa_msg)}"
             st.markdown(f"""
             <a href="{wa_url}" target="_blank" style="
                 display:inline-flex;align-items:center;gap:8px;
@@ -2990,7 +3085,7 @@ with tab6:
             f"{fire_s2}\n{flood_s2}\n{loc_s2}\n\n"
             f"{T('Generated by KisanOS Field Watch · NASA FIRMS · FAO Locust Hub · OpenWeatherMap')}"
         )
-        encoded_wa = requests.utils.quote(wa_alert)
+        encoded_wa = __import__('urllib.parse', fromlist=['quote']).quote(wa_alert)
 
         numbers = [n.strip() for n in fw_contacts.split('\n') if n.strip()]
         if numbers:
