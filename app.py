@@ -1,6 +1,11 @@
 import streamlit as st
 import pickle
 import numpy as np
+try:
+    from dotenv import load_dotenv as _load_dotenv
+    _load_dotenv(override=False)
+except ImportError:
+    pass
 import pandas as pd
 import json
 import base64
@@ -2265,23 +2270,6 @@ with tab2:
     )
     # Normalise: treat the placeholder as no-state
     selected_state_v = '' if selected_state_v.startswith('—') else selected_state_v
-
-    # ── Claude Vision API key (session-level, never stored) ──────────────────
-    import os as _os
-    _env_key = _os.environ.get('ANTHROPIC_API_KEY', '')
-    if not _env_key:
-        with st.expander(f"🤖 {T('Enable Claude Vision AI')} — {T('Google-Lens accuracy for all 27 crops')}", expanded=True):
-            st.info(T("Paste your Anthropic API key to unlock AI-powered photo diagnosis for ALL crops. Free at console.anthropic.com — key is only kept for this session."))
-            _ui_key = st.text_input(
-                "Anthropic API Key", type="password", placeholder="sk-ant-...",
-                key="anthropic_key_input",
-                help="Get a free key at console.anthropic.com"
-            )
-            if _ui_key:
-                _os.environ['ANTHROPIC_API_KEY'] = _ui_key
-                st.success(T("Claude Vision AI enabled — all 27 crops supported."))
-    else:
-        st.success(f"🤖 {T('Claude Vision AI active — all 27 crops supported')}")
 
     vision_file = st.file_uploader(
         T("Upload leaf / stem / fruit photo"),
