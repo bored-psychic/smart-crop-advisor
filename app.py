@@ -1309,6 +1309,234 @@ def _annotate_result(result: dict, state: str) -> dict:
     return result
 
 
+# ── PlantVillage ONNX disease info: 24 disease classes → treatment + meta ───
+_ONNX_DISEASE_INFO: dict[str, tuple] = {
+    # (disease_name, severity, treatment, prevention, action)
+    'Apple Scab': (
+        'Apple Scab (Venturia inaequalis)', 'Medium',
+        'Captan 50% WP @ 2g/L or Myclobutanil 10 WP @ 1g/L from bud break. Repeat every 10-14 days.',
+        'Resistant varieties (Enterprise, Liberty). Remove fallen leaves. Prune for airflow.',
+        'Spray preventively before wet weather — scab spreads in rain.'),
+    'Apple with Black Rot': (
+        'Apple Black Rot (Botryosphaeria obtusa)', 'High',
+        'Captan 50 WP @ 2g/L or Thiophanate-methyl 70 WP @ 1g/L. Prune 15cm below infection.',
+        'Remove mummified fruit and dead wood. Wound sealant after pruning.',
+        '⚠️ Prune and destroy infected wood immediately.'),
+    'Cedar Apple Rust': (
+        'Cedar-Apple Rust (Gymnosporangium juniperi-virginianae)', 'Medium',
+        'Myclobutanil 10 WP @ 1g/L or Propiconazole 25 EC @ 1ml/L from pink bud stage every 7-10 days.',
+        'Remove nearby juniper/cedar alternate hosts. Resistant apple varieties.',
+        'Critical spray window: pink bud to petal fall.'),
+    'Cherry with Powdery Mildew': (
+        'Powdery Mildew (Podosphaera clandestina)', 'Medium',
+        'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L. Spray every 14 days.',
+        'Prune for airflow. Avoid excess nitrogen. Resistant varieties.',
+        'Spray in cool morning hours for best absorption.'),
+    'Corn (Maize) with Cercospora and Gray Leaf Spot': (
+        'Gray Leaf Spot (Cercospora zeae-maydis)', 'Medium',
+        'Azoxystrobin 23 SC @ 1ml/L or Propiconazole 25 EC @ 1ml/L at tasseling.',
+        'Resistant hybrids. Crop rotation. Avoid dense planting.',
+        'Spray at first lesion appearance — wait and lose 20-40% yield.'),
+    'Corn (Maize) with Common Rust': (
+        'Common Rust (Puccinia sorghi)', 'Medium',
+        'Mancozeb 75 WP @ 2g/L or Azoxystrobin 23 SC @ 1ml/L at early pustule stage.',
+        'Rust-resistant hybrids. Early planting to avoid peak spore load.',
+        'Manageable if caught early. Spray within 48h of first pustules.'),
+    'Corn (Maize) with Northern Leaf Blight': (
+        'Northern Leaf Blight (Exserohilum turcicum)', 'Medium',
+        'Propiconazole 25 EC @ 1ml/L or Tebuconazole 25.9 EC @ 1ml/L at first lesion.',
+        'Resistant varieties. Crop rotation with non-cereal. Balanced nitrogen.',
+        'Scout from tasseling — spray within 7 days of first long grey lesion.'),
+    'Grape with Black Rot': (
+        'Grape Black Rot (Guignardia bidwellii)', 'High',
+        'Captan 50 WP @ 2g/L or Mancozeb 75 WP @ 2g/L from bud break. Spray every 10-14 days.',
+        'Remove mummified berries and infected canes. Good airflow.',
+        '⚠️ Infected berries = spore source for 3 seasons. Remove all.'),
+    'Grape with Esca (Black Measles)': (
+        'Esca / Black Measles (Phaeomoniella chlamydospora)', 'High',
+        'No reliable cure. Prune infected wood. Protect cuts with Trichoderma paste.',
+        'Avoid large pruning wounds. Apply wound sealant. Remove dead wood.',
+        '⚠️ Chronic wood disease — manage long-term, no quick fix.'),
+    'Grape with Isariopsis Leaf Spot': (
+        'Grape Isariopsis Leaf Spot / Leaf Blight (Pseudocercospora vitis)', 'Medium',
+        'Copper oxychloride 50 WP @ 3g/L or Mancozeb 75 WP @ 2g/L post-harvest.',
+        'Remove fallen leaves. Improve canopy airflow. Post-harvest spray critical.',
+        'Usually cosmetic — spray post-harvest to protect next season buds.'),
+    'Orange with Citrus Greening': (
+        'Citrus Greening / HLB (Candidatus Liberibacter asiaticus)', 'High',
+        'No cure. Remove and destroy infected trees. Doxycycline trunk injection slows progression.',
+        'Certified nursery plants. Control psyllid vector (Diaphorina citri) with Imidacloprid. Remove infected trees.',
+        '⚠️ Remove infected tree — it will not recover and spreads to neighbours.'),
+    'Peach with Bacterial Spot': (
+        'Bacterial Spot (Xanthomonas arboricola pv. pruni)', 'Medium',
+        'Copper hydroxide 53.8 WP @ 2g/L every 7-10 days from pre-bloom. Streptomycin 500ppm alternated.',
+        'Resistant varieties. Avoid overhead irrigation. Windbreaks.',
+        'Spray at bud swell — early copper sprays are most effective.'),
+    'Bell Pepper with Bacterial Spot': (
+        'Bacterial Spot (Xanthomonas perforans)', 'Medium',
+        'Copper hydroxide 53.8 WP @ 2g/L + Mancozeb 75 WP @ 1g/L every 7 days.',
+        'Certified disease-free transplants. Drip irrigation. Crop rotation.',
+        'Remove and destroy heavily infected plants to slow spread.'),
+    'Potato with Early Blight': (
+        'Early Blight (Alternaria solani)', 'Medium',
+        'Chlorothalonil 75 WP @ 2g/L or Mancozeb 75 WP @ 2g/L every 10 days.',
+        'Certified seed tubers. Crop rotation. Balanced nutrition — avoid K deficiency.',
+        'Start spraying 30 days after emergence, before symptoms appear.'),
+    'Potato with Late Blight': (
+        'Late Blight (Phytophthora infestans)', 'High',
+        'Cymoxanil + Mancozeb 72 WP @ 2g/L IMMEDIATELY. Destroy infected haulms.',
+        'Well-drained soil. Avoid overhead irrigation. Monitor weather — spray before rain.',
+        '⚠️ Act in 24h — Late Blight doubles every 3 days in cool wet weather.'),
+    'Squash with Powdery Mildew': (
+        'Powdery Mildew (Podosphaera xanthii)', 'Low',
+        'Sulphur 80 WP @ 2g/L or Trifloxystrobin 25 WG @ 0.5g/L at first white patch.',
+        'Resistant varieties. Good airflow. Avoid dense planting.',
+        'Low severity if caught early. Spray in morning hours.'),
+    'Strawberry with Leaf Scorch': (
+        'Leaf Scorch (Diplocarpon earliana)', 'Medium',
+        'Captan 50 WP @ 2g/L or Myclobutanil 10 WP @ 1g/L. Remove infected leaves.',
+        'Resistant varieties. Drip irrigation. Remove old foliage after harvest.',
+        'Renovate strawberry beds after harvest — remove all old leaves.'),
+    'Tomato with Bacterial Spot': (
+        'Bacterial Spot (Xanthomonas perforans)', 'Medium',
+        'Copper hydroxide 53.8% DF @ 2g/L every 7 days. Streptomycin 500ppm alternated with copper.',
+        'Disease-free transplants. Drip irrigation. Avoid working in wet fields.',
+        'Remove and destroy heavily spotted leaves to slow spread.'),
+    'Tomato with Early Blight': (
+        'Early Blight (Alternaria solani)', 'Medium',
+        'Mancozeb 75 WP @ 2g/L or Chlorothalonil 75 WP @ 2g/L. Repeat every 10 days.',
+        'Crop rotation every 2 years. Remove lower infected leaves. Balanced nutrition.',
+        'Manageable — remove infected leaves and spray immediately.'),
+    'Tomato with Late Blight': (
+        'Late Blight (Phytophthora infestans)', 'High',
+        'Metalaxyl + Mancozeb 72 WP @ 2g/L immediately. Destroy infected plants.',
+        'Avoid overhead irrigation. Certified disease-free seeds. Drain field.',
+        '⚠️ Destroy infected plants — entire field at risk within 7 days.'),
+    'Tomato with Leaf Mold': (
+        'Leaf Mold (Cladosporium fulvum)', 'Medium',
+        'Copper oxychloride 50 WP @ 3g/L or Mancozeb 75 WP @ 2g/L every 14 days.',
+        'Improve greenhouse ventilation. Reduce humidity below 85%. Resistant varieties.',
+        'Increase airflow immediately — Leaf Mold loves humidity >85%.'),
+    'Tomato with Septoria Leaf Spot': (
+        'Septoria Leaf Spot (Septoria lycopersici)', 'Medium',
+        'Chlorothalonil 75 WP @ 2g/L or Copper hydroxide 53.8 WP @ 2g/L every 7-10 days.',
+        'Crop rotation. Mulch to prevent soil splash. Remove infected lower leaves.',
+        'Remove infected leaves immediately — spores splash from soil.'),
+    'Tomato with Spider Mites or Two-spotted Spider Mite': (
+        'Spider Mite (Tetranychus urticae)', 'Medium',
+        'Abamectin 1.8 EC @ 0.5ml/L or Spiromesifen 240 SC @ 1ml/L. Wet undersides of leaves.',
+        'Conserve predatory mites (Phytoseiidae). Avoid dusty conditions. Overhead irrigation.',
+        'Spray undersides of leaves — that is where mites live and feed.'),
+    'Tomato with Target Spot': (
+        'Target Spot (Corynespora cassiicola)', 'Medium',
+        'Azoxystrobin 23 SC @ 1ml/L or Tebuconazole 25.9 EC @ 1ml/L every 14 days.',
+        'Improve airflow. Reduce humidity. Avoid overhead irrigation.',
+        'Scout lower canopy first — Target Spot starts from bottom leaves.'),
+    'Tomato Yellow Leaf Curl Virus': (
+        'Tomato Yellow Leaf Curl Virus (TYLCV)', 'High',
+        'No cure. Remove infected plants immediately. Control whitefly vector: Imidacloprid 17.8 SL @ 0.5ml/L.',
+        'Silver reflective mulch. Whitefly-proof net. Resistant hybrids (TY-1 gene).',
+        '⚠️ Remove infected plants immediately — TYLCV spreads via whitefly in minutes.'),
+    'Tomato Mosaic Virus': (
+        'Tomato Mosaic Virus (ToMV)', 'High',
+        'No cure. Remove and destroy infected plants. Wash hands and tools with soap after handling.',
+        'Certified disease-free seed. Do not smoke near plants (tobacco carries ToMV). Resistant varieties.',
+        '⚠️ Highly contagious via hands and tools — disinfect immediately.'),
+}
+
+_onnx_session_cache: dict = {}
+
+def _load_onnx_model():
+    """Load the PlantVillage ONNX model + labels. Cached after first load."""
+    import os, json as _json
+    if 'session' in _onnx_session_cache:
+        return _onnx_session_cache['session'], _onnx_session_cache['labels']
+    model_path  = os.path.join(os.path.dirname(__file__), 'models', 'plant_disease.onnx')
+    labels_path = os.path.join(os.path.dirname(__file__), 'models', 'plant_disease_labels.json')
+    if not os.path.exists(model_path) or not os.path.exists(labels_path):
+        return None, None
+    try:
+        import onnxruntime as ort
+        sess = ort.InferenceSession(model_path,
+                                    providers=['CPUExecutionProvider'])
+        labels = _json.load(open(labels_path))
+        _onnx_session_cache['session'] = sess
+        _onnx_session_cache['labels']  = labels
+        return sess, labels
+    except Exception:
+        return None, None
+
+
+def _diagnose_with_onnx(img, crop: str = '') -> dict | None:
+    """
+    Run PlantVillage MobileNetV2 ONNX (38 classes, 14 crops) on the image.
+    Works offline — no API key needed. Returns None if model not available.
+    """
+    sess, labels = _load_onnx_model()
+    if sess is None:
+        return None
+    try:
+        arr = np.array(img.convert('RGB').resize((224, 224)), dtype=np.float32) / 255.0
+        mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+        std  = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+        arr  = (arr - mean) / std
+        inp  = arr.transpose(2, 0, 1)[None]
+
+        logits = sess.run(None, {'input': inp})[0][0]
+        probs  = np.exp(logits - logits.max())
+        probs /= probs.sum()
+
+        top3_idx = np.argsort(probs)[::-1][:3]
+        top_label = labels[str(top3_idx[0])]
+        top_conf  = float(probs[top3_idx[0]] * 100)
+
+        # Require minimum confidence — below this HSV is more reliable
+        if top_conf < 40:
+            return None
+
+        # Skip healthy predictions for non-matching crops (avoid false negatives)
+        is_healthy = 'Healthy' in top_label
+        if is_healthy and top_conf < 70:
+            return None
+
+        # Look up treatment from our table
+        clean_label = top_label  # e.g. "Tomato with Early Blight"
+        info = None
+        # Direct match
+        for key, val in _ONNX_DISEASE_INFO.items():
+            if key.lower() in clean_label.lower():
+                info = val
+                break
+
+        if info is None:
+            if is_healthy:
+                info = ('Healthy Plant', 'None',
+                        'No disease detected. Continue regular monitoring every 7 days.',
+                        'Apply neem oil spray monthly. Maintain field hygiene.',
+                        'No immediate action needed.')
+            else:
+                return None   # Unknown class — let HSV handle it
+
+        disease_name, severity, treatment, prevention, action = info
+        top3 = [(labels[str(i)].replace('Corn (Maize)', 'Maize').replace('Bell Pepper', 'Chilli/Pepper'),
+                 int(round(float(probs[i]) * 100))) for i in top3_idx]
+
+        return {
+            'disease':    disease_name,
+            'severity':   severity,
+            'confidence': int(min(95, top_conf)),
+            'color':      {'None': 'green', 'Low': 'green',
+                           'Medium': 'orange', 'High': 'red'}.get(severity, 'orange'),
+            'treatment':  treatment,
+            'prevention': prevention,
+            'action':     action,
+            'top3':       top3,
+            'model_used': f'PlantVillage MobileNetV2 ONNX (38 classes)',
+        }
+    except Exception:
+        return None
+
+
 def _diagnose_with_claude_vision(img, crop: str = '') -> dict | None:
     """
     Primary vision path: sends the image to claude-haiku-4-5 for disease
@@ -1389,15 +1617,21 @@ def _diagnose_with_claude_vision(img, crop: str = '') -> dict | None:
 def analyze_image_pixels(img, crop: str = '', state: str = ''):
     """
     Routing (priority order):
-      1. Claude Vision AI     — all 27 crops, Google-Lens-level (needs ANTHROPIC_API_KEY)
-      2. Specialist TFLite    — Rice / Maize / Fruit / Chickpea / Pigeonpea models
-      3. PlantVillage general — 38 classes (14 crops)
-      4. HSV pixel fallback   — color-based heuristic, no ML dependencies
+      1. Claude Vision AI          — all 27 crops, Google-Lens-level (needs ANTHROPIC_API_KEY)
+      2. PlantVillage ONNX         — MobileNetV2, 38 classes, 14 crops, fully offline
+      3. Specialist TFLite         — Rice / Maize / Fruit / Chickpea / Pigeonpea models
+      4. PlantVillage general TF   — 38 classes (14 crops)
+      5. HSV pixel fallback        — color-based heuristic, no ML dependencies
     """
     # ── 1. Claude Vision AI (primary — works for every crop) ─────────────────
     claude_result = _diagnose_with_claude_vision(img, crop=crop)
     if claude_result is not None:
         return _annotate_result(claude_result, state)
+
+    # ── 2. PlantVillage MobileNetV2 ONNX (offline, 38 classes, 14 crops) ─────
+    onnx_result = _diagnose_with_onnx(img, crop=crop)
+    if onnx_result is not None:
+        return _annotate_result(onnx_result, state)
 
     from PIL import Image as PILImage
     from models.vision_model import (
@@ -1572,9 +1806,9 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
 
     crop_lc = crop.lower()
 
-    # ── Crop-aware priority rules ─────────────────────────────────────────────
+    # ── Crop-aware priority rules (27 crops, 5-8 diseases each) ─────────────
 
-    # Sugarcane: red/pink internal staining → Red Rot (Colletotrichum falcatum)
+    # ── SUGARCANE ─────────────────────────────────────────────────────────────
     if any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and (rr + pk) > 0.08:
         d,sv,conf,tr,pr_,ac = (
             'Sugarcane Red Rot (Colletotrichum falcatum)', 'High', min(91, int(72 + (rr+pk)*120)),
@@ -1582,8 +1816,89 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
             'Use disease-free certified setts. Hot water treatment at 50°C for 2h. Plant resistant varieties (Co 86032, CoLk 94184).',
             '⚠️ Destroy infected stools — Red Rot spreads through waterlogging and infected setts.')
 
-    # Wheat/Maize: orange powdery pustules → Rust
-    elif any(x in crop_lc for x in ('wheat', 'maize', 'corn', 'barley', 'sorghum')) and orr > 0.06:
+    elif any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and blk > 0.06 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Sugarcane Smut (Sporisorium scitamineum)', 'High', min(88, int(68 + (blk+dr)*110)),
+            'No in-field cure. Uproot and burn smutted stools before spore release. Sett treatment: Propiconazole 25 EC @ 1ml/L soak.',
+            'Certified disease-free seed setts. Resistant varieties (Co 86032). Hot water treatment 52°C for 30 min.',
+            '⚠️ Black whip = Smut confirmed. Burn entire infected clump — spores spread on wind to whole field.')
+    elif any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Sugarcane Rust (Puccinia melanocephala)', 'Medium', min(86, int(65 + orr*130)),
+            'Propiconazole 25 EC @ 1ml/L or Triadimefon 25 WP @ 1g/L. 2 sprays 15 days apart.',
+            'Resistant varieties. Avoid excessive nitrogen. Remove volunteer ratoons.',
+            'Rust is manageable — spray at first pustule appearance on leaf underside.')
+    elif any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and yr > 0.18 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Grassy Shoot Disease / Wilt (Phytoplasma / Fusarium)', 'High', min(85, int(62 + yr*35)),
+            'No cure for phytoplasma. Uproot stunted plants. For Fusarium wilt: soil drench Carbendazim 50 WP @ 1g/L.',
+            'Certified disease-free setts. Control leafhopper vector with Imidacloprid 70 WS @ 5g/kg sett.',
+            '⚠️ Grassy shoot spreads through infected setts and leafhoppers. Remove and destroy.')
+    elif any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')) and br > 0.09 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Sugarcane Red Stripe / Brown Stripe (Acidovorax avenae)', 'Medium', min(82, int(60 + br*80)),
+            'Copper oxychloride 50 WP @ 3g/L. Remove and destroy severely affected leaves.',
+            'Avoid overhead irrigation. Use balanced fertilization. Plant resistant varieties.',
+            'Primarily affects young growth. Severe infections in cool-wet conditions.')
+    elif any(x in crop_lc for x in ('sugarcane', 'cane', 'ganna')):
+        d,sv,conf,tr,pr_,ac = (
+            'Sugarcane Leaf Scald / Blight (Xanthomonas albilineans)', 'Medium', min(78, int(58 + wr*40 + br*30)),
+            'Copper-based bactericide 3g/L. Hot water treatment of setts at 50°C for 2h.',
+            'Disease-free planting material. Avoid waterlogging.',
+            'Pencil-line white stripe along midrib = Leaf Scald. Confirm before spraying.')
+
+    # ── RICE / PADDY ──────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and orr > 0.06 and gr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice False Smut (Ustilaginoidea virens)', 'Medium', min(86, int(65 + orr*110)),
+            'Propiconazole 25 EC @ 1ml/L at boot leaf stage. Repeat at 50% heading.',
+            'Avoid excess nitrogen. Use certified seed. Early sowing to avoid humid flowering period.',
+            'False Smut kernels contain toxins — remove infected panicles before harvest.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and (pr > 0.07 or (pk > 0.06 and gr < 0.35)):
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Sheath Blight (Rhizoctonia solani)', 'High', min(88, int(68 + (pr+pk)*100)),
+            'Hexaconazole 5 EC @ 1ml/L or Propiconazole 25 EC @ 1ml/L at tillering. Repeat 15 days later.',
+            'Proper spacing (20×15cm). Avoid excess nitrogen. Drain standing water periodically.',
+            'Spray at water line where sheath meets stem — disease moves upward from there.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and tan > 0.08 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Blast (Magnaporthe oryzae)', 'High', min(90, int(70 + tan*100)),
+            'Tricyclazole 75 WP @ 0.6g/L or Isoprothiolane 40 EC @ 1ml/L at booting stage.',
+            'Blast-resistant varieties. Avoid excess nitrogen. Silica (SiO2) fertilizer strengthens cell walls.',
+            '⚠️ Spray before heading — neck blast causes complete panicle loss (white head).')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and br > 0.12 and yr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Brown Spot (Bipolaris oryzae)', 'Medium', min(85, int(65 + br*55)),
+            'Mancozeb 75 WP @ 2g/L or Edifenphos 50 EC @ 1ml/L. Apply at tillering.',
+            'Balanced NPK — Brown Spot worsens with potassium deficiency. Certified seed.',
+            'Often linked to nutrient stress. Check soil K levels before spraying.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and wr > 0.12 and yr > 0.07:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Leaf Blight (Xanthomonas oryzae pv. oryzae)', 'High', min(87, int(65 + wr*60)),
+            'Copper oxychloride 50 WP @ 3g/L + Streptomycin sulfate 90 SP @ 0.3g/L. Remove water from field.',
+            'Resistant varieties (IR64, Pusa Basmati 1). Drain field during tillering. Balanced nitrogen.',
+            '⚠️ Drain irrigation water — BLB spreads through flood water. No in-crop cure once severe.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and br > 0.08 and dr > 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Sheath Rot (Sarocladium oryzae)', 'Medium', min(83, int(62 + br*60)),
+            'Propiconazole 25 EC @ 1ml/L at panicle initiation. Carbendazim 50 WP @ 1g/L.',
+            'Avoid excess nitrogen. Control stem borer (insect entry creates infection courts).',
+            'Discoloured flag leaf sheath with partial panicle emergence = Sheath Rot.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')) and yr > 0.15 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Tungro Virus / Iron Toxicity / Nitrogen Deficiency', 'High', min(83, int(60 + yr*40)),
+            'For Tungro: control green leafhopper with Carbofuran 3G @ 25kg/ha. For nutrient: apply Urea top-dress.',
+            'Tungro-resistant varieties. Monitor leafhopper population. Balanced fertilization.',
+            'Yellow-orange discolouration from base upward = Tungro or Fe toxicity. Confirm vector presence.')
+    elif any(x in crop_lc for x in ('rice', 'paddy')):
+        d,sv,conf,tr,pr_,ac = (
+            'Rice Neck Rot / Grain Discolouration (Bipolaris / Fusarium)', 'Medium', min(78, int(58 + br*50)),
+            'Propiconazole 25 EC @ 1ml/L at booting. Harvest at correct maturity to reduce discolouration.',
+            'Avoid late harvest. Balanced nutrition. Certified seed.',
+            'Grain discolouration reduces market price but not always yield loss.')
+
+    # ── WHEAT / BARLEY / RYE / OAT ───────────────────────────────────────────
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and orr > 0.06:
         rust_type = 'Stem/Black Rust (Puccinia graminis)' if blk > 0.04 else \
                     'Yellow/Stripe Rust (Puccinia striiformis)' if yr > 0.08 else \
                     'Brown/Leaf Rust (Puccinia triticina)'
@@ -1593,7 +1908,911 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
             'Resistant varieties. Early sowing. Balanced nitrogen.',
             '⚠️ Rust spreads at 1 km/hour in wind. Spray within 24h.')
 
-    # Cotton/Tomato/Brinjal: black smut pustules
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and (dr + blk) > 0.05:
+        if (blk > 0.05) or (dr > 0.08 and br > 0.04):
+            d,sv,conf,tr,pr_,ac = (
+                'Loose Smut / Black Mold (Ustilago tritici / Alternaria)',
+                'High', min(89, int(68 + (dr + blk) * 120)),
+                'No in-crop cure. Rogue out and burn all infected heads before spore release. '
+                'Next season: seed treatment with Carboxin 37.5% + Thiram 37.5% DS @ 2g/kg. '
+                'Hot water treatment 52°C for 10 minutes.',
+                'Certified disease-free seed. Crop rotation every 3 years. '
+                'Avoid harvesting infected crop for seed.',
+                '⚠️ Burn infected heads now — spores overwinter in healthy-looking seed and infect the entire next crop.')
+        else:
+            d,sv,conf,tr,pr_,ac = (
+                'Black Point / Grain Mold (Bipolaris sorokiniana / Fusarium)',
+                'Medium', min(84, int(65 + dr * 80 + br * 40)),
+                'Tebuconazole 25.9 EC @ 0.75ml/L at grain fill (Zadoks 71-75). '
+                'Mancozeb 75 WP @ 2g/L if early infection. Harvest at correct maturity.',
+                'Avoid late sowing. Balanced NPK. Resistant varieties where available.',
+                'Black Point reduces grain quality/market price. Grade out darkened seed before storage.')
+
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and pk > 0.05 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Fusarium Head Blight / Scab (Fusarium graminearum)', 'High', min(88, int(66 + (pk+br)*80)),
+            'Tebuconazole 25.9 EC @ 1ml/L at anthesis (50% heading). A second spray 7 days later if wet.',
+            'Resistant varieties. Avoid planting after maize. Crop rotation. Balanced nitrogen.',
+            '⚠️ Scab produces DON mycotoxin. Do not feed blighted grain to pigs or children.')
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and tan > 0.07 and yr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Septoria Leaf Blotch (Zymoseptoria tritici)', 'Medium', min(85, int(64 + tan*90)),
+            'Propiconazole 25 EC @ 1ml/L or Tebuconazole 25.9 EC @ 0.75ml/L at flag leaf emergence.',
+            'Resistant varieties. Delayed sowing. Remove crop debris. Balanced nitrogen.',
+            'Septoria moves up the canopy — protect flag leaf at all costs for yield.')
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and wr > 0.10 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Blumeria graminis f.sp. tritici)', 'Medium', min(86, int(64 + wr*80)),
+            'Propiconazole 25 EC @ 1ml/L or Sulphur 80 WP @ 3g/L. Spray at first white pustule.',
+            'Resistant varieties. Avoid dense planting. Reduce nitrogen. Early sowing.',
+            'Powdery Mildew reduces photosynthesis — control before upper leaves are affected.')
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')) and yr > 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Barley Yellow Dwarf Virus / Wheat Streak Mosaic', 'High', min(82, int(60 + yr*40)),
+            'No direct cure. Control aphid vector: Dimethoate 30 EC @ 1.5ml/L or Imidacloprid 17.8 SL @ 0.5ml/L.',
+            'Virus-resistant varieties. Early sowing to escape peak aphid pressure. Remove volunteer plants.',
+            'Yellowing from tip downward = BYDV. Yellowing from base = nitrogen deficiency. Confirm vector.')
+    elif any(x in crop_lc for x in ('wheat', 'barley', 'rye', 'oat')):
+        d,sv,conf,tr,pr_,ac = (
+            'Spot Blotch / Helminthosporium Blight (Bipolaris sorokiniana)', 'Medium', min(80, int(60 + br*60)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L at flag leaf.',
+            'Resistant varieties. Timely sowing. Balanced nutrition. Crop rotation.',
+            'Common in warm humid conditions. Most damaging at grain fill stage.')
+
+    # ── MAIZE / CORN ──────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('maize', 'corn')) and orr > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Maize Common Rust (Puccinia sorghi)', 'High', min(89, int(68 + orr*130)),
+            'Mancozeb 75 WP @ 2.5g/L + Propiconazole 25 EC @ 1ml/L. Spray at first pustule.',
+            'Resistant hybrids (NK 6240, DKC 9141). Balanced nitrogen. Avoid late planting.',
+            '⚠️ Rust spreads rapidly in cool humid weather. Spray within 48h of detection.')
+    elif any(x in crop_lc for x in ('maize', 'corn')) and (blk + dr) > 0.08 and s.mean() < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Common Smut / Galls (Ustilago maydis)', 'Medium', min(85, int(65 + (blk+dr)*80)),
+            'No effective fungicide once galls appear. Remove galls before they burst. Crop rotation.',
+            'Resistant hybrids. Avoid mechanical damage (entry point for spores). Balanced nutrition.',
+            'Smut galls are edible (huitlacoche) but reduce yield. Remove while white/grey before spores release.')
+    elif any(x in crop_lc for x in ('maize', 'corn')) and tan > 0.08 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Northern Leaf Blight / Turcicum Blight (Exserohilum turcicum)', 'High', min(87, int(65 + tan*100)),
+            'Mancozeb 75 WP @ 2.5g/L or Propiconazole 25 EC @ 1ml/L at VT/R1 (tasseling).',
+            'Resistant hybrids. Crop rotation away from maize. Deep tillage of crop residue.',
+            'Cigar-shaped grey-tan lesions on lower leaves first, move upward. Protect ear leaf.')
+    elif any(x in crop_lc for x in ('maize', 'corn')) and br > 0.12 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Southern Leaf Blight (Bipolaris maydis)', 'High', min(86, int(64 + br*55)),
+            'Mancozeb 75 WP @ 2.5g/L. Spray 2-3 times at 10-day intervals during silking.',
+            'Resistant hybrids (avoid T-cytoplasm lines). Crop rotation. Remove debris.',
+            'Rectangular tan lesions bounded by leaf veins. Worst in warm humid weather.')
+    elif any(x in crop_lc for x in ('maize', 'corn')) and yr > 0.15 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Maize Streak Virus / Chlorotic Dwarf', 'High', min(83, int(60 + yr*42)),
+            'Control leafhopper vector: Imidacloprid 70 WS seed treatment @ 5g/kg. No in-crop cure for virus.',
+            'Resistant varieties (SEEDCO SC403). Early planting. Rogue out severely infected plants.',
+            'Yellow streaks parallel to midrib = Maize Streak Virus. No cure once infected.')
+    elif any(x in crop_lc for x in ('maize', 'corn')) and wr > 0.08:
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew (Peronosclerospora sorghi)', 'High', min(85, int(64 + wr*70)),
+            'Metalaxyl 35 SD @ 6g/kg seed. Spray Metalaxyl 25 WP @ 1g/L on foliage.',
+            'Treated seed only. Destroy infected plants immediately. Do not replant susceptible varieties.',
+            '⚠️ Downy Mildew causes systemic infection — infected plants produce no cobs at all.')
+    elif any(x in crop_lc for x in ('maize', 'corn')):
+        d,sv,conf,tr,pr_,ac = (
+            'Grey Leaf Spot (Cercospora zeae-maydis)', 'Medium', min(80, int(60 + tan*70 + br*30)),
+            'Propiconazole 25 EC @ 1ml/L at tasseling. Mancozeb 75 WP @ 2.5g/L.',
+            'Resistant hybrids. Crop rotation. Deep ploughing of infected residue.',
+            'Rectangular grey lesions restricted by leaf veins. Worsens with conservation tillage.')
+
+    # ── SORGHUM / JOWAR ───────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('sorghum', 'jowar')) and orr > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Sorghum Rust (Puccinia purpurea)', 'Medium', min(85, int(65 + orr*120)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L at flag leaf stage.',
+            'Resistant varieties (CSV 15, SPV 462). Balanced nutrition. Early sowing.',
+            'Purple-brown pustules on lower leaf surface. Spray at flag leaf stage for maximum protection.')
+    elif any(x in crop_lc for x in ('sorghum', 'jowar')) and (pk > 0.06 or (blk > 0.04 and dr > 0.04)):
+        d,sv,conf,tr,pr_,ac = (
+            'Grain Mold (Fusarium / Colletotrichum / Alternaria complex)', 'High', min(87, int(66 + (pk+blk)*90)),
+            'Propiconazole 25 EC @ 1ml/L at 50% flowering. Repeat at grain fill. Harvest at right maturity.',
+            'Resistant varieties with hard grain texture. Avoid delayed harvest. Balanced nutrition.',
+            'Pink/black moldy grain reduces food safety. Harvest early and dry quickly.')
+    elif any(x in crop_lc for x in ('sorghum', 'jowar')) and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Sorghum Downy Mildew / Crazy Top (Peronosclerospora sorghi)', 'High', min(85, int(64 + wr*70)),
+            'Metalaxyl 35 SD @ 6g/kg seed treatment. Uproot and destroy infected plants.',
+            'Seed treatment is the only effective control. Resistant varieties. Crop rotation.',
+            '⚠️ Systemic disease — infected plants bear no grain. Destroy before sporulation.')
+    elif any(x in crop_lc for x in ('sorghum', 'jowar')) and yr > 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Sorghum Streak Virus / Chlorosis', 'Medium', min(80, int(60 + yr*38)),
+            'Control leafhopper vector with Imidacloprid. Remove infected plants.',
+            'Resistant varieties. Early planting. Rogue infected plants.',
+            'Yellow streak symptoms. No in-crop cure — control insect vector.')
+    elif any(x in crop_lc for x in ('sorghum', 'jowar')):
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Colletotrichum graminicola)', 'High', min(82, int(62 + br*60)),
+            'Propiconazole 25 EC @ 1ml/L or Carbendazim 50 WP @ 1g/L at heading.',
+            'Resistant varieties. Crop rotation. Remove infected crop residue.',
+            'Red stalk rot + leaf anthracnose common in humid conditions. Check stalk for red discolouration.')
+
+    # ── BAJRA / PEARL MILLET ──────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('bajra', 'pearl millet', 'millet')) and wr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Bajra Downy Mildew / Green Ear (Sclerospora graminicola)', 'High', min(88, int(68 + wr*70)),
+            'Metalaxyl 35 SD seed treatment @ 6g/kg. Uproot green ear plants immediately.',
+            'Treated seed. Resistant varieties (HHB 67 Improved, Pusa 383). Crop rotation.',
+            '⚠️ Green ear disease is systemic — infected plants bear leafy instead of grain panicles. No cure.')
+    elif any(x in crop_lc for x in ('bajra', 'pearl millet')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Pearl Millet Rust (Puccinia substriata var. penicillariae)', 'Medium', min(83, int(62 + orr*120)),
+            'Mancozeb 75 WP @ 2.5g/L or Propiconazole 25 EC @ 1ml/L at booting.',
+            'Resistant varieties. Balanced nitrogen. Avoid late sowing.',
+            'Orange pustules on leaf undersurface. Usually not severe unless epidemic year.')
+    elif any(x in crop_lc for x in ('bajra', 'pearl millet')) and pk > 0.05 and orr > 0.02:
+        d,sv,conf,tr,pr_,ac = (
+            'Ergot (Claviceps fusiformis)', 'High', min(86, int(65 + (pk+orr)*90)),
+            'Spray Thiram 75 WS @ 3g/L or Propiconazole 25 EC @ 1ml/L at 50% flowering.',
+            'Resistant varieties. Rogue ergot bodies before harvest. Use certified clean seed.',
+            '⚠️ Ergot produces alkaloids toxic to humans and livestock. Never consume blighted grain.')
+    elif any(x in crop_lc for x in ('bajra', 'pearl millet')) and blk > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Pearl Millet Smut (Moesziomyces penicillariae)', 'Medium', min(82, int(60 + blk*90)),
+            'Seed treatment: Carboxin 37.5% + Thiram 37.5% DS @ 2g/kg. Remove smut balls before harvest.',
+            'Certified smut-free seed. Resistant varieties.',
+            'Smut balls replace individual grains in panicle. Remove before spore dispersal.')
+    elif any(x in crop_lc for x in ('bajra', 'pearl millet')):
+        d,sv,conf,tr,pr_,ac = (
+            'Blast / Leaf Spot (Pyricularia grisea)', 'Medium', min(78, int(58 + tan*80 + br*30)),
+            'Tricyclazole 75 WP @ 0.6g/L or Mancozeb 75 WP @ 2.5g/L at booting stage.',
+            'Resistant varieties. Balanced nitrogen. Avoid high humidity conditions.',
+            'Diamond-shaped grey lesions on leaves — same pathogen as rice blast.')
+
+    # ── GROUNDNUT / PEANUT ────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('groundnut', 'peanut', 'moongphali')) and orr > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Groundnut Rust (Puccinia arachidis)', 'High', min(89, int(68 + orr*130)),
+            'Chlorothalonil 75 WP @ 2g/L or Mancozeb 75 WP @ 2.5g/L. Spray every 10-14 days.',
+            'Resistant varieties (ICGV 86699). Early planting. Avoid late rains during pod fill.',
+            '⚠️ Rust + Late Leaf Spot together cause 50-70% yield loss. Spray both fungicides.')
+    elif any(x in crop_lc for x in ('groundnut', 'peanut', 'moongphali')) and br > 0.10 and tan > 0.05:
+        if yr > 0.04:
+            d,sv,conf,tr,pr_,ac = (
+                'Early Leaf Spot (Cercospora arachidicola)', 'Medium', min(84, int(63 + br*55)),
+                'Chlorothalonil 75 WP @ 2g/L or Mancozeb 75 WP @ 2.5g/L. Spray from 30 days after sowing.',
+                'Certified seed. Crop rotation. Remove and destroy infected debris.',
+                'Light brown circular spots with yellow halo on upper surface = Early Leaf Spot.')
+        else:
+            d,sv,conf,tr,pr_,ac = (
+                'Late Leaf Spot (Phaeoisariopsis personata)', 'High', min(87, int(65 + br*60)),
+                'Chlorothalonil 75 WP @ 2g/L or Tebuconazole 25.9 EC @ 1ml/L. Spray from 40 days after sowing.',
+                'Resistant varieties (ICGV 91114). Crop rotation. Destroy infected debris.',
+                'Dark brown spots on lower surface with no yellow halo = Late Leaf Spot. More severe than Early.')
+    elif any(x in crop_lc for x in ('groundnut', 'peanut', 'moongphali')) and yr > 0.15 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Bud Necrosis Virus (TSWV) / Peanut Stripe Virus', 'High', min(83, int(60 + yr*42)),
+            'Control thrip vector: Imidacloprid 70 WS seed treatment @ 5g/kg. Spinosad 45 SC @ 0.3ml/L foliar.',
+            'Virus-free planting material. Reflective mulch. Early sowing. Rogue infected plants.',
+            'No cure for BNV once infected. Control thrips early (vector transmits in <30 minutes of feeding).')
+    elif any(x in crop_lc for x in ('groundnut', 'peanut', 'moongphali')):
+        d,sv,conf,tr,pr_,ac = (
+            'Collar Rot / Stem Rot / Tikka (Aspergillus niger / Sclerotium rolfsii)', 'High', min(80, int(60 + br*50 + dr*60)),
+            'Carbendazim 50 WP seed treatment @ 2g/kg. Soil drench Carbendazim 1g/L at collar region.',
+            'Deep ploughing. Crop rotation with non-host. Avoid waterlogging. Seed treatment mandatory.',
+            'White mycelium at plant base with mustard-seed sclerotia = Stem Rot. Act immediately.')
+
+    # ── SOYBEAN ───────────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('soybean', 'soya', 'soy bean')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Soybean Rust (Phakopsora pachyrhizi)', 'High', min(90, int(68 + orr*130)),
+            'Tebuconazole 25.9 EC @ 1ml/L or Trifloxystrobin 25 WG @ 0.5g/L. Spray at first pustule.',
+            'Early planting. Resistant varieties. Scout lower canopy from R1 (flowering) stage.',
+            '⚠️ Soybean rust can cause 80% yield loss. Spray cannot cure — only protect healthy tissue.')
+    elif any(x in crop_lc for x in ('soybean', 'soya', 'soy bean')) and yr > 0.18 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Yellow Mosaic Virus / Soybean Mosaic Virus (SMV)', 'High', min(84, int(62 + yr*42)),
+            'Control aphid vector: Dimethoate 30 EC @ 1.5ml/L. No in-crop cure for virus.',
+            'Resistant varieties. Virus-free seed. Rogue infected plants early.',
+            'Irregular bright yellow patches on young leaves = mosaic. Remove infected plants within 3 days.')
+    elif any(x in crop_lc for x in ('soybean', 'soya', 'soy bean')) and br > 0.10 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Frogeye Leaf Spot (Cercospora sojina)', 'Medium', min(82, int(62 + br*55)),
+            'Carbendazim 50 WP @ 1g/L or Thiophanate-methyl 70 WP @ 0.7g/L.',
+            'Resistant varieties. Crop rotation. Certified seed.',
+            'Grey centre with reddish-brown margin spots = Frogeye. Use fungicide from R3 (pod formation) stage.')
+    elif any(x in crop_lc for x in ('soybean', 'soya', 'soy bean')):
+        d,sv,conf,tr,pr_,ac = (
+            'Pod Blight / Stem Canker (Diaporthe phaseolorum)', 'Medium', min(78, int(58 + br*55 + dr*40)),
+            'Carbendazim 50 WP @ 1g/L at flowering. Thiophanate-methyl 70 WP @ 0.7g/L.',
+            'Crop rotation. Resistant varieties. Remove infected crop debris. Balanced nutrition.',
+            'Canker girdles stem = plants wilt and die suddenly. Also infects pods reducing seed quality.')
+
+    # ── COTTON ────────────────────────────────────────────────────────────────
+    elif 'cotton' in crop_lc and yr > 0.15 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Cotton Leaf Curl Disease (CLCuD – Begomovirus)', 'High', min(88, int(65 + yr*42)),
+            'Control whitefly vector: Imidacloprid 17.8 SL @ 0.3ml/L alternated with Thiamethoxam 25 WG @ 0.3g/L.',
+            'CLCuD-resistant varieties (Bt cotton with curl tolerance). Reflective mulch. Rogue infected plants.',
+            '⚠️ No cure once infected. Control whitefly population below 1 per leaf to prevent spread.')
+    elif 'cotton' in crop_lc and br > 0.10 and dr > 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Blight (Xanthomonas axonopodis pv. malvacearum)', 'High', min(86, int(64 + br*55)),
+            'Copper oxychloride 50 WP @ 3g/L + Streptomycin sulfate @ 0.3g/L. Spray 3x at 10-day intervals.',
+            'Disease-free seed. Seed treatment with Carbendazim 50 WP @ 2g/kg. Crop rotation.',
+            'Angular water-soaked lesions on leaves = Bacterial Blight. Avoid overhead irrigation.')
+    elif 'cotton' in crop_lc and tan > 0.08 and br > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Alternaria Leaf Spot / Target Spot (Alternaria macrospora)', 'Medium', min(83, int(62 + tan*80)),
+            'Mancozeb 75 WP @ 2.5g/L or Iprodione 50 WP @ 1g/L. Spray at first symptom.',
+            'Balanced nutrition (avoid excess N). Remove infected leaves. Crop rotation.',
+            'Concentric ring spots with yellow halo = Alternaria. Usually appears in aging lower leaves first.')
+    elif 'cotton' in crop_lc and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew / Areolate Mildew (Leveillula taurica / Ramularia gossypii)', 'Medium', min(82, int(60 + wr*70)),
+            'Sulphur 80 WP @ 3g/L or Dinocap 48 EC @ 0.5ml/L. Spray early morning.',
+            'Avoid dense planting. Improve airflow. Reduce nitrogen. Sulphur spray preventively.',
+            'White powdery patches on leaf undersurface = Powdery Mildew. Spray sulphur before temperature >35°C.')
+    elif 'cotton' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Fusarium / Verticillium Wilt', 'High', min(82, int(60 + br*50 + yr*30)),
+            'Soil drench Carbendazim 50 WP @ 1g/L at base. No systemic cure once vascular infected.',
+            'Wilt-tolerant varieties. Crop rotation (3-year). Avoid waterlogging. Trichoderma soil treatment.',
+            'Browning of vascular tissue when stem cut = Wilt. Remove wilted plants to prevent soil spread.')
+
+    # ── TOMATO ────────────────────────────────────────────────────────────────
+    elif 'tomato' in crop_lc and br > 0.13 and dr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Late Blight (Phytophthora infestans)', 'High', min(92, int(70 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L immediately. Spray every 5-7 days in humid weather.',
+            'Resistant varieties. Avoid overhead irrigation. Remove infected material immediately.',
+            '⚠️ Late Blight doubles every 3 days in cool humid weather. Act within 24h of detection.')
+    elif 'tomato' in crop_lc and br > 0.07 and yr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Early Blight (Alternaria solani)', 'Medium', min(87, int(65 + br*52)),
+            'Mancozeb 75 WP @ 2g/L or Chlorothalonil 75 WP @ 2g/L. Repeat every 7-10 days.',
+            'Crop rotation (2-year). Remove lower infected leaves. Mulch to reduce splash.',
+            'Concentric ring (target) spots on lower leaves first. Remove and destroy infected leaves.')
+    elif 'tomato' in crop_lc and yr > 0.18 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Tomato Yellow Leaf Curl Virus (TYLCV)', 'High', min(88, int(65 + yr*44)),
+            'Control whitefly: Imidacloprid 17.8 SL @ 0.5ml/L or Thiamethoxam 25 WG @ 0.3g/L.',
+            'TYLCV-resistant varieties (Syngenta TYLCV-R). Reflective mulch. Neem spray 5ml/L.',
+            '⚠️ No cure. Rogue infected plants immediately. Whiteflies transmit in <15 minutes of feeding.')
+    elif 'tomato' in crop_lc and tan > 0.08 and gr < 0.30:
+        d,sv,conf,tr,pr_,ac = (
+            'Septoria Leaf Spot (Septoria lycopersici)', 'Medium', min(83, int(62 + tan*85)),
+            'Chlorothalonil 75 WP @ 2g/L or Mancozeb 75 WP @ 2g/L. Spray every 7-10 days.',
+            'Crop rotation. Remove lower leaves. Avoid working in wet foliage. Mulch.',
+            'Small circular spots with dark border and white centre = Septoria. Starts from lower leaves.')
+    elif 'tomato' in crop_lc and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Leveillula taurica)', 'Low', min(82, int(60 + wr*65)),
+            'Sulphur 80 WP @ 2g/L or Hexaconazole 5 EC @ 1ml/L. Spray in cool morning hours.',
+            'Improve airflow. Avoid excess nitrogen. Resistant varieties.',
+            'White powdery growth on leaf underside, yellow on top. Usually not yield-limiting if caught early.')
+    elif 'tomato' in crop_lc and pr > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Speck (Pseudomonas syringae pv. tomato)', 'Medium', min(81, int(60 + pr*90)),
+            'Copper oxychloride 50 WP @ 3g/L. Avoid overhead irrigation. Remove infected leaves.',
+            'Resistant varieties. Crop rotation. Avoid working in wet fields.',
+            'Tiny dark specks surrounded by yellow halo = Bacterial Speck. Favoured by cool wet conditions.')
+    elif 'tomato' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Wilt (Ralstonia solanacearum)', 'High', min(83, int(62 + dr*70 + br*40)),
+            'No chemical cure. Remove and destroy wilted plants. Soil solarization. Crop rotation (3-year).',
+            'Wilt-resistant varieties. Raised beds. Avoid waterlogging. Trichoderma bio-control in soil.',
+            'Sudden wilt without yellowing + milky ooze from cut stem = Bacterial Wilt. Highly destructive.')
+
+    # ── POTATO ────────────────────────────────────────────────────────────────
+    elif 'potato' in crop_lc and br > 0.13 and dr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Late Blight (Phytophthora infestans)', 'High', min(93, int(70 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L every 5 days. Chlorothalonil 75 WP @ 2g/L preventively.',
+            'Certified disease-free seed tubers. Avoid overhead irrigation. Ridge high to protect tubers.',
+            '⚠️ Late Blight can destroy entire crop in 7-10 days under cool humid conditions.')
+    elif 'potato' in crop_lc and br > 0.07 and yr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Early Blight (Alternaria solani)', 'Medium', min(85, int(63 + br*52)),
+            'Mancozeb 75 WP @ 2g/L or Chlorothalonil 75 WP @ 2g/L from 30 days after emergence.',
+            'Crop rotation. Balanced nutrition (avoid low N). Remove lower leaves.',
+            'Target-spot pattern on lower leaves first = Early Blight. Manage nitrogen carefully.')
+    elif 'potato' in crop_lc and blk > 0.05 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Black Scurf / Rhizoctonia Canker (Rhizoctonia solani)', 'Medium', min(82, int(60 + (blk+dr)*80)),
+            'Seed treatment: Pencycuron 25 WP @ 0.2g/L soak or Flutolanil 17.5% SC. Soil application Trichoderma.',
+            'Certified seed. Avoid cold waterlogged soil at planting. Crop rotation.',
+            'Black hard patches on tuber skin = Sclerotia (not dirt). Affects sprout vigour.')
+    elif 'potato' in crop_lc and yr > 0.15 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Potato Virus Y / Potato Leaf Roll Virus (PVY / PLRV)', 'High', min(82, int(60 + yr*42)),
+            'Control aphid vector: Imidacloprid 17.8 SL @ 0.5ml/L. Use mineral oil spray 1% to deter aphids.',
+            'Certified virus-free seed. Early planting. Rogue infected plants. Control aphids from emergence.',
+            'Rolling/mottling of leaves = viral. No cure — control aphid vector.')
+    elif 'potato' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Common Scab (Streptomyces scabiei)', 'Low', min(75, int(55 + tan*60 + br*30)),
+            'Maintain soil pH below 5.2. Avoid manure before planting. Seed treatment with Thiram.',
+            'Acidifying fertilizers (ammonium sulphate). Crop rotation. Adequate irrigation at tuber set.',
+            'Corky scabby patches on tuber skin. Cosmetic defect — does not affect eating quality but reduces market value.')
+
+    # ── ONION / GARLIC ────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')) and pr > 0.07 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Purple Blotch (Alternaria porri)', 'High', min(87, int(65 + (pr+br)*80)),
+            'Mancozeb 75 WP @ 2g/L or Iprodione 50 WP @ 1g/L. Spray every 7-10 days.',
+            'Crop rotation. Avoid overhead irrigation. Remove infected debris. Balanced nutrition.',
+            'Purple-brown oval lesions with yellow border on leaves = Purple Blotch. Serious in humid conditions.')
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')) and wr > 0.12 and gr > 0.08:
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew (Peronospora destructor)', 'High', min(85, int(64 + wr*70)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L or Cymoxanil + Mancozeb @ 2g/L. Spray at first symptom.',
+            'Avoid dense planting. No overhead irrigation. Crop rotation. Resistant varieties.',
+            'Grey-violet downy growth on leaf surface = Downy Mildew. Leaves collapse in wet weather.')
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')) and wr > 0.08 and blk < 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'White Rot (Sclerotium cepivorum)', 'High', min(86, int(65 + wr*65)),
+            'Iprodione 50 WP @ 1g/L soil drench. Tebuconazole 25.9 EC @ 1ml/L spray.',
+            'Crop rotation (minimum 8 years — sclerotia survive long). Certified disease-free sets. Raised beds.',
+            '⚠️ White fluffy mycelium at bulb base = White Rot. Highly persistent in soil — quarantine infected area.')
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Rust (Puccinia allii)', 'Medium', min(83, int(62 + orr*120)),
+            'Mancozeb 75 WP @ 2g/L or Propiconazole 25 EC @ 1ml/L. Spray at first pustule.',
+            'Crop rotation. Resistant varieties. Balanced nutrition.',
+            'Orange elongated pustules on leaves = Allium Rust. Usually not severe — spray early.')
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')) and yr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Iris Yellow Spot Virus (IYSV) / Thrips Damage', 'High', min(82, int(60 + yr*42)),
+            'Control thrip vector: Spinosad 45 SC @ 0.3ml/L or Fipronil 5 SC @ 1.5ml/L.',
+            'Blue sticky traps. Reflective mulch. Rogue infected plants. Early planting.',
+            'Diamond-shaped straw/tan spots on leaves = IYSV. Thrips transmit in <30 min of feeding.')
+    elif any(x in crop_lc for x in ('onion', 'garlic', 'leek', 'pyaj', 'lasun')):
+        d,sv,conf,tr,pr_,ac = (
+            'Stemphylium Leaf Blight (Stemphylium vesicarium)', 'Medium', min(80, int(58 + br*60 + tan*40)),
+            'Mancozeb 75 WP @ 2g/L or Chlorothalonil 75 WP @ 2g/L. Spray every 10 days.',
+            'Crop rotation. Balanced nutrition. Avoid excess nitrogen. Remove debris.',
+            'Water-soaked lesions turning tan-brown = Stemphylium. Worsens after thrips damage.')
+
+    # ── CHILLI / PEPPER / CAPSICUM ────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')) and yr > 0.18 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Chilli Leaf Curl Virus / Pepper Yellow Leaf Curl (Begomovirus)', 'High', min(88, int(65 + yr*44)),
+            'Control whitefly: Imidacloprid 17.8 SL @ 0.5ml/L. Acephate 75 SP @ 1.5g/L alternated.',
+            'Resistant varieties (Pusa Jwala). Neem oil 5ml/L. Reflective mulch. Rogue infected plants.',
+            '⚠️ No cure once infected. Whitefly transmits virus in minutes. Manage from seedling stage.')
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')) and br > 0.10 and dr > 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose / Fruit Rot (Colletotrichum capsici)', 'High', min(87, int(65 + br*55)),
+            'Mancozeb 75 WP @ 2g/L or Carbendazim 50 WP @ 1g/L. Spray at fruit set and repeat every 10 days.',
+            'Crop rotation. Remove infected fruits. Avoid overhead irrigation. Certified seed.',
+            'Sunken dark lesions on fruit = Anthracnose. Major post-harvest loss crop too — spray before harvest.')
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')) and pr > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Phytophthora Blight / Die-back (Phytophthora capsici)', 'High', min(87, int(65 + pr*90)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L immediately. Avoid waterlogging — this is the key trigger.',
+            'Raised bed planting. Crop rotation. Metalaxyl seed treatment. Resistant varieties.',
+            '⚠️ Phytophthora spreads through irrigation water. Drain field immediately if detected.')
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')) and tan > 0.07 and yr > 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Leaf Spot (Cercospora capsici)', 'Medium', min(82, int(60 + tan*85)),
+            'Mancozeb 75 WP @ 2g/L or Carbendazim 50 WP @ 1g/L. Spray at first spots.',
+            'Crop rotation. Avoid overhead irrigation. Remove lower infected leaves.',
+            'Circular tan spots with dark border on leaves = Cercospora. Causes defoliation in severe cases.')
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')) and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Leveillula taurica)', 'Low', min(80, int(58 + wr*65)),
+            'Sulphur 80 WP @ 2g/L or Hexaconazole 5 EC @ 1ml/L. Spray in morning.',
+            'Improve airflow. Reduce nitrogen. Avoid drought stress.',
+            'White powdery growth on leaf underside, pale yellow on top. Usually low severity.')
+    elif any(x in crop_lc for x in ('chilli', 'pepper', 'capsicum', 'mirchi')):
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Wilt / Fusarium Wilt', 'High', min(80, int(60 + dr*70 + br*35)),
+            'Soil drench Carbendazim 50 WP @ 1g/L + Copper oxychloride 50 WP @ 3g/L. Remove wilted plants.',
+            'Wilt-resistant varieties. Raised beds. Crop rotation (3-year). Trichoderma soil treatment.',
+            'Sudden wilt in single plants = Bacterial/Fusarium Wilt. Cut stem — brown vascular ring confirms it.')
+
+    # ── BRINJAL / EGGPLANT ────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('brinjal', 'eggplant', 'baingan', 'aubergine')) and yr > 0.15 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Brinjal Little Leaf Disease (Phytoplasma)', 'High', min(85, int(63 + yr*42)),
+            'No cure. Rogue infected plants. Control leafhopper vector: Imidacloprid 17.8 SL @ 0.5ml/L.',
+            'Resistant varieties. Rogue infected plants early. Control leafhopper from seedling stage.',
+            '⚠️ Tiny leaf and flower abnormality = Phytoplasma. Remove entire plant — it will never recover.')
+    elif any(x in crop_lc for x in ('brinjal', 'eggplant', 'baingan', 'aubergine')) and br > 0.10 and dr > 0.03:
+        d,sv,conf,tr,pr_,ac = (
+            'Phomopsis Blight / Fruit Rot (Phomopsis vexans)', 'High', min(86, int(64 + br*55)),
+            'Mancozeb 75 WP @ 2g/L or Carbendazim 50 WP @ 1g/L. Spray at flowering and fruit set.',
+            'Crop rotation. Certified disease-free seed. Remove and destroy infected fruits.',
+            'Dark sunken lesions on fruit + damping off in nursery = Phomopsis. Spray preventively.')
+    elif any(x in crop_lc for x in ('brinjal', 'eggplant', 'baingan', 'aubergine')) and blk > 0.04 and s.mean() < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Leaf Spot / Sooty Mold', 'Medium', min(80, int(58 + blk*85)),
+            'Mancozeb 75 WP @ 2g/L. Control sucking insects for sooty mold. Copper oxychloride 3g/L.',
+            'Control mealybug/whitefly (sooty mold host). Crop rotation for Cercospora.',
+            'Wash sooty mold with soap water. Then apply copper-based fungicide.')
+    elif any(x in crop_lc for x in ('brinjal', 'eggplant', 'baingan', 'aubergine')):
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Wilt / Verticillium Wilt', 'High', min(79, int(58 + dr*70 + br*40)),
+            'No chemical cure. Remove wilted plants. Soil solarization. Trichoderma viride @ 5g/L drench.',
+            'Wilt-tolerant varieties. Raised beds. Crop rotation (3-year). Avoid waterlogging.',
+            'Cut the stem — milky bacterial ooze = Bacterial Wilt; brown discolouration = Verticillium.')
+
+    # ── OKRA / BHINDI ─────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('okra', 'bhindi', 'lady finger', 'ladyfinger')) and yr > 0.20 and gr < 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Yellow Vein Mosaic Virus (YVMV – Begomovirus)', 'High', min(91, int(68 + yr*45)),
+            'Control whitefly: Imidacloprid 17.8 SL @ 0.5ml/L from seedling. Thiamethoxam 25 WG @ 0.3g/L alternated.',
+            'Resistant varieties (Parbhani Kranti, Arka Anamika). Silver mulch. Neem oil 5ml/L. Remove infected plants.',
+            '⚠️ YVMV is most destructive okra disease. Resistant variety is the only real solution.')
+    elif any(x in crop_lc for x in ('okra', 'bhindi', 'lady finger', 'ladyfinger')) and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Erysiphe cichoracearum)', 'Medium', min(83, int(62 + wr*68)),
+            'Sulphur 80 WP @ 3g/L or Triadimefon 25 WP @ 1g/L. Spray 2-3 times at 10-day intervals.',
+            'Improved airflow. Balanced nutrition. Avoid excess nitrogen.',
+            'White powdery patches on leaves. Spray sulphur before temperatures exceed 35°C.')
+    elif any(x in crop_lc for x in ('okra', 'bhindi', 'lady finger', 'ladyfinger')) and br > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Leaf Spot / Target Spot (Cercospora abelmoschi)', 'Medium', min(80, int(58 + br*60)),
+            'Mancozeb 75 WP @ 2g/L or Carbendazim 50 WP @ 1g/L. Spray every 10 days.',
+            'Crop rotation. Remove and destroy infected debris. Avoid overhead irrigation.',
+            'Circular brown spots with grey centre = Cercospora. Remove lower infected leaves.')
+    elif any(x in crop_lc for x in ('okra', 'bhindi', 'lady finger', 'ladyfinger')):
+        d,sv,conf,tr,pr_,ac = (
+            'Enation Leaf Curl Virus', 'High', min(78, int(58 + yr*40 + gr*(-20))),
+            'Control leafhopper vector: Dimethoate 30 EC @ 1.5ml/L. Imidacloprid 17.8 SL @ 0.5ml/L.',
+            'Tolerant varieties. Early sowing. Control leafhoppers from nursery stage.',
+            'Leaf rolling/curling with enations (outgrowths) on underside = Enation. Remove infected plants.')
+
+    # ── CHICKPEA / GRAM ───────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('chickpea', 'gram', 'chana', 'chick pea', 'kabuli')) and br > 0.10 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Ascochyta Blight (Ascochyta rabiei)', 'High', min(88, int(66 + br*55)),
+            'Mancozeb 75 WP @ 2.5g/L or Chlorothalonil 75 WP @ 2g/L. Spray at onset of flowering.',
+            'Certified blight-free seed. Seed treatment: Thiram 75 WS @ 3g/kg. Resistant varieties (JAKI 9218).',
+            '⚠️ Ascochyta spreads in rain splash — avoid working in wet field. Can cause 100% crop loss.')
+    elif any(x in crop_lc for x in ('chickpea', 'gram', 'chana', 'chick pea', 'kabuli')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Chickpea Rust (Uromyces ciceris-arietini)', 'Medium', min(83, int(62 + orr*120)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L at first pustule.',
+            'Resistant varieties. Early sowing. Balanced nutrition.',
+            'Orange-brown pustules on leaves = Chickpea Rust. Spray early for best results.')
+    elif any(x in crop_lc for x in ('chickpea', 'gram', 'chana', 'chick pea', 'kabuli')) and yr > 0.15 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Fusarium Wilt / Stunt (Fusarium oxysporum f.sp. ciceri)', 'High', min(84, int(62 + yr*42)),
+            'No effective in-crop cure. Trichoderma harzianum soil treatment @ 5g/L at sowing.',
+            'Wilt-resistant varieties (JG 74, Annigeri-1). Soil solarization. Deep ploughing in summer.',
+            'Yellowing from top down + stem collar browning = Fusarium Wilt. Pull up plant — roots are dark.')
+    elif any(x in crop_lc for x in ('chickpea', 'gram', 'chana', 'chick pea', 'kabuli')):
+        d,sv,conf,tr,pr_,ac = (
+            'Botrytis Grey Mold / Collar Rot (Botrytis cinerea / Pythium)', 'High', min(80, int(60 + dr*70 + br*40)),
+            'Iprodione 50 WP @ 1g/L or Carbendazim 50 WP @ 1g/L. Seed treatment: Thiram 75 WS @ 3g/kg.',
+            'Avoid dense planting. Improve airflow. Avoid waterlogging. Early sowing.',
+            'Grey fuzzy mold on flowers/pods in cool wet weather = Botrytis. Remove and burn.')
+
+    # ── PIGEONPEA / ARHAR ─────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('pigeonpea', 'arhar', 'tur', 'cajanus', 'redgram')) and br > 0.10 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Phytophthora Stem Blight (Phytophthora drechsleri f.sp. cajani)', 'High', min(86, int(64 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L drench at base. Remove affected plants.',
+            'Raised bed planting. Crop rotation. Avoid waterlogging. Metalaxyl seed treatment.',
+            'Dark brown stem at soil line + rapid wilt = Phytophthora. Drain field immediately.')
+    elif any(x in crop_lc for x in ('pigeonpea', 'arhar', 'tur', 'cajanus', 'redgram')) and yr > 0.18 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Sterility Mosaic Virus (SMV – Pigeonpea)', 'High', min(85, int(63 + yr*42)),
+            'Control eriophyid mite vector: Dimethoate 30 EC @ 2ml/L or Wettable Sulphur 80 WP @ 3g/L.',
+            'Resistant varieties (ICPL 84023, Asha). Rogue infected plants. Early sowing.',
+            '⚠️ Sterility Mosaic = zero pod set. Mite-transmitted. Remove infected plants within 7 days.')
+    elif any(x in crop_lc for x in ('pigeonpea', 'arhar', 'tur', 'cajanus', 'redgram')) and br > 0.08 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Alternaria Blight (Alternaria tenuissima)', 'Medium', min(81, int(60 + br*55)),
+            'Mancozeb 75 WP @ 2.5g/L or Iprodione 50 WP @ 1g/L. Spray at podding.',
+            'Crop rotation. Certified seed. Remove infected debris.',
+            'Concentric spots on leaves + pod spots = Alternaria. Spray at podding for protection.')
+    elif any(x in crop_lc for x in ('pigeonpea', 'arhar', 'tur', 'cajanus', 'redgram')):
+        d,sv,conf,tr,pr_,ac = (
+            'Fusarium Wilt (Fusarium udum)', 'High', min(82, int(60 + dr*70 + yr*30)),
+            'No in-crop cure. Soil treatment Trichoderma viride @ 5g/kg seed. Crop rotation.',
+            'Resistant varieties (ICPL 87119, Maruti). Deep summer ploughing. Soil solarization.',
+            'Wilt at any growth stage with brown vascular tissue = Fusarium Wilt. Cannot be cured.')
+
+    # ── MUNGBEAN / MOONG ──────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('mungbean', 'moong', 'green gram', 'mung')) and yr > 0.20 and gr < 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Yellow Mosaic Virus (Mungbean MYMV)', 'High', min(90, int(68 + yr*45)),
+            'Control whitefly: Imidacloprid 17.8 SL @ 0.5ml/L from 2nd week. Thiamethoxam alternated.',
+            'Resistant varieties (MH 318, Pusa Vishal). Silver mulch. Remove infected plants immediately.',
+            '⚠️ MYMV is most destructive moong disease. Resistant variety is the primary management tool.')
+    elif any(x in crop_lc for x in ('mungbean', 'moong', 'green gram', 'mung')) and br > 0.10 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Leaf Spot (Cercospora canescens)', 'Medium', min(82, int(60 + br*58)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2g/L. Spray 2-3 times at 10-day intervals.',
+            'Crop rotation. Certified seed. Balanced nutrition. Avoid overhead irrigation.',
+            'Circular brown spots on leaves = Cercospora. Causes premature defoliation in severe cases.')
+    elif any(x in crop_lc for x in ('mungbean', 'moong', 'green gram', 'mung')):
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew / Anthracnose (Erysiphe / Colletotrichum)', 'Medium', min(78, int(58 + wr*65 + br*35)),
+            'Carbendazim 50 WP @ 1g/L (anthracnose) or Sulphur 80 WP @ 3g/L (mildew).',
+            'Crop rotation. Certified seed. Balanced nutrition.',
+            'White powder on leaves = Mildew; dark sunken pod spots = Anthracnose.')
+
+    # ── BLACKGRAM / URAD ──────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('blackgram', 'urad', 'black gram', 'urd')) and yr > 0.18 and gr < 0.18:
+        d,sv,conf,tr,pr_,ac = (
+            'Yellow Mosaic Virus (MYMV)', 'High', min(89, int(66 + yr*45)),
+            'Control whitefly: Imidacloprid 17.8 SL @ 0.5ml/L. Thiamethoxam 25 WG @ 0.3g/L.',
+            'Resistant varieties (LBG 752, Pant U-30). Silver mulch. Rogue infected plants.',
+            '⚠️ Remove infected plants within 5 days — each plant is a virus source for whiteflies.')
+    elif any(x in crop_lc for x in ('blackgram', 'urad', 'black gram', 'urd')) and br > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Leaf Spot / Web Blight (Cercospora / Rhizoctonia)', 'Medium', min(81, int(60 + br*58)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2g/L. Spray at 30 and 45 days.',
+            'Crop rotation. Certified seed. Avoid overhead irrigation. Remove infected debris.',
+            'Web Blight in humid conditions — blighted patches on lower canopy. Drain waterlogged areas.')
+    elif any(x in crop_lc for x in ('blackgram', 'urad', 'black gram', 'urd')):
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew / Anthracnose', 'Medium', min(76, int(56 + wr*65 + br*35)),
+            'Carbendazim 50 WP @ 1g/L or Sulphur 80 WP @ 3g/L.',
+            'Crop rotation. Certified seed.',
+            'White powder = Mildew; dark pod lesions = Anthracnose. Confirm before spraying.')
+
+    # ── LENTIL / MASOOR ───────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('lentil', 'masoor', 'dal')) and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Lentil Rust (Uromyces viciae-fabae)', 'High', min(87, int(65 + orr*125)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L at first pustule.',
+            'Resistant varieties. Early sowing. Balanced nitrogen. Remove debris.',
+            'Orange-brown pustules on leaves = Rust. Can cause complete crop loss in epidemic year.')
+    elif any(x in crop_lc for x in ('lentil', 'masoor', 'dal')) and tan > 0.07 and br > 0.07:
+        d,sv,conf,tr,pr_,ac = (
+            'Stemphylium Blight (Stemphylium botryosum)', 'High', min(85, int(64 + (tan+br)*60)),
+            'Iprodione 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray 2 times at 10-day intervals.',
+            'Resistant varieties (Sapna, Sehore 74-3). Early sowing. Crop rotation.',
+            '⚠️ Stemphylium is the most serious lentil disease in South Asia. Causes 50-70% loss in epidemic year.')
+    elif any(x in crop_lc for x in ('lentil', 'masoor', 'dal')):
+        d,sv,conf,tr,pr_,ac = (
+            'Ascochyta Blight / Fusarium Wilt (Ascochyta / Fusarium oxysporum)', 'Medium', min(78, int(58 + br*55)),
+            'Mancozeb 75 WP @ 2.5g/L or Carbendazim 50 WP @ 1g/L. Seed treatment: Thiram @ 3g/kg.',
+            'Certified disease-free seed. Resistant varieties. Crop rotation.',
+            'Stem base browning + wilt = Fusarium; circular leaf lesions = Ascochyta.')
+
+    # ── MUSTARD / RAPESEED / CANOLA ───────────────────────────────────────────
+    elif any(x in crop_lc for x in ('mustard', 'rapeseed', 'canola', 'sarson', 'raya')) and wr > 0.12 and blk < 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'White Rust (Albugo candida)', 'High', min(87, int(65 + wr*70)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L or Ridomil Gold @ 2g/L. Spray at early rosette stage.',
+            'Resistant varieties (Rohini, Varuna). Crop rotation. Destroy infected plant debris.',
+            'White blister pustules on leaf underside + stag head malformation of siliques = White Rust.')
+    elif any(x in crop_lc for x in ('mustard', 'rapeseed', 'canola', 'sarson', 'raya')) and br > 0.10 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Alternaria Blight (Alternaria brassicae / A. brassicicola)', 'High', min(88, int(66 + br*55)),
+            'Iprodione 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L at 50% flowering and pod fill.',
+            'Seed treatment Thiram 75 WS @ 3g/kg. Resistant varieties. Crop rotation.',
+            '⚠️ Alternaria reduces seed weight and oil content significantly. Spray at flowering mandatory.')
+    elif any(x in crop_lc for x in ('mustard', 'rapeseed', 'canola', 'sarson', 'raya')) and blk > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Sclerotinia Stem Rot / White Mold (Sclerotinia sclerotiorum)', 'High', min(86, int(64 + (blk+dr)*80)),
+            'Carbendazim 50 WP @ 1g/L or Iprodione 50 WP @ 1g/L at 25% flowering. Avoid dense planting.',
+            'Crop rotation (avoid sunflower, soybean). Remove sclerotia from soil. Trichoderma application.',
+            'White cottony growth on stem + black rat-dropping sclerotia inside stem = Sclerotinia.')
+    elif any(x in crop_lc for x in ('mustard', 'rapeseed', 'canola', 'sarson', 'raya')):
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew / Powdery Mildew (Peronospora / Erysiphe)', 'Medium', min(80, int(58 + wr*65 + br*30)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L (downy) or Sulphur 80 WP @ 3g/L (powdery).',
+            'Crop rotation. Avoid overhead irrigation. Balanced nutrition. Early sowing.',
+            'Grey downy growth on underside = Downy Mildew. White powder = Powdery Mildew.')
+
+    # ── SUNFLOWER ─────────────────────────────────────────────────────────────
+    elif 'sunflower' in crop_lc and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Sunflower Rust (Puccinia helianthi)', 'High', min(88, int(66 + orr*130)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L. Spray at first pustule.',
+            'Resistant varieties. Early sowing. Balanced nitrogen. Crop rotation.',
+            '⚠️ Rust pustules on leaf underside. Spray before 5% leaf area covered.')
+    elif 'sunflower' in crop_lc and br > 0.10 and tan > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Alternaria Leaf Blight (Alternaria helianthi)', 'High', min(86, int(64 + br*55)),
+            'Mancozeb 75 WP @ 2.5g/L or Iprodione 50 WP @ 1g/L. Spray 2-3 times at 10-day intervals.',
+            'Certified seed. Crop rotation. Balanced nutrition. Remove infected debris.',
+            'Irregular brown lesions with yellow halo = Alternaria. Severe during humid weather.')
+    elif 'sunflower' in crop_lc and blk > 0.06 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Sclerotinia Head Rot (Sclerotinia sclerotiorum)', 'High', min(87, int(65 + (blk+dr)*80)),
+            'Iprodione 50 WP @ 1g/L at early head formation. Carbendazim 50 WP @ 1g/L.',
+            'Crop rotation. Resistant varieties. Avoid dense planting. Improve airflow.',
+            'Brown rot on back of head with white mycelium + black sclerotia inside = Sclerotinia.')
+    elif 'sunflower' in crop_lc and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew (Plasmopara halstedii)', 'High', min(85, int(64 + wr*68)),
+            'Metalaxyl seed treatment @ 6g/kg. Metalaxyl + Mancozeb 72 WP @ 2g/L spray.',
+            'Resistant varieties. Treated seed only. Crop rotation. Destroy infected plants.',
+            '⚠️ Systemic downy mildew stunts plants completely. Treated seed is mandatory.')
+    elif 'sunflower' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Charcoal Rot / Macrophomina Stem Rot', 'High', min(80, int(60 + dr*70 + br*35)),
+            'Seed treatment: Carbendazim 50 WP @ 2g/kg + Thiram 75 WS @ 3g/kg. Adequate soil moisture.',
+            'Avoid drought stress at head fill. Crop rotation. Deep ploughing.',
+            'Premature ripening + charcoal-grey streaks inside stem = Charcoal Rot. Drought predisposes it.')
+
+    # ── MANGO ─────────────────────────────────────────────────────────────────
+    elif 'mango' in crop_lc and blk > 0.05 and br > 0.08:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Colletotrichum gloeosporioides)', 'High', min(88, int(66 + (blk+br)*70)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray at panicle emergence and fortnightly.',
+            'Copper oxychloride 50 WP preventive spray. Post-harvest hot water treatment 52°C for 5 min.',
+            'Dark sunken spots on fruit/leaves = Anthracnose. Major post-harvest disease — pre-harvest sprays critical.')
+    elif 'mango' in crop_lc and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Oidium mangiferae)', 'Medium', min(85, int(63 + wr*68)),
+            'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L. Spray at panicle emergence.',
+            'Spray Carbendazim 0.1% at bud burst and again 15 days later.',
+            'White powdery coating on panicles/young leaves = Powdery Mildew. Critical to spray at panicle stage.')
+    elif 'mango' in crop_lc and yr > 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Die-back / Tip Burn (Botryodiplodia theobromae)', 'High', min(83, int(62 + yr*42)),
+            'Prune 15cm below dead tissue. Carbendazim 50 WP @ 1g/L spray on cut ends. Copper paste on wounds.',
+            'Remove dead wood regularly. Balanced nutrition. Adequate irrigation.',
+            'Tip dieback from twigs moving downward = Die-back. Prune and paste immediately.')
+    elif 'mango' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Canker / Sooty Mold (Xanthomonas campestris)', 'Medium', min(78, int(58 + br*55 + blk*40)),
+            'Copper oxychloride 50 WP @ 3g/L. Control scale/mealybug for sooty mold.',
+            'Prune infected branches. Bordeaux mixture 1% on canker lesions. Control sucking insects.',
+            'Raised water-soaked cankers on stem = Bacterial Canker. Black coating = Sooty Mold from insects.')
+
+    # ── BANANA ────────────────────────────────────────────────────────────────
+    elif 'banana' in crop_lc and yr > 0.12 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Yellow Sigatoka (Mycosphaerella musicola)', 'High', min(87, int(65 + (yr+br)*60)),
+            'Propiconazole 25 EC @ 1ml/L or Mancozeb 75 WP @ 2.5g/L. Spray oil-fungicide mix for canopy penetration.',
+            'Oil spray programme (80ml/L summer oil). Remove severely affected leaves (leaf surgery).',
+            'Yellow streaks expanding to brown leaf lesions = Sigatoka. Spray on leaf underside.')
+    elif 'banana' in crop_lc and blk > 0.05 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Black Sigatoka (Mycosphaerella fijiensis)', 'High', min(90, int(68 + (blk+br)*70)),
+            'Propiconazole 25 EC @ 1ml/L alternated with Tebuconazole 25.9 EC @ 1ml/L. Oil spray programme.',
+            'Resistant varieties. Strict leaf surgery programme. Oil spray programme.',
+            '⚠️ Black Sigatoka is more aggressive than Yellow. Can reduce photosynthesis by 80%.')
+    elif 'banana' in crop_lc and br > 0.10 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Panama Wilt / Fusarium Wilt (FOC Race 4)', 'High', min(88, int(66 + br*55)),
+            'No chemical cure. Remove and destroy infected plants with roots. Lime the excavation pit.',
+            'Disease-free tissue culture plants only. TR4-resistant varieties. Quarantine infected areas.',
+            '⚠️ Panama Wilt TR4 is a global crisis. Once soil infected, cannot grow susceptible banana for decades.')
+    elif 'banana' in crop_lc and yr > 0.20 and gr < 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Banana Bunchy Top Virus (BBTV)', 'High', min(87, int(65 + yr*44)),
+            'No cure. Remove entire plant including corm. Control aphid vector: Dimethoate 30 EC @ 1.5ml/L.',
+            'Certified virus-free tissue culture planting material only. Rogue infected plants immediately.',
+            '⚠️ BBTV — narrow dark green streaks on leaves + bunched rosette = confirmed. Destroy entire mat.')
+    elif 'banana' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Xanthomonas Wilt / Bacterial Wilt (Xanthomonas campestris pv. musacearum)', 'High', min(82, int(60 + dr*70 + br*35)),
+            'No chemical cure. Remove and destroy infected plants. Disinfect cutting tools with bleach.',
+            'Disease-free planting material. Disinfect all tools between plants. No infected plant material in field.',
+            '⚠️ Yellow ooze from cut stem = Xanthomonas Wilt. Spreads on machete blades.')
+
+    # ── GRAPES / VINE ─────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('grape', 'grapes', 'vine', 'angur')) and wr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Uncinula necator / Erysiphe necator)', 'Medium', min(85, int(63 + wr*68)),
+            'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L. Spray every 10-14 days.',
+            'Prune for good airflow. Avoid excess nitrogen. Resistant varieties (Muscadine).',
+            'White powdery coating on young shoots, leaves and berries = Powdery Mildew. Spray sulphur early.')
+    elif any(x in crop_lc for x in ('grape', 'grapes', 'vine', 'angur')) and br > 0.10 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew (Plasmopara viticola)', 'High', min(88, int(66 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L or Cymoxanil + Mancozeb @ 2g/L. Spray before rain.',
+            'Bordeaux mixture 1% preventively. Improve airflow. Avoid overhead irrigation.',
+            'Oily yellow spots on leaf top + white downy on underside = Downy Mildew. Act before rain.')
+    elif any(x in crop_lc for x in ('grape', 'grapes', 'vine', 'angur')) and blk > 0.05 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Elsinoe ampelina)', 'High', min(86, int(64 + (blk+br)*70)),
+            'Carbendazim 50 WP @ 1g/L or Copper oxychloride 50 WP @ 3g/L. Spray 3-4 times at budbreak.',
+            'Prune infected shoots. Destroy infected canes. Spray Bordeaux 4% during dormancy.',
+            'Dark sunken spots with grey centre on berries/shoots = Anthracnose. Bird-eye spots on berries.')
+    elif any(x in crop_lc for x in ('grape', 'grapes', 'vine', 'angur')) and yr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Leaf Roll Virus / Fanleaf Virus', 'High', min(82, int(60 + yr*42)),
+            'No cure. Remove infected vines. Control mealybug/nematode vector.',
+            'Certified virus-tested planting material. Remove infected vines. Control vectors.',
+            'Rolling of leaves with red/yellow discolouration = Leaf Roll. Spreads through propagation material.')
+    elif any(x in crop_lc for x in ('grape', 'grapes', 'vine', 'angur')):
+        d,sv,conf,tr,pr_,ac = (
+            'Botrytis Bunch Rot / Grey Mold (Botrytis cinerea)', 'High', min(82, int(60 + br*55 + dr*35)),
+            'Iprodione 50 WP @ 1g/L or Fenhexamid 50 WP @ 1g/L at flowering and early fruit.',
+            'Improve cluster aeration (leaf removal). Avoid dense clusters. Harvest at right maturity.',
+            'Grey fuzzy mold on berries in cool humid weather = Botrytis. Use different chemistry each spray.')
+
+    # ── CITRUS ────────────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('citrus', 'orange', 'lemon', 'lime', 'mosambi', 'mandarin', 'malta')) and blk > 0.05 and br > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Citrus Canker (Xanthomonas axonopodis pv. citri)', 'High', min(88, int(66 + (blk+br)*70)),
+            'Copper oxychloride 50 WP @ 3g/L + Streptomycin sulfate 90 SP @ 300ppm. Spray 4-5 times seasonally.',
+            'Canker-resistant varieties. Windbreaks. Disinfect pruning tools. Destroy canker lesions.',
+            '⚠️ Raised corky lesions on fruit/leaves with yellow halo = Canker. Spreads in wind-driven rain.')
+    elif any(x in crop_lc for x in ('citrus', 'orange', 'lemon', 'lime', 'mosambi', 'mandarin', 'malta')) and yr > 0.15 and gr < 0.25:
+        d,sv,conf,tr,pr_,ac = (
+            'Citrus Greening / Huanglongbing (HLB – Candidatus Liberibacter)', 'High', min(87, int(65 + yr*44)),
+            'Control Asian Citrus Psyllid vector: Imidacloprid 17.8 SL @ 0.5ml/L. Dimethoate 30 EC @ 1.5ml/L.',
+            'Certified HLB-free nursery planting material. Rogue infected trees. Psyllid control mandatory.',
+            '⚠️ HLB = death sentence for citrus grove. Mottled yellowing of one branch = early sign. No cure.')
+    elif any(x in crop_lc for x in ('citrus', 'orange', 'lemon', 'lime', 'mosambi', 'mandarin', 'malta')) and br > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Gummosis / Phytophthora Brown Rot (Phytophthora parasitica)', 'High', min(85, int(63 + br*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L drench + spray on trunk. Ridomil Gold MZ @ 2g/L.',
+            'Raised bed planting. Avoid wounding bark. Drain waterlogged soil. Copper Bordeaux trunk painting.',
+            'Gum exuding from trunk at soil line + brown discolouration = Phytophthora Gummosis.')
+    elif any(x in crop_lc for x in ('citrus', 'orange', 'lemon', 'lime', 'mosambi', 'mandarin', 'malta')):
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew / Sooty Mold / Scab (Elsinoe fawcettii)', 'Medium', min(78, int(58 + wr*65 + blk*40)),
+            'Sulphur 80 WP @ 3g/L (mildew/scab) or Copper oxychloride 3g/L (sooty). Control sucking insects.',
+            'Prune for airflow. Control aphids/scales. Balanced nutrition.',
+            'White powder = Mildew; black soot = Sooty Mold (control insects first); raised warty spots = Scab.')
+
+    # ── COCONUT ───────────────────────────────────────────────────────────────
+    elif 'coconut' in crop_lc and br > 0.10 and dr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Bud Rot (Phytophthora palmivora)', 'High', min(88, int(66 + br*55)),
+            'Drench crown with Metalaxyl + Mancozeb 72 WP @ 2g/L. Pour 1% Bordeaux mixture into crown.',
+            'Avoid waterlogging. Remove and destroy affected crown. Bordeaux mixture preventively in monsoon.',
+            '⚠️ Rotting crown with fetid smell = Bud Rot. Single growing point — tree cannot recover if crown dead.')
+    elif 'coconut' in crop_lc and yr > 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Root Wilt Disease (Phytoplasma)', 'High', min(83, int(61 + yr*42)),
+            'No cure. Improve nutrition: Urea 1kg + MOP 2kg + SSP 2kg/tree/year. Nematicide application.',
+            'Resistant varieties (Lakshadweep Ordinary). Disease-free seedlings. Root zone treatment.',
+            'Yellowing and marginal drying of older fronds progressing inward = Root Wilt. Nutrition improves symptom.')
+    elif 'coconut' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Leaf Blight / Thanjavur Wilt (Pestalotiopsis / Ganoderma)', 'Medium', min(78, int(58 + br*55 + blk*30)),
+            'Copper oxychloride 50 WP @ 3g/L. For Ganoderma: soil drenching Carbendazim 1g/L at base.',
+            'Balanced nutrition with micronutrients. Remove dead fronds. Soil solarization for Ganoderma.',
+            'Bracket fungus at base = Ganoderma (stem bleeding disease). Brown leaf tips = Leaf Blight.')
+
+    # ── COFFEE ────────────────────────────────────────────────────────────────
+    elif 'coffee' in crop_lc and orr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Coffee Leaf Rust (Hemileia vastatrix)', 'High', min(90, int(68 + orr*130)),
+            'Copper oxychloride 50 WP @ 3g/L or Triadimefon 25 WP @ 1g/L. Spray 4-6 times per season.',
+            'Rust-resistant varieties (Catimor, S795). Shade management. Balanced nutrition.',
+            '⚠️ Coffee Leaf Rust can destroy 50-80% of crop. Spray at first yellow-orange spot on leaf underside.')
+    elif 'coffee' in crop_lc and blk > 0.05 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose / Coffee Berry Disease (Colletotrichum kahawae)', 'High', min(86, int(64 + (blk+br)*70)),
+            'Carbendazim 50 WP @ 1g/L or Copper oxychloride 50 WP @ 3g/L. Spray at pin berry stage.',
+            'Resistant varieties (Ruiru 11). Remove mummified berries. Sanitation.',
+            'Dark sunken lesions on green berries + mummified berries = CBD. Spray from pin berry stage.')
+    elif 'coffee' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Black Rot / Koleroga (Koleroga noxia)', 'High', min(80, int(60 + br*55 + blk*35)),
+            'Copper oxychloride 50 WP @ 3g/L or Bordeaux mixture 1%. Spray preventively before monsoon.',
+            'Open up canopy. Remove infected berries. Good drainage.',
+            'Rotting berries hanging as mummified clusters in wet season = Koleroga. Act before full monsoon.')
+
+    # ── PAPAYA ────────────────────────────────────────────────────────────────
+    elif 'papaya' in crop_lc and br > 0.10 and blk > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Colletotrichum gloeosporioides)', 'High', min(87, int(65 + (br+blk)*65)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray 3-4 times per season.',
+            'Post-harvest hot water treatment 49°C for 20 min. Avoid mechanical damage.',
+            'Dark sunken spots on fruit expanding with pink spore masses = Anthracnose. Post-harvest issue too.')
+    elif 'papaya' in crop_lc and yr > 0.15 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Papaya Ring Spot Virus (PRSV)', 'High', min(87, int(65 + yr*44)),
+            'No cure. Control aphid vector: Mineral oil 1% spray + Imidacloprid 17.8 SL @ 0.5ml/L.',
+            'Virus-free transplants. Transgenic PRSV-resistant papaya where available. Rogue infected plants.',
+            '⚠️ PRSV = concentric ring spots on fruit + mosaic on leaves. No cure — uproot infected trees.')
+    elif 'papaya' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Phytophthora Root/Foot Rot (Phytophthora palmivora)', 'High', min(82, int(60 + dr*70 + br*40)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L drench at base. Raised beds prevent waterlogging.',
+            'Raised bed planting. Excellent drainage. Avoid trunk injury. Crop rotation.',
+            'Rapid yellowing + collapse of adult plant = Foot Rot. Stem base shows water-soaked rot.')
+
+    # ── POMEGRANATE / ANAR ────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('pomegranate', 'anar')) and blk > 0.06 and br > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Bacterial Blight (Xanthomonas axonopodis pv. punicae)', 'High', min(88, int(66 + (blk+br)*70)),
+            'Copper oxychloride 50 WP @ 3g/L + Streptomycin sulfate 90 SP @ 300ppm. Spray 6-8 times/season.',
+            'Disease-free planting material. Prune infected branches. Disinfect tools. Bordeaux mixture preventively.',
+            '⚠️ Bacterial Blight is the most serious pomegranate disease. Dark oily spots on fruit = confirmed.')
+    elif any(x in crop_lc for x in ('pomegranate', 'anar')) and wr > 0.10:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Sphaerotheca pannosa)', 'Medium', min(83, int(62 + wr*68)),
+            'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L. Spray 3-4 times at fortnightly intervals.',
+            'Improved airflow. Reduce nitrogen. Prune dense canopy.',
+            'White powdery coating on new growth and flowers = Powdery Mildew. Critical at flowering.')
+    elif any(x in crop_lc for x in ('pomegranate', 'anar')):
+        d,sv,conf,tr,pr_,ac = (
+            'Cercospora Fruit Spot / Wilt (Ceratocystis fimbriata)', 'High', min(80, int(60 + br*55 + dr*40)),
+            'Carbendazim 50 WP @ 1g/L (Cercospora) or Trichoderma soil drench (Wilt). Prune infected wood.',
+            'Disease-free grafted plants. Avoid waterlogging. Crop rotation. Soil solarization.',
+            'Sudden wilting of single branch = Ceratocystis Wilt. Small brown spots on fruit = Cercospora.')
+
+    # ── APPLE / PEAR ──────────────────────────────────────────────────────────
+    elif any(x in crop_lc for x in ('apple', 'pear', 'seb')) and blk > 0.05 and br > 0.06:
+        d,sv,conf,tr,pr_,ac = (
+            'Apple Scab (Venturia inaequalis)', 'High', min(88, int(66 + (blk+br)*70)),
+            'Mancozeb 75 WP @ 2.5g/L or Dithianon 75 WP @ 0.75g/L. Spray 8-10 times from green tip to harvest.',
+            'Resistant varieties (Enterprise, Liberty). Remove leaf litter. Pruning for airflow.',
+            'Olive-green velvety spots on leaves and fruit = Scab. Spray programme from bud burst is mandatory.')
+    elif any(x in crop_lc for x in ('apple', 'pear', 'seb')) and br > 0.10 and yr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Fire Blight (Erwinia amylovora)', 'High', min(88, int(66 + br*55)),
+            'Streptomycin sulfate 90 SP @ 300ppm at flowering. Copper oxychloride @ 3g/L. Prune 30cm below lesion.',
+            'Resistant varieties. Prune infected shoots in dry weather. Disinfect tools with 10% bleach.',
+            '⚠️ Shepherd crook wilting of shoot tips = Fire Blight. Cut branch — dark brown canker confirms it.')
+    elif any(x in crop_lc for x in ('apple', 'pear', 'seb')) and wr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Podosphaera leucotricha)', 'Medium', min(84, int(62 + wr*68)),
+            'Sulphur 80 WP @ 3g/L or Hexaconazole 5 EC @ 1ml/L from green tip. Spray every 10-14 days.',
+            'Prune infected shoots in dormancy. Resistant varieties. Reduce nitrogen.',
+            'White powdery growth on young shoots and leaves from bud burst = Powdery Mildew.')
+    elif any(x in crop_lc for x in ('apple', 'pear', 'seb')) and rr > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Cedar-Apple Rust / Alternaria Leaf Spot (Gymnosporangium / Alternaria)', 'Medium', min(80, int(60 + rr*90)),
+            'Mancozeb 75 WP @ 2.5g/L or Myclobutanil 10 WP @ 1g/L from pink stage through petal fall.',
+            'Remove nearby cedar/juniper trees (alternate host). Resistant varieties.',
+            'Orange rust on upper leaf surface = Cedar-Apple Rust. Remove alternate host.')
+    elif any(x in crop_lc for x in ('apple', 'pear', 'seb')):
+        d,sv,conf,tr,pr_,ac = (
+            'Bitter Rot / Flyspeck (Colletotrichum acutatum / Schizothyrium pomi)', 'Medium', min(78, int(58 + br*55 + blk*30)),
+            'Mancozeb 75 WP @ 2.5g/L or Carbendazim 50 WP @ 1g/L from petal fall.',
+            'Prune for airflow. Remove mummified fruits. Wax coating post-harvest.',
+            'Sunken brown rot on ripe fruit = Bitter Rot; black sooty specks on skin = Flyspeck.')
+
+    # ── CUCUMBER / GOURD / CUCURBITS ──────────────────────────────────────────
+    elif any(x in crop_lc for x in ('cucumber', 'pumpkin', 'gourd', 'melon', 'squash', 'karela', 'lauki', 'tinda', 'turai', 'kundru')) and wr > 0.12:
+        d,sv,conf,tr,pr_,ac = (
+            'Powdery Mildew (Podosphaera xanthii / Sphaerotheca fuliginea)', 'Medium', min(85, int(63 + wr*68)),
+            'Sulphur 80 WP @ 2g/L or Trifloxystrobin 25 WG @ 0.5g/L. Spray every 7-10 days.',
+            'Resistant varieties. Improve airflow. Avoid excess nitrogen.',
+            'White powdery patches on upper leaf surface = Powdery Mildew. Spray sulphur at first patch.')
+    elif any(x in crop_lc for x in ('cucumber', 'pumpkin', 'gourd', 'melon', 'squash', 'karela', 'lauki', 'tinda', 'turai', 'kundru')) and yr > 0.15 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Downy Mildew (Pseudoperonospora cubensis)', 'High', min(87, int(65 + (yr+br)*55)),
+            'Metalaxyl + Mancozeb 72 WP @ 2g/L or Cymoxanil + Mancozeb @ 2g/L. Spray every 7 days in wet weather.',
+            'Resistant varieties. Improve airflow. Avoid overhead irrigation.',
+            'Angular yellow spots bounded by leaf veins on top + grey downy on underside = Downy Mildew.')
+    elif any(x in crop_lc for x in ('cucumber', 'pumpkin', 'gourd', 'melon', 'squash', 'karela', 'lauki', 'tinda', 'turai', 'kundru')) and yr > 0.15 and gr < 0.20:
+        d,sv,conf,tr,pr_,ac = (
+            'Mosaic Virus (CMV / WMV / PRSV)', 'High', min(83, int(61 + yr*43)),
+            'Control aphid vector: Mineral oil 1% spray + Imidacloprid 17.8 SL @ 0.5ml/L.',
+            'Virus-free seed. Silver mulch. Rogue infected plants. Windbreaks.',
+            'Yellow mosaic mottling + fruit distortion = CMV. No cure — control aphid vector.')
+    elif any(x in crop_lc for x in ('cucumber', 'pumpkin', 'gourd', 'melon', 'squash', 'karela', 'lauki', 'tinda', 'turai', 'kundru')) and blk > 0.05 and br > 0.05:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Colletotrichum orbiculare)', 'High', min(84, int(62 + (blk+br)*68)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray at first lesion.',
+            'Certified seed. Crop rotation. Remove infected debris.',
+            'Dark water-soaked lesions on leaves and fruit = Anthracnose. Common in humid conditions.')
+    elif any(x in crop_lc for x in ('cucumber', 'pumpkin', 'gourd', 'melon', 'squash', 'karela', 'lauki', 'tinda', 'turai', 'kundru')):
+        d,sv,conf,tr,pr_,ac = (
+            'Gummy Stem Blight / Didymella Blight (Didymella bryoniae)', 'High', min(79, int(58 + br*55 + dr*40)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray every 7 days. Remove infected stems.',
+            'Crop rotation. Certified seed. Balanced nutrition. Avoid stem injury.',
+            'Tan-brown lesions on stem with amber gummy exudate = Gummy Stem Blight.')
+
+    # ── JUTE ──────────────────────────────────────────────────────────────────
+    elif 'jute' in crop_lc and br > 0.10 and dr > 0.04:
+        d,sv,conf,tr,pr_,ac = (
+            'Stem Rot / Charcoal Rot (Macrophomina phaseolina)', 'High', min(85, int(63 + br*55)),
+            'Carbendazim 50 WP @ 1g/L soil drench. Thiram seed treatment 3g/kg. Remove infected plants.',
+            'Crop rotation. Avoid waterlogging. Balanced nutrition. Early sowing.',
+            'Black lesions at stem base + wilting = Stem Rot. Common in waterlogged conditions.')
+    elif 'jute' in crop_lc and yr > 0.15:
+        d,sv,conf,tr,pr_,ac = (
+            'Jute Yellow Mosaic Virus', 'High', min(82, int(60 + yr*42)),
+            'Control whitefly vector: Imidacloprid 17.8 SL @ 0.5ml/L. Remove infected plants.',
+            'Resistant varieties. Early planting. Rogue infected plants.',
+            'Yellow mosaic on leaves = Jute YMV. Whitefly-transmitted. No cure.')
+    elif 'jute' in crop_lc:
+        d,sv,conf,tr,pr_,ac = (
+            'Anthracnose (Colletotrichum corchori)', 'Medium', min(78, int(58 + br*55 + blk*30)),
+            'Carbendazim 50 WP @ 1g/L or Mancozeb 75 WP @ 2.5g/L. Spray 2-3 times.',
+            'Certified seed. Crop rotation. Balanced nutrition.',
+            'Dark lesions on stem and leaves = Anthracnose. Common in humid monsoon conditions.')
+
+    # ── GENERIC FALLBACK (crop not recognised or not crop-specific) ───────────
     elif blk > 0.12 and (s.mean() < 0.2):
         d,sv,conf,tr,pr_,ac = (
             'Smut / Sooty Mold (fungal)', 'Medium', min(84, int(68 + blk*80)),
@@ -1601,28 +2820,13 @@ def analyze_image_pixels(img, crop: str = '', state: str = ''):
             'Control sucking insects that secrete honeydew. Prune for airflow.',
             'Wash sooty mold off with soap water first, then spray copper.')
 
-    # Any crop: purple/pink lesions → Phomopsis, Anthracnose, stem canker
+    # Generic: purple/pink lesions → canker / blight
     elif pr > 0.07 or (pk > 0.06 and gr < 0.35):
-        if 'rice' in crop_lc:
-            d,sv,conf,tr,pr_,ac = (
-                'Rice Sheath Blight (Rhizoctonia solani)', 'High', min(87, int(68 + pr*110)),
-                'Hexaconazole 5 EC @ 1ml/L or Propiconazole 25 EC @ 1ml/L at tillering stage.',
-                'Proper spacing. Avoid excess nitrogen. Drain standing water.',
-                'Spray at water line where sheath meets stem.')
-        else:
-            d,sv,conf,tr,pr_,ac = (
-                'Stem Canker / Phomopsis Blight (fungal)', 'High', min(85, int(65 + (pr+pk)*100)),
-                'Carbendazim 50 WP @ 1g/L + Mancozeb 75 WP @ 2g/L. Remove infected tissue.',
-                'Crop rotation. Remove infected debris. Drip irrigation.',
-                'Prune 15cm below visible lesion and apply Bordeaux paste.')
-
-    # Rice: diamond-shaped grey lesions → Blast
-    elif 'rice' in crop_lc and tan > 0.08 and gr < 0.30:
         d,sv,conf,tr,pr_,ac = (
-            'Rice Blast (Magnaporthe oryzae)', 'High', min(89, int(70 + tan*100)),
-            'Tricyclazole 75 WP @ 0.6g/L or Isoprothiolane 40 EC @ 1ml/L at booting stage.',
-            'Blast-resistant varieties. Avoid excess nitrogen. Silica fertilizer.',
-            '⚠️ Spray before heading — blast at neck causes complete grain loss.')
+            'Stem Canker / Phomopsis / Sheath Blight (fungal)', 'High', min(85, int(65 + (pr+pk)*100)),
+            'Carbendazim 50 WP @ 1g/L + Mancozeb 75 WP @ 2g/L. Remove infected tissue.',
+            'Crop rotation. Remove infected debris. Drip irrigation.',
+            'Prune 15cm below visible lesion and apply Bordeaux paste.')
 
     # Healthy: dominant green, minimal disease markers
     elif gr > 0.50 and br < 0.06 and yr < 0.06 and rr < 0.04:
@@ -2381,7 +3585,7 @@ with tab2:
         v_img = PILImage.open(vision_file)
         col_v1, col_v2 = st.columns([1, 1])
         with col_v1:
-            st.image(v_img, caption=T("Uploaded photo"), use_column_width=True)
+            st.image(v_img, caption=T("Uploaded photo"), use_container_width=True)
         with col_v2:
             st.markdown(f"**{T('File')}:** `{vision_file.name}`")
             st.markdown(f"**{T('Dimensions')}:** {v_img.width}×{v_img.height}px")
@@ -2527,7 +3731,7 @@ with tab2:
                   f"{T('Treatment')}: {result['treatment']}. {T('Prevention')}: {result['prevention']}", lang)
 
     st.divider()
-    st.caption(T("Claude Vision AI (primary) → Specialist TFLite models → HSV fallback · 27 crops · 173 diseases & pests · Google-Lens accuracy with API key"))
+    st.caption(T("Claude Vision AI → ONNX MobileNetV2 → Specialist TFLite → HSV fallback · 27 crops · 173 diseases & pests · Google-Lens accuracy with API key"))
 
 
 # TAB 3 — MARKET PRICES — LIVE AGMARKNET + STATE-CALIBRATED PROPHET

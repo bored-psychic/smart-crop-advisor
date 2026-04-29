@@ -1,5 +1,6 @@
 # ── AI Vision ────────────────────────────────────
 anthropic
+onnxruntime
 
 # ── Core ML ──────────────────────────────────────
 streamlit

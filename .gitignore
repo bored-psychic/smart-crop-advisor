@@ -1,4 +1,5 @@
 # Secrets — never push API keys
+.env
 .streamlit/secrets.toml
 
 # Python
