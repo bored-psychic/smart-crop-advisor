@@ -43,5 +43,6 @@ async def recommend_crop(input_data: CropInput):
         "conf2": float(probs[top3_idx[1]] * 100),
         "crop3": le.classes_[top3_idx[2]],
         "conf3": float(probs[top3_idx[2]] * 100),
-        "probs": probs.tolist()
+        "probs": probs.tolist(),
+        "crop_classes": le.classes_.tolist()
     }

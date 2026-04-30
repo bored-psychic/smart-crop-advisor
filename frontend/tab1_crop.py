@@ -1,7 +1,16 @@
 import streamlit as st
 import asyncio
+import pandas as pd
 from frontend.api_client import APIClient
 from core.language import T
+
+CROP_EMOJI = {
+    'rice':'🌾','maize':'🌽','chickpea':'🫘','kidneybeans':'🫘','pigeonpeas':'🫘',
+    'mothbeans':'🌿','mungbean':'🌿','blackgram':'🌿','lentil':'🌿','pomegranate':'🍎',
+    'banana':'🍌','mango':'🥭','grapes':'🍇','watermelon':'🍉','muskmelon':'🍈',
+    'apple':'🍎','orange':'🍊','papaya':'🍈','coconut':'🥥','cotton':'🌿',
+    'jute':'🌿','coffee':'☕',
+}
 
 def render():
     st.subheader(T("Find the best crop for your field"))
@@ -17,7 +26,6 @@ def render():
 
     with col2:
         st.markdown(f"**🌦️ {T('Climate Conditions')}**")
-        # Add city lookup for auto-fill logic here as well
         temperature = st.slider(T("Temperature (°C)"), 8.0, 45.0, 25.0, step=0.5)
         humidity = st.slider(T("Humidity (%)"), 14.0, 100.0, 80.0, step=0.5)
         rainfall = st.slider(T("Rainfall (mm)"), 20.0, 300.0, 200.0, step=5.0)
@@ -33,8 +41,34 @@ def render():
         with st.spinner(T("Consulting the Swarm...")):
             res = asyncio.run(APIClient.recommend_crop(data))
             if res:
-                st.success(f"### {res['top_crop'].upper()} — {res['top_conf']:.1f}% confidence")
+                top_crop = res['top_crop']
+                emoji = CROP_EMOJI.get(top_crop, '🌱')
+                st.success(f"### {emoji} {T('Best Crop')}: **{top_crop.upper()}** — {res['top_conf']:.1f}% {T('confidence')}")
                 st.info(f"💡 **{T('Tip')}:** {T(res['tip'])}")
-                # Render further metrics from res
+                st.markdown(f"{res['soil_color']} **{T('Detected Soil Type')}:** {T(res['soil'])}")
+                st.warning(f"🌱 **{T('Soil Advice')}:** {T(res['soil_advice'])}")
+
+                st.markdown(f"#### {T('Other Options')}")
+                r2, r3 = st.columns(2)
+                with r2:
+                    st.metric(label=f"{CROP_EMOJI.get(res['crop2'],'🌱')} #2 — {res['crop2'].capitalize()}", value=f"{res['conf2']:.1f}%")
+                with r3:
+                    st.metric(label=f"{CROP_EMOJI.get(res['crop3'],'🌱')} #3 — {res['crop3'].capitalize()}", value=f"{res['conf3']:.1f}%")
+
+                st.markdown(f"#### {T('Confidence Across Top 8 Crops')}")
+                chart_df = pd.DataFrame({
+                    'Crop': [c.capitalize() for c in res['crop_classes']],
+                    'Confidence (%)': [round(p * 100, 2) for p in res['probs']]
+                }).sort_values('Confidence (%)', ascending=False).head(8)
+                st.bar_chart(chart_df.set_index('Crop'))
+
+                with st.expander(f"📋 {T('Your Input Summary')}"):
+                    summary = pd.DataFrame({
+                        T('Parameter'): [T('Nitrogen (N)'), T('Phosphorus (P)'), T('Potassium (K)'),
+                                         T('Temperature'), T('Humidity'), T('pH'), T('Rainfall')],
+                        T('Value'): [f"{N} kg/ha", f"{P} kg/ha", f"{K} kg/ha",
+                                     f"{temperature} °C", f"{humidity} %", str(ph), f"{rainfall} mm"]
+                    })
+                    st.table(summary)
             else:
                 st.error(T("Swarm offline. Check backend connection."))

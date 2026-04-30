@@ -29,6 +29,7 @@ class CropRecommendationResponse(BaseModel):
     crop3: str
     conf3: float
     probs: List[float]
+    crop_classes: List[str]
 
 class VisionResult(BaseModel):
     disease: str
