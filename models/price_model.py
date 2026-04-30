@@ -1,6 +1,5 @@
 import json
 import os
-import streamlit as st
 
 def load_price_models():
     from prophet.serialize import model_from_json
