@@ -5,9 +5,14 @@ pandas
 pillow
 prophet
 pystan
-requests
+requests==2.31.0
 httpx
 deep-translator
 gtts
 scipy
- 
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+redis==5.0.3
+pydantic
+pydantic-settings
+python-dotenv
