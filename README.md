@@ -38,4 +38,4 @@ streamlit run app.py
 This system gives them AI-powered advice via a simple web interface.
 
 ## Author
-Built by Prajval SB — First Semester CS (AI/ML) Student
+Built by Prajval SB — First Year CS (AI/ML) Student
