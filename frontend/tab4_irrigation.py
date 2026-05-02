@@ -2,6 +2,7 @@ import streamlit as st
 import asyncio
 import numpy as np
 from frontend.api_client import APIClient
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 CROP_KC = {
@@ -59,8 +60,7 @@ def calculate_ET0(temp, humidity, wind_speed_kmh):
 
 
 def render():
-    st.subheader(T("Smart Irrigation & Fertilizer Advisor"))
-    st.markdown(T("Get precise water and fertilizer recommendations based on your crop and weather."))
+    page_hero("WATERING", "Just enough water,", "just in time.", "We do the FAO water math behind the scenes and tell you simply: how many litres today, and when to water next.")
 
     st.markdown(f"#### 🌤️ {T('Live Weather (Auto-fill)')}")
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"), key="irr_city")
@@ -73,7 +73,10 @@ def render():
             wc2.metric("💧 " + T("Humidity"), f"{weather_data['humidity']}%")
             wc3.metric("💨 " + T("Wind"), f"{weather_data.get('wind_speed', 0):.1f} km/h")
             wc4.metric("🌧️ " + T("Rain"), f"{weather_data.get('rainfall', 0)} mm")
-            st.success(f"📍 {T('Live weather for')} **{weather_data['city']}**: {weather_data['description']}")
+            card(f"&#128205; {T('Live weather for')} <b>{weather_data['city']}</b>: {weather_data['description']}", severity="success")
+            st.session_state['irr_temp'] = min(max(float(weather_data['temp']), 10.0), 48.0)
+            st.session_state['irr_hum']  = min(max(float(weather_data['humidity']), 10.0), 100.0)
+            st.session_state['irr_wind'] = min(float(weather_data.get('wind_speed', 10.0)), 50.0)
             desc_lower = weather_data['description'].lower()
             for key, tips in CALAMITY_TIPS.items():
                 if key in desc_lower:
@@ -82,7 +85,7 @@ def render():
                         st.markdown(f"- {T(tip)}")
                     break
         else:
-            st.error(T("City not found. Please check spelling or try a nearby city."))
+            card(T("City not found. Please check spelling or try a nearby city."), severity="error")
 
     st.divider()
     col1, col2 = st.columns(2)
@@ -96,12 +99,9 @@ def render():
 
     with col2:
         st.markdown(f"**🌡️ {T('Today Weather')}**")
-        default_temp     = float(weather_data['temp'])                   if weather_data else 30.0
-        default_humidity = float(weather_data['humidity'])               if weather_data else 60.0
-        default_wind     = float(weather_data.get('wind_speed', 10.0))  if weather_data else 10.0
-        irr_temp     = st.slider(T("Temperature (°C)"), 10.0, 48.0, min(max(default_temp, 10.0), 48.0), step=0.5, key="irr_temp")
-        irr_humidity = st.slider(T("Humidity (%)"), 10.0, 100.0, min(max(default_humidity, 10.0), 100.0), step=1.0, key="irr_hum")
-        wind_speed   = st.slider(T("Wind Speed (km/h)"), 0.0, 50.0, min(default_wind, 50.0), step=1.0, key="irr_wind")
+        irr_temp     = st.slider(T("Temperature (°C)"), 10.0, 48.0, 30.0, step=0.5, key="irr_temp")
+        irr_humidity = st.slider(T("Humidity (%)"), 10.0, 100.0, 60.0, step=1.0, key="irr_hum")
+        wind_speed   = st.slider(T("Wind Speed (km/h)"), 0.0, 50.0, 10.0, step=1.0, key="irr_wind")
 
     st.divider()
 
@@ -144,18 +144,18 @@ def render():
         st.divider()
 
         if net_irrigation < 1.0:
-            st.success(f"✅ **{T('No irrigation needed today!')}** {T('Recent rainfall is sufficient.')}")
+            card(f"&#9989; <b>{T('No irrigation needed today!')}</b> {T('Recent rainfall is sufficient.')}", severity="success")
         elif net_irrigation < 3.0:
-            st.warning(f"💧 **{T('Light irrigation recommended')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
+            card(f"&#128167; <b>{T('Light irrigation recommended')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="warning")
         else:
-            st.error(f"🚨 **{T('Irrigation urgently needed')}:** {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)")
+            card(f"&#128680; <b>{T('Irrigation urgently needed')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="error")
 
-        st.markdown(f"#### 🌱 {T('Fertilizer Recommendation')}")
-        st.info(f"""
-        **{T('Growth Stage')}:** {T(growth_stage)}
-        **{T('Nitrogen (N)')}:** {T(fert['N'])}
-        **{T('Tip')}:** {T(fert['tip'])}
-        """)
+        card(f"""
+        <b style='color:#22C55E;'>&#127807; {T('Fertilizer Recommendation')}</b><br>
+        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>{T('Stage')}:</span> {T(growth_stage)}&nbsp;&nbsp;
+        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>N dose:</span> {T(fert['N'])}<br>
+        <span style='font-size:0.88rem;color:#E2F5DF;'>{T(fert['tip'])}</span>
+        """, severity="info")
 
         with st.expander(f"🔬 {T('Calculation Details (FAO-56 Method)')}"):
             st.markdown(f"""

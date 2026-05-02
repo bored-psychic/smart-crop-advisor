@@ -10,7 +10,7 @@ class WeatherResponse(BaseModel):
     city: str
 
 class FieldWatchResponse(BaseModel):
-    weather: Optional[WeatherResponse]
+    weather: Optional[Dict]
     fire: Optional[Dict]
     locust: Optional[Dict]
     aqi: Optional[Dict]
@@ -53,3 +53,5 @@ class AcousticResult(BaseModel):
     icon: str
     top3: List[tuple]
     ml_used: bool
+    claude_advice: Optional[str] = None
+    band_energy: Optional[Dict[str, float]] = None

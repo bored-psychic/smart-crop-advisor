@@ -2,6 +2,7 @@ import streamlit as st
 import asyncio
 import pandas as pd
 from frontend.api_client import APIClient
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 CROP_EMOJI = {
@@ -13,8 +14,7 @@ CROP_EMOJI = {
 }
 
 def render():
-    st.subheader(T("Find the best crop for your field"))
-    st.markdown(T("Enter your soil and climate details below."))
+    page_hero("CROP ADVISOR", "Find what your soil", "wants to grow.", "Tell us about your field. We'll quietly look through 26 crops and suggest the one your land will love most.")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -43,10 +43,17 @@ def render():
             if res:
                 top_crop = res['top_crop']
                 emoji = CROP_EMOJI.get(top_crop, '🌱')
-                st.success(f"### {emoji} {T('Best Crop')}: **{top_crop.upper()}** — {res['top_conf']:.1f}% {T('confidence')}")
-                st.info(f"💡 **{T('Tip')}:** {T(res['tip'])}")
-                st.markdown(f"{res['soil_color']} **{T('Detected Soil Type')}:** {T(res['soil'])}")
-                st.warning(f"🌱 **{T('Soil Advice')}:** {T(res['soil_advice'])}")
+                card(f"""
+                <div style='font-family:Space Grotesk,sans-serif;'>
+                  <div style='font-size:1.7rem;font-weight:700;color:#22C55E;margin-bottom:2px;'>
+                    {emoji}&nbsp;{top_crop.upper()}
+                  </div>
+                  <div style='font-family:JetBrains Mono,monospace;font-size:0.78rem;color:#4ADE80;'>
+                    {T('Best Crop')} &middot; {T('confidence')} {res['top_conf']:.1f}%
+                  </div>
+                </div>""", severity="success")
+                card(f"<b style='color:#22C55E'>&#128161; {T('Tip')}:</b> {T(res['tip'])}", severity="info")
+                card(f"<b style='color:#22C55E'>&#127757; {T('Soil')}:</b> {T(res['soil'])} &nbsp;&#183;&nbsp; <b style='color:#22C55E'>{T('Advice')}:</b> {T(res['soil_advice'])}", severity="warning")
 
                 st.markdown(f"#### {T('Other Options')}")
                 r2, r3 = st.columns(2)
@@ -71,4 +78,4 @@ def render():
                     })
                     st.table(summary)
             else:
-                st.error(T("Swarm offline. Check backend connection."))
+                card(T("Swarm offline. Check backend connection."), severity="error")

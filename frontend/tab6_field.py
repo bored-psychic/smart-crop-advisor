@@ -1,21 +1,17 @@
 import streamlit as st
 import asyncio
 import datetime
+import urllib.parse
 from frontend.api_client import APIClient
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 
 def render():
-    st.markdown(f"### 🛰️ {T('Field Watch — Satellite Intelligence')}")
-    st.markdown(T("Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place."))
+    page_hero("FIELD WATCH", "Your land, seen", "from above.", "Live satellite weather, wildfire alerts, flood warnings, locust data, and air quality — all in one place.")
 
-    fw_city = st.text_input(T("Your City / Nearest Town"), placeholder="e.g. Bellary, Nagpur, Warangal", key="fw_city")
-
-    col_a, col_b = st.columns(2)
-    with col_a:
-        farmer_name_fw = st.text_input(T("Farmer Name"), value=st.session_state.get('farmer_name', ''), key="fw_name")
-    with col_b:
-        farmer_crop_fw = st.text_input(T("Your Crop"), value=st.session_state.get('farmer_crop', ''), key="fw_crop")
+    _default_city = st.session_state.get('farmer_village', '').split(',')[0].strip()
+    fw_city = st.text_input(T("Your City / Nearest Town"), value=_default_city, placeholder="e.g. Bellary, Nagpur, Warangal", key="fw_city")
 
     if st.button(f"🛰️ {T('Scan My Field Now')}", use_container_width=True, type="primary", key="fw_scan"):
         if not fw_city.strip():
@@ -26,14 +22,14 @@ def render():
             if fw_result:
                 st.session_state['fw_result'] = fw_result
             else:
-                st.error(T("Field Watch API unavailable. Check backend connection."))
+                card(T("Field Watch API unavailable. Check backend connection."), severity="error")
 
     if 'fw_result' in st.session_state:
         fw = st.session_state['fw_result']
 
-        fire_risk   = fw.get('fire',  {}).get('risk',        'NONE')
-        flood_risk  = fw.get('flood', {}).get('flood_risk',  'LOW')
-        locust_risk = fw.get('locust',{}).get('risk',        'NONE')
+        fire_risk   = (fw.get('fire')   or {}).get('risk',       'NONE')
+        flood_risk  = (fw.get('flood')  or {}).get('flood_risk', 'LOW')
+        locust_risk = (fw.get('locust') or {}).get('risk',       'NONE')
 
         if 'HIGH' in [fire_risk, flood_risk, locust_risk]:
             overall = 'HIGH';   badge_col = '#EF4444'
@@ -71,12 +67,8 @@ def render():
                 'MEDIUM': T("CAUTION: Moderate rainfall expected 25–50mm. Monitor drainage channels. Avoid fertilizer application. Prepare bunds."),
                 'LOW':    T("LOW RISK: Rainfall <25mm forecast. Normal field operations permitted."),
             }.get(flr, '')
-            if flr == 'HIGH':
-                st.error(f"🌊 **{T('Flood Risk')}: {flr}** — {fl['rain_48h']}mm {T('forecast')}\n\n{flood_msg}")
-            elif flr == 'MEDIUM':
-                st.warning(f"🌊 **{T('Flood Risk')}: {flr}** — {fl['rain_48h']}mm {T('forecast')}\n\n{flood_msg}")
-            else:
-                st.success(f"✅ **{T('Flood Risk')}: {flr}** — {fl['rain_48h']}mm {T('forecast')}\n\n{flood_msg}")
+            _fsmap = {'HIGH': 'error', 'MEDIUM': 'warning', 'LOW': 'success'}
+            card(f"<b>&#127754; {T('Flood Risk')}: {flr}</b> &#8212; {fl['rain_48h']}mm {T('forecast')}<br><span style='font-size:0.88rem;'>{flood_msg}</span>", severity=_fsmap.get(flr, 'info'))
 
         fire = fw.get('fire')
         if fire:
@@ -89,12 +81,9 @@ def render():
                 'NONE':    T("No active fire hotspots detected within 220km of your location."),
                 'UNKNOWN': T("Fire data temporarily unavailable."),
             }.get(fr, T("Fire data unavailable."))
-            if fr == 'HIGH':
-                st.error(f"🔥 **{T('Wildfire Risk')}: HIGH** — {hs} {T('hotspots')}\n\n{fire_msg}")
-            elif fr == 'MEDIUM':
-                st.warning(f"🔥 **{T('Wildfire Risk')}: MEDIUM** — {hs} {T('hotspot(s)')}\n\n{fire_msg}")
-            else:
-                st.success(f"✅ **{T('No Wildfire Risk')}** — {fire_msg}")
+            _frsmap = {'HIGH': 'error', 'MEDIUM': 'warning'}
+            _frlabel = '&#128293; ' + (f"<b>{T('Wildfire Risk')}: {fr}</b> &#8212; {hs} {T('hotspots')}" if fr in ('HIGH','MEDIUM') else f"<b>{T('No Wildfire Risk')}</b>")
+            card(f"{_frlabel}<br><span style='font-size:0.88rem;'>{fire_msg}</span>", severity=_frsmap.get(fr, 'success'))
             st.caption(f"📡 {T('Source')}: {fire['source']}")
 
         loc = fw.get('locust')
@@ -108,12 +97,9 @@ def render():
                 'NONE':    T("No active locust swarms detected in your region."),
                 'UNKNOWN': T("Locust data temporarily unavailable. Monitor IMD advisories."),
             }.get(lr, T("Locust data unavailable."))
-            if lr == 'HIGH':
-                st.error(f"🦗 **{T('Locust Risk')}: HIGH** — {sw} {T('swarms')}\n\n{loc_msg}")
-            elif lr == 'MEDIUM':
-                st.warning(f"🦗 **{T('Locust Risk')}: MEDIUM** — {sw} {T('swarm(s)')}\n\n{loc_msg}")
-            else:
-                st.success(f"✅ **{T('No Locust Risk')}** — {loc_msg}")
+            _lsmap = {'HIGH': 'error', 'MEDIUM': 'warning'}
+            _llabel = '&#129431; ' + (f"<b>{T('Locust Risk')}: {lr}</b> &#8212; {sw} {T('swarms')}" if lr in ('HIGH','MEDIUM') else f"<b>{T('No Locust Risk')}</b>")
+            card(f"{_llabel}<br><span style='font-size:0.88rem;'>{loc_msg}</span>", severity=_lsmap.get(lr, 'success'))
             st.caption(f"📡 {T('Source')}: {loc['source']}")
 
         aqi = fw.get('aqi')
@@ -142,3 +128,40 @@ def render():
                 st.markdown(f"**{name_h}** — {note_h}")
             with c_b:
                 st.markdown(f"[📞 {num_h}](tel:{num_h})")
+
+        st.divider()
+        st.markdown(f"#### 📤 {T('Send Field Alert to WhatsApp')}")
+
+        _name    = st.session_state.get('farmer_name', '') or T('Farmer')
+        _crop    = st.session_state.get('farmer_crop', '') or T('Crop')
+        _village = st.session_state.get('farmer_village', '') or fw_city
+        _ts      = datetime.datetime.now().strftime('%d %b %Y, %I:%M %p')
+        _fire_s  = f"🔥 {T('Wildfire')}: {(fw.get('fire') or {}).get('risk','?')} ({(fw.get('fire') or {}).get('hotspots_nearby',0)} {T('hotspots')})"
+        _flood_s = f"🌊 {T('Flood')}: {(fw.get('flood') or {}).get('flood_risk','?')} ({(fw.get('flood') or {}).get('rain_48h',0)}mm)"
+        _loc_s   = f"🦗 {T('Locust')}: {(fw.get('locust') or {}).get('risk','?')} ({(fw.get('locust') or {}).get('swarms_nearby',0)} {T('swarms')})"
+
+        wa_msg = (
+            f"🛰️ *Field Watch Alert — KisanOS*\n\n"
+            f"Farmer: *{_name}*\nCrop: {_crop}\nLocation: {_village}\nTime: {_ts}\n\n"
+            f"*Overall Risk: {overall}*\n\n"
+            f"{_fire_s}\n{_flood_s}\n{_loc_s}\n\n"
+            f"Generated by KisanOS Field Watch · NASA FIRMS · FAO · OpenWeatherMap"
+        )
+        _encoded = urllib.parse.quote(wa_msg)
+
+        _profile_phone = st.session_state.get('farmer_phone', '').strip()
+        _extra = st.text_input(T("Additional number (with 91)"), placeholder="e.g. 919876543210", key="fw_extra_num")
+
+        _numbers = [n for n in [_profile_phone, _extra.strip()] if n]
+        if _numbers:
+            for _num in _numbers:
+                _wa_link = f"https://wa.me/{_num}?text={_encoded}"
+                st.markdown(
+                    f'<a href="{_wa_link}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;'
+                    f'background:#25D366;color:white;text-decoration:none;padding:10px 18px;border-radius:10px;'
+                    f'font-weight:600;font-size:13px;margin:4px 0;width:100%;justify-content:center">'
+                    f'📲 {T("Send Alert to")} {_num}</a>',
+                    unsafe_allow_html=True
+                )
+        else:
+            card(T("Add your WhatsApp number in the sidebar profile to send alerts."), severity="info")

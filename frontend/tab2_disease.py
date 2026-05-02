@@ -2,6 +2,7 @@ import streamlit as st
 import asyncio
 from PIL import Image as PILImage
 from frontend.api_client import APIClient
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 DISEASE_DB = {
@@ -67,8 +68,7 @@ TYPE_ICON     = {'Disease': '🦠', 'Pest': '🐛'}
 
 
 def render():
-    st.markdown(f"### 🌿 {T('Crop Disease, Pest & Vision AI')}")
-    st.markdown(T("Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below."))
+    page_hero("LEAF DOCTOR", "See what your leaves", "are trying to say.", "Upload a photo. Claude reads the signs — spots, yellowing, lesions — before the damage spreads.")
 
     st.markdown(f"#### 📸 {T('Method 1 — Photo Diagnosis (Recommended)')}")
 
@@ -93,37 +93,48 @@ def render():
             st.info(f"☀️ {T('Daylight')} · 🎯 {T('Close-up on affected area')} · 📷 {T('Sharp, no blur')}")
 
         if st.button(f"🔍 {T('Diagnose from Photo')}", use_container_width=True, type="primary", key="tab2_vision_btn"):
-            with st.spinner(T("Analyzing pixel patterns...")):
+            with st.spinner("▶ Claude Vision scanning plant tissue..."):
                 img_bytes = vision_file.getvalue()
-                vr = asyncio.run(APIClient.diagnose_vision(img_bytes))
+                vr = asyncio.run(APIClient.diagnose_vision(img_bytes, crop_type=selected_crop_v))
             if vr:
                 st.session_state['tab2_vision_result'] = vr
             else:
-                st.error(T("Vision API unavailable. Check backend connection."))
+                card(T("Vision API unavailable. Check backend connection."), severity="error")
 
     if 'tab2_vision_result' in st.session_state:
         vr = st.session_state['tab2_vision_result']
         model_badge = vr.get('model_used', 'Vision AI')
-        st.markdown(f'<span style="background:#166534;color:#86efac;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">📷 {model_badge}</span>', unsafe_allow_html=True)
+        st.markdown(
+            f'<span style="background:rgba(34,197,94,0.12);color:#4ADE80;padding:3px 12px;'
+            f'border-radius:20px;font-size:11px;font-weight:600;font-family:JetBrains Mono,monospace;'
+            f'border:1px solid rgba(34,197,94,0.3);">&#128247; {model_badge}</span>',
+            unsafe_allow_html=True)
         st.markdown("")
 
-        if vr['severity'] == 'High':
-            st.error(f"### 🔴 {T('Detected')}: **{T(vr['disease'])}**")
-        elif vr['severity'] == 'Medium':
-            st.warning(f"### 🟡 {T('Detected')}: **{T(vr['disease'])}**")
-        else:
-            st.success(f"### 🟢 {T('Detected')}: **{T(vr['disease'])}**")
-
-        conf = vr['confidence']
-        st.markdown(f"**{T('AI Confidence')}: {conf}%**")
-        st.progress(conf / 100)
-
-        col_t, col_p = st.columns(2)
-        with col_t:
-            st.info(f"**💊 {T('Treatment')}:** {T(vr['treatment'])}")
-        with col_p:
-            st.success(f"**🛡️ {T('Prevention')}:** {T(vr['prevention'])}")
-        st.caption(f"⚡ {T(vr['action'])}")
+        _sev   = vr.get('severity', 'Medium')
+        _smap  = {"High": "error", "Medium": "warning", "Low": "success", "None": "success"}
+        _conf  = vr.get('confidence', 0)
+        _icons = {"High": "&#128308;", "Medium": "&#128993;", "Low": "&#128994;", "None": "&#128994;"}
+        card(f"""
+        <div style='font-family:Space Grotesk,sans-serif;'>
+          <div style='font-size:1.3rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+            {_icons.get(_sev,'&#9888;')}&nbsp;{T(vr['disease'])}
+          </div>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:12px;'>
+            {T('confidence')} &middot; {_conf}%
+          </div>
+          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
+            <b style='color:#22C55E;'>&#128138; {T('Treatment')}:</b> {T(vr['treatment'])}
+          </div>
+          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
+            <b style='color:#22C55E;'>&#128737; {T('Prevention')}:</b> {T(vr['prevention'])}
+          </div>
+          <div style='font-size:0.8rem;color:#4ADE80;font-family:JetBrains Mono,monospace;'>
+            &#9889; {T(vr['action'])}
+          </div>
+        </div>
+        """, severity=_smap.get(_sev, "warning"))
+        st.progress(_conf / 100)
 
     st.divider()
     st.markdown(f"#### 🔬 {T('Method 2 — Symptom / Pest Checker')}")
@@ -174,19 +185,28 @@ def render():
         severity = result['severity']
         dtype    = result.get('type', 'Disease')
         dicon    = TYPE_ICON.get(dtype, '🦠')
-
-        if severity == 'High':
-            st.error(f"### 🔴 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('HIGH — Act immediately!')}**")
-        elif severity == 'Medium':
-            st.warning(f"### 🟡 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('MEDIUM — Monitor closely')}**")
-        else:
-            st.info(f"### 🟢 {dicon} {T(result['disease'])}\n**{T('Severity')}: {T('LOW — Manageable')}**")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.info(f"**💊 {T('Treatment')}:** {T(result['treatment'])}")
-        with col2:
-            st.success(f"**🛡️ {T('Prevention')}:** {T(result['prevention'])}")
+        _smap2   = {"High": "error", "Medium": "warning", "Low": "info"}
+        _slabels = {
+            "High":   T("HIGH &#8212; Act immediately!"),
+            "Medium": T("MEDIUM &#8212; Monitor closely"),
+            "Low":    T("LOW &#8212; Manageable"),
+        }
+        card(f"""
+        <div style='font-family:Space Grotesk,sans-serif;'>
+          <div style='font-size:1.2rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+            {dicon} {T(result['disease'])}
+          </div>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:12px;'>
+            severity &middot; {_slabels.get(severity, severity)}
+          </div>
+          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
+            <b style='color:#22C55E;'>&#128138; {T('Treatment')}:</b> {T(result['treatment'])}
+          </div>
+          <div style='font-size:0.88rem;color:#E2F5DF;'>
+            <b style='color:#22C55E;'>&#128737; {T('Prevention')}:</b> {T(result['prevention'])}
+          </div>
+        </div>
+        """, severity=_smap2.get(severity, "info"))
 
     st.divider()
     st.caption(T("Vision AI: disease_model.tflite/h5 when TensorFlow available · 26+ crops · 50+ diseases & pests"))

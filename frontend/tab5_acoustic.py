@@ -2,6 +2,7 @@ import streamlit as st
 import asyncio
 import pandas as pd
 from frontend.api_client import APIClient
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 PEST_META = {
@@ -17,8 +18,7 @@ PEST_META = {
 
 
 def render():
-    st.subheader("🎙️ " + T("Acoustic Pest Detector"))
-    st.markdown(T("Upload a short audio recording from your field. The AI analyzes frequency patterns to detect hidden pests — 7 days before visible symptoms appear."))
+    page_hero("LISTEN TO FIELD", "Hear what's hidden", "under the leaves.", "Upload a field recording. The AI reads frequency patterns to find pests 7 days before they're visible.")
 
     st.warning(f"""
     **{T('How to record')}:**
@@ -45,13 +45,13 @@ def render():
         st.markdown(f"**{T('File')}:** {audio_file.name} · **{T('Size')}:** {audio_file.size // 1024} KB")
 
         if st.button(f"🔊 {T('Analyze for Pests')}", use_container_width=True, type="primary"):
-            with st.spinner(T("Extracting frequency spectrum and analyzing pest signatures...")):
+            with st.spinner("▶ Generating spectrogram · dispatching to Claude..."):
                 audio_bytes = audio_file.read()
-                result = asyncio.run(APIClient.analyze_acoustic(audio_bytes))
+                result = asyncio.run(APIClient.analyze_acoustic(audio_bytes, crop_type=acoustic_crop))
             if result:
                 st.session_state['tab5_result'] = result
             else:
-                st.error(T("Acoustic API unavailable. Check backend connection."))
+                card(T("Acoustic API unavailable. Check backend connection."), severity="error")
 
     if 'tab5_result' in st.session_state:
         r = st.session_state['tab5_result']
@@ -68,19 +68,24 @@ def render():
         pest_name = r.get('pest', 'Unknown')
         severity  = r.get('severity', 'low')
         icon      = r.get('icon', '⚠️')
+        _smap_a   = {'high': 'error', 'medium': 'warning', 'low': 'success'}
+        _conf_a   = r.get('confidence', 0)
+        card(f"""
+        <div style='font-family:Space Grotesk,sans-serif;'>
+          <div style='font-size:1.3rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+            {icon}&nbsp;{T(pest_name)}
+          </div>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:10px;'>
+            {T('severity')} &middot; {severity.upper()}{f" &nbsp;&#183;&nbsp; {T('confidence')} {_conf_a}%" if _conf_a > 0 else ""}
+          </div>
+          <div style='font-size:0.88rem;color:#E2F5DF;'>
+            <b style='color:#22C55E;'>&#128138; {T('Action')}:</b> {T(r.get('action', ''))}
+          </div>
+        </div>
+        """, severity=_smap_a.get(severity, 'warning'))
 
-        if severity == 'high':
-            st.error(f"### {icon} {T('Detected')}: **{T(pest_name)}**")
-        elif severity == 'medium':
-            st.warning(f"### {icon} {T('Detected')}: **{T(pest_name)}**")
-        elif r.get('confidence', 0) == 0:
-            st.warning(f"### ⚠️ {T(pest_name)}")
-        else:
-            st.success(f"### {icon} {T('Result')}: **{T(pest_name)}**")
-
-        if r.get('confidence', 0) > 0:
-            st.markdown(f"**{T('Detection Confidence')}: {r['confidence']}%**")
-            st.progress(r['confidence'] / 100)
+        if _conf_a > 0:
+            st.progress(_conf_a / 100)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -105,14 +110,13 @@ def render():
                     unsafe_allow_html=True
                 )
 
-        st.divider()
-        action = r.get('action', '')
-        if severity == 'high':
-            st.error(f"**💊 {T('Recommended Action')}:** {T(action)}")
-        elif severity == 'medium':
-            st.warning(f"**💊 {T('Recommended Action')}:** {T(action)}")
-        else:
-            st.info(f"**💊 {T('Recommended Action')}:** {T(action)}")
+        if r.get('claude_advice'):
+            card(f"<b style='color:#22C55E;'>&#129302; {T('AI Farm Advisor')}:</b> {r['claude_advice']}", severity="info")
+
+        if r.get('band_energy'):
+            st.markdown(f"#### 📊 {T('Frequency Band Energy')}")
+            chart_df = pd.DataFrame.from_dict(r['band_energy'], orient='index', columns=[T('Energy')])
+            st.bar_chart(chart_df)
 
     st.divider()
     with st.expander(f"🔬 {T('Acoustic Pest Science — 8 Classes')}"):

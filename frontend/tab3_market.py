@@ -3,6 +3,7 @@ import asyncio
 import json
 import os
 import pandas as pd
+from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 INDIA_STATES = [
@@ -89,8 +90,7 @@ def get_state_adjusted_forecast(df, crop, state):
 
 
 def render():
-    st.markdown(f"### 💰 {T('Live Mandi Prices')}")
-    st.markdown(T("Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet."))
+    page_hero("MARKET PRICES", "Know before you", "sell.", "Live mandi prices for your crop and district. Sell when the moment is right.")
 
     price_models = load_price_models()
 
@@ -161,7 +161,7 @@ def render():
               </div>
             </div>""", unsafe_allow_html=True)
         else:
-            st.info(f"💡 {T('Agmarknet API unavailable — showing Prophet forecast calibrated for')} {state_r}. {T('Factor')}: {factor:.2f}×")
+            card(f"&#128161; {T('Agmarknet API unavailable — showing Prophet forecast calibrated for')} {state_r}. {T('Factor')}: {factor:.2f}&times;", severity="info")
 
         if r3['forecast']:
             ff        = pd.DataFrame(r3['forecast'])
@@ -181,9 +181,9 @@ def render():
 
             today_p = ff['Price'].iloc[0]
             if best_row['Price'] > today_p * 1.06:
-                st.success(f"⏳ {T('Wait to sell')} — {T('price expected to peak at')} ₹{best_row['Price']:,.0f} {T('on')} {best_row['Date'].strftime('%d %b %Y')}. {T('Potential gain')}: {((best_row['Price']-today_p)/today_p*100):.1f}%")
+                card(f"&#9203; <b>{T('Wait to sell')}</b> &#8212; {T('price expected to peak at')} &#8377;{best_row['Price']:,.0f} {T('on')} {best_row['Date'].strftime('%d %b %Y')}. {T('Potential gain')}: {((best_row['Price']-today_p)/today_p*100):.1f}%", severity="success")
             else:
-                st.warning(f"🚀 {T('Sell now')} — {T('prices not expected to rise significantly in next')} {r3['days']} {T('days')}.")
+                card(f"&#128640; <b>{T('Sell now')}</b> &#8212; {T('prices not expected to rise significantly in next')} {r3['days']} {T('days')}.", severity="warning")
 
             st.markdown(f"#### {T('Price Forecast Chart')} — {crop_r} · {state_r}")
             chart_df = ff.set_index('Date')[['Price', 'Min', 'Max']]

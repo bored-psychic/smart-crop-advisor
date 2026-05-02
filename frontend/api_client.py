@@ -23,17 +23,19 @@ class APIClient:
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
-    async def diagnose_vision(image_bytes: bytes):
-        async with httpx.AsyncClient() as client:
+    async def diagnose_vision(image_bytes: bytes, crop_type: str = "Unknown"):
+        async with httpx.AsyncClient(timeout=45.0) as client:
             files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
-            r = await client.post(f"{BACKEND_URL}/vision/diagnose", files=files)
+            data = {"crop_type": crop_type}
+            r = await client.post(f"{BACKEND_URL}/vision/diagnose", files=files, data=data)
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
-    async def analyze_acoustic(audio_bytes: bytes):
-        async with httpx.AsyncClient() as client:
+    async def analyze_acoustic(audio_bytes: bytes, crop_type: str = "Unknown"):
+        async with httpx.AsyncClient(timeout=45.0) as client:
             files = {"file": ("audio.wav", audio_bytes, "audio/wav")}
-            r = await client.post(f"{BACKEND_URL}/acoustic/analyze", files=files)
+            data = {"crop_type": crop_type}
+            r = await client.post(f"{BACKEND_URL}/acoustic/analyze", files=files, data=data)
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
