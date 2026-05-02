@@ -1,1 +1,1 @@
-# Core backend logic for KisanOS.
+# KisanOS Backend — FastAPI

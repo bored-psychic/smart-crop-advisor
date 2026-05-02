@@ -35,11 +35,11 @@ CROP_TIPS = {
 }
 
 CROP_KC = {
-    'Rice':        {'Initial': 1.05, 'Development': 1.20, 'Mid-season': 1.20, 'Late season': 0.90}
+    'Rice':        {'Initial': 1.05, 'Development': 1.20, 'Mid-season': 1.20, 'Late season': 0.90},
 }
 
 FERTILIZER_SCHEDULE = {
-    'Initial':     {'N': '30% of total N dose', 'tip': 'Apply basal dose of P and K fully at sowing.'}
+    'Initial':     {'N': '30% of total N dose', 'tip': 'Apply basal dose of P and K fully at sowing.'},
 }
 
 def calculate_ET0(temp, humidity, wind_speed_kmh):

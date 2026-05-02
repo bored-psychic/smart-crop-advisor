@@ -1,5 +1,23 @@
-# ── Crop & Disease Metadata ───────────────────────────────────────────────────
+"""
+KisanOS Constants — All static data extracted from the monolithic app.py.
+Single source of truth for crop metadata, disease metadata, pest metadata,
+irrigation coefficients, and fertilizer schedules.
+"""
 
+# ── Language support ──────────────────────────────────────────────────────────
+LANGUAGES = {
+    'English': 'en',
+    'हिंदी (Hindi)': 'hi',
+    'తెలుగు (Telugu)': 'te',
+    'தமிழ் (Tamil)': 'ta',
+    'ಕನ್ನಡ (Kannada)': 'kn',
+    'मराठी (Marathi)': 'mr',
+    'বাংলা (Bengali)': 'bn',
+    'ગુજરાતી (Gujarati)': 'gu',
+    'ਪੰਜਾਬੀ (Punjabi)': 'pa',
+}
+
+# ── Crop Emoji Map ────────────────────────────────────────────────────────────
 CROP_EMOJI = {
     'rice': '🌾', 'maize': '🌽', 'chickpea': '🫘', 'kidneybeans': '🫘',
     'pigeonpeas': '🫘', 'mothbeans': '🫘', 'mungbean': '🫘', 'blackgram': '🫘',
@@ -9,6 +27,7 @@ CROP_EMOJI = {
     'jute': '🌿', 'coffee': '☕'
 }
 
+# ── Crop Tips ─────────────────────────────────────────────────────────────────
 CROP_TIPS = {
     'rice':       'Best grown in waterlogged, clayey soil. Requires consistent irrigation.',
     'maize':      'Grows well in well-drained loamy soil. Needs moderate water.',
@@ -34,6 +53,53 @@ CROP_TIPS = {
     'coffee':     'Needs high altitude, moderate temp, and well-distributed rainfall.'
 }
 
+# ── Crop Coefficients (FAO-56) ────────────────────────────────────────────────
+CROP_KC = {
+    'Rice':        {'Initial': 1.05, 'Development': 1.20, 'Mid-season': 1.20, 'Late season': 0.90},
+    'Maize':       {'Initial': 0.30, 'Development': 0.70, 'Mid-season': 1.20, 'Late season': 0.35},
+    'Chickpea':    {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.00, 'Late season': 0.35},
+    'Kidneybeans': {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.15, 'Late season': 0.30},
+    'Pigeonpeas':  {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.05, 'Late season': 0.55},
+    'Mothbeans':   {'Initial': 0.35, 'Development': 0.65, 'Mid-season': 1.00, 'Late season': 0.30},
+    'Mungbean':    {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.05, 'Late season': 0.35},
+    'Blackgram':   {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.05, 'Late season': 0.35},
+    'Lentil':      {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.10, 'Late season': 0.30},
+    'Pomegranate': {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.05, 'Late season': 0.75},
+    'Banana':      {'Initial': 0.50, 'Development': 0.90, 'Mid-season': 1.20, 'Late season': 1.10},
+    'Mango':       {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.00, 'Late season': 0.85},
+    'Grapes':      {'Initial': 0.30, 'Development': 0.70, 'Mid-season': 0.85, 'Late season': 0.45},
+    'Watermelon':  {'Initial': 0.40, 'Development': 0.75, 'Mid-season': 1.00, 'Late season': 0.75},
+    'Muskmelon':   {'Initial': 0.40, 'Development': 0.75, 'Mid-season': 1.00, 'Late season': 0.75},
+    'Apple':       {'Initial': 0.45, 'Development': 0.75, 'Mid-season': 1.10, 'Late season': 0.85},
+    'Orange':      {'Initial': 0.60, 'Development': 0.70, 'Mid-season': 0.75, 'Late season': 0.70},
+    'Papaya':      {'Initial': 0.40, 'Development': 0.80, 'Mid-season': 1.05, 'Late season': 0.90},
+    'Coconut':     {'Initial': 0.90, 'Development': 1.00, 'Mid-season': 1.00, 'Late season': 1.00},
+    'Cotton':      {'Initial': 0.35, 'Development': 0.70, 'Mid-season': 1.20, 'Late season': 0.50},
+    'Jute':        {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.15, 'Late season': 0.50},
+    'Coffee':      {'Initial': 0.90, 'Development': 0.95, 'Mid-season': 1.05, 'Late season': 1.05},
+}
+
+# ── Fertilizer Schedule ──────────────────────────────────────────────────────
+FERTILIZER_SCHEDULE = {
+    'Initial':     {'N': '30% of total N dose', 'tip': 'Apply basal dose of P and K fully at sowing.'},
+    'Development': {'N': '30% of total N dose', 'tip': 'Top-dress with urea. Monitor leaf color.'},
+    'Mid-season':  {'N': '40% of total N dose', 'tip': 'Final N top-dress. Avoid excess — causes lodging.'},
+    'Late season': {'N': 'No N needed',          'tip': 'Stop fertilizing. Focus on pest monitoring.'},
+}
+
+# ── Weather Calamity Tips ─────────────────────────────────────────────────────
+CALAMITY_TIPS = {
+    'thunderstorm': ['⚡ Move livestock to shelter', '🚫 Stop all field work immediately', '💧 Clear drainage channels'],
+    'rain':         ['🌱 Avoid fertilizer — will wash away', '🌊 Create bunds around fields', '📞 Contact agriculture office if flooding'],
+    'drizzle':      ['💧 Good for germination', '🌱 Ideal time for transplanting', '✅ Reduce irrigation today'],
+    'snow':         ['🌿 Cover sensitive crops with cloth', '🔥 Light irrigation before frost protects roots', '🌱 Avoid pruning until frost passes'],
+    'mist':         ['🍄 Watch for fungal disease', '💊 Apply preventive fungicide', '🌬️ Improve air circulation'],
+    'haze':         ['😷 Reduce outdoor work', '💧 Increase irrigation — heat stress likely', '🌿 Monitor crops for wilting'],
+    'clear':        ['☀️ Good day for spraying pesticides', '🚜 Ideal for harvesting', '💧 Check soil moisture levels'],
+    'clouds':       ['🌤️ Good day for transplanting', '💧 Moderate irrigation needed', '🌱 Apply fertilizers today'],
+}
+
+# ── Disease Metadata ──────────────────────────────────────────────────────────
 DISEASE_META = {
     'healthy': {
         'severity': 'None', 'treatment': 'No disease detected. Continue regular monitoring every 7 days.',
@@ -192,6 +258,7 @@ DISEASE_META = {
     },
 }
 
+# ── Pest Metadata (Acoustic) ─────────────────────────────────────────────────
 PEST_META = {
     'Healthy Plant': {
         'severity': 'low', 'freq_range': '<100 Hz (flat)', 'pattern': 'Flat noise floor',
@@ -242,3 +309,13 @@ PEST_META = {
         'icon': '🟡'
     },
 }
+
+# ── Government Helplines ──────────────────────────────────────────────────────
+GOVT_HELPLINES = [
+    ("Kisan Call Centre", "18001801551", "Free · 24/7 · All Indian languages"),
+    ("PM Kisan Helpline", "155261", "PM Kisan scheme queries"),
+    ("NDRF Emergency", "1078", "Flood, earthquake, disaster"),
+    ("Ambulance", "108", "Medical emergency"),
+    ("Police", "100", "Security / theft"),
+    ("State Agriculture Dept", "18004252", "Disease outbreak reporting"),
+]

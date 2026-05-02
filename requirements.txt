@@ -1,3 +1,8 @@
+# ── AI Vision ────────────────────────────────────
+anthropic
+onnxruntime
+
+# ── Core ML ──────────────────────────────────────
 streamlit
 scikit-learn
 numpy
@@ -5,17 +10,18 @@ pandas
 pillow
 prophet
 pystan
-requests==2.31.0
+scipy
+
+# ── Translation / Speech ────────────────────────
+requests
 httpx
 deep-translator
 gtts
-scipy
-fastapi==0.110.0
-uvicorn[standard]==0.29.0
-redis==5.0.3
-pydantic
+
+# ── FastAPI Backend ─────────────────────────────
+fastapi
+uvicorn[standard]
 pydantic-settings
 python-dotenv
-anthropic
-pydub
-matplotlib
+httpx
+python-multipart
