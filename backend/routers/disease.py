@@ -22,6 +22,9 @@ async def analyze_image(
     img = Image.open(io.BytesIO(contents))
 
     disease_bundle = request.app.state.disease_model
+    if disease_bundle is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="Disease model unavailable")
     result = disease_bundle.predict_from_image(img)
 
     return DiseaseResult(**result)

@@ -175,10 +175,24 @@ def render():
                 </div>""", unsafe_allow_html=True)
 
         if st.button(f"🔬 {T('Diagnose by Symptom / Pest')}", use_container_width=True, type="primary", key="symp_diagnose_btn"):
-            st.session_state['tab2_symp_result'] = {
-                'disease': DISEASE_DB[selected_crop][selected_symptom],
-                'crop': selected_crop, 'symptom': selected_symptom
-            }
+            with st.spinner(T("Consulting the Swarm...")):
+                api_res = asyncio.run(APIClient.diagnose_symptom(selected_crop, selected_symptom))
+            if api_res:
+                st.session_state['tab2_symp_result'] = {
+                    'disease': {
+                        'disease':   api_res['disease'],
+                        'severity':  api_res['severity'],
+                        'type':      api_res['disease_type'],
+                        'treatment': api_res['treatment'],
+                        'prevention': api_res['prevention'],
+                    },
+                    'crop': api_res['crop'], 'symptom': api_res['symptom'],
+                }
+            else:
+                st.session_state['tab2_symp_result'] = {
+                    'disease': DISEASE_DB[selected_crop][selected_symptom],
+                    'crop': selected_crop, 'symptom': selected_symptom,
+                }
 
     if 'tab2_symp_result' in st.session_state:
         result   = st.session_state['tab2_symp_result']['disease']

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     NASA_FIRMS_KEY: str = "6a8dded48b9e7f3f8fb71ac4c5a45e89"
 
     # ── Model Paths ──────────────────────────────────────────────────────
-    MODEL_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MODEL_DIR: str = os.path.dirname(os.path.abspath(__file__))
     CROP_MODEL_PATH: str = "crop_model.pkl"
     SCALER_PATH: str = "scaler.pkl"
     LABEL_ENCODER_PATH: str = "label_encoder.pkl"

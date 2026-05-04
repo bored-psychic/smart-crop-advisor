@@ -20,11 +20,19 @@ async def lifespan(app: FastAPI):
 
     from backend.ml import crop_model, disease_model, price_model, acoustic_model
 
-    app.state.crop_model = crop_model.load()
-    logger.info("  ✅ Crop model loaded (Random Forest)")
+    try:
+        app.state.crop_model = crop_model.load()
+        logger.info("  ✅ Crop model loaded (Random Forest)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Crop model unavailable: {e}")
+        app.state.crop_model = None
 
-    app.state.disease_model = disease_model.load()
-    logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+    try:
+        app.state.disease_model = disease_model.load()
+        logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Disease model unavailable: {e}")
+        app.state.disease_model = None
 
     try:
         app.state.price_models = price_model.load_all()
@@ -33,8 +41,12 @@ async def lifespan(app: FastAPI):
         logger.warning(f"  ⚠️ Price models unavailable: {e}")
         app.state.price_models = {}
 
-    app.state.acoustic_model = acoustic_model.load()
-    logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+    try:
+        app.state.acoustic_model = acoustic_model.load()
+        logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Acoustic model unavailable: {e}")
+        app.state.acoustic_model = None
 
     logger.info("🚀 KisanOS API ready!")
     yield

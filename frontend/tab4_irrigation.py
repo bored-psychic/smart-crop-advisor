@@ -106,32 +106,33 @@ def render():
     st.divider()
 
     if st.button(f"💧 {T('Get Irrigation Advice')}", use_container_width=True, type="primary"):
-        ET0             = calculate_ET0(irr_temp, irr_humidity, wind_speed)
-        Kc              = CROP_KC[irr_crop][growth_stage]
-        ETc             = ET0 * Kc
-        effective_rain  = last_rain * 0.7
-        net_irrigation  = max(ETc - effective_rain / 3, 0)
-        litres_per_acre = net_irrigation * 4046.86
-        total_litres    = litres_per_acre * field_area
-        fert = FERTILIZER_SCHEDULE[growth_stage]
-        st.session_state['tab4_result'] = {
-            'ET0': ET0, 'Kc': Kc, 'ETc': ETc,
-            'net_irrigation': net_irrigation, 'total_litres': total_litres,
-            'field_area': field_area, 'fert': fert,
-            'growth_stage': growth_stage, 'irr_crop': irr_crop,
-        }
+        with st.spinner(T("Consulting the Swarm...")):
+            res = asyncio.run(APIClient.irrigation_advice({
+                "crop": irr_crop,
+                "growth_stage": growth_stage,
+                "field_area": field_area,
+                "last_rain_mm": last_rain,
+                "temperature": irr_temp,
+                "humidity": irr_humidity,
+                "wind_speed": wind_speed,
+            }))
+        if res:
+            st.session_state['tab4_result'] = res
+        else:
+            card(T("Irrigation API unavailable. Check backend connection."), severity="error")
 
     if 'tab4_result' in st.session_state:
         r              = st.session_state['tab4_result']
         ET0            = r['ET0']
         Kc             = r['Kc']
         ETc            = r['ETc']
-        net_irrigation = r['net_irrigation']
+        net_irrigation = r['net_irrigation_mm']
         total_litres   = r['total_litres']
+        total_kl       = r['total_kl']
         field_area     = r['field_area']
-        fert           = r['fert']
-        growth_stage   = r['growth_stage']
-        irr_crop       = r['irr_crop']
+        fert           = r['fertilizer']
+        growth_stage   = fert['growth_stage']
+        irr_crop       = r['crop']
 
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -139,21 +140,21 @@ def render():
         with c2:
             st.metric(f"🚿 {T('Net Irrigation')}", f"{net_irrigation:.1f} mm/day")
         with c3:
-            st.metric(f"🪣 {T('Total Water')}", f"{total_litres/1000:.1f} kL", f"{T('for')} {field_area} {T('acre(s)')}")
+            st.metric(f"🪣 {T('Total Water')}", f"{total_kl:.1f} kL", f"{T('for')} {field_area} {T('acre(s)')}")
 
         st.divider()
 
         if net_irrigation < 1.0:
             card(f"&#9989; <b>{T('No irrigation needed today!')}</b> {T('Recent rainfall is sufficient.')}", severity="success")
         elif net_irrigation < 3.0:
-            card(f"&#128167; <b>{T('Light irrigation recommended')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="warning")
+            card(f"&#128167; <b>{T('Light irrigation recommended')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_kl:.1f} kL)", severity="warning")
         else:
-            card(f"&#128680; <b>{T('Irrigation urgently needed')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="error")
+            card(f"&#128680; <b>{T('Irrigation urgently needed')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_kl:.1f} kL)", severity="error")
 
         card(f"""
         <b style='color:#22C55E;'>&#127807; {T('Fertilizer Recommendation')}</b><br>
         <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>{T('Stage')}:</span> {T(growth_stage)}&nbsp;&nbsp;
-        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>N dose:</span> {T(fert['N'])}<br>
+        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>N dose:</span> {T(fert['nitrogen'])}<br>
         <span style='font-size:0.88rem;color:#E2F5DF;'>{T(fert['tip'])}</span>
         """, severity="info")
 
@@ -166,7 +167,7 @@ def render():
             | Crop Water Need (ETc) | {ETc:.2f} mm/day |
             | {T('Net Irrigation Need')} | {net_irrigation:.2f} mm/day |
             | {T('Field Area')} | {field_area} {T('acres')} |
-            | {T('Total Water Required')} | {total_litres/1000:.2f} kL |
+            | {T('Total Water Required')} | {total_kl:.2f} kL |
 
             *{T('Using FAO Penman-Monteith method (FAO-56 guidelines)')}*
             """)

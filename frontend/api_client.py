@@ -88,6 +88,26 @@ class APIClient:
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
+    async def irrigation_advice(data: dict):
+        async with httpx.AsyncClient() as client:
+            r = await client.post(
+                f"{_backend_url()}/irrigation/advise",
+                json=data,
+                headers=_headers(),
+            )
+            return r.json() if r.status_code == 200 else None
+
+    @staticmethod
+    async def diagnose_symptom(crop: str, symptom: str):
+        async with httpx.AsyncClient() as client:
+            r = await client.post(
+                f"{_backend_url()}/disease/analyze-symptom",
+                json={"crop": crop, "symptom": symptom},
+                headers=_headers(),
+            )
+            return r.json() if r.status_code == 200 else None
+
+    @staticmethod
     async def get_field_watch(city: str):
         async with httpx.AsyncClient() as client:
             r = await client.post(
