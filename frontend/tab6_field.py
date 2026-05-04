@@ -56,7 +56,7 @@ def render():
             wc2.metric(T("Humidity"),       f"{w['humidity']}%")
             wc3.metric(T("Wind"),           f"{w['wind']} km/h")
             wc4.metric(T("Rain 1h"),        f"{w['rain_1h']} mm")
-            st.caption(f"☁️ {w['desc']} · 📍 {fw_city}")
+            st.caption(f"☁️ {w['description']} · 📍 {fw_city}")
 
         fl = fw.get('flood')
         if fl:

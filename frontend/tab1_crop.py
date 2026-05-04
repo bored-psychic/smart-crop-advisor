@@ -41,31 +41,45 @@ def render():
         with st.spinner(T("Consulting the Swarm...")):
             res = asyncio.run(APIClient.recommend_crop(data))
             if res:
-                top_crop = res['top_crop']
-                emoji = CROP_EMOJI.get(top_crop, '🌱')
+                top_obj  = res['top_crop']
+                top_crop = top_obj['crop']
+                top_conf = top_obj['confidence']
+                emoji    = top_obj.get('emoji') or CROP_EMOJI.get(top_crop.lower(), '🌱')
+
+                soil_obj    = res['soil']
+                soil_type   = soil_obj['soil_type']
+                soil_advice = soil_obj['advice']
+
+                alt   = res.get('alternatives', [])
+                crop2 = alt[0]['crop']       if len(alt) > 0 else ''
+                conf2 = alt[0]['confidence'] if len(alt) > 0 else 0.0
+                crop3 = alt[1]['crop']       if len(alt) > 1 else ''
+                conf3 = alt[1]['confidence'] if len(alt) > 1 else 0.0
+
                 card(f"""
                 <div style='font-family:Space Grotesk,sans-serif;'>
                   <div style='font-size:1.7rem;font-weight:700;color:#22C55E;margin-bottom:2px;'>
                     {emoji}&nbsp;{top_crop.upper()}
                   </div>
                   <div style='font-family:JetBrains Mono,monospace;font-size:0.78rem;color:#4ADE80;'>
-                    {T('Best Crop')} &middot; {T('confidence')} {res['top_conf']:.1f}%
+                    {T('Best Crop')} &middot; {T('confidence')} {top_conf:.1f}%
                   </div>
                 </div>""", severity="success")
                 card(f"<b style='color:#22C55E'>&#128161; {T('Tip')}:</b> {T(res['tip'])}", severity="info")
-                card(f"<b style='color:#22C55E'>&#127757; {T('Soil')}:</b> {T(res['soil'])} &nbsp;&#183;&nbsp; <b style='color:#22C55E'>{T('Advice')}:</b> {T(res['soil_advice'])}", severity="warning")
+                card(f"<b style='color:#22C55E'>&#127757; {T('Soil')}:</b> {T(soil_type)} &nbsp;&#183;&nbsp; <b style='color:#22C55E'>{T('Advice')}:</b> {T(soil_advice)}", severity="warning")
 
                 st.markdown(f"#### {T('Other Options')}")
                 r2, r3 = st.columns(2)
                 with r2:
-                    st.metric(label=f"{CROP_EMOJI.get(res['crop2'],'🌱')} #2 — {res['crop2'].capitalize()}", value=f"{res['conf2']:.1f}%")
+                    st.metric(label=f"{CROP_EMOJI.get(crop2.lower(), '🌱')} #2 — {crop2.capitalize()}", value=f"{conf2:.1f}%")
                 with r3:
-                    st.metric(label=f"{CROP_EMOJI.get(res['crop3'],'🌱')} #3 — {res['crop3'].capitalize()}", value=f"{res['conf3']:.1f}%")
+                    st.metric(label=f"{CROP_EMOJI.get(crop3.lower(), '🌱')} #3 — {crop3.capitalize()}", value=f"{conf3:.1f}%")
 
                 st.markdown(f"#### {T('Confidence Across Top 8 Crops')}")
+                all_probs = res.get('all_probabilities', {})
                 chart_df = pd.DataFrame({
-                    'Crop': [c.capitalize() for c in res['crop_classes']],
-                    'Confidence (%)': [round(p * 100, 2) for p in res['probs']]
+                    'Crop': [c.capitalize() for c in all_probs],
+                    'Confidence (%)': list(all_probs.values()),
                 }).sort_values('Confidence (%)', ascending=False).head(8)
                 st.bar_chart(chart_df.set_index('Crop'))
 

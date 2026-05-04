@@ -1,45 +1,91 @@
+import os
 import httpx
 import streamlit as st
 
-BACKEND_URL = "http://localhost:8000/api/v1"
+BACKEND_URL = "http://localhost:8000/api"
+
+
+def _api_key() -> str:
+    try:
+        return st.secrets.get("BACKEND_API_KEY", "") or os.environ.get("BACKEND_API_KEY", "kisanos-dev-key-change-in-production")
+    except Exception:
+        return os.environ.get("BACKEND_API_KEY", "kisanos-dev-key-change-in-production")
+
+
+def _headers() -> dict:
+    return {"X-API-Key": _api_key()}
+
 
 class APIClient:
     @staticmethod
     async def get_weather(city: str):
         async with httpx.AsyncClient() as client:
-            r = await client.get(f"{BACKEND_URL}/weather/current/{city}")
-            return r.json() if r.status_code == 200 else None
+            r = await client.post(
+                f"{BACKEND_URL}/field-watch/scan",
+                json={"city": city},
+                headers=_headers(),
+            )
+            if r.status_code == 200:
+                body = r.json()
+                w = body.get("weather") or {}
+                return {
+                    "temp":        w.get("temp"),
+                    "humidity":    w.get("humidity"),
+                    "wind_speed":  w.get("wind"),
+                    "rainfall":    w.get("rain_1h", 0),
+                    "city":        body.get("city", city),
+                    "description": w.get("description", ""),
+                }
+            return None
 
     @staticmethod
     async def recommend_crop(data: dict):
         async with httpx.AsyncClient() as client:
-            r = await client.post(f"{BACKEND_URL}/crop/recommend", json=data)
+            r = await client.post(
+                f"{BACKEND_URL}/crop/recommend",
+                json=data,
+                headers=_headers(),
+            )
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
-    async def get_market_price(state: str, crop: str):
+    async def get_market_price(state: str, crop: str, forecast_days: int = 30):
         async with httpx.AsyncClient() as client:
-            r = await client.get(f"{BACKEND_URL}/market/price/{state}/{crop}")
+            r = await client.post(
+                f"{BACKEND_URL}/market/forecast",
+                json={"crop": crop, "state": state, "forecast_days": forecast_days},
+                headers=_headers(),
+            )
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
     async def diagnose_vision(image_bytes: bytes, crop_type: str = "Unknown"):
         async with httpx.AsyncClient(timeout=45.0) as client:
-            files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
-            data = {"crop_type": crop_type}
-            r = await client.post(f"{BACKEND_URL}/vision/diagnose", files=files, data=data)
+            r = await client.post(
+                f"{BACKEND_URL}/disease/analyze-image",
+                files={"file": ("image.jpg", image_bytes, "image/jpeg")},
+                data={"crop_type": crop_type},
+                headers=_headers(),
+            )
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
     async def analyze_acoustic(audio_bytes: bytes, crop_type: str = "Unknown"):
         async with httpx.AsyncClient(timeout=45.0) as client:
-            files = {"file": ("audio.wav", audio_bytes, "audio/wav")}
-            data = {"crop_type": crop_type}
-            r = await client.post(f"{BACKEND_URL}/acoustic/analyze", files=files, data=data)
+            r = await client.post(
+                f"{BACKEND_URL}/acoustic/analyze",
+                files={"file": ("audio.wav", audio_bytes, "audio/wav")},
+                data={"crop_type": crop_type},
+                headers=_headers(),
+            )
             return r.json() if r.status_code == 200 else None
 
     @staticmethod
     async def get_field_watch(city: str):
         async with httpx.AsyncClient() as client:
-            r = await client.get(f"{BACKEND_URL}/weather/field-watch/{city}")
+            r = await client.post(
+                f"{BACKEND_URL}/field-watch/scan",
+                json={"city": city},
+                headers=_headers(),
+            )
             return r.json() if r.status_code == 200 else None
