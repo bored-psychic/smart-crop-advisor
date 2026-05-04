@@ -2,7 +2,14 @@ import os
 import httpx
 import streamlit as st
 
-BACKEND_URL = "http://localhost:8000/api"
+_BACKEND_DEFAULT = "http://localhost:8000/api"
+
+
+def _backend_url() -> str:
+    try:
+        return st.secrets.get("BACKEND_URL", "") or os.environ.get("BACKEND_URL", _BACKEND_DEFAULT)
+    except Exception:
+        return os.environ.get("BACKEND_URL", _BACKEND_DEFAULT)
 
 
 def _api_key() -> str:
@@ -21,7 +28,7 @@ class APIClient:
     async def get_weather(city: str):
         async with httpx.AsyncClient() as client:
             r = await client.post(
-                f"{BACKEND_URL}/field-watch/scan",
+                f"{_backend_url()}/field-watch/scan",
                 json={"city": city},
                 headers=_headers(),
             )
@@ -42,7 +49,7 @@ class APIClient:
     async def recommend_crop(data: dict):
         async with httpx.AsyncClient() as client:
             r = await client.post(
-                f"{BACKEND_URL}/crop/recommend",
+                f"{_backend_url()}/crop/recommend",
                 json=data,
                 headers=_headers(),
             )
@@ -52,7 +59,7 @@ class APIClient:
     async def get_market_price(state: str, crop: str, forecast_days: int = 30):
         async with httpx.AsyncClient() as client:
             r = await client.post(
-                f"{BACKEND_URL}/market/forecast",
+                f"{_backend_url()}/market/forecast",
                 json={"crop": crop, "state": state, "forecast_days": forecast_days},
                 headers=_headers(),
             )
@@ -62,7 +69,7 @@ class APIClient:
     async def diagnose_vision(image_bytes: bytes, crop_type: str = "Unknown"):
         async with httpx.AsyncClient(timeout=45.0) as client:
             r = await client.post(
-                f"{BACKEND_URL}/disease/analyze-image",
+                f"{_backend_url()}/disease/analyze-image",
                 files={"file": ("image.jpg", image_bytes, "image/jpeg")},
                 data={"crop_type": crop_type},
                 headers=_headers(),
@@ -73,7 +80,7 @@ class APIClient:
     async def analyze_acoustic(audio_bytes: bytes, crop_type: str = "Unknown"):
         async with httpx.AsyncClient(timeout=45.0) as client:
             r = await client.post(
-                f"{BACKEND_URL}/acoustic/analyze",
+                f"{_backend_url()}/acoustic/analyze",
                 files={"file": ("audio.wav", audio_bytes, "audio/wav")},
                 data={"crop_type": crop_type},
                 headers=_headers(),
@@ -84,7 +91,7 @@ class APIClient:
     async def get_field_watch(city: str):
         async with httpx.AsyncClient() as client:
             r = await client.post(
-                f"{BACKEND_URL}/field-watch/scan",
+                f"{_backend_url()}/field-watch/scan",
                 json={"city": city},
                 headers=_headers(),
             )
