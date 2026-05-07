@@ -12,6 +12,7 @@ and the model file exists. Otherwise the general model handles everything.
 """
 
 import os
+import importlib
 import numpy as np
 import streamlit as st
 
@@ -40,6 +41,17 @@ FRUIT_MASTER_FALLBACK_CLASSES = (
 )
 
 
+def _load_tensorflow():
+    """
+    Import TensorFlow lazily and safely.
+    Returns the tensorflow module, or None when unavailable.
+    """
+    try:
+        return importlib.import_module('tensorflow')
+    except ImportError:
+        return None
+
+
 @st.cache_resource
 def load_general_model():
     """Load the 38-class PlantVillage TFLite/Keras model."""
@@ -52,26 +64,24 @@ def load_general_model():
 
     class_names = np.load(classes_path, allow_pickle=True).tolist()
 
-    try:
-        import tensorflow as tf
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
 
-        if os.path.exists(tflite_path):
-            try:
-                interp = tf.lite.Interpreter(model_path=tflite_path)
-                interp.allocate_tensors()
-                return interp, class_names
-            except Exception:
-                pass
+    if os.path.exists(tflite_path):
+        try:
+            interp = tf.lite.Interpreter(model_path=tflite_path)
+            interp.allocate_tensors()
+            return interp, class_names
+        except Exception:
+            pass
 
-        if os.path.exists(h5_path):
-            try:
-                model = tf.keras.models.load_model(h5_path, compile=False)
-                return model, class_names
-            except Exception:
-                pass
-
-    except ImportError:
-        pass
+    if os.path.exists(h5_path):
+        try:
+            model = tf.keras.models.load_model(h5_path, compile=False)
+            return model, class_names
+        except Exception:
+            pass
 
     return None, None
 
@@ -94,12 +104,14 @@ def load_rice_model():
         else list(RICE_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 
@@ -128,12 +140,14 @@ def load_maize_model():
         else list(MAIZE_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()               # required before any inference
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 
@@ -159,12 +173,14 @@ def load_chickpea_model():
         else list(CHICKPEA_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 
@@ -190,12 +206,14 @@ def load_pulse_swarm_model():
         else list(PULSE_SWARM_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 
@@ -221,12 +239,14 @@ def load_pigeonpea_lentil_model():
         else list(PIGEONPEA_LENTIL_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 
@@ -252,12 +272,14 @@ def load_fruit_master_model():
         else list(FRUIT_MASTER_FALLBACK_CLASSES)
     )
 
+    tf = _load_tensorflow()
+    if tf is None:
+        return None, None
     try:
-        import tensorflow as tf
         interp = tf.lite.Interpreter(model_path=tflite_path)
         interp.allocate_tensors()
         return interp, classes
-    except (ImportError, Exception):
+    except Exception:
         return None, None
 
 

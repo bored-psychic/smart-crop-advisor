@@ -1,6 +1,6 @@
 """POST /api/crop/recommend — Crop recommendation from soil + climate data."""
 
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends
 from backend.schemas.crop import CropRecommendRequest, CropRecommendResponse, CropPrediction, SoilInfo
 from backend.services.soil_service import get_soil_type
 from backend.core.constants import CROP_EMOJI, CROP_TIPS
@@ -17,6 +17,8 @@ async def recommend_crop(
 ):
     """Run Random Forest crop prediction and soil analysis."""
     crop_bundle = request.app.state.crop_model
+    if crop_bundle is None:
+        raise HTTPException(status_code=503, detail="Crop model unavailable")
     result = crop_bundle.predict(
         req.N, req.P, req.K,
         req.temperature, req.humidity, req.ph, req.rainfall

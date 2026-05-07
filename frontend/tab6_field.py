@@ -1,8 +1,7 @@
 import streamlit as st
-import asyncio
 import datetime
 import urllib.parse
-from frontend.api_client import APIClient
+from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
@@ -18,11 +17,14 @@ def render():
             st.error(T("Please enter your city name."))
         else:
             with st.spinner(T("Fetching satellite data, wildfire map, locust feed, weather forecast...")):
-                fw_result = asyncio.run(APIClient.get_field_watch(fw_city.strip()))
+                try:
+                    fw_result = run_async(APIClient.get_field_watch(fw_city.strip()))
+                except Exception:
+                    fw_result = None
             if fw_result:
                 st.session_state['fw_result'] = fw_result
             else:
-                card(T("Field Watch API unavailable. Check backend connection."), severity="error")
+                card(T("Field Watch request timed out or backend is unavailable. Please try again."), severity="error")
 
     if 'fw_result' in st.session_state:
         fw = st.session_state['fw_result']

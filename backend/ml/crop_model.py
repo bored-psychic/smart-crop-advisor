@@ -5,6 +5,7 @@ Loads crop_model.pkl, scaler.pkl, label_encoder.pkl once at startup.
 
 import pickle
 import numpy as np
+import pandas as pd
 from backend.config import get_settings
 
 
@@ -23,7 +24,13 @@ class CropModelBundle:
         Run crop prediction.
         Returns: {top_crop, top_conf, alternatives: [(crop, conf)], all_probs: {crop: conf}}
         """
-        input_data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+        values = [[N, P, K, temperature, humidity, ph, rainfall]]
+        feature_names = getattr(self.scaler, 'feature_names_in_', None)
+        input_data = (
+            pd.DataFrame(values, columns=feature_names)
+            if feature_names is not None
+            else np.array(values)
+        )
         input_scaled = self.scaler.transform(input_data)
         probs = self.model.predict_proba(input_scaled)[0]
         top3_idx = np.argsort(probs)[::-1][:3]

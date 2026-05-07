@@ -202,7 +202,8 @@ def load() -> DiseaseModelBundle:
 
     # Try TensorFlow (soft optional dependency)
     try:
-        import tensorflow as tf
+        import importlib
+        tf = importlib.import_module('tensorflow')
 
         if os.path.exists(tflite_path):
             try:

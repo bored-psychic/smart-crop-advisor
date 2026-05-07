@@ -14,7 +14,8 @@ def load_price_models():
         path = f'price_model_{crop.lower()}.json'
         if os.path.exists(path):
             with open(path, 'r') as f:
-                models[crop] = model_from_json(json.load(f))
+                raw = f.read()
+            parsed = json.loads(raw)
+            models[crop] = model_from_json(parsed if isinstance(parsed, str) else raw)
     return models
-
 

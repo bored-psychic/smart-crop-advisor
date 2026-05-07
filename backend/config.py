@@ -5,6 +5,7 @@ All secrets and tunables come from environment variables / .env file.
 
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from pathlib import Path
 import os
 
 
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "KisanOS API"
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = False
+    ENVIRONMENT: str = "development"  # "development" or "production"
 
     # ── Authentication ───────────────────────────────────────────────────
     API_KEY: str = "kisanos-dev-key-change-in-production"
@@ -23,18 +25,22 @@ class Settings(BaseSettings):
     CORS_ORIGINS: list[str] = ["*"]
 
     # ── External API Keys ────────────────────────────────────────────────
-    OWM_API_KEY: str = "bd5e378503939ddaee76f12ad7a97608"
-    DATA_GOV_API_KEY: str = "579b464db66ec23bdd000001cdd3946e44ce4aab825747b0bc4f6e0d"
-    NASA_FIRMS_KEY: str = "6a8dded48b9e7f3f8fb71ac4c5a45e89"
+    OWM_API_KEY: str = ""
+    DATA_GOV_API_KEY: str = ""
+    NASA_FIRMS_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
 
     # ── Model Paths ──────────────────────────────────────────────────────
-    MODEL_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MODEL_DIR: str = os.path.dirname(os.path.abspath(__file__))
     CROP_MODEL_PATH: str = "crop_model.pkl"
     SCALER_PATH: str = "scaler.pkl"
     LABEL_ENCODER_PATH: str = "label_encoder.pkl"
     DISEASE_MODEL_TFLITE: str = "disease_model.tflite"
     DISEASE_MODEL_H5: str = "disease_model.h5"
     CLASS_NAMES_PATH: str = "class_names.npy"
+
+    # ── Upload Limits ────────────────────────────────────────────────────
+    MAX_IMAGE_BYTES: int = 10 * 1024 * 1024  # 10 MB
 
     # ── Cache TTLs (seconds) ─────────────────────────────────────────────
     WEATHER_CACHE_TTL: int = 300       # 5 minutes
@@ -51,7 +57,7 @@ class Settings(BaseSettings):
         return os.path.join(self.MODEL_DIR, filename)
 
     class Config:
-        env_file = ".env"
+        env_file = str(Path(__file__).parent.parent / ".env")
         env_file_encoding = "utf-8"
         case_sensitive = True
 

@@ -16,15 +16,41 @@ logger = logging.getLogger("kisanos")
 async def lifespan(app: FastAPI):
     """Load all ML models once at startup — zero cold-start on first request."""
     settings = get_settings()
+
+    # Validate API key in production
+    if settings.ENVIRONMENT == "production":
+        if settings.API_KEY == "kisanos-dev-key-change-in-production":
+            logger.error(
+                "❌ SECURITY: Default API key detected in production! "
+                "Set API_KEY environment variable before deploying."
+            )
+            raise RuntimeError(
+                "Production deployment requires a custom API_KEY. "
+                "Set the API_KEY environment variable and restart."
+            )
+    elif settings.API_KEY == "kisanos-dev-key-change-in-production":
+        logger.warning(
+            "⚠️ Using default API key (development only). "
+            "For production, set API_KEY environment variable."
+        )
+
     logger.info("🌾 KisanOS API starting — loading ML models...")
 
     from backend.ml import crop_model, disease_model, price_model, acoustic_model
 
-    app.state.crop_model = crop_model.load()
-    logger.info("  ✅ Crop model loaded (Random Forest)")
+    try:
+        app.state.crop_model = crop_model.load()
+        logger.info("  ✅ Crop model loaded (Random Forest)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Crop model unavailable: {e}")
+        app.state.crop_model = None
 
-    app.state.disease_model = disease_model.load()
-    logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+    try:
+        app.state.disease_model = disease_model.load()
+        logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Disease model unavailable: {e}")
+        app.state.disease_model = None
 
     try:
         app.state.price_models = price_model.load_all()
@@ -33,8 +59,12 @@ async def lifespan(app: FastAPI):
         logger.warning(f"  ⚠️ Price models unavailable: {e}")
         app.state.price_models = {}
 
-    app.state.acoustic_model = acoustic_model.load()
-    logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+    try:
+        app.state.acoustic_model = acoustic_model.load()
+        logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+    except Exception as e:
+        logger.warning(f"  ⚠️ Acoustic model unavailable: {e}")
+        app.state.acoustic_model = None
 
     logger.info("🚀 KisanOS API ready!")
     yield
@@ -56,11 +86,13 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # ── CORS — enabled for all origins during development ────────────
+    # ── CORS ─────────────────────────────────────────────────────────
+    # Header-based auth (X-API-Key) doesn't require allow_credentials.
+    # For production, restrict allow_origins to specific frontend domains.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
-        allow_credentials=True,
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )

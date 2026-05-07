@@ -1,7 +1,9 @@
 import streamlit as st
-import asyncio
 import pandas as pd
-from frontend.api_client import APIClient
+import io
+import wave
+import numpy as np
+from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
@@ -15,6 +17,89 @@ PEST_META = {
     'Spider Mite':           {'severity': 'medium', 'freq_range': '1200–4000 Hz',    'pattern': 'Ultra-high freq scratching',      'energy_level': 'Moderate-high',  'icon': '🟡'},
     'Thrips Infestation':    {'severity': 'medium', 'freq_range': '350–500 Hz',      'pattern': 'Rapid mid-freq staccato',         'energy_level': 'Low-moderate',   'icon': '🟡'},
 }
+
+
+_WARNING_LABEL = {
+    'truncated_to_10s': '✂️ Recording was longer than 10s — only the first 10s were analyzed.',
+    'too_short':         '⏱️ Recording too short for reliable analysis.',
+    'below_noise_floor': '🔇 Recording is essentially silent.',
+    'decode_failed':     '🛑 Could not decode this audio format on the server.',
+    'empty_upload':      '🛑 Empty upload — no audio data received.',
+    'feature_extract_failed': '⚠️ Feature extraction failed after decode.',
+}
+
+
+def _warning_text(code: str) -> str:
+    if code in _WARNING_LABEL:
+        return _WARNING_LABEL[code]
+    if code.startswith('low_sample_rate_'):
+        return f'⚠️ Low sample rate ({code.split("_")[-1]}) — accuracy reduced.'
+    if code.startswith('high_sample_rate_'):
+        return f'ℹ️ Unusually high sample rate ({code.split("_")[-1]}).'
+    return f'ℹ️ {code}'
+
+
+def _precheck_audio_upload(audio_bytes: bytes, filename: str, mime_type: str) -> tuple[bool, list[str], list[str]]:
+    """
+    Frontend quality gate to avoid sending accidental taps/silence to backend.
+    Returns (is_valid, blocking_errors, non_blocking_warnings).
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    if not audio_bytes:
+        return False, ["Empty file uploaded."], warnings
+
+    if len(audio_bytes) < 6000:
+        errors.append("File is too small and looks like an accidental tap. Please record 4-10 seconds.")
+
+    lower_name = (filename or "").lower()
+    is_wav = "wav" in (mime_type or "").lower() or lower_name.endswith(".wav")
+
+    if not is_wav:
+        if len(audio_bytes) < 12000:
+            errors.append("Audio is likely too short. Record at least 1.5 seconds (recommended 4-10 seconds).")
+        warnings.append("Detailed sample-rate/silence checks are available for WAV previews only.")
+        return len(errors) == 0, errors, warnings
+
+    try:
+        with wave.open(io.BytesIO(audio_bytes), "rb") as wf:
+            sample_rate = wf.getframerate()
+            n_channels = wf.getnchannels()
+            sampwidth = wf.getsampwidth()
+            n_frames = wf.getnframes()
+            duration = (n_frames / sample_rate) if sample_rate else 0.0
+            pcm_bytes = wf.readframes(n_frames)
+    except Exception:
+        errors.append("Could not parse WAV metadata. Re-record and upload again.")
+        return False, errors, warnings
+
+    if duration < 1.5:
+        errors.append(f"Recording is only {duration:.1f}s. Minimum is 1.5s (recommended 4-10s).")
+    if sample_rate < 8000:
+        errors.append(f"Sample rate is {sample_rate} Hz. Please re-record at 8 kHz or higher.")
+
+    dtype_map = {1: np.uint8, 2: np.int16, 4: np.int32}
+    dtype = dtype_map.get(sampwidth)
+    if dtype is not None and len(pcm_bytes) > 0:
+        raw = np.frombuffer(pcm_bytes, dtype=dtype)
+        if n_channels > 1:
+            raw = raw.reshape(-1, n_channels)[:, 0]
+
+        if sampwidth == 1:
+            signal = (raw.astype(np.float32) - 128.0) / 128.0
+        elif sampwidth == 2:
+            signal = raw.astype(np.float32) / 32768.0
+        else:
+            signal = raw.astype(np.float32) / 2147483648.0
+
+        rms = float(np.sqrt(np.mean(signal ** 2))) if signal.size else 0.0
+        if rms < 1e-4:
+            errors.append("Recording is essentially silent. Move closer to the crop and re-record.")
+    else:
+        warnings.append("Could not run silence check for this WAV encoding.")
+
+    return len(errors) == 0, errors, warnings
 
 
 def render():
@@ -43,11 +128,24 @@ def render():
     if audio_file is not None:
         st.audio(audio_file, format=audio_file.type)
         st.markdown(f"**{T('File')}:** {audio_file.name} · **{T('Size')}:** {audio_file.size // 1024} KB")
+        audio_bytes = audio_file.getvalue()
+        can_analyze, gate_errors, gate_warnings = _precheck_audio_upload(
+            audio_bytes, audio_file.name, audio_file.type
+        )
 
-        if st.button(f"🔊 {T('Analyze for Pests')}", use_container_width=True, type="primary"):
-            with st.spinner("▶ Generating spectrogram · dispatching to Claude..."):
-                audio_bytes = audio_file.read()
-                result = asyncio.run(APIClient.analyze_acoustic(audio_bytes, crop_type=acoustic_crop))
+        for err in gate_errors:
+            st.error(err)
+        for warn in gate_warnings:
+            st.warning(warn)
+
+        if st.button(
+            f"🔊 {T('Analyze for Pests')}",
+            use_container_width=True,
+            type="primary",
+            disabled=not can_analyze,
+        ):
+            with st.spinner("▶ Decoding audio · generating spectrogram · dispatching to Claude..."):
+                result = run_async(APIClient.analyze_acoustic(audio_bytes, crop_type=acoustic_crop))
             if result:
                 st.session_state['tab5_result'] = result
             else:
@@ -57,13 +155,46 @@ def render():
         r = st.session_state['tab5_result']
         st.divider()
 
-        if r.get('ml_used'):
+        warnings = r.get('quality_warnings') or []
+        for w in warnings:
+            st.warning(_warning_text(w))
+
+        method = r.get('analysis_method', '')
+        if method == 'rejected':
+            card(T(r.get('action', 'Analysis rejected.')), severity="error")
+            return
+
+        if method == 'random_forest':
+            cv_acc = r.get('cv_accuracy')
+            cv_lbl = r.get('cv_label') or 'cross-validation'
+            badge_text = "🤖 Random Forest fallback · 8 classes"
+            if isinstance(cv_acc, (int, float)) and cv_acc > 0:
+                badge_text = (
+                    f"🤖 Random Forest fallback · 8 classes · "
+                    f"{cv_acc * 100:.1f}% on {cv_lbl}"
+                )
             st.markdown(
-                '<span style="background:#1B4332;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
-                'font-size:12px;font-weight:600">🤖 Random Forest ML · 97.2% CV Accuracy · 8 classes</span>',
+                f'<span style="background:#1B4332;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
+                f'font-size:12px;font-weight:600">{badge_text}</span>',
+                unsafe_allow_html=True
+            )
+            st.caption(T("Synthetic-data fallback — used when Claude vision is unavailable. Not a real-world accuracy claim."))
+            st.markdown("")
+        elif method == 'claude_vision':
+            st.markdown(
+                '<span style="background:#0F2A1F;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
+                'font-size:12px;font-weight:600">👁️ Claude Vision · spectrogram analysis</span>',
                 unsafe_allow_html=True
             )
             st.markdown("")
+
+        meta_cols = st.columns(3)
+        with meta_cols[0]:
+            st.caption(f"**Analyzed:** {r.get('analyzed_seconds', 0)}s of {r.get('duration_seconds', 0)}s")
+        with meta_cols[1]:
+            st.caption(f"**Sample rate:** {r.get('sample_rate', 0)} Hz")
+        with meta_cols[2]:
+            st.caption(f"**Decoder:** {r.get('decode_method', '–')}")
 
         pest_name = r.get('pest', 'Unknown')
         severity  = r.get('severity', 'low')
@@ -96,7 +227,7 @@ def render():
             st.metric(T("Risk Level"), severity.upper())
 
         if r.get('top3'):
-            st.markdown(f"#### 📊 {T('Top Predictions (ML)')}")
+            st.markdown(f"#### 📊 {T('Top Predictions')}")
             for p_name, pct in r['top3']:
                 meta = PEST_META.get(p_name, {})
                 sev_color = {'high': '#FF4B4B', 'medium': '#FFA500', 'low': '#21BA45'}.get(meta.get('severity', 'low'), '#888')
@@ -117,6 +248,9 @@ def render():
             st.markdown(f"#### 📊 {T('Frequency Band Energy')}")
             chart_df = pd.DataFrame.from_dict(r['band_energy'], orient='index', columns=[T('Energy')])
             st.bar_chart(chart_df)
+
+        if r.get('methodology_note'):
+            st.caption(f"ℹ️ {r['methodology_note']}")
 
     st.divider()
     with st.expander(f"🔬 {T('Acoustic Pest Science — 8 Classes')}"):

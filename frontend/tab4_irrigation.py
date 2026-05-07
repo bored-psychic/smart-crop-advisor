@@ -1,7 +1,7 @@
 import streamlit as st
-import asyncio
+import time
 import numpy as np
-from frontend.api_client import APIClient
+from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
@@ -49,6 +49,8 @@ CALAMITY_TIPS = {
     'clouds':       ['🌤️ Good day for transplanting', '💧 Moderate irrigation needed', '🌱 Apply fertilizers today'],
 }
 
+WEATHER_CACHE_TTL_SECONDS = 300
+
 
 def calculate_ET0(temp, humidity, wind_speed_kmh):
     wind_ms = wind_speed_kmh / 3.6
@@ -65,8 +67,33 @@ def render():
     st.markdown(f"#### 🌤️ {T('Live Weather (Auto-fill)')}")
     city = st.text_input(T("Enter your city name"), placeholder=T("e.g. Bengaluru, Pune, Hyderabad"), key="irr_city")
     weather_data = None
-    if city:
-        weather_data = asyncio.run(APIClient.get_weather(city))
+    city_clean = city.strip()
+    if city_clean:
+        cached_city = st.session_state.get('irr_weather_city')
+        cached_data = st.session_state.get('irr_weather_data')
+        cached_ts = st.session_state.get('irr_weather_ts')
+        now_ts = time.time()
+        city_changed = city_clean != cached_city
+        cache_expired = (
+            cached_ts is None
+            or (now_ts - float(cached_ts)) >= WEATHER_CACHE_TTL_SECONDS
+        )
+
+        if city_changed or cache_expired:
+            fresh_weather = run_async(APIClient.get_weather(city_clean))
+            if fresh_weather:
+                weather_data = fresh_weather
+                st.session_state['irr_weather_city'] = city_clean
+                st.session_state['irr_weather_data'] = fresh_weather
+                st.session_state['irr_weather_ts'] = now_ts
+            else:
+                if city_clean == cached_city and cached_data:
+                    weather_data = cached_data
+                    st.warning(T("Live weather refresh failed. Showing last known data."))
+                else:
+                    weather_data = None
+        else:
+            weather_data = cached_data
         if weather_data:
             wc1, wc2, wc3, wc4 = st.columns(4)
             wc1.metric("🌡️ " + T("Temp"), f"{weather_data['temp']}°C")
@@ -85,7 +112,7 @@ def render():
                         st.markdown(f"- {T(tip)}")
                     break
         else:
-            card(T("City not found. Please check spelling or try a nearby city."), severity="error")
+            card(T("Live weather unavailable. You can still adjust today's weather manually below."), severity="warning")
 
     st.divider()
     col1, col2 = st.columns(2)
@@ -106,32 +133,33 @@ def render():
     st.divider()
 
     if st.button(f"💧 {T('Get Irrigation Advice')}", use_container_width=True, type="primary"):
-        ET0             = calculate_ET0(irr_temp, irr_humidity, wind_speed)
-        Kc              = CROP_KC[irr_crop][growth_stage]
-        ETc             = ET0 * Kc
-        effective_rain  = last_rain * 0.7
-        net_irrigation  = max(ETc - effective_rain / 3, 0)
-        litres_per_acre = net_irrigation * 4046.86
-        total_litres    = litres_per_acre * field_area
-        fert = FERTILIZER_SCHEDULE[growth_stage]
-        st.session_state['tab4_result'] = {
-            'ET0': ET0, 'Kc': Kc, 'ETc': ETc,
-            'net_irrigation': net_irrigation, 'total_litres': total_litres,
-            'field_area': field_area, 'fert': fert,
-            'growth_stage': growth_stage, 'irr_crop': irr_crop,
-        }
+        with st.spinner(T("Consulting the Swarm...")):
+            res = run_async(APIClient.irrigation_advice({
+                "crop": irr_crop,
+                "growth_stage": growth_stage,
+                "field_area": field_area,
+                "last_rain_mm": last_rain,
+                "temperature": irr_temp,
+                "humidity": irr_humidity,
+                "wind_speed": wind_speed,
+            }))
+        if res:
+            st.session_state['tab4_result'] = res
+        else:
+            card(T("Irrigation API unavailable. Check backend connection."), severity="error")
 
     if 'tab4_result' in st.session_state:
         r              = st.session_state['tab4_result']
         ET0            = r['ET0']
         Kc             = r['Kc']
         ETc            = r['ETc']
-        net_irrigation = r['net_irrigation']
+        net_irrigation = r['net_irrigation_mm']
         total_litres   = r['total_litres']
+        total_kl       = r['total_kl']
         field_area     = r['field_area']
-        fert           = r['fert']
-        growth_stage   = r['growth_stage']
-        irr_crop       = r['irr_crop']
+        fert           = r['fertilizer']
+        growth_stage   = fert['growth_stage']
+        irr_crop       = r['crop']
 
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -139,23 +167,25 @@ def render():
         with c2:
             st.metric(f"🚿 {T('Net Irrigation')}", f"{net_irrigation:.1f} mm/day")
         with c3:
-            st.metric(f"🪣 {T('Total Water')}", f"{total_litres/1000:.1f} kL", f"{T('for')} {field_area} {T('acre(s)')}")
+            st.metric(f"🪣 {T('Total Water')}", f"{total_kl:.1f} kL", f"{T('for')} {field_area} {T('acre(s)')}")
 
         st.divider()
 
         if net_irrigation < 1.0:
-            card(f"&#9989; <b>{T('No irrigation needed today!')}</b> {T('Recent rainfall is sufficient.')}", severity="success")
+            card(f"&#9989; <b>{T('No irrigation needed today!')}</b> {T('Recent rainfall is sufficient.')}", severity="success", dark=True)
         elif net_irrigation < 3.0:
-            card(f"&#128167; <b>{T('Light irrigation recommended')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="warning")
+            card(f"&#128167; <b>{T('Light irrigation recommended')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_kl:.1f} kL)", severity="warning", dark=True)
         else:
-            card(f"&#128680; <b>{T('Irrigation urgently needed')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_litres/1000:.1f} kL)", severity="error")
+            card(f"&#128680; <b>{T('Irrigation urgently needed')}:</b> {T('Apply')} {net_irrigation:.1f} mm ({total_kl:.1f} kL)", severity="error", dark=True)
 
         card(f"""
-        <b style='color:#22C55E;'>&#127807; {T('Fertilizer Recommendation')}</b><br>
-        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>{T('Stage')}:</span> {T(growth_stage)}&nbsp;&nbsp;
-        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#4ADE80;'>N dose:</span> {T(fert['N'])}<br>
-        <span style='font-size:0.88rem;color:#E2F5DF;'>{T(fert['tip'])}</span>
-        """, severity="info")
+        <b style='color:#166534;'>&#127807; {T('Fertilizer Recommendation')}</b><br>
+        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#15803D;'>{T('Stage')}:</span>
+        <span style='color:#1A2E1A;'> {T(growth_stage)}</span>&nbsp;&nbsp;
+        <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#15803D;'>N dose:</span>
+        <span style='color:#1A2E1A;'> {T(fert['nitrogen'])}</span><br>
+        <span style='font-size:0.88rem;color:#374151;'>{T(fert['tip'])}</span>
+        """, severity="info", dark=True)
 
         with st.expander(f"🔬 {T('Calculation Details (FAO-56 Method)')}"):
             st.markdown(f"""
@@ -166,7 +196,7 @@ def render():
             | Crop Water Need (ETc) | {ETc:.2f} mm/day |
             | {T('Net Irrigation Need')} | {net_irrigation:.2f} mm/day |
             | {T('Field Area')} | {field_area} {T('acres')} |
-            | {T('Total Water Required')} | {total_litres/1000:.2f} kL |
+            | {T('Total Water Required')} | {total_kl:.2f} kL |
 
             *{T('Using FAO Penman-Monteith method (FAO-56 guidelines)')}*
             """)
