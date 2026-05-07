@@ -56,6 +56,7 @@ CROP_TIPS = {
 # ── Crop Coefficients (FAO-56) ────────────────────────────────────────────────
 CROP_KC = {
     'Rice':        {'Initial': 1.05, 'Development': 1.20, 'Mid-season': 1.20, 'Late season': 0.90},
+    'Wheat':       {'Initial': 0.30, 'Development': 0.70, 'Mid-season': 1.15, 'Late season': 0.25},
     'Maize':       {'Initial': 0.30, 'Development': 0.70, 'Mid-season': 1.20, 'Late season': 0.35},
     'Chickpea':    {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.00, 'Late season': 0.35},
     'Kidneybeans': {'Initial': 0.40, 'Development': 0.70, 'Mid-season': 1.15, 'Late season': 0.30},

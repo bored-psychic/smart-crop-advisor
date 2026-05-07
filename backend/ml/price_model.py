@@ -5,6 +5,7 @@ Loads all 26 crop price models from JSON at startup.
 
 import json
 import os
+from datetime import date
 import pandas as pd
 from backend.config import get_settings
 from backend.data.state_prices import STATE_PRICE_FACTORS
@@ -26,7 +27,9 @@ def load_all() -> dict:
         path = settings.model_path(f'price_model_{crop.lower()}.json')
         if os.path.exists(path):
             with open(path, 'r') as f:
-                models[crop] = model_from_json(json.load(f))
+                raw = f.read()
+            parsed = json.loads(raw)
+            models[crop] = model_from_json(parsed if isinstance(parsed, str) else raw)
     return models
 
 
@@ -39,10 +42,17 @@ def forecast(models: dict, crop: str, state: str, days: int = 30) -> dict | None
         return None
 
     model = models[crop]
-    future = model.make_future_dataframe(periods=days)
+    today = pd.Timestamp(date.today())
+
+    # Models were trained on historical data (cutoff ~Jan 2024).
+    # Extend future far enough to reach today + requested days.
+    last_train_date = model.history['ds'].max()
+    gap = max(0, (today - last_train_date).days)
+    future = model.make_future_dataframe(periods=gap + days)
     prediction = model.predict(future)
 
-    ff = prediction.tail(days)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
+    # Slice from today forward for exactly `days` rows
+    ff = prediction[prediction['ds'] >= today].head(days)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
     ff.columns = ['Date', 'Price', 'Min', 'Max']
     ff['Date'] = pd.to_datetime(ff['Date'])
 

@@ -14,3 +14,11 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Model artifacts are local/read-only; do not add new ones to git.
+*.pkl
+*.h5
+*.tflite
+*.npy
+*.onnx
+*.onnx.data

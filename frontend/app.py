@@ -11,7 +11,7 @@ import frontend.tab3_market as tab3_market
 import frontend.tab4_irrigation as tab4_irrigation
 import frontend.tab5_acoustic as tab5_acoustic
 import frontend.tab6_field as tab6_field
-from core.language import T, T_batch, LANGUAGES
+from core.language import T, activate, LANGUAGES
 
 st.set_page_config(
     page_title="KisanOS Swarm · Smart Crop Advisory",
@@ -22,7 +22,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,0,400;9..144,0,500;9..144,1,300;9..144,1,400&family=Inter:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,0,400;9..144,0,500;9..144,1,300;9..144,1,400&family=Inter:wght@300;400;500;600&family=Kalam:wght@300;400;700&display=swap');
 
 /* === BASE === */
 html, body, [class*="css"] {
@@ -70,7 +70,7 @@ section[data-testid="stMain"]::before {
 .stTabs [data-baseweb="tab"] {
   background: transparent !important;
   border-radius: 999px !important;
-  color: #5A6655 !important;
+  color: #3A4A35 !important;
   font-family: 'Inter', sans-serif !important;
   font-size: 0.78rem !important;
   font-weight: 500 !important;
@@ -127,8 +127,8 @@ section[data-testid="stMain"]::before {
 }
 [data-testid="stSidebar"] * { color: #2A3328 !important; }
 [data-testid="stSidebar"] .stTextInput input {
-  font-family: 'Caveat', cursive !important;
-  font-size: 17px !important;
+  font-family: 'Kalam', cursive !important;
+  font-size: 15px !important;
   background: transparent !important;
   border: none !important;
   border-bottom: 1px dashed rgba(42,51,40,0.20) !important;
@@ -144,7 +144,7 @@ section[data-testid="stMain"]::before {
 [data-testid="stSidebar"] label {
   font-family: 'Inter', sans-serif !important;
   font-size: 11px !important;
-  color: #8C9684 !important;
+  color: #4A5545 !important;
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
 }
@@ -188,7 +188,7 @@ div[data-baseweb="select"] > div {
   box-shadow: 0 4px 12px -8px rgba(42,51,40,0.15) !important;
 }
 [data-testid="stMetricLabel"] p {
-  color: #8C9684 !important;
+  color: #4A5545 !important;
   font-family: 'Inter', sans-serif !important;
   font-size: 0.7rem !important;
   text-transform: uppercase !important;
@@ -238,7 +238,7 @@ div[data-testid="stSpinner"] svg { display: none !important; }
 div[data-testid="stSpinner"] p {
   font-family: 'Inter', sans-serif !important;
   font-size: 0.82rem !important;
-  color: #5A6655 !important;
+  color: #3A4A35 !important;
   letter-spacing: 0.03em !important;
   margin-bottom: 8px !important;
 }
@@ -252,8 +252,12 @@ div[data-testid="stSpinner"] > div::after {
 }
 
 /* === CENTERED TABS === */
-.stTabs > div:first-child { display: flex !important; justify-content: center !important; }
-.stTabs [data-baseweb="tab-list"] { width: auto !important; flex-shrink: 0 !important; }
+.stTabs [data-baseweb="tab-list"] {
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  flex-shrink: 0 !important;
+}
 
 /* === TAB CONTENT BLOOM === */
 @keyframes tab-bloom {
@@ -291,10 +295,11 @@ with st.sidebar:
     _lang_options = list(LANGUAGES.keys())
     _sel = st.selectbox("🌐 Language", _lang_options)
     st.session_state['lang_code'] = LANGUAGES[_sel]
+    activate(st.session_state['lang_code'])
 
     st.divider()
     st.markdown("""
-    <div style="font-family:'Inter',sans-serif;font-size:10px;color:#8C9684;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">
+    <div style="font-family:'Inter',sans-serif;font-size:10px;color:#4A5545;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">
       Your Profile
     </div>
     """, unsafe_allow_html=True)
@@ -305,7 +310,7 @@ with st.sidebar:
 
     st.divider()
     st.markdown("""
-    <div style="font-family:'Caveat',cursive;font-size:17px;color:#5A6655;line-height:1.5;padding:8px 4px;">
+    <div style="font-family:'Kalam',cursive;font-size:15px;color:#3A4A35;line-height:1.6;padding:8px 4px;">
       "a calm field today<br>is a good harvest tomorrow."
     </div>
     """, unsafe_allow_html=True)

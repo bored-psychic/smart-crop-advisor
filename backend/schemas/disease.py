@@ -1,5 +1,6 @@
 """Pydantic schemas for disease detection endpoints."""
 
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -12,6 +13,7 @@ class DiseaseResult(BaseModel):
     action: str
     model_used: str
     top3: list[tuple[str, int]] = []
+    color: Optional[str] = None
 
 
 class SymptomRequest(BaseModel):

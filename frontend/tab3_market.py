@@ -1,7 +1,6 @@
 import streamlit as st
-import asyncio
 import pandas as pd
-from frontend.api_client import APIClient
+from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
@@ -38,7 +37,7 @@ def render():
 
     if st.button(f"📈 {T('Get Live Price + Forecast')}", use_container_width=True, type="primary"):
         with st.spinner(T("Fetching live Agmarknet data and computing forecast...")):
-            res = asyncio.run(APIClient.get_market_price(selected_state, crop_choice, forecast_days))
+            res = run_async(APIClient.get_market_price(selected_state, crop_choice, forecast_days))
         if res:
             st.session_state['tab3_result'] = res
         else:

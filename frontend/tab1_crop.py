@@ -1,7 +1,6 @@
 import streamlit as st
-import asyncio
 import pandas as pd
-from frontend.api_client import APIClient
+from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
@@ -39,7 +38,7 @@ def render():
             "rainfall": rainfall
         }
         with st.spinner(T("Consulting the Swarm...")):
-            res = asyncio.run(APIClient.recommend_crop(data))
+            res = run_async(APIClient.recommend_crop(data))
             if res:
                 top_obj  = res['top_crop']
                 top_crop = top_obj['crop']

@@ -1,5 +1,6 @@
 """Pydantic schemas for acoustic pest detection endpoint."""
 
+from typing import Optional, Literal
 from pydantic import BaseModel, Field
 
 
@@ -14,3 +15,16 @@ class AcousticResponse(BaseModel):
     icon: str
     top3: list[tuple[str, int]] = []
     ml_used: bool
+    band_energy: Optional[dict] = None
+    claude_advice: Optional[str] = None
+
+    analysis_method: Literal["claude_vision", "random_forest", "rejected"] = "rejected"
+    decode_method: Optional[Literal["scipy_wav", "pydub_ffmpeg"]] = None
+    truncated: bool = False
+    analyzed_seconds: float = 0.0
+    duration_seconds: float = 0.0
+    sample_rate: int = 0
+    quality_warnings: list[str] = Field(default_factory=list)
+    cv_accuracy: Optional[float] = None
+    cv_label: Optional[str] = None
+    methodology_note: Optional[str] = None

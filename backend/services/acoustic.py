@@ -2,11 +2,12 @@ import numpy as np
 import io
 import base64
 import json
+import importlib
 import scipy.io.wavfile as wav
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 from core.config import settings
 
 PEST_ICONS = {
@@ -27,30 +28,52 @@ class AcousticService:
         if not settings.ANTHROPIC_API_KEY:
             return AcousticService._fallback_result("No API key — add ANTHROPIC_API_KEY to .env")
 
-        wav_bytes = AcousticService._to_wav_bytes(audio_bytes)
-        spec_bytes, band_energy = AcousticService._make_spectrogram(wav_bytes)
-        if spec_bytes is None:
+        wav_bytes, decode_warnings = AcousticService._to_wav_bytes(audio_bytes)
+        if wav_bytes is None:
             return AcousticService._fallback_result(
-                "Could not decode audio — install ffmpeg: brew install ffmpeg"
+                "Could not decode audio. WAV works natively; for MP3/M4A/OGG install ffmpeg: "
+                "brew install ffmpeg"
+            )
+        spec_bytes, band_energy, quality_meta = AcousticService._make_spectrogram(wav_bytes)
+        if spec_bytes is None:
+            quality_warnings = quality_meta.get('quality_warnings', []) + decode_warnings
+            return AcousticService._fallback_result(
+                "Could not generate spectrogram from decoded audio.",
+                quality_warnings=quality_warnings,
             )
 
         result = await AcousticService._claude_analyze(spec_bytes, crop_type)
         result['band_energy'] = band_energy
+        result['duration_seconds'] = quality_meta.get('duration_seconds', 0.0)
+        result['analyzed_seconds'] = quality_meta.get('analyzed_seconds', 0.0)
+        result['quality_warnings'] = quality_meta.get('quality_warnings', [])
+        result['quality_warnings'].extend(decode_warnings)
+        result['truncated'] = quality_meta.get('truncated', False)
         result['ml_used'] = False
         result['claude_advice'] = None
         result.setdefault('icon', PEST_ICONS.get(result.get('pest', ''), '⚠️'))
         return result
 
     @staticmethod
-    def _to_wav_bytes(audio_bytes: bytes) -> bytes:
+    def _to_wav_bytes(audio_bytes: bytes) -> Tuple[Optional[bytes], list[str]]:
+        warnings: list[str] = []
+        # Fast-path: if upload is already WAV, avoid ffmpeg dependency entirely.
         try:
-            from pydub import AudioSegment
-            seg = AudioSegment.from_file(io.BytesIO(audio_bytes))
+            wav.read(io.BytesIO(audio_bytes))
+            return audio_bytes, warnings
+        except Exception:
+            warnings.append("not_native_wav")
+
+        try:
+            audio_segment = importlib.import_module("pydub").AudioSegment
+            # Using dynamic import keeps pydub optional and avoids static resolution warnings.
+            seg = audio_segment.from_file(io.BytesIO(audio_bytes))
             out = io.BytesIO()
             seg.export(out, format="wav")
-            return out.getvalue()
+            return out.getvalue(), warnings
         except Exception:
-            return audio_bytes
+            warnings.append("pydub_ffmpeg_decode_failed")
+            return None, warnings
 
     @staticmethod
     def _make_spectrogram(wav_bytes: bytes):
@@ -60,7 +83,20 @@ class AcousticService:
                 data = data[:, 0]
             raw = data.astype(np.float32) / (32768.0 if data.dtype == np.int16 else 1.0)
 
-            seg = raw[:rate * 10]  # first 10s max
+            max_seconds = 10
+            duration_seconds = (len(raw) / rate) if rate else 0.0
+            truncated = duration_seconds > max_seconds
+            analyzed_seconds = min(duration_seconds, max_seconds)
+            warnings = ["truncated_to_10s"] if truncated else []
+
+            seg = raw[:rate * max_seconds]  # first 10s max
+            if len(seg) == 0:
+                return None, None, {
+                    "truncated": False,
+                    "duration_seconds": round(duration_seconds, 2),
+                    "analyzed_seconds": 0.0,
+                    "quality_warnings": ["empty_audio"],
+                }
 
             # Band energy for chart
             fft_vals = np.abs(np.fft.rfft(seg))
@@ -82,9 +118,19 @@ class AcousticService:
             fig.savefig(buf, format='png', dpi=80, bbox_inches='tight')
             plt.close(fig)
             buf.seek(0)
-            return buf.read(), band_energy
+            return buf.read(), band_energy, {
+                "truncated": truncated,
+                "duration_seconds": round(duration_seconds, 2),
+                "analyzed_seconds": round(analyzed_seconds, 2),
+                "quality_warnings": warnings,
+            }
         except Exception:
-            return None, None
+            return None, None, {
+                "truncated": False,
+                "duration_seconds": 0.0,
+                "analyzed_seconds": 0.0,
+                "quality_warnings": ["spectrogram_generation_failed"],
+            }
 
     @staticmethod
     async def _claude_analyze(spec_bytes: bytes, crop: str) -> Dict[str, Any]:
@@ -136,7 +182,7 @@ class AcousticService:
         return json.loads(resp.content[0].text)
 
     @staticmethod
-    def _fallback_result(msg: str) -> Dict[str, Any]:
+    def _fallback_result(msg: str, quality_warnings: Optional[list[str]] = None) -> Dict[str, Any]:
         return {
             "pest": msg,
             "severity": "low",
@@ -150,4 +196,5 @@ class AcousticService:
             "ml_used": False,
             "claude_advice": None,
             "band_energy": None,
+            "quality_warnings": quality_warnings or [],
         }

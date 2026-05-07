@@ -1,14 +1,15 @@
 import streamlit as st
 
 
-def card(content_html: str, severity: str = "info") -> None:
+def card(content_html: str, severity: str = "info", dark: bool = False) -> None:
     palette = {
-        "success": ("#3E6B3E", "rgba(62,107,62,0.06)"),
-        "warning": ("#A06B1F", "rgba(217,182,107,0.12)"),
-        "error":   ("#B6553A", "rgba(182,85,58,0.08)"),
-        "info":    ("#5A6655", "rgba(42,51,40,0.04)"),
+        "success": ("#3E6B3E", "rgba(62,107,62,0.06)",  "rgba(62,107,62,0.28)"),
+        "warning": ("#A06B1F", "rgba(217,182,107,0.12)", "rgba(217,150,50,0.30)"),
+        "error":   ("#B6553A", "rgba(182,85,58,0.08)",   "rgba(182,85,58,0.28)"),
+        "info":    ("#30850B", "rgba(42,51,40,0.04)",    "rgba(42,51,40,0.20)"),
     }
-    bc, bg = palette.get(severity, palette["info"])
+    bc, bg_light, bg_dark = palette.get(severity, palette["info"])
+    bg = bg_dark if dark else bg_light
     html = (
         f'<div style="border-left:3px solid {bc};background:{bg};'
         f'border-radius:0 14px 14px 0;padding:16px 20px;margin:8px 0;'
