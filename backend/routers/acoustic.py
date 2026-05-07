@@ -117,7 +117,7 @@ async def _claude_acoustic(spec_bytes: bytes, crop_type: str) -> Optional[dict]:
         client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
         img_b64 = base64.standard_b64encode(spec_bytes).decode()
         resp = await client.messages.create(
-            model="claude-sonnet-4-6",
+            model="Codex-sonnet-4-6",
             max_tokens=600,
             system=[{
                 "type": "text",
@@ -180,6 +180,62 @@ async def _claude_acoustic(spec_bytes: bytes, crop_type: str) -> Optional[dict]:
         return json.loads(text)
     except Exception:
         return None
+
+
+_VALID_PESTS = set(PEST_META.keys())
+# Below this threshold we'd rather defer to the RF + crop priors than trust a
+# weak Claude guess. Claude's own calibration rules cap weak matches at 30-55,
+# so 25 lets confident-enough vision picks through while filtering noise.
+_CLAUDE_MIN_CONFIDENCE = 25
+
+
+def _coerce_claude_prediction(raw: Optional[dict]) -> Optional[dict]:
+    """Validate Claude's JSON; return a schema-ready dict or None on any issue."""
+    if not isinstance(raw, dict):
+        return None
+
+    pest = str(raw.get("pest", "")).strip()
+    if pest not in _VALID_PESTS:
+        return None
+
+    try:
+        confidence = int(round(float(raw.get("confidence", 0))))
+    except (TypeError, ValueError):
+        return None
+    if confidence < _CLAUDE_MIN_CONFIDENCE:
+        return None
+
+    meta = PEST_META[pest]
+
+    raw_top3 = raw.get("top3") or []
+    cleaned_top3: list[tuple[str, int]] = []
+    if isinstance(raw_top3, list):
+        for entry in raw_top3[:3]:
+            try:
+                name = str(entry[0])
+                score = int(round(float(entry[1])))
+            except (TypeError, ValueError, IndexError):
+                continue
+            if name in _VALID_PESTS:
+                cleaned_top3.append((name, max(0, min(100, score))))
+    if not cleaned_top3:
+        cleaned_top3 = [(pest, max(0, min(100, confidence)))]
+
+    action = raw.get("action")
+    action_str = str(action).strip() if action else ""
+
+    return {
+        "pest": pest,
+        "severity": str(raw.get("severity") or meta["severity"]),
+        "freq_range": str(raw.get("freq_range") or meta["freq_range"]),
+        "pattern": str(raw.get("pattern") or meta["pattern"]),
+        "energy_level": str(raw.get("energy_level") or meta["energy_level"]),
+        "confidence": max(0, min(100, confidence)),
+        "action": action_str or meta["action"],
+        "icon": meta["icon"],
+        "top3": cleaned_top3,
+        "claude_advice": action_str or None,
+    }
 
 
 def _rejected(reason: str, warnings: list[str], duration: float, sr: int,
@@ -274,10 +330,6 @@ async def analyze_audio(
         'methodology_note': METHODOLOGY_NOTE,
     }
 
-    acoustic_bundle = request.app.state.acoustic_model
-    if acoustic_bundle is None:
-        raise HTTPException(status_code=503, detail="Acoustic model unavailable")
-
     features = _features_from_pcm(seg, rate)
     if features is None:
         return _rejected(
@@ -286,15 +338,30 @@ async def analyze_audio(
             duration, rate, decode_method,
         )
 
-    result = acoustic_bundle.predict(features, crop_type=normalized_crop)
+    # Claude vision is the primary classifier. The synthetic-trained Random
+    # Forest ([backend/ml/acoustic_model.py]) only generalizes to two classes
+    # (Spider Mite / Healthy) on real audio, so it now serves as an offline
+    # fallback for when ANTHROPIC_API_KEY is missing or Claude returns
+    # malformed / low-confidence JSON.
     claude_result = None
     if spec_bytes is not None:
         claude_result = await _claude_acoustic(spec_bytes, normalized_crop)
+    claude_pred = _coerce_claude_prediction(claude_result)
+
+    if claude_pred is not None:
+        result = claude_pred
+        result["ml_used"] = False
+        result["analysis_method"] = "claude_vision"
+        result["cv_accuracy"] = None
+        result["cv_label"] = None
+    else:
+        acoustic_bundle = request.app.state.acoustic_model
+        if acoustic_bundle is None:
+            raise HTTPException(status_code=503, detail="Acoustic model unavailable")
+        result = acoustic_bundle.predict(features, crop_type=normalized_crop)
+        result["analysis_method"] = "random_forest"
+
     result.update(base_meta)
-    # Ensure frontend chart data is always present on RF fallback responses.
     if not result.get("band_energy"):
         result["band_energy"] = band_energy
-    if isinstance(claude_result, dict) and claude_result.get("action"):
-        result["claude_advice"] = str(claude_result.get("action"))
-    result['analysis_method'] = 'random_forest'
     return AcousticResponse(**result)
