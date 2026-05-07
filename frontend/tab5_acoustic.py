@@ -26,6 +26,7 @@ _WARNING_LABEL = {
     'decode_failed':     '🛑 Could not decode this audio format on the server.',
     'empty_upload':      '🛑 Empty upload — no audio data received.',
     'feature_extract_failed': '⚠️ Feature extraction failed after decode.',
+    'claude_unavailable_or_invalid_response': '🤖 Claude analysis unavailable or invalid response; used Random Forest fallback.',
 }
 
 

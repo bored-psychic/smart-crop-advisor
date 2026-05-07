@@ -116,68 +116,74 @@ async def _claude_acoustic(spec_bytes: bytes, crop_type: str) -> Optional[dict]:
             return None
         client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
         img_b64 = base64.standard_b64encode(spec_bytes).decode()
-        resp = await client.messages.create(
-            model="Codex-sonnet-4-6",
-            max_tokens=600,
-            system=[{
-                "type": "text",
-                "text": (
-                    "You are an expert bioacoustics analyst for crop pest detection. "
-                    "Analyze spectrogram images of field audio recordings and identify pest signatures.\n\n"
-                    "Known pest signatures in spectrograms:\n"
-                    "- Healthy Plant: flat noise floor, low energy across all bands\n"
-                    "- Aphid Colony: clustered mid-frequency bursts 200-400 Hz\n"
-                    "- Whitefly Infestation: wing-beat harmonic series 400-700 Hz\n"
-                    "- Locust Activity: high-amplitude low-frequency pulses 50-200 Hz\n"
-                    "- Stem Borer: rhythmic low-frequency gnawing 50-150 Hz\n"
-                    "- Early Fungal Infection: high-frequency crackling 800-1200 Hz\n"
-                    "- Spider Mite: ultra-high-frequency scratching 1200-4000 Hz\n"
-                    "- Thrips Infestation: rapid mid-frequency staccato 350-500 Hz\n\n"
-                    "CALIBRATION RULES:\n"
-                    "1. Spectrogram analysis is exploratory; you are not trained on labelled "
-                    "spectrograms — be conservative.\n"
-                    "2. If the signature is ambiguous, weak, or could be ambient noise, "
-                    "set pest='Healthy Plant' and explain in action.\n"
-                    "3. Confidence MUST be ≤ 70 unless the signature is textbook and "
-                    "unambiguous (a clear concentrated band matching a profile above).\n"
-                    "4. For weak or partial matches, use confidence 30-55.\n"
-                    "5. Use the supplied crop type to favour ecologically plausible pests.\n\n"
-                    "Respond ONLY with valid JSON, no markdown fences:\n"
-                    '{"pest":"name","severity":"high|medium|low","freq_range":"e.g. 50-150 Hz",'
-                    '"pattern":"describe what you see in spectrogram",'
-                    '"energy_level":"Very High|High|Moderate|Low-moderate|Background",'
-                    '"confidence":<int 0-100>,"action":"specific actionable advice for Indian farmer",'
-                    '"top3":[["Pest1",85],["Pest2",10],["Pest3",5]]}'
-                ),
-                "cache_control": {"type": "ephemeral"},
-            }],
-            messages=[{
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/png",
-                            "data": img_b64,
-                        },
-                    },
-                    {
+        model_candidates = ["claude-sonnet-4-6"]
+        for model_name in model_candidates:
+            try:
+                resp = await client.messages.create(
+                    model=model_name,
+                    max_tokens=600,
+                    system=[{
                         "type": "text",
                         "text": (
-                            f"Crop: {crop_type}. Analyze this field audio spectrogram "
-                            "for pest signatures. Respond with JSON only."
+                            "You are an expert bioacoustics analyst for crop pest detection. "
+                            "Analyze spectrogram images of field audio recordings and identify pest signatures.\n\n"
+                            "Known pest signatures in spectrograms:\n"
+                            "- Healthy Plant: flat noise floor, low energy across all bands\n"
+                            "- Aphid Colony: clustered mid-frequency bursts 200-400 Hz\n"
+                            "- Whitefly Infestation: wing-beat harmonic series 400-700 Hz\n"
+                            "- Locust Activity: high-amplitude low-frequency pulses 50-200 Hz\n"
+                            "- Stem Borer: rhythmic low-frequency gnawing 50-150 Hz\n"
+                            "- Early Fungal Infection: high-frequency crackling 800-1200 Hz\n"
+                            "- Spider Mite: ultra-high-frequency scratching 1200-4000 Hz\n"
+                            "- Thrips Infestation: rapid mid-frequency staccato 350-500 Hz\n\n"
+                            "CALIBRATION RULES:\n"
+                            "1. Spectrogram analysis is exploratory; you are not trained on labelled "
+                            "spectrograms — be conservative.\n"
+                            "2. If the signature is ambiguous, weak, or could be ambient noise, "
+                            "set pest='Healthy Plant' and explain in action.\n"
+                            "3. Confidence MUST be ≤ 70 unless the signature is textbook and "
+                            "unambiguous (a clear concentrated band matching a profile above).\n"
+                            "4. For weak or partial matches, use confidence 30-55.\n"
+                            "5. Use the supplied crop type to favour ecologically plausible pests.\n\n"
+                            "Respond ONLY with valid JSON, no markdown fences:\n"
+                            '{"pest":"name","severity":"high|medium|low","freq_range":"e.g. 50-150 Hz",'
+                            '"pattern":"describe what you see in spectrogram",'
+                            '"energy_level":"Very High|High|Moderate|Low-moderate|Background",'
+                            '"confidence":<int 0-100>,"action":"specific actionable advice for Indian farmer",'
+                            '"top3":[["Pest1",85],["Pest2",10],["Pest3",5]]}'
                         ),
-                    },
-                ],
-            }],
-        )
-        text = resp.content[0].text.strip()
-        if text.startswith("```"):
-            text = text.strip("`")
-            if text.lower().startswith("json"):
-                text = text[4:].lstrip()
-        return json.loads(text)
+                        "cache_control": {"type": "ephemeral"},
+                    }],
+                    messages=[{
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "image/png",
+                                    "data": img_b64,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": (
+                                    f"Crop: {crop_type}. Analyze this field audio spectrogram "
+                                    "for pest signatures. Respond with JSON only."
+                                ),
+                            },
+                        ],
+                    }],
+                )
+                text = resp.content[0].text.strip()
+                if text.startswith("```"):
+                    text = text.strip("`")
+                    if text.lower().startswith("json"):
+                        text = text[4:].lstrip()
+                return json.loads(text)
+            except Exception:
+                continue
+        return None
     except Exception:
         return None
 
@@ -355,6 +361,7 @@ async def analyze_audio(
         result["cv_accuracy"] = None
         result["cv_label"] = None
     else:
+        warnings.append("claude_unavailable_or_invalid_response")
         acoustic_bundle = request.app.state.acoustic_model
         if acoustic_bundle is None:
             raise HTTPException(status_code=503, detail="Acoustic model unavailable")
