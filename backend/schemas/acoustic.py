@@ -18,7 +18,13 @@ class AcousticResponse(BaseModel):
     band_energy: Optional[dict] = None
     claude_advice: Optional[str] = None
 
-    analysis_method: Literal["claude_vision", "random_forest", "rejected"] = "rejected"
+    analysis_method: Literal[
+        "claude_vision",
+        "gemini_audio",
+        "uncertain",
+        "random_forest_offline_demo",
+        "rejected",
+    ] = "rejected"
     decode_method: Optional[Literal["scipy_wav", "pydub_ffmpeg"]] = None
     truncated: bool = False
     analyzed_seconds: float = 0.0
@@ -28,3 +34,8 @@ class AcousticResponse(BaseModel):
     cv_accuracy: Optional[float] = None
     cv_label: Optional[str] = None
     methodology_note: Optional[str] = None
+
+    is_pest: Optional[bool] = None
+    claude_failure_stage: Optional[str] = None
+    claude_failure_detail: Optional[str] = None
+    claude_model_used: Optional[str] = None

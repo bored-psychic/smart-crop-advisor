@@ -60,19 +60,19 @@ def render():
         _icons = {"High": "&#128308;", "Medium": "&#128993;", "Low": "&#128994;", "None": "&#128994;"}
         card(f"""
         <div style='font-family:Space Grotesk,sans-serif;'>
-          <div style='font-size:1.3rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+          <div style='font-size:1.3rem;font-weight:700;color:#2A3328;margin-bottom:3px;'>
             {_icons.get(_sev,'&#9888;')}&nbsp;{T(vr['disease'])}
           </div>
-          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:12px;'>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#3E6B3E;margin-bottom:12px;'>
             {T('confidence')} &middot; {_conf}%
           </div>
-          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
-            <b style='color:#22C55E;'>&#128138; {T('Treatment')}:</b> {T(vr['treatment'])}
+          <div style='font-size:0.88rem;color:#2A3328;margin-bottom:6px;'>
+            <b style='color:#3E6B3E;'>&#128138; {T('Treatment')}:</b> {T(vr['treatment'])}
           </div>
-          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
-            <b style='color:#22C55E;'>&#128737; {T('Prevention')}:</b> {T(vr['prevention'])}
+          <div style='font-size:0.88rem;color:#2A3328;margin-bottom:6px;'>
+            <b style='color:#3E6B3E;'>&#128737; {T('Prevention')}:</b> {T(vr['prevention'])}
           </div>
-          <div style='font-size:0.8rem;color:#4ADE80;font-family:JetBrains Mono,monospace;'>
+          <div style='font-size:0.8rem;color:#3E6B3E;font-family:JetBrains Mono,monospace;'>
             &#9889; {T(vr['action'])}
           </div>
         </div>
@@ -161,17 +161,17 @@ def render():
         }
         card(f"""
         <div style='font-family:Space Grotesk,sans-serif;'>
-          <div style='font-size:1.2rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+          <div style='font-size:1.2rem;font-weight:700;color:#2A3328;margin-bottom:3px;'>
             {dicon} {T(result['disease'])}
           </div>
-          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:12px;'>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#3E6B3E;margin-bottom:12px;'>
             severity &middot; {_slabels.get(severity, severity)}
           </div>
-          <div style='font-size:0.88rem;color:#E2F5DF;margin-bottom:6px;'>
-            <b style='color:#22C55E;'>&#128138; {T('Treatment')}:</b> {T(result['treatment'])}
+          <div style='font-size:0.88rem;color:#2A3328;margin-bottom:6px;'>
+            <b style='color:#3E6B3E;'>&#128138; {T('Treatment')}:</b> {T(result['treatment'])}
           </div>
-          <div style='font-size:0.88rem;color:#E2F5DF;'>
-            <b style='color:#22C55E;'>&#128737; {T('Prevention')}:</b> {T(result['prevention'])}
+          <div style='font-size:0.88rem;color:#2A3328;'>
+            <b style='color:#3E6B3E;'>&#128737; {T('Prevention')}:</b> {T(result['prevention'])}
           </div>
         </div>
         """, severity=_smap2.get(severity, "info"))

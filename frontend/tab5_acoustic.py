@@ -26,7 +26,6 @@ _WARNING_LABEL = {
     'decode_failed':     '🛑 Could not decode this audio format on the server.',
     'empty_upload':      '🛑 Empty upload — no audio data received.',
     'feature_extract_failed': '⚠️ Feature extraction failed after decode.',
-    'claude_unavailable_or_invalid_response': '🤖 Claude analysis unavailable or invalid response; used Random Forest fallback.',
 }
 
 
@@ -145,7 +144,7 @@ def render():
             type="primary",
             disabled=not can_analyze,
         ):
-            with st.spinner("▶ Decoding audio · generating spectrogram · dispatching to Claude..."):
+            with st.spinner("▶ Decoding audio · analysing audio..."):
                 result = run_async(APIClient.analyze_acoustic(audio_bytes, crop_type=acoustic_crop))
             if result:
                 st.session_state['tab5_result'] = result
@@ -165,26 +164,58 @@ def render():
             card(T(r.get('action', 'Analysis rejected.')), severity="error")
             return
 
-        if method == 'random_forest':
+        if method == 'uncertain':
+            stage = r.get('claude_failure_stage') or 'unknown'
+            detail = r.get('claude_failure_detail') or '—'
+            model_tried = r.get('claude_model_used') or '—'
+            card(T(r.get('action', 'AI could not produce a confident reading.')),
+                 severity="info")
+            st.markdown(
+                f'<div style="font-family:JetBrains Mono,monospace;font-size:0.72rem;'
+                f'color:#9AA0A6;margin-top:6px">'
+                f'Stage: <b>{stage}</b> &middot; '
+                f'Detail: {detail} &middot; '
+                f'Model tried: {model_tried}'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown("")
+            st.caption(T("Tip: re-record closer to the crop, or open the Disease tab "
+                         "to upload a leaf photo instead."))
+            return
+
+        if method == 'random_forest_offline_demo':
             cv_acc = r.get('cv_accuracy')
             cv_lbl = r.get('cv_label') or 'cross-validation'
-            badge_text = "🤖 Random Forest fallback · 8 classes"
+            badge_text = "🟡 OFFLINE DEMO — synthetic-data model · NOT a real prediction"
             if isinstance(cv_acc, (int, float)) and cv_acc > 0:
                 badge_text = (
-                    f"🤖 Random Forest fallback · 8 classes · "
+                    f"🟡 OFFLINE DEMO — synthetic-data model · NOT a real prediction · "
                     f"{cv_acc * 100:.1f}% on {cv_lbl}"
                 )
             st.markdown(
-                f'<span style="background:#1B4332;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
+                f'<span style="background:#3B2F0F;color:#FBE7A1;padding:4px 12px;border-radius:20px;'
                 f'font-size:12px;font-weight:600">{badge_text}</span>',
                 unsafe_allow_html=True
             )
-            st.caption(T("Synthetic-data fallback — used when Claude vision is unavailable. Not a real-world accuracy claim."))
+            st.caption(T("Set ANTHROPIC_API_KEY to enable real Claude bioacoustics. "
+                         "This synthetic Random Forest is for offline UI demos only."))
+            st.markdown("")
+        elif method == 'gemini_audio':
+            model_used = r.get('claude_model_used') or 'gemini+claude'
+            st.markdown(
+                f'<span style="background:#0F1F3A;color:#93C5FD;padding:4px 12px;border-radius:20px;'
+                f'font-size:12px;font-weight:600">🎵 Gemini Audio → Claude · {model_used} · '
+                f'native audio understanding</span>',
+                unsafe_allow_html=True
+            )
             st.markdown("")
         elif method == 'claude_vision':
+            model_used = r.get('claude_model_used') or 'claude vision'
             st.markdown(
-                '<span style="background:#0F2A1F;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
-                'font-size:12px;font-weight:600">👁️ Claude Vision · spectrogram analysis</span>',
+                f'<span style="background:#0F2A1F;color:#B7E4C7;padding:4px 12px;border-radius:20px;'
+                f'font-size:12px;font-weight:600">👁️ Claude Vision · {model_used} · '
+                f'spectrogram + DSP features</span>',
                 unsafe_allow_html=True
             )
             st.markdown("")
@@ -230,11 +261,11 @@ def render():
         if r.get('top3'):
             st.markdown(f"#### 📊 {T('Top Predictions')}")
             for p_name, pct in r['top3']:
-                meta = PEST_META.get(p_name, {})
+                meta = PEST_META.get(p_name, {'icon': '🐛', 'severity': 'medium'})
                 sev_color = {'high': '#FF4B4B', 'medium': '#FFA500', 'low': '#21BA45'}.get(meta.get('severity', 'low'), '#888')
                 st.markdown(
                     f'<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'
-                    f'<div style="width:130px;font-size:13px">{meta.get("icon","")}&nbsp;{p_name}</div>'
+                    f'<div style="width:130px;font-size:13px">{meta.get("icon","🐛")}&nbsp;{p_name}</div>'
                     f'<div style="flex:1;height:10px;background:#eee;border-radius:5px;overflow:hidden">'
                     f'<div style="width:{pct}%;height:100%;background:{sev_color};border-radius:5px"></div></div>'
                     f'<div style="width:38px;font-size:13px;font-weight:600;text-align:right">{pct}%</div>'
@@ -254,7 +285,10 @@ def render():
             st.caption(f"ℹ️ {r['methodology_note']}")
 
     st.divider()
-    with st.expander(f"🔬 {T('Acoustic Pest Science — 8 Classes')}"):
+    with st.expander(f"🔬 {T('Reference Signatures (8 well-known) — Claude can also detect others')}"):
+        st.caption(T("These eight signatures are the ones the tool was originally tuned for. "
+                     "Claude can return any pest, disease, or non-pest sound it identifies — "
+                     "the table below is just the canonical reference set."))
         data = {
             T('Pest / Condition'): list(PEST_META.keys()),
             T('Frequency Range'):  [m['freq_range'] for m in PEST_META.values()],

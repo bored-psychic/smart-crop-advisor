@@ -1,5 +1,6 @@
 # ── AI Vision ────────────────────────────────────
 anthropic
+google-genai>=1.0
 
 # ── Core ML ──────────────────────────────────────
 streamlit

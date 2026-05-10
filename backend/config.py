@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     DATA_GOV_API_KEY: str = ""
     NASA_FIRMS_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
 
     # ── Model Paths ──────────────────────────────────────────────────────
     MODEL_DIR: str = os.path.dirname(os.path.abspath(__file__))
