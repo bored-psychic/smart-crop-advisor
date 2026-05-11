@@ -21,6 +21,11 @@ function ViewIrrigation({ profile, setProfile, t }){
 
   // 400ms debounce for city → weather autofill
   const debounceRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(debounceRef.current);
+  }, []);
+
   const handleCityChange = useCallback((val) => {
     setCity(val);
     setAutofillNote('');
@@ -228,20 +233,22 @@ function ViewIrrigation({ profile, setProfile, t }){
             <div style={{color:'var(--ink-soft)',fontSize:13,fontStyle:'italic'}}>{result.fertilizer.tip}</div>
           </div>
 
-          {/* Calamity tips */}
-          {calamityKey && CALAMITY_TIPS[calamityKey] && (
-            <div className="card rise" style={{background:'rgba(160,107,31,0.07)', borderColor:'#A06B1F'}}>
-              <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:8}}>
-                weather tips · {calamityKey}
-              </div>
-              <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>
-                {CALAMITY_TIPS[calamityKey].map((tip, i) => (
-                  <li key={i}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+        </div>
+      )}
 
+      {/* Calamity tips — standalone, independent of result */}
+      {calamityKey && CALAMITY_TIPS[calamityKey] && (
+        <div style={{marginTop:24}}>
+          <div className="card rise" style={{background:'rgba(160,107,31,0.07)', borderColor:'#A06B1F'}}>
+            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:8}}>
+              weather tips · {calamityKey}
+            </div>
+            <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>
+              {CALAMITY_TIPS[calamityKey].map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>
