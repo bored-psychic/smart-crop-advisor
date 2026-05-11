@@ -71,7 +71,11 @@ function ViewIrrigation({ profile, setProfile, t }){
       });
       setResult(data);
     } catch(err){
-      setError(err);
+      setError({
+        status: err.status || null,
+        detail: err.detail || err.message || String(err),
+        message: err.message || String(err),
+      });
     } finally {
       setLoading(false);
     }
@@ -174,7 +178,7 @@ function ViewIrrigation({ profile, setProfile, t }){
           {error   && (
             <ErrorCard
               title="Could not calculate"
-              detail={error.message || String(error)}
+              detail={!error.status ? 'No connection — check your network and try again.' : error.detail}
               onRetry={handleSubmit}
             />
           )}

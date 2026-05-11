@@ -138,7 +138,11 @@ function PhotoPanel() {
         window.__catMood?.('excited', 1500);
       })
       .catch(e => {
-        setError(e);
+        setError({
+          status: e.status || null,
+          detail: e.detail || e.message || String(e),
+          message: e.message || String(e),
+        });
         setLoading(false);
       });
   }, [cropType]);
@@ -272,7 +276,11 @@ function SymptomPanel() {
         setCropsLoading(false);
       })
       .catch(e => {
-        setCropsError(e);
+        setCropsError({
+          status: e.status || null,
+          detail: e.detail || e.message || String(e),
+          message: e.message || String(e),
+        });
         setCropsLoading(false);
       });
   }, []);
@@ -300,7 +308,11 @@ function SymptomPanel() {
         window.__catMood?.('excited', 1500);
       })
       .catch(e => {
-        setAnalysisError(e);
+        setAnalysisError({
+          status: e.status || null,
+          detail: e.detail || e.message || String(e),
+          message: e.message || String(e),
+        });
         setAnalysisLoading(false);
       });
   }, []);

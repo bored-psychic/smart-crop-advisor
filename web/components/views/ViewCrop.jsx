@@ -44,7 +44,11 @@ function ViewCrop({ profile, setProfile, t }) {
         window.__catMood?.('excited', 1500);
       })
       .catch(e => {
-        setError(e);
+        setError({
+          status: e.status || null,
+          detail: e.detail || e.message || String(e),
+          message: e.message || String(e),
+        });
         setLoading(false);
       });
   }, [N, P, K, temperature, humidity, ph, rainfall]);

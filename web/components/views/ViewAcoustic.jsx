@@ -1,6 +1,8 @@
 // ViewAcoustic — pre-check gate (Task 5.1) + rich result rendering (Task 5.2)
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
+const BAR_COUNT = window.innerWidth <= 640 ? 28 : 40;
+
 /* ===== Module-scope helpers ===== */
 
 function roleColor(role){
@@ -206,16 +208,16 @@ function ViewAcoustic({ profile, t }){
   const [result, setResult]                   = useState(null);
   const [cropType, setCropType]               = useState('Unknown');
   const [drag, setDrag]                       = useState(false);
-  const [bars, setBars]                       = useState(Array(40).fill(0.1));
+  const [bars, setBars]                       = useState(Array(BAR_COUNT).fill(0.1));
   const inputRef = useRef();
 
   // Animate bars while loading
   useEffect(()=>{
     if(loading){
-      const id = setInterval(()=>setBars(Array.from({length:40},()=>0.2+Math.random()*0.7)),100);
+      const id = setInterval(()=>setBars(Array.from({length:BAR_COUNT},()=>0.2+Math.random()*0.7)),100);
       return ()=>clearInterval(id);
     } else {
-      setBars(Array(40).fill(0.1));
+      setBars(Array(BAR_COUNT).fill(0.1));
     }
   },[loading]);
 
