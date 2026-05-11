@@ -29,7 +29,13 @@ async function _req(path, opts = {}) {
     fetchOpts.body = body;
   }
 
-  const r = await fetch(`${window.API_BASE}${path}`, fetchOpts);
+  let r;
+  try {
+    r = await fetch(`${window.API_BASE}${path}`, fetchOpts);
+  } catch (err) {
+    err.message = `${path}: ${err.message}`;
+    throw err;
+  }
 
   if (!r.ok) {
     let detail;
