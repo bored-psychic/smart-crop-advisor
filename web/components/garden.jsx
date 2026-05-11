@@ -142,7 +142,7 @@ const LANGS = [
   { code:'mr', flag:'🇮🇳', label:'मराठी' },
 ];
 
-function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, active, setActive }){
+function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, active, setActive, t }){
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef(null);
   useEffect(()=>{
@@ -247,7 +247,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
 }
 
 /* ===== Centered horizontal tab bar ===== */
-function TabBar({ active, setActive }){
+function TabBar({ active, setActive, t }){
   const tabs = [
     { k:'crop',       label:'Crop Advisor' },
     { k:'disease',    label:'Leaf Doctor' },
@@ -299,7 +299,7 @@ function classifyCrop({N,P,K,ph,temperature,humidity,rainfall}){
   return c.map(x=>({...x,prob:x.score/t})).sort((a,b)=>b.prob-a.prob);
 }
 
-function ViewCrop({ profile, setProfile }){
+function ViewCrop({ profile, setProfile, t }){
   const [N,setN]=useState(90),[P,setP]=useState(42),[K,setK]=useState(43),[ph,setPh]=useState(6.5);
   const [temperature,setT]=useState(25),[humidity,setH]=useState(80),[rainfall,setR]=useState(200);
   const [result,setResult]=useState(null);
@@ -377,7 +377,7 @@ function ViewCrop({ profile, setProfile }){
 }
 
 /* ============ Disease ============ */
-function ViewDisease({ profile }){
+function ViewDisease({ profile, t }){
   const [crop,setCrop]=useState('Tomato');
   const [phase,setPhase]=useState('idle');
   const [progress,setProgress]=useState(0);
@@ -463,7 +463,7 @@ function ViewDisease({ profile }){
 
 /* ============ Market ============ */
 function genSeries(b,n=60){let arr=[],p=b;for(let i=0;i<n;i++){p=p*(1+(Math.random()-0.48)*0.025+0.0008);arr.push(p)}return arr}
-function ViewMarket({ profile, setProfile }){
+function ViewMarket({ profile, setProfile, t }){
   const [crop,setCrop]=useState('Cotton');
   const series=useMemo(()=>genSeries({Cotton:6800,Wheat:2400,Rice:2100,Maize:1850,Onion:2000,Tomato:1300}[crop]||3000,60),[crop]);
   const fc=useMemo(()=>genSeries(series[series.length-1],14),[series]);
@@ -533,7 +533,7 @@ function ViewMarket({ profile, setProfile }){
 }
 
 /* ============ Irrigation ============ */
-function ViewIrrigation({ profile, setProfile }){
+function ViewIrrigation({ profile, setProfile, t }){
   const KC={Rice:[1.05,1.20,1.20,0.90],Cotton:[0.35,0.70,1.20,0.50],Maize:[0.30,0.70,1.20,0.35],Tomato:[0.50,0.80,1.15,0.70],Wheat:[0.30,0.70,1.15,0.25]};
   const STAGES=['just sown','growing','flowering','ripening'];
   const [crop,setCrop]=useState('Cotton');
@@ -601,7 +601,7 @@ function ViewIrrigation({ profile, setProfile }){
 }
 
 /* ============ Acoustic — drag-drop audio ============ */
-function ViewAcoustic({ profile }){
+function ViewAcoustic({ profile, t }){
   const [phase,setPhase]=useState('idle');
   const [bars,setBars]=useState(Array(40).fill(0.1));
   const [result,setResult]=useState(null);
@@ -684,7 +684,7 @@ function ViewAcoustic({ profile }){
 }
 
 /* ============ Field ============ */
-function ViewField({ profile, setProfile }){
+function ViewField({ profile, setProfile, t }){
   const items=[
     {emo:'☀️',title:'Bright and dry',body:'A good day to spray and harvest. Soil moisture is fine.',tone:'leaf'},
     {emo:'🌧',title:'Light rain at dusk',body:'About 2.4 mm expected. Open drainage on plot B.',tone:'warn'},

@@ -1,5 +1,5 @@
 // Main App component — mounts the KisanOS layout
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
 const VIEW_MAP = {
   crop:       ViewCrop,
@@ -22,6 +22,11 @@ const CRUMB_MAP = {
 function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [lang, setLang] = useState('en');
+  const [i18nReady, setI18nReady] = useState(!!window.I18N.bundles);
+  useEffect(() => {
+    if (!i18nReady) window.I18N._ready.then(() => setI18nReady(true));
+  }, []);
+  const t = useMemo(() => window.makeT(lang), [lang, i18nReady]);
   const [active, setActive] = useState('crop');
   const [profile, setProfile] = useState({
     name:    'Ramesh Kumar',
@@ -73,12 +78,13 @@ function App() {
           setLang={setLang}
           active={active}
           setActive={switchTab}
+          t={t}
         />
         <main className="main">
-          <TabBar active={active} setActive={switchTab} />
+          <TabBar active={active} setActive={switchTab} t={t} />
           <div className="tab-content-wrap" ref={wrapRef}>
             <div className={`tab-content ${phase !== 'idle' ? phase : ''}`}>
-              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} />
+              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} t={t} />
             </div>
           </div>
         </main>
