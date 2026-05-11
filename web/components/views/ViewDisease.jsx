@@ -3,6 +3,9 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
 const FALLBACK_CROPS = ['Tomato','Potato','Rice','Cotton','Wheat','Maize','Banana','Sugarcane'];
 
+// Fix #1: module-level cache so the "already fetched" guard survives re-mounts
+let _detailedCropsCache = null;
+
 function SevTag({ severity }) {
   const color = severity === 'High' ? 'var(--berry)'
               : severity === 'Medium' ? '#A06B1F'
@@ -105,6 +108,8 @@ function PhotoPanel() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  // Fix #5: store chosen file in state so retry doesn't use stale fileRef.current.files
+  const [file, setFile] = useState(null);
   const fileRef = useRef();
 
   useEffect(() => {
@@ -120,13 +125,13 @@ function PhotoPanel() {
       .finally(() => setCropsLoading(false));
   }, []);
 
-  const analyzeFile = useCallback((file) => {
-    if (!file) return;
+  const analyzeFile = useCallback((f) => {
+    if (!f) return;
     setLoading(true);
     setResult(null);
     setError(null);
     window.__catMood?.('thinking', 2500);
-    window.api.diseasePhoto(file, cropType)
+    window.api.diseasePhoto(f, cropType)
       .then(r => {
         setResult(r);
         setLoading(false);
@@ -138,19 +143,27 @@ function PhotoPanel() {
       });
   }, [cropType]);
 
-  function handleFileChange(e) {
-    const file = e.target.files?.[0];
-    if (file) analyzeFile(file);
+  // Fix #6: wrap in useCallback
+  const handleFileChange = useCallback((e) => {
+    const chosen = e.target.files?.[0];
+    if (chosen) {
+      setFile(chosen);
+      analyzeFile(chosen);
+    }
     // reset so same file can be re-selected
     e.target.value = '';
-  }
+  }, [analyzeFile]);
 
-  function onDrop(e) {
+  // Fix #6: wrap in useCallback
+  const onDrop = useCallback((e) => {
     e.preventDefault();
     setDrag(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) analyzeFile(file);
-  }
+    const dropped = e.dataTransfer.files?.[0];
+    if (dropped) {
+      setFile(dropped);
+      analyzeFile(dropped);
+    }
+  }, [analyzeFile]);
 
   function errorMsg(e) {
     if (!e) return 'Something went wrong.';
@@ -213,9 +226,8 @@ function PhotoPanel() {
           <ErrorCard
             title="Could not analyze photo"
             detail={errorMsg(error)}
-            onRetry={() => {
-              if (fileRef.current?.files?.[0]) analyzeFile(fileRef.current.files[0]);
-            }}
+            // Fix #5: retry uses the file stored in state, not stale fileRef.current.files
+            onRetry={() => { if (file) analyzeFile(file); }}
           />
         )}
         {!loading && result && <PhotoResult result={result} />}
@@ -225,27 +237,35 @@ function PhotoPanel() {
 }
 
 function SymptomPanel() {
-  const cropsRef = useRef(null);
+  // Fix #1: removed cropsRef useRef — using module-level _detailedCropsCache instead
   const [cropsLoading, setCropsLoading] = useState(false);
   const [cropsError, setCropsError] = useState(null);
   const [cropList, setCropList] = useState([]);
+  // Fix #3: store full crops data object in state so symptoms memo is reactive
+  const [cropsData, setCropsData] = useState(null);
   const [selectedCrop, setSelectedCrop] = useState('');
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  // Fix #7: track last clicked symptom so the analysis error card can retry
+  const [lastClickedSymptom, setLastClickedSymptom] = useState(null);
 
-  // Lazy-load detailed crops on first mount of this panel
-  useEffect(() => {
-    if (cropsRef.current) {
-      // Already fetched
-      setCropList(Object.keys(cropsRef.current));
+  // Fix #2: extract fetch into a named useCallback so both useEffect and onRetry call the same path
+  const loadCrops = useCallback(() => {
+    // Fix #1: guard against re-fetch using the module-level cache
+    if (_detailedCropsCache) {
+      setCropsData(_detailedCropsCache);
+      const names = Object.keys(_detailedCropsCache);
+      setCropList(names);
+      setSelectedCrop(prev => prev || names[0] || '');
       return;
     }
     setCropsLoading(true);
     setCropsError(null);
     window.api.diseaseCrops({ detailed: true })
       .then(data => {
-        cropsRef.current = data;
+        _detailedCropsCache = data;
+        setCropsData(data);
         const names = Object.keys(data);
         setCropList(names);
         setSelectedCrop(names[0] || '');
@@ -257,17 +277,23 @@ function SymptomPanel() {
       });
   }, []);
 
-  const symptoms = useMemo(() => {
-    if (!cropsRef.current || !selectedCrop) return [];
-    return cropsRef.current[selectedCrop] || [];
-  }, [selectedCrop, cropList]);
+  useEffect(() => {
+    loadCrops();
+  }, [loadCrops]);
 
-  function handleSymptomClick(item) {
+  // Fix #3: derive symptoms from cropsData state (reactive), not from the module variable
+  const symptoms = useMemo(() => {
+    if (!cropsData || !selectedCrop) return [];
+    return cropsData[selectedCrop] || [];
+  }, [cropsData, selectedCrop]);
+
+  const handleSymptomClick = useCallback((crop, item) => {
+    setLastClickedSymptom(item);
     setAnalysisLoading(true);
     setAnalysisResult(null);
     setAnalysisError(null);
     window.__catMood?.('thinking', 2000);
-    window.api.diseaseSymptom(selectedCrop, item.symptom)
+    window.api.diseaseSymptom(crop, item.symptom)
       .then(r => {
         setAnalysisResult(r);
         setAnalysisLoading(false);
@@ -277,7 +303,7 @@ function SymptomPanel() {
         setAnalysisError(e);
         setAnalysisLoading(false);
       });
-  }
+  }, []);
 
   function symptomErrMsg(e) {
     if (!e) return 'Something went wrong.';
@@ -298,19 +324,11 @@ function SymptomPanel() {
       <ErrorCard
         title="Could not load symptoms"
         detail={symptomErrMsg(cropsError)}
+        // Fix #2: retry calls the shared loadCrops, first clearing the module cache
         onRetry={() => {
-          cropsRef.current = null;
-          setCropsError(null);
-          setCropsLoading(true);
-          window.api.diseaseCrops({ detailed: true })
-            .then(data => {
-              cropsRef.current = data;
-              const names = Object.keys(data);
-              setCropList(names);
-              setSelectedCrop(names[0] || '');
-              setCropsLoading(false);
-            })
-            .catch(e => { setCropsError(e); setCropsLoading(false); });
+          _detailedCropsCache = null;
+          setCropsData(null);
+          loadCrops();
         }}
       />
     );
@@ -342,9 +360,10 @@ function SymptomPanel() {
         {symptoms.map((item, i) => (
           <button
             key={i}
-            className="tile"
-            style={{ textAlign: 'left', padding: '12px 14px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 6 }}
-            onClick={() => handleSymptomClick(item)}
+            // Fix #4: changed from "tile" to "btn ghost" per design system
+            className="btn ghost"
+            style={{ padding: '8px 12px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 4 }}
+            onClick={() => handleSymptomClick(selectedCrop, item)}
           >
             <div style={{ fontSize: 13, color: 'var(--ink)', lineHeight: 1.5 }}>{item.symptom}</div>
             {item.severity && (
@@ -372,7 +391,12 @@ function SymptomPanel() {
       )}
       {!analysisLoading && analysisError && (
         <div style={{ marginTop: 18 }}>
-          <ErrorCard title="Could not analyze symptom" detail={symptomErrMsg(analysisError)} />
+          <ErrorCard
+            title="Could not analyze symptom"
+            detail={symptomErrMsg(analysisError)}
+            // Fix #7: retry replays the last clicked symptom
+            onRetry={() => { if (lastClickedSymptom) handleSymptomClick(selectedCrop, lastClickedSymptom); }}
+          />
         </div>
       )}
       {!analysisLoading && analysisResult && (
