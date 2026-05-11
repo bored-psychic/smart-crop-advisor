@@ -84,6 +84,15 @@ const ACOUSTIC_WARNING_LABELS = {
   high_sample_rate: '📈 Sample rate resampled to 16 kHz',
 };
 
+const GOVT_HELPLINES = [
+  ['Kisan Call Centre',     '18001801551', 'Free · 24/7 · All Indian languages'],
+  ['PM Kisan Helpline',     '155261',      'PM Kisan scheme queries'],
+  ['NDRF Emergency',        '1078',        'Flood, earthquake, disaster'],
+  ['Ambulance',             '108',         'Medical emergency'],
+  ['Police',                '100',         'Security / theft'],
+  ['State Agriculture Dept','18004252',    'Disease outbreak reporting'],
+];
+
 function LocationBar({ village, setVillage, state, setState, extra }){
   return (
     <div className="locbar rise rise-1">
@@ -482,6 +491,7 @@ function ToastContainer({ toasts }) {
 
 Object.assign(window, {
   Slider, Donut, INDIA_STATES, ALL_CROPS, CROP_KC_KEYS, CALAMITY_TIPS, PEST_META, ACOUSTIC_WARNING_LABELS,
+  GOVT_HELPLINES,
   LocationBar, VineBackdrop, LANGS,
   Sidebar, TabBar, Topbar, mountCaterpillar,
   Loading, ErrorCard, useToast, ToastContainer
