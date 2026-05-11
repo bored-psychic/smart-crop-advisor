@@ -6,7 +6,7 @@ function ProbBars({ probs }) {
   const max = sorted[0]?.[1] || 1;
   return (
     <div style={{ marginTop: 18 }}>
-      <div className="page-eyebrow" style={{ marginBottom: 10 }}>all crops</div>
+      <div className="page-eyebrow" style={{ marginBottom: 10 }}>{t('all crops')}</div>
       {sorted.map(([crop, prob]) => (
         <div key={crop} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <div style={{ width: 90, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right', textTransform: 'capitalize' }}>{crop}</div>
@@ -73,7 +73,7 @@ function ViewCrop({ profile, setProfile, t }) {
 
       <div className="grid-2">
         <div className="card rise rise-1">
-          <div className="card-h"><h3>Soil</h3><span className="meta">npk · ph</span></div>
+          <div className="card-h"><h3>{t('Soil')}</h3><span className="meta">npk · ph</span></div>
           <Slider label="Nitrogen" unit="kg/ha" min={0} max={140} value={N} onChange={setN}
             hint={N < 40 ? 'a little hungry' : N < 90 ? 'just right' : 'plenty'} />
           <Slider label="Phosphorus" unit="kg/ha" min={5} max={145} value={P} onChange={setP} />
@@ -82,20 +82,20 @@ function ViewCrop({ profile, setProfile, t }) {
             hint={ph < 5.5 ? 'acidic' : ph < 7.5 ? 'sweet spot' : 'a touch alkaline'} />
         </div>
         <div className="card rise rise-2">
-          <div className="card-h"><h3>Weather</h3><span className="meta">your local feel</span></div>
+          <div className="card-h"><h3>{t('Weather')}</h3><span className="meta">your local feel</span></div>
           <Slider label="Temperature" unit="°C" min={8} max={45} step={0.5} value={temperature} onChange={setTemp} />
           <Slider label="Humidity" unit="%" min={14} max={100} value={humidity} onChange={setHum} />
           <Slider label="Rainfall" unit="mm" min={20} max={300} step={5} value={rainfall} onChange={setRain} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
             <button className="btn primary" onClick={handleSubmit} disabled={loading}>
-              {loading ? '🌿 Analyzing…' : '🌱 Suggest a crop'}
+              {loading ? t('🌿 Analyzing…') : t('🌱 Suggest a crop')}
             </button>
-            <button className="btn ghost" onClick={handleReset}>Reset</button>
+            <button className="btn ghost" onClick={handleReset}>{t('Reset')}</button>
           </div>
         </div>
       </div>
 
-      {loading && <Loading label="Analyzing soil and climate…" />}
+      {loading && <Loading label={t('Analyzing soil and climate…')} />}
 
       {error && !loading && (
         <ErrorCard
@@ -112,7 +112,7 @@ function ViewCrop({ profile, setProfile, t }) {
           <div className="grid-2" style={{ gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: 36 }}>
             <Donut value={result.top_crop.confidence * 100} label="confidence" />
             <div>
-              <div className="page-eyebrow">our recommendation</div>
+              <div className="page-eyebrow">{t('our recommendation')}</div>
               <div style={{ fontFamily: 'var(--display)', fontSize: 60, letterSpacing: '-0.02em', color: 'var(--ink)', marginTop: 4, lineHeight: 1.1 }}>
                 {result.top_crop.emoji} <em style={{ color: 'var(--leaf)', fontStyle: 'italic', fontWeight: 300 }}>{result.top_crop.crop}</em>
               </div>
@@ -126,7 +126,7 @@ function ViewCrop({ profile, setProfile, t }) {
                 </div>
               )}
               <div style={{ marginTop: 16 }}>
-                <div className="page-eyebrow" style={{ marginBottom: 8 }}>also great</div>
+                <div className="page-eyebrow" style={{ marginBottom: 8 }}>{t('also great')}</div>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   {result.alternatives.slice(0, 3).map(c => (
                     <div key={c.crop} className="tile" style={{ padding: '10px 14px' }}>

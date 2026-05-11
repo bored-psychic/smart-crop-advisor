@@ -227,12 +227,12 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
 /* ===== Centered horizontal tab bar ===== */
 function TabBar({ active, setActive, t }){
   const tabs = [
-    { k:'crop',       label:'Crop Advisor' },
-    { k:'disease',    label:'Leaf Doctor' },
-    { k:'market',     label:'Market Prices' },
-    { k:'irrigation', label:'Watering' },
-    { k:'acoustic',   label:'Listen to Field' },
-    { k:'field',      label:'Field Watch' },
+    { k:'crop',       label: t('Crop Advisor') },
+    { k:'disease',    label: t('Leaf Doctor') },
+    { k:'market',     label: t('Market Prices') },
+    { k:'irrigation', label: t('Watering') },
+    { k:'acoustic',   label: t('Listen to Field') },
+    { k:'field',      label: t('Field Watch') },
   ];
   return (
     <div className="tabbar-wrap">
