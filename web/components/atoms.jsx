@@ -66,6 +66,24 @@ const CALAMITY_TIPS = {
   clouds:['🌤️ Good day for transplanting','💧 Moderate irrigation needed','🌱 Apply fertilizers today'],
 };
 
+const PEST_META = {
+  Bee:         { role:'pollinator', severity:'low',    icon:'🐝', roleLabel:'Pollinator' },
+  Locust:      { role:'pest',       severity:'high',   icon:'🦗', roleLabel:'Pest' },
+  Cicada:      { role:'pest',       severity:'medium', icon:'🟠', roleLabel:'Pest' },
+  Cricket:     { role:'ambient',    severity:'low',    icon:'⚪', roleLabel:'Ambient' },
+  Grasshopper: { role:'pest',       severity:'medium', icon:'🟠', roleLabel:'Pest' },
+  Beetle:      { role:'pest',       severity:'medium', icon:'🪲', roleLabel:'Pest' },
+  Wasp:        { role:'pest',       severity:'medium', icon:'🐝', roleLabel:'Pest' },
+};
+
+const ACOUSTIC_WARNING_LABELS = {
+  too_short:        '⏱ Recording too short — need at least 3 seconds',
+  below_noise_floor:'🔇 Too quiet — hold mic closer to the plant stem',
+  truncated_to_20s: '✂️ Long recording — analyzed first 20 seconds',
+  low_sample_rate:  '📉 Low sample rate may reduce accuracy',
+  high_sample_rate: '📈 Sample rate resampled to 16 kHz',
+};
+
 function LocationBar({ village, setVillage, state, setState, extra }){
   return (
     <div className="locbar rise rise-1">
@@ -463,7 +481,8 @@ function ToastContainer({ toasts }) {
 }
 
 Object.assign(window, {
-  Slider, Donut, INDIA_STATES, ALL_CROPS, CROP_KC_KEYS, CALAMITY_TIPS, LocationBar, VineBackdrop, LANGS,
+  Slider, Donut, INDIA_STATES, ALL_CROPS, CROP_KC_KEYS, CALAMITY_TIPS, PEST_META, ACOUSTIC_WARNING_LABELS,
+  LocationBar, VineBackdrop, LANGS,
   Sidebar, TabBar, Topbar, mountCaterpillar,
   Loading, ErrorCard, useToast, ToastContainer
 });
