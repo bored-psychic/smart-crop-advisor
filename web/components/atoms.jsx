@@ -48,6 +48,24 @@ const ALL_CROPS = [
   "Potato","Onion","Tomato","Banana","Coconut","Mango"
 ];
 
+const CROP_KC_KEYS = [
+  'Rice','Wheat','Maize','Chickpea','Kidneybeans','Pigeonpeas',
+  'Mothbeans','Mungbean','Blackgram','Lentil','Pomegranate','Banana',
+  'Mango','Grapes','Watermelon','Muskmelon','Apple','Orange','Papaya',
+  'Coconut','Cotton','Jute','Coffee'
+];
+
+const CALAMITY_TIPS = {
+  thunderstorm:['⚡ Move livestock to shelter','🚫 Stop all field work immediately','💧 Clear drainage channels'],
+  rain:['🌱 Avoid fertilizer — will wash away','🌊 Create bunds around fields','📞 Contact agriculture office if flooding'],
+  drizzle:['💧 Good for germination','🌱 Ideal time for transplanting','✅ Reduce irrigation today'],
+  snow:['🌿 Cover sensitive crops with cloth','🔥 Light irrigation before frost protects roots','🌱 Avoid pruning until frost passes'],
+  mist:['🍄 Watch for fungal disease','💊 Apply preventive fungicide','🌬️ Improve air circulation'],
+  haze:['😷 Reduce outdoor work','💧 Increase irrigation — heat stress likely','🌿 Monitor crops for wilting'],
+  clear:['☀️ Good day for spraying pesticides','🚜 Ideal for harvesting','💧 Check soil moisture levels'],
+  clouds:['🌤️ Good day for transplanting','💧 Moderate irrigation needed','🌱 Apply fertilizers today'],
+};
+
 function LocationBar({ village, setVillage, state, setState, extra }){
   return (
     <div className="locbar rise rise-1">
@@ -445,7 +463,7 @@ function ToastContainer({ toasts }) {
 }
 
 Object.assign(window, {
-  Slider, Donut, INDIA_STATES, ALL_CROPS, LocationBar, VineBackdrop, LANGS,
+  Slider, Donut, INDIA_STATES, ALL_CROPS, CROP_KC_KEYS, CALAMITY_TIPS, LocationBar, VineBackdrop, LANGS,
   Sidebar, TabBar, Topbar, mountCaterpillar,
   Loading, ErrorCard, useToast, ToastContainer
 });

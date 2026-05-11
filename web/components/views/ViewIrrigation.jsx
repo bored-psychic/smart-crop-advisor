@@ -1,18 +1,89 @@
-// ViewIrrigation — single view
-const { useState, useEffect, useRef, useMemo, useCallback } = React;
+// ViewIrrigation — real API wiring: city autofill + FAO backend + calamity tips
+const { useState, useEffect, useRef, useCallback } = React;
+
+const GROWTH_STAGES = ['Initial', 'Development', 'Mid-season', 'Late season'];
 
 function ViewIrrigation({ profile, setProfile, t }){
-  const KC={Rice:[1.05,1.20,1.20,0.90],Cotton:[0.35,0.70,1.20,0.50],Maize:[0.30,0.70,1.20,0.35],Tomato:[0.50,0.80,1.15,0.70],Wheat:[0.30,0.70,1.15,0.25]};
-  const STAGES=['just sown','growing','flowering','ripening'];
-  const [crop,setCrop]=useState('Cotton');
-  const [stage,setStage]=useState(2);
-  const [temp,setTemp]=useState(32),[hum,setHum]=useState(45),[wind,setWind]=useState(12),[area,setArea]=useState(2.4);
-  const ET0=useMemo(()=>{
-    const w=wind/3.6, es=0.6108*Math.exp(17.27*temp/(temp+237.3)), ea=es*hum/100, vpd=Math.max(es-ea,0);
-    return Math.max(((0.408*0.0135*(temp+17.8)*(w+1))+(0.34*vpd*w))*4,1.0);
-  },[temp,hum,wind]);
-  const kc=KC[crop][stage]; const ETc=ET0*kc; const liters=ETc*area*10000;
-  const nextHrs = Math.max(6, 48-ETc*4);
+  const [crop, setCrop]           = useState('Cotton');
+  const [stage, setStage]         = useState('Mid-season');
+  const [fieldArea, setFieldArea] = useState(2.0);
+  const [lastRain, setLastRain]   = useState(0);
+  const [temperature, setTemperature] = useState(32);
+  const [humidity, setHumidity]   = useState(45);
+  const [windSpeed, setWindSpeed] = useState(12);
+  const [city, setCity]           = useState('');
+  const [autofilling, setAutofilling] = useState(false);
+  const [autofillNote, setAutofillNote] = useState('');
+  const [calamityKey, setCalamityKey]   = useState(null);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState(null);
+  const [result, setResult]       = useState(null);
+
+  // 400ms debounce for city → weather autofill
+  const debounceRef = useRef(null);
+  const handleCityChange = useCallback((val) => {
+    setCity(val);
+    setAutofillNote('');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (val.trim().length > 2) {
+      debounceRef.current = setTimeout(async () => {
+        setAutofilling(true);
+        try {
+          const data = await window.api.fieldWatchScan(val.trim());
+          const w = data.weather;
+          if (w) {
+            if (w.temp     != null) setTemperature(parseFloat(w.temp));
+            if (w.humidity != null) setHumidity(parseFloat(w.humidity));
+            if (w.wind     != null) setWindSpeed(parseFloat(w.wind));
+            setAutofillNote(`Autofilled from ${val.trim()}`);
+            // calamity detection
+            const desc = (w.description || '').toLowerCase();
+            const matched = Object.keys(CALAMITY_TIPS).find(k => desc.includes(k));
+            setCalamityKey(matched || null);
+          }
+        } catch (_) {
+          // silently ignore autofill errors
+        } finally {
+          setAutofilling(false);
+        }
+      }, 400);
+    }
+  }, []);
+
+  async function handleSubmit(){
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const data = await window.api.irrigationAdvise({
+        crop,
+        growth_stage: stage,
+        field_area: fieldArea,
+        last_rain_mm: lastRain,
+        temperature,
+        humidity,
+        wind_speed: windSpeed,
+      });
+      setResult(data);
+    } catch(err){
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Urgency color config
+  const urgencyStyle = result ? (() => {
+    if (result.urgency === 'urgent') return {
+      bg: 'rgba(182,85,58,0.08)', border: 'var(--berry)'
+    };
+    if (result.urgency === 'light') return {
+      bg: 'rgba(160,107,31,0.08)', border: '#A06B1F'
+    };
+    return {
+      bg: 'rgba(199,214,189,0.3)', border: 'var(--leaf)'
+    };
+  })() : null;
 
   return (
     <div className="view-fade">
@@ -25,45 +96,154 @@ function ViewIrrigation({ profile, setProfile, t }){
         </div>
       </div>
 
-      <LocationBar village={profile.village} setVillage={v=>setProfile({...profile,village:v})}
-        state={profile.state} setState={s=>setProfile({...profile,state:s})}
+      <LocationBar
+        village={profile.village} setVillage={v => setProfile({...profile, village: v})}
+        state={profile.state}     setState={s  => setProfile({...profile, state: s})}
         extra={
-          <select className="input" value={crop} onChange={e=>setCrop(e.target.value)}>
-            {Object.keys(KC).map(c=><option key={c}>{c}</option>)}
+          <select className="input" value={crop} onChange={e => setCrop(e.target.value)}>
+            {CROP_KC_KEYS.map(c => <option key={c}>{c}</option>)}
           </select>
-        }/>
+        }
+      />
 
       <div className="grid-2">
+        {/* LEFT — Your field */}
         <div className="card rise rise-1">
           <div className="card-h"><h3>Your field</h3></div>
+
+          {/* City autofill */}
           <div className="field">
-            <div className="field-label"><span className="name">Where the crop is</span></div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
-              {STAGES.map((s,i)=>(
-                <button key={s} className={`tile ${stage===i?'active':''}`} style={{padding:'10px 8px',textAlign:'center',fontSize:12}} onClick={()=>setStage(i)}>{s}</button>
+            <div className="field-label">
+              <span className="name">City for weather autofill</span>
+              {autofilling && <span style={{fontSize:12, color:'var(--ink-faint)', fontStyle:'italic', marginLeft:8}}>scanning…</span>}
+            </div>
+            <input
+              className="input"
+              type="text"
+              placeholder="e.g. Nagpur"
+              value={city}
+              onChange={e => handleCityChange(e.target.value)}
+              style={{width:'100%', marginBottom:4}}
+            />
+            {autofillNote && (
+              <div style={{fontSize:12, color:'var(--leaf)', fontStyle:'italic'}}>{autofillNote}</div>
+            )}
+          </div>
+
+          {/* Growth stage tiles */}
+          <div className="field">
+            <div className="field-label"><span className="name">Growth stage</span></div>
+            <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8}}>
+              {GROWTH_STAGES.map(s => (
+                <button
+                  key={s}
+                  className={`tile${stage === s ? ' active' : ''}`}
+                  style={{
+                    padding:'10px 8px',
+                    textAlign:'center',
+                    fontSize:12,
+                    ...(stage === s ? {background:'rgba(62,107,62,0.12)'} : {})
+                  }}
+                  onClick={() => setStage(s)}
+                >{s}</button>
               ))}
             </div>
           </div>
-          <Slider label="Temperature" unit="°C" min={5} max={48} step={0.5} value={temp} onChange={setTemp}/>
-          <Slider label="Humidity" unit="%" min={10} max={100} value={hum} onChange={setHum}/>
-          <Slider label="Plot size" unit="ha" min={0.1} max={20} step={0.1} value={area} onChange={setArea}/>
+
+          <Slider label="Field area"    unit="ac"   min={0.5} max={20}  step={0.1} value={fieldArea}   onChange={setFieldArea}/>
+          <Slider label="Recent rain"   unit="mm"   min={0}   max={100}            value={lastRain}    onChange={setLastRain}/>
+          <Slider label="Temperature"   unit="°C"   min={10}  max={48}  step={0.5} value={temperature} onChange={setTemperature}/>
+          <Slider label="Humidity"      unit="%"    min={10}  max={100}            value={humidity}    onChange={setHumidity}/>
+          <Slider label="Wind speed"    unit="km/h" min={0}   max={50}             value={windSpeed}   onChange={setWindSpeed}/>
         </div>
 
+        {/* RIGHT — Get advice */}
         <div className="card rise rise-2">
-          <div className="card-h"><h3>Today's plan</h3><span className="tag">gentle reminder</span></div>
-          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:18,padding:'10px 0'}}>
-            <Donut value={Math.min(100, ETc*8)} label="thirst level" sub={`${ETc.toFixed(2)} mm/day`}/>
-            <div style={{textAlign:'center'}}>
-              <div className="bignum"><em>{Math.round(liters).toLocaleString()}</em> <span className="unit">L today</span></div>
-              <div className="muted small" style={{marginTop:6}}>across {area} ha · ≈ {(liters/1000).toFixed(1)} m³</div>
-            </div>
-            <div style={{display:'flex',gap:10}}>
-              <span className="tag">⏱ next watering · {Math.round(nextHrs)}h</span>
-              <span className="tag warn">☀️ warm day</span>
-            </div>
+          <div className="card-h"><h3>Get advice</h3></div>
+          <div style={{padding:'12px 0'}}>
+            <button className="btn primary" onClick={handleSubmit} disabled={loading} style={{width:'100%'}}>
+              Calculate irrigation
+            </button>
           </div>
+          {loading && <Loading label="Calculating irrigation…"/>}
+          {error   && (
+            <ErrorCard
+              title="Could not calculate"
+              detail={error.message || String(error)}
+              onRetry={handleSubmit}
+            />
+          )}
         </div>
       </div>
+
+      {/* Results */}
+      {result && (
+        <div style={{marginTop:24, display:'flex', flexDirection:'column', gap:20}}>
+
+          {/* 3 metric tiles */}
+          <div className="grid-3">
+            <div className="card rise" style={{textAlign:'center'}}>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Water needed</div>
+              <div className="bignum">
+                <em>{result.total_litres.toLocaleString()}</em>
+                <span className="unit"> L</span>
+              </div>
+              <div style={{fontSize:13,color:'var(--ink-soft)',marginTop:4}}>{result.total_kl} kL</div>
+            </div>
+
+            <div className="card rise" style={{textAlign:'center'}}>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Net irrigation</div>
+              <div className="bignum">
+                <em>{result.net_irrigation_mm}</em>
+                <span className="unit"> mm/day</span>
+              </div>
+            </div>
+
+            <div className="card rise" style={{textAlign:'center'}}>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Crop Kc factor</div>
+              <div className="bignum"><em>{result.Kc}</em></div>
+              <div style={{fontSize:13,color:'var(--ink-soft)',marginTop:4}}>{result.crop} · {stage}</div>
+            </div>
+          </div>
+
+          {/* Urgency card */}
+          <div className="card rise" style={{
+            background: urgencyStyle.bg,
+            borderColor: urgencyStyle.border,
+          }}>
+            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:urgencyStyle.border,marginBottom:8}}>
+              urgency · {result.urgency}
+            </div>
+            <div style={{color:'var(--ink)',lineHeight:1.6}}>{result.advice}</div>
+          </div>
+
+          {/* Fertilizer card */}
+          <div className="card rise" style={{background:'rgba(62,107,62,0.06)', borderColor:'var(--leaf)'}}>
+            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:8}}>
+              fertilizer · {result.fertilizer.growth_stage}
+            </div>
+            <div style={{color:'var(--ink)',marginBottom:6}}>
+              <strong>Nitrogen:</strong> {result.fertilizer.nitrogen}
+            </div>
+            <div style={{color:'var(--ink-soft)',fontSize:13,fontStyle:'italic'}}>{result.fertilizer.tip}</div>
+          </div>
+
+          {/* Calamity tips */}
+          {calamityKey && CALAMITY_TIPS[calamityKey] && (
+            <div className="card rise" style={{background:'rgba(160,107,31,0.07)', borderColor:'#A06B1F'}}>
+              <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:8}}>
+                weather tips · {calamityKey}
+              </div>
+              <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>
+                {CALAMITY_TIPS[calamityKey].map((tip, i) => (
+                  <li key={i}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
