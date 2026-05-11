@@ -259,11 +259,11 @@ function TabBar({ active, setActive, t }){
   return (
     <div className="tabbar-wrap">
       <div className="tabbar" role="tablist">
-        {tabs.map(t=>(
-          <button key={t.k} role="tab" aria-selected={active===t.k}
-            className={`tab-pill ${active===t.k?'active':''}`}
-            onClick={()=>setActive(t.k)}>
-            {t.label}
+        {tabs.map(tab=>(
+          <button key={tab.k} role="tab" aria-selected={active===tab.k}
+            className={`tab-pill ${active===tab.k?'active':''}`}
+            onClick={()=>setActive(tab.k)}>
+            {tab.label}
           </button>
         ))}
       </div>
