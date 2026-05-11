@@ -41,6 +41,13 @@ function Donut({ value, max=100, size=160, label, sub }){
 
 const INDIA_STATES = ["Andhra Pradesh","Assam","Bihar","Chhattisgarh","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Odisha","Punjab","Rajasthan","Tamil Nadu","Telangana","Uttar Pradesh","Uttarakhand","West Bengal"];
 
+const ALL_CROPS = [
+  "Wheat","Rice","Maize","Barley","Pearl Millet","Sorghum","Chickpea",
+  "Pigeon Pea","Black Gram","Green Gram","Lentil","Mustard","Groundnut",
+  "Soybean","Sunflower","Sesame","Castor","Cotton","Sugarcane","Jute",
+  "Potato","Onion","Tomato","Banana","Coconut","Mango"
+];
+
 function LocationBar({ village, setVillage, state, setState, extra }){
   return (
     <div className="locbar rise rise-1">
@@ -438,7 +445,7 @@ function ToastContainer({ toasts }) {
 }
 
 Object.assign(window, {
-  Slider, Donut, INDIA_STATES, LocationBar, VineBackdrop, LANGS,
+  Slider, Donut, INDIA_STATES, ALL_CROPS, LocationBar, VineBackdrop, LANGS,
   Sidebar, TabBar, Topbar, mountCaterpillar,
   Loading, ErrorCard, useToast, ToastContainer
 });

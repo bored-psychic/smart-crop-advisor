@@ -1,23 +1,119 @@
-// ViewMarket — single view
-const { useState, useEffect, useRef, useMemo, useCallback } = React;
+// ViewMarket — live price + forecast chart + sell advice
+const { useState, useCallback } = React;
 
-function genSeries(b,n=60){let arr=[],p=b;for(let i=0;i<n;i++){p=p*(1+(Math.random()-0.48)*0.025+0.0008);arr.push(p)}return arr}
-function ViewMarket({ profile, setProfile, t }){
-  const [crop,setCrop]=useState('Cotton');
-  const series=useMemo(()=>genSeries({Cotton:6800,Wheat:2400,Rice:2100,Maize:1850,Onion:2000,Tomato:1300}[crop]||3000,60),[crop]);
-  const fc=useMemo(()=>genSeries(series[series.length-1],14),[series]);
-  const today=series[series.length-1], yest=series[series.length-2];
-  const change=((today-yest)/yest)*100, target=fc[fc.length-1], upside=((target-today)/today)*100;
+function ViewMarket({ profile, setProfile, t }) {
+  const [crop, setCrop] = useState('Cotton');
+  const [forecastDays, setForecastDays] = useState(30);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
 
-  const W=720,H=220,pad=30;
-  const all=[...series,...fc]; const min=Math.min(...all), max=Math.max(...all);
-  const x=i=>pad+i*(W-pad*2)/(all.length-1);
-  const y=v=>H-pad-((v-min)/(max-min))*(H-pad*2);
-  const path=(arr,off=0)=>arr.map((v,i)=>`${i===0?'M':'L'}${x(i+off)},${y(v)}`).join(' ');
+  const handleSubmit = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const data = await window.api.marketForecast(crop, profile.state, forecastDays);
+      setResult(data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [crop, profile.state, forecastDays]);
+
+  function getErrorDetail(err) {
+    if (!err) return '';
+    if (err.status === 401 || err.status === 403) return 'API key issue — check your configuration.';
+    if (!err.status) return 'Network error — please check your connection.';
+    return err.detail || err.message || 'Unexpected error.';
+  }
+
+  /* ---- SVG forecast chart ---- */
+  function ForecastChart({ forecast }) {
+    if (!forecast || forecast.length === 0) {
+      return (
+        <div style={{ color: 'var(--ink-soft)', fontStyle: 'italic', padding: '16px 0' }}>
+          No forecast available for this crop + model.
+        </div>
+      );
+    }
+
+    const W = 720, H = 200, pad = 30;
+    const prices = forecast.map(d => d.price);
+    const mins = forecast.map(d => d.min_price);
+    const maxs = forecast.map(d => d.max_price);
+    const allVals = [...prices, ...mins, ...maxs];
+    const minV = Math.min(...allVals);
+    const maxV = Math.max(...allVals);
+    const rangeV = maxV - minV || 1;
+    const n = forecast.length;
+
+    const xp = i => pad + i * (W - pad * 2) / (n - 1);
+    const yp = v => H - pad - ((v - minV) / rangeV) * (H - pad * 2);
+
+    const bandTop = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.max_price)}`).join(' ');
+    const bandBot = [...forecast].reverse().map((d, i) => `L${xp(n - 1 - i)},${yp(d.min_price)}`).join(' ');
+    const bandPath = bandTop + ' ' + bandBot + ' Z';
+
+    const mainLine = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.price)}`).join(' ');
+
+    const gridYs = [0, 1, 2, 3].map(i => pad + i * (H - pad * 2) / 3);
+
+    // Every 7th date label
+    const dateLabels = forecast
+      .map((d, i) => ({ i, date: d.date }))
+      .filter(({ i }) => i % 7 === 0);
+
+    return (
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 200, display: 'block' }}>
+        {gridYs.map((gy, i) => (
+          <line key={i} x1={pad} y1={gy} x2={W - pad} y2={gy} stroke="rgba(42,51,40,0.06)" />
+        ))}
+        <path d={bandPath} fill="rgba(62,107,62,0.12)" />
+        <path d={mainLine} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeLinecap="round" />
+        {dateLabels.map(({ i, date }) => (
+          <text key={i} x={xp(i)} y={H - 4} textAnchor="middle"
+            style={{ fontSize: 9, fill: 'var(--ink-faint)', fontFamily: 'var(--body)' }}>
+            {date.slice(5)}
+          </text>
+        ))}
+      </svg>
+    );
+  }
+
+  /* ---- Forecast table ---- */
+  function ForecastTable({ forecast }) {
+    return (
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+        <thead>
+          <tr style={{ background: 'rgba(199,214,189,0.4)' }}>
+            <th style={thStyle}>Date</th>
+            <th style={thStyle}>Price</th>
+            <th style={thStyle}>Min</th>
+            <th style={thStyle}>Max</th>
+          </tr>
+        </thead>
+        <tbody>
+          {forecast.map((row, i) => (
+            <tr key={row.date} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(199,214,189,0.18)' }}>
+              <td style={tdStyle}>{row.date}</td>
+              <td style={tdStyle}>₹{row.price.toFixed(0)}</td>
+              <td style={tdStyle}>₹{row.min_price.toFixed(0)}</td>
+              <td style={tdStyle}>₹{row.max_price.toFixed(0)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  const thStyle = { padding: '6px 8px', textAlign: 'left', color: 'var(--ink-soft)', fontWeight: 600 };
+  const tdStyle = { padding: '5px 8px', color: 'var(--ink)' };
 
   return (
-    <div className="view-fade">
-      <Topbar crumb="Market"/>
+    <div>
+      <Topbar crumb="Market" />
       <div className="page-head">
         <div>
           <div className="page-eyebrow">market</div>
@@ -26,47 +122,113 @@ function ViewMarket({ profile, setProfile, t }){
         </div>
       </div>
 
-      <LocationBar village={profile.village} setVillage={v=>setProfile({...profile,village:v})}
-        state={profile.state} setState={s=>setProfile({...profile,state:s})}
+      <LocationBar
+        village={profile.village}
+        setVillage={v => setProfile({ ...profile, village: v })}
+        state={profile.state}
+        setState={s => setProfile({ ...profile, state: s })}
         extra={
-          <select className="input" value={crop} onChange={e=>setCrop(e.target.value)}>
-            {['Cotton','Wheat','Rice','Maize','Onion','Tomato'].map(c=><option key={c}>{c}</option>)}
+          <select className="input" value={crop} onChange={e => setCrop(e.target.value)}>
+            {ALL_CROPS.map(c => <option key={c}>{c}</option>)}
           </select>
-        }/>
+        }
+      />
 
-      <div className="card rise rise-2">
-        <div className="card-h">
-          <h3 style={{margin:0}}>Today's mandi · {crop}</h3>
-          <span className="tag">📍 {profile.state}</span>
+      <div className="card rise rise-2" style={{ display: 'flex', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <Slider label="Forecast horizon" unit="days" min={7} max={60} value={forecastDays} onChange={setForecastDays} />
         </div>
-        <div className="grid-3" style={{marginBottom:14}}>
-          <div>
-            <div className="page-eyebrow">spot price</div>
-            <div className="bignum">₹<em>{today.toFixed(0)}</em><span className="unit">/q</span></div>
-            <div className="small" style={{color:change>=0?'var(--leaf)':'var(--berry)',marginTop:4}}>{change>=0?'▲':'▼'} {Math.abs(change).toFixed(2)}% from yesterday</div>
-          </div>
-          <div>
-            <div className="page-eyebrow">in 14 days</div>
-            <div className="bignum">₹<em>{target.toFixed(0)}</em><span className="unit">/q</span></div>
-            <div className="small" style={{color:upside>=0?'var(--leaf)':'var(--berry)',marginTop:4}}>{upside>=0?'▲':'▼'} {Math.abs(upside).toFixed(2)}% expected</div>
-          </div>
-          <div>
-            <div className="page-eyebrow">our advice</div>
-            <div className="bignum"><em style={{color:upside>2?'var(--leaf)':upside<-2?'var(--berry)':'#A06B1F'}}>{upside>2?'wait':upside<-2?'sell':'either way'}</em></div>
-            <div className="small muted" style={{marginTop:4}}>{upside>2?`hold for ~₹${(target-today).toFixed(0)} more`:upside<-2?'price likely to slip':'pretty steady'}</div>
-          </div>
-        </div>
-
-        <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',height:220,display:'block'}}>
-          <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="rgba(62,107,62,0.18)"/><stop offset="100%" stopColor="rgba(62,107,62,0)"/></linearGradient></defs>
-          {[0,1,2,3].map(i=><line key={i} x1={pad} y1={pad+i*(H-pad*2)/3} x2={W-pad} y2={pad+i*(H-pad*2)/3} stroke="rgba(42,51,40,0.06)"/>)}
-          <path d={series.map((v,i)=>`${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ')+` L${x(series.length-1)},${H-pad} L${x(0)},${H-pad} Z`} fill="url(#ag)"/>
-          <path d={path(series,0)} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeLinecap="round"/>
-          <path d={path(fc,series.length-1)} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeDasharray="3 5" strokeLinecap="round" opacity="0.7"/>
-          <line x1={x(series.length-1)} y1={pad} x2={x(series.length-1)} y2={H-pad} stroke="var(--ink-faint)" strokeDasharray="2 4" opacity="0.3"/>
-          <text x={x(series.length-1)+4} y={pad+10} className="spark-axis">today</text>
-        </svg>
+        <button className="btn primary" onClick={handleSubmit} style={{ whiteSpace: 'nowrap', marginBottom: 2 }}>
+          📊 Get forecast
+        </button>
       </div>
+
+      {loading && <Loading label="Fetching market data…" />}
+
+      {error && !loading && (
+        <ErrorCard
+          title="Could not fetch forecast"
+          detail={getErrorDetail(error)}
+          onRetry={handleSubmit}
+        />
+      )}
+
+      {result && !loading && (
+        <div className="view-fade">
+
+          {/* 1. Live price card */}
+          {result.live_price !== null ? (
+            <div className="card rise rise-1">
+              <div className="page-eyebrow">live mandi · {result.live_price.source}</div>
+              <div className="bignum">₹<em>{result.live_price.today_price.toFixed(0)}</em><span className="unit">/q</span></div>
+              <div className="small muted" style={{ marginTop: 4 }}>
+                {result.live_price.mandis_checked} mandis · state factor {result.live_price.state_factor.toFixed(2)}
+              </div>
+              <div style={{ marginTop: 8 }}>
+                {result.live_price.live
+                  ? <span className="tag" style={{ background: 'rgba(62,107,62,0.12)', color: 'var(--leaf)' }}>🟢 LIVE</span>
+                  : <span className="tag" style={{ background: 'rgba(160,107,31,0.12)', color: '#A06B1F' }}>🟡 ESTIMATED</span>
+                }
+              </div>
+            </div>
+          ) : (
+            <div className="card rise rise-1" style={{ color: 'var(--ink-soft)', fontStyle: 'italic' }}>
+              Live mandi data not available — showing model forecast only.
+            </div>
+          )}
+
+          {/* 2. Three metric tiles */}
+          <div className="card rise rise-2">
+            <div className="grid-3">
+              <div>
+                <div className="page-eyebrow">best price</div>
+                <div className="bignum">₹<em>{result.best_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="small muted" style={{ marginTop: 4 }}>on {result.best_date}</div>
+              </div>
+              <div>
+                <div className="page-eyebrow">worst price</div>
+                <div className="bignum">₹<em>{result.worst_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="small muted" style={{ marginTop: 4 }}>on {result.worst_date}</div>
+              </div>
+              <div>
+                <div className="page-eyebrow">average price</div>
+                <div className="bignum">₹<em>{result.avg_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="small muted" style={{ marginTop: 4 }}>over {forecastDays} days</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Sell advice card */}
+          <div className="card rise rise-3" style={{ background: 'rgba(160,107,31,0.08)', borderColor: 'rgba(160,107,31,0.25)' }}>
+            <div className="page-eyebrow">our advice</div>
+            <div style={{ fontSize: 15, color: 'var(--ink)', lineHeight: 1.6, marginTop: 6 }}>{result.sell_advice}</div>
+          </div>
+
+          {/* 4. SVG forecast chart */}
+          <div className="card rise rise-4">
+            <div className="card-h" style={{ marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>Price forecast · {result.crop}</h3>
+              <span className="tag">📍 {result.state}</span>
+            </div>
+            <ForecastChart forecast={result.forecast} />
+          </div>
+
+          {/* 5. Full forecast table expander */}
+          {result.forecast && result.forecast.length > 0 && (
+            <div className="card rise rise-5">
+              <details>
+                <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--ink-soft)', userSelect: 'none', padding: '4px 0' }}>
+                  Full forecast table ({result.forecast.length} days)
+                </summary>
+                <div style={{ marginTop: 12, overflowX: 'auto' }}>
+                  <ForecastTable forecast={result.forecast} />
+                </div>
+              </details>
+            </div>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
