@@ -1,6 +1,25 @@
 // ViewCrop — wired to /api/crop/recommend
 const { useState, useCallback } = React;
 
+function ProbBars({ probs }) {
+  const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const max = sorted[0]?.[1] || 1;
+  return (
+    <div style={{ marginTop: 18 }}>
+      <div className="page-eyebrow" style={{ marginBottom: 10 }}>all crops</div>
+      {sorted.map(([crop, prob]) => (
+        <div key={crop} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <div style={{ width: 90, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right', textTransform: 'capitalize' }}>{crop}</div>
+          <div style={{ flex: 1, height: 6, background: 'rgba(42,51,40,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ width: `${(prob / max) * 100}%`, height: '100%', background: 'var(--leaf)', borderRadius: 99, transition: 'width 0.8s ease' }} />
+          </div>
+          <div style={{ width: 36, fontSize: 12, color: 'var(--ink-faint)' }}>{(prob * 100).toFixed(0)}%</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ViewCrop({ profile, setProfile, t }) {
   const [N, setN] = useState(90);
   const [P, setP] = useState(42);
@@ -34,26 +53,6 @@ function ViewCrop({ profile, setProfile, t }) {
     setN(90); setP(42); setK(43); setPh(6.5); setTemp(25); setHum(80); setRain(200);
     setResult(null); setError(null);
   }, []);
-
-  // Top-8 bar chart of all_probabilities
-  function ProbBars({ probs }) {
-    const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, 8);
-    const max = sorted[0]?.[1] || 1;
-    return (
-      <div style={{ marginTop: 18 }}>
-        <div className="page-eyebrow" style={{ marginBottom: 10 }}>all crops</div>
-        {sorted.map(([crop, prob]) => (
-          <div key={crop} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-            <div style={{ width: 90, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right', textTransform: 'capitalize' }}>{crop}</div>
-            <div style={{ flex: 1, height: 6, background: 'rgba(42,51,40,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{ width: `${(prob / max) * 100}%`, height: '100%', background: 'var(--leaf)', borderRadius: 99, transition: 'width 0.8s ease' }} />
-            </div>
-            <div style={{ width: 36, fontSize: 12, color: 'var(--ink-faint)' }}>{(prob * 100).toFixed(0)}%</div>
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="view-fade">
@@ -103,7 +102,7 @@ function ViewCrop({ profile, setProfile, t }) {
           title={error.status === 401 || error.status === 403
             ? 'API key misconfigured. Open web/config.js and verify the dev key.'
             : 'Could not analyze soil'}
-          detail={error.detail || (error.message && !error.status ? 'No connection — check your network and try again.' : error.detail)}
+          detail={!error.status && error.message ? 'No connection — check your network and try again.' : error.detail}
           onRetry={handleSubmit}
         />
       )}
