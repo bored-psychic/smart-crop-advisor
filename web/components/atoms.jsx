@@ -409,10 +409,11 @@ function ErrorCard({ title, detail, onRetry }) {
 }
 
 // useToast hook + Toast component
+let _toastId = 0;
 function useToast() {
-  const [toasts, setToasts] = React.useState([]);
-  const add = React.useCallback((text, kind='info') => {
-    const id = Date.now();
+  const [toasts, setToasts] = useState([]);
+  const add = useCallback((text, kind='info') => {
+    const id = ++_toastId;
     setToasts(prev => [...prev, {id, text, kind}]);
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
   }, []);
