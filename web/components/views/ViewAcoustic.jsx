@@ -1,6 +1,202 @@
 // ViewAcoustic — pre-check gate (Task 5.1) + rich result rendering (Task 5.2)
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
+/* ===== Module-scope helpers ===== */
+
+function roleColor(role){
+  if(role==='pest')       return 'var(--berry)';
+  if(role==='pollinator') return 'var(--leaf)';
+  if(role==='vector')     return '#A06B1F';
+  return 'var(--ink-faint)';
+}
+
+function MethodBadge({ method }){
+  if(!method) return null;
+  const goodMethods = ['yamnet','claude_vision','gemini_audio'];
+  const color = goodMethods.includes(method) ? 'var(--leaf)' : 'var(--berry)';
+  return (
+    <span style={{
+      display:'inline-block',fontSize:11,fontWeight:600,letterSpacing:'0.08em',
+      textTransform:'uppercase',padding:'3px 9px',borderRadius:999,
+      background:color,color:'#fff',marginBottom:12
+    }}>{method.replace(/_/g,' ')}</span>
+  );
+}
+
+function TopBars({ top3 }){
+  if(!top3||!top3.length) return null;
+  const maxVal = Math.max(...top3.map(([,p])=>p), 1);
+  return (
+    <div style={{marginTop:16}}>
+      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>top detections</div>
+      {top3.map(([name,pct],i)=>(
+        <div key={i} style={{marginBottom:8}}>
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:3}}>
+            <span>{name}</span><span style={{color:'var(--ink-soft)'}}>{Math.round(pct)}%</span>
+          </div>
+          <div style={{height:8,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
+            <div style={{height:'100%',width:`${(pct/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4,transition:'width 0.8s ease'}}/>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BandChart({ bandEnergy }){
+  if(!bandEnergy||!Object.keys(bandEnergy).length) return null;
+  const entries = Object.entries(bandEnergy);
+  const maxVal  = Math.max(...entries.map(([,v])=>v), 0.001);
+  return (
+    <div style={{marginTop:20}}>
+      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>band energy</div>
+      {entries.map(([band,val],i)=>(
+        <div key={i} style={{marginBottom:7}}>
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:2}}>
+            <span style={{color:'var(--ink-soft)'}}>{band}</span>
+            <span style={{color:'var(--ink-faint)'}}>{val.toFixed ? val.toFixed(4) : val}</span>
+          </div>
+          <div style={{height:7,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
+            <div style={{height:'100%',width:`${(val/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4}}/>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RichResult({ r }){
+  const rc = roleColor(r.role);
+  return (
+    <div className="rise">
+      {/* Method badge */}
+      <MethodBadge method={r.analysis_method}/>
+
+      {/* Pest card */}
+      <div style={{
+        padding:'16px 18px',borderRadius:14,marginBottom:14,
+        border:`2px solid ${rc}`,
+        background: r.role==='pest'?'rgba(182,85,58,0.06)':r.role==='pollinator'?'rgba(130,176,130,0.10)':'rgba(42,51,40,0.04)'
+      }}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+          <span style={{fontSize:36}}>{r.icon || '🐛'}</span>
+          <div style={{fontFamily:'var(--display)',fontSize:32,color:rc,lineHeight:1}}>{r.pest}</div>
+        </div>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:10}}>
+          <span style={{
+            fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',
+            padding:'3px 9px',borderRadius:999,background:rc,color:'#fff'
+          }}>{r.role}</span>
+          {r.severity && (
+            <span style={{
+              fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',
+              padding:'3px 9px',borderRadius:999,
+              background:'rgba(42,51,40,0.08)',color:'var(--ink-soft)'
+            }}>{r.severity}</span>
+          )}
+        </div>
+        {r.action && (
+          <div style={{
+            padding:'10px 13px',borderRadius:10,fontSize:14,lineHeight:1.5,
+            background: r.role==='pollinator'?'rgba(130,176,130,0.2)':'rgba(199,214,189,0.4)',
+            color: r.role==='ambient'||r.is_pest===false?'var(--ink-soft)':'var(--ink)'
+          }}>{r.action}</div>
+        )}
+      </div>
+
+      {/* 4-metric grid */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14}}>
+        {[
+          {label:'Confidence', value:`${Math.round(r.confidence||0)}%`},
+          {label:'Duration',   value:`${r.analyzed_seconds||0}s / ${r.duration_seconds||0}s`},
+          {label:'Sample rate',value:`${r.sample_rate||0} Hz`},
+          {label:'Energy',     value:r.energy_level||'—'},
+        ].map(({label,value})=>(
+          <div key={label} style={{
+            padding:'10px 12px',borderRadius:12,background:'rgba(199,214,189,0.3)',textAlign:'center'
+          }}>
+            <div style={{fontSize:16,fontWeight:700,color:'var(--ink)',fontFamily:'var(--display)'}}>{value}</div>
+            <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--ink-faint)',marginTop:3}}>{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Top-3 bars */}
+      <TopBars top3={r.top3}/>
+
+      {/* Claude advice */}
+      {r.claude_advice && (
+        <div style={{
+          marginTop:16,padding:'12px 16px',borderRadius:12,
+          background:'rgba(130,176,130,0.15)',borderLeft:'3px solid var(--leaf)',
+          fontSize:14,lineHeight:1.6,color:'var(--ink)'
+        }}>
+          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:6,fontWeight:600}}>Claude advice</div>
+          {r.claude_advice}
+        </div>
+      )}
+
+      {/* Quality warnings from result */}
+      {r.quality_warnings && r.quality_warnings.length > 0 && (
+        <div style={{
+          marginTop:14,padding:'10px 14px',borderRadius:12,
+          background:'rgba(160,107,31,0.08)',border:'1px solid rgba(160,107,31,0.3)'
+        }}>
+          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:6,fontWeight:600}}>quality notes</div>
+          {r.quality_warnings.map((w,i)=>(
+            <div key={i} style={{fontSize:13,color:'#A06B1F',marginBottom:3}}>
+              {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Band energy chart */}
+      <BandChart bandEnergy={r.band_energy}/>
+
+      {/* Methodology note */}
+      {r.methodology_note && (
+        <div style={{marginTop:14,fontSize:12,color:'var(--ink-faint)',fontStyle:'italic',lineHeight:1.5}}>
+          {r.methodology_note}
+        </div>
+      )}
+
+      {/* Reference library expander */}
+      <details style={{marginTop:18}}>
+        <summary style={{cursor:'pointer',fontSize:13,color:'var(--ink-soft)',userSelect:'none'}}>
+          Reference library ({Object.keys(window.PEST_META||{}).length} known insects)
+        </summary>
+        <div style={{marginTop:10,overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+            <thead>
+              <tr style={{borderBottom:'1px solid var(--line-2)'}}>
+                {['Icon','Name','Role','Severity','Freq range'].map(h=>(
+                  <th key={h} style={{textAlign:'left',padding:'4px 8px',color:'var(--ink-faint)',fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',fontSize:10}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(window.PEST_META||{}).map(([name,meta])=>(
+                <tr key={name} style={{borderBottom:'1px solid rgba(42,51,40,0.06)'}}>
+                  <td style={{padding:'5px 8px',fontSize:18}}>{meta.icon}</td>
+                  <td style={{padding:'5px 8px'}}>{name}</td>
+                  <td style={{padding:'5px 8px',color:roleColor(meta.role)}}>{meta.roleLabel}</td>
+                  <td style={{padding:'5px 8px',color:'var(--ink-soft)',textTransform:'capitalize'}}>{meta.severity}</td>
+                  <td style={{padding:'5px 8px',color:'var(--ink-faint)'}}>
+                    {(r.pest===name && r.freq_range) ? r.freq_range : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  );
+}
+
+/* ===== Main component ===== */
+
 function ViewAcoustic({ profile, t }){
   const [file, setFile]                       = useState(null);
   const [preCheckWarnings, setPreCheckWarnings] = useState([]);
@@ -122,200 +318,6 @@ function ViewAcoustic({ profile, t }){
   // Analyze button disabled: loading OR size-hard-block only
   const isSizeBlock = preCheckError && preCheckError.startsWith('File too large');
   const analyzeDisabled = loading || isSizeBlock || !file;
-
-  /* ===== Render helpers ===== */
-
-  function MethodBadge({ method }){
-    if(!method) return null;
-    const goodMethods = ['yamnet','claude_vision','gemini_audio'];
-    const color = goodMethods.includes(method) ? 'var(--leaf)' : 'var(--berry)';
-    return (
-      <span style={{
-        display:'inline-block',fontSize:11,fontWeight:600,letterSpacing:'0.08em',
-        textTransform:'uppercase',padding:'3px 9px',borderRadius:999,
-        background:color,color:'#fff',marginBottom:12
-      }}>{method.replace(/_/g,' ')}</span>
-    );
-  }
-
-  function roleColor(role){
-    if(role==='pest')       return 'var(--berry)';
-    if(role==='pollinator') return 'var(--leaf)';
-    if(role==='vector')     return '#A06B1F';
-    return 'var(--ink-faint)';
-  }
-
-  function TopBars({ top3 }){
-    if(!top3||!top3.length) return null;
-    const maxVal = Math.max(...top3.map(([,p])=>p), 1);
-    return (
-      <div style={{marginTop:16}}>
-        <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>top detections</div>
-        {top3.map(([name,pct],i)=>(
-          <div key={i} style={{marginBottom:8}}>
-            <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:3}}>
-              <span>{name}</span><span style={{color:'var(--ink-soft)'}}>{Math.round(pct)}%</span>
-            </div>
-            <div style={{height:8,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
-              <div style={{height:'100%',width:`${(pct/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4,transition:'width 0.8s ease'}}/>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  function BandChart({ bandEnergy }){
-    if(!bandEnergy||!Object.keys(bandEnergy).length) return null;
-    const entries = Object.entries(bandEnergy);
-    const maxVal  = Math.max(...entries.map(([,v])=>v), 0.001);
-    return (
-      <div style={{marginTop:20}}>
-        <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>band energy</div>
-        {entries.map(([band,val],i)=>(
-          <div key={i} style={{marginBottom:7}}>
-            <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:2}}>
-              <span style={{color:'var(--ink-soft)'}}>{band}</span>
-              <span style={{color:'var(--ink-faint)'}}>{val.toFixed ? val.toFixed(4) : val}</span>
-            </div>
-            <div style={{height:7,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
-              <div style={{height:'100%',width:`${(val/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4}}/>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  function RichResult({ r }){
-    const rc = roleColor(r.role);
-    return (
-      <div className="rise">
-        {/* Method badge */}
-        <MethodBadge method={r.analysis_method}/>
-
-        {/* Pest card */}
-        <div style={{
-          padding:'16px 18px',borderRadius:14,marginBottom:14,
-          border:`2px solid ${rc}`,
-          background: r.role==='pest'?'rgba(182,85,58,0.06)':r.role==='pollinator'?'rgba(130,176,130,0.10)':'rgba(42,51,40,0.04)'
-        }}>
-          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
-            <span style={{fontSize:36}}>{r.icon || '🐛'}</span>
-            <div style={{fontFamily:'var(--display)',fontSize:32,color:rc,lineHeight:1}}>{r.pest}</div>
-          </div>
-          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:10}}>
-            <span style={{
-              fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',
-              padding:'3px 9px',borderRadius:999,background:rc,color:'#fff'
-            }}>{r.role}</span>
-            {r.severity && (
-              <span style={{
-                fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',
-                padding:'3px 9px',borderRadius:999,
-                background:'rgba(42,51,40,0.08)',color:'var(--ink-soft)'
-              }}>{r.severity}</span>
-            )}
-          </div>
-          {r.action && (
-            <div style={{
-              padding:'10px 13px',borderRadius:10,fontSize:14,lineHeight:1.5,
-              background: r.role==='pollinator'?'rgba(130,176,130,0.2)':'rgba(199,214,189,0.4)',
-              color: r.role==='ambient'||r.is_pest===false?'var(--ink-soft)':'var(--ink)'
-            }}>{r.action}</div>
-          )}
-        </div>
-
-        {/* 4-metric grid */}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14}}>
-          {[
-            {label:'Confidence', value:`${Math.round(r.confidence||0)}%`},
-            {label:'Duration',   value:`${r.analyzed_seconds||0}s / ${r.duration_seconds||0}s`},
-            {label:'Sample rate',value:`${r.sample_rate||0} Hz`},
-            {label:'Energy',     value:r.energy_level||'—'},
-          ].map(({label,value})=>(
-            <div key={label} style={{
-              padding:'10px 12px',borderRadius:12,background:'rgba(199,214,189,0.3)',textAlign:'center'
-            }}>
-              <div style={{fontSize:16,fontWeight:700,color:'var(--ink)',fontFamily:'var(--display)'}}>{value}</div>
-              <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--ink-faint)',marginTop:3}}>{label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Top-3 bars */}
-        <TopBars top3={r.top3}/>
-
-        {/* Claude advice */}
-        {r.claude_advice && (
-          <div style={{
-            marginTop:16,padding:'12px 16px',borderRadius:12,
-            background:'rgba(130,176,130,0.15)',borderLeft:'3px solid var(--leaf)',
-            fontSize:14,lineHeight:1.6,color:'var(--ink)'
-          }}>
-            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:6,fontWeight:600}}>Claude advice</div>
-            {r.claude_advice}
-          </div>
-        )}
-
-        {/* Quality warnings from result */}
-        {r.quality_warnings && r.quality_warnings.length > 0 && (
-          <div style={{
-            marginTop:14,padding:'10px 14px',borderRadius:12,
-            background:'rgba(160,107,31,0.08)',border:'1px solid rgba(160,107,31,0.3)'
-          }}>
-            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:6,fontWeight:600}}>quality notes</div>
-            {r.quality_warnings.map((w,i)=>(
-              <div key={i} style={{fontSize:13,color:'#A06B1F',marginBottom:3}}>
-                {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Band energy chart */}
-        <BandChart bandEnergy={r.band_energy}/>
-
-        {/* Methodology note */}
-        {r.methodology_note && (
-          <div style={{marginTop:14,fontSize:12,color:'var(--ink-faint)',fontStyle:'italic',lineHeight:1.5}}>
-            {r.methodology_note}
-          </div>
-        )}
-
-        {/* Reference library expander */}
-        <details style={{marginTop:18}}>
-          <summary style={{cursor:'pointer',fontSize:13,color:'var(--ink-soft)',userSelect:'none'}}>
-            Reference library ({Object.keys(window.PEST_META||{}).length} known insects)
-          </summary>
-          <div style={{marginTop:10,overflowX:'auto'}}>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-              <thead>
-                <tr style={{borderBottom:'1px solid var(--line-2)'}}>
-                  {['Icon','Name','Role','Severity','Freq range'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'4px 8px',color:'var(--ink-faint)',fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',fontSize:10}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(window.PEST_META||{}).map(([name,meta])=>(
-                  <tr key={name} style={{borderBottom:'1px solid rgba(42,51,40,0.06)'}}>
-                    <td style={{padding:'5px 8px',fontSize:18}}>{meta.icon}</td>
-                    <td style={{padding:'5px 8px'}}>{name}</td>
-                    <td style={{padding:'5px 8px',color:roleColor(meta.role)}}>{meta.roleLabel}</td>
-                    <td style={{padding:'5px 8px',color:'var(--ink-soft)',textTransform:'capitalize'}}>{meta.severity}</td>
-                    <td style={{padding:'5px 8px',color:'var(--ink-faint)'}}>
-                      {(r.pest===name && r.freq_range) ? r.freq_range : '—'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </details>
-      </div>
-    );
-  }
 
   /* ===== Main render ===== */
   return (
