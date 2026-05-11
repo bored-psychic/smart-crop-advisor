@@ -1,6 +1,88 @@
 // ViewMarket — live price + forecast chart + sell advice
 const { useState, useCallback } = React;
 
+/* ---- SVG forecast chart ---- */
+function ForecastChart({ forecast }) {
+  if (!forecast || forecast.length < 2) {
+    return (
+      <div className="muted" style={{ padding: '20px', textAlign: 'center' }}>
+        Not enough data to chart.
+      </div>
+    );
+  }
+
+  const W = 720, H = 200, pad = 30;
+  const prices = forecast.map(d => d.price);
+  const mins = forecast.map(d => d.min_price);
+  const maxs = forecast.map(d => d.max_price);
+  const allVals = [...prices, ...mins, ...maxs];
+  const minV = Math.min(...allVals);
+  const maxV = Math.max(...allVals);
+  const rangeV = maxV - minV || 1;
+  const n = forecast.length;
+
+  const xp = i => pad + i * (W - pad * 2) / (n - 1);
+  const yp = v => H - pad - ((v - minV) / rangeV) * (H - pad * 2);
+
+  const bandTop = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.max_price)}`).join(' ');
+  const bandBot = [...forecast].reverse().map((d, i) => `L${xp(n - 1 - i)},${yp(d.min_price)}`).join(' ');
+  const bandPath = bandTop + ' ' + bandBot + ' Z';
+
+  const mainLine = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.price)}`).join(' ');
+
+  const gridYs = [0, 1, 2, 3].map(i => pad + i * (H - pad * 2) / 3);
+
+  // Every 7th date label
+  const dateLabels = forecast
+    .map((d, i) => ({ i, date: d.date }))
+    .filter(({ i }) => i % 7 === 0);
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 200, display: 'block' }}>
+      {gridYs.map((gy, i) => (
+        <line key={i} x1={pad} y1={gy} x2={W - pad} y2={gy} stroke="rgba(42,51,40,0.06)" />
+      ))}
+      <path d={bandPath} fill="rgba(62,107,62,0.12)" />
+      <path d={mainLine} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeLinecap="round" />
+      {dateLabels.map(({ i, date }) => (
+        <text key={i} x={xp(i)} y={H - 4} textAnchor="middle"
+          style={{ fontSize: 9, fill: 'var(--ink-faint)', fontFamily: 'var(--body)' }}>
+          {(date ?? '').slice(5)}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
+/* ---- Forecast table ---- */
+const thStyle = { padding: '6px 8px', textAlign: 'left', color: 'var(--ink-soft)', fontWeight: 600 };
+const tdStyle = { padding: '5px 8px', color: 'var(--ink)' };
+
+function ForecastTable({ forecast }) {
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+      <thead>
+        <tr style={{ background: 'rgba(199,214,189,0.4)' }}>
+          <th style={thStyle}>Date</th>
+          <th style={thStyle}>Price</th>
+          <th style={thStyle}>Min</th>
+          <th style={thStyle}>Max</th>
+        </tr>
+      </thead>
+      <tbody>
+        {forecast.map((row, i) => (
+          <tr key={row.date} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(199,214,189,0.18)' }}>
+            <td style={tdStyle}>{row.date}</td>
+            <td style={tdStyle}>₹{row.price.toFixed(0)}</td>
+            <td style={tdStyle}>₹{row.min_price.toFixed(0)}</td>
+            <td style={tdStyle}>₹{row.max_price.toFixed(0)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function ViewMarket({ profile, setProfile, t }) {
   const [crop, setCrop] = useState('Cotton');
   const [forecastDays, setForecastDays] = useState(30);
@@ -16,100 +98,15 @@ function ViewMarket({ profile, setProfile, t }) {
       const data = await window.api.marketForecast(crop, profile.state, forecastDays);
       setResult(data);
     } catch (err) {
-      setError(err);
+      setError({
+        status: err.status,
+        detail: err.detail || err.message || String(err),
+        message: err.message
+      });
     } finally {
       setLoading(false);
     }
   }, [crop, profile.state, forecastDays]);
-
-  function getErrorDetail(err) {
-    if (!err) return '';
-    if (err.status === 401 || err.status === 403) return 'API key issue — check your configuration.';
-    if (!err.status) return 'Network error — please check your connection.';
-    return err.detail || err.message || 'Unexpected error.';
-  }
-
-  /* ---- SVG forecast chart ---- */
-  function ForecastChart({ forecast }) {
-    if (!forecast || forecast.length === 0) {
-      return (
-        <div style={{ color: 'var(--ink-soft)', fontStyle: 'italic', padding: '16px 0' }}>
-          No forecast available for this crop + model.
-        </div>
-      );
-    }
-
-    const W = 720, H = 200, pad = 30;
-    const prices = forecast.map(d => d.price);
-    const mins = forecast.map(d => d.min_price);
-    const maxs = forecast.map(d => d.max_price);
-    const allVals = [...prices, ...mins, ...maxs];
-    const minV = Math.min(...allVals);
-    const maxV = Math.max(...allVals);
-    const rangeV = maxV - minV || 1;
-    const n = forecast.length;
-
-    const xp = i => pad + i * (W - pad * 2) / (n - 1);
-    const yp = v => H - pad - ((v - minV) / rangeV) * (H - pad * 2);
-
-    const bandTop = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.max_price)}`).join(' ');
-    const bandBot = [...forecast].reverse().map((d, i) => `L${xp(n - 1 - i)},${yp(d.min_price)}`).join(' ');
-    const bandPath = bandTop + ' ' + bandBot + ' Z';
-
-    const mainLine = forecast.map((d, i) => `${i === 0 ? 'M' : 'L'}${xp(i)},${yp(d.price)}`).join(' ');
-
-    const gridYs = [0, 1, 2, 3].map(i => pad + i * (H - pad * 2) / 3);
-
-    // Every 7th date label
-    const dateLabels = forecast
-      .map((d, i) => ({ i, date: d.date }))
-      .filter(({ i }) => i % 7 === 0);
-
-    return (
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 200, display: 'block' }}>
-        {gridYs.map((gy, i) => (
-          <line key={i} x1={pad} y1={gy} x2={W - pad} y2={gy} stroke="rgba(42,51,40,0.06)" />
-        ))}
-        <path d={bandPath} fill="rgba(62,107,62,0.12)" />
-        <path d={mainLine} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeLinecap="round" />
-        {dateLabels.map(({ i, date }) => (
-          <text key={i} x={xp(i)} y={H - 4} textAnchor="middle"
-            style={{ fontSize: 9, fill: 'var(--ink-faint)', fontFamily: 'var(--body)' }}>
-            {date.slice(5)}
-          </text>
-        ))}
-      </svg>
-    );
-  }
-
-  /* ---- Forecast table ---- */
-  function ForecastTable({ forecast }) {
-    return (
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-        <thead>
-          <tr style={{ background: 'rgba(199,214,189,0.4)' }}>
-            <th style={thStyle}>Date</th>
-            <th style={thStyle}>Price</th>
-            <th style={thStyle}>Min</th>
-            <th style={thStyle}>Max</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecast.map((row, i) => (
-            <tr key={row.date} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(199,214,189,0.18)' }}>
-              <td style={tdStyle}>{row.date}</td>
-              <td style={tdStyle}>₹{row.price.toFixed(0)}</td>
-              <td style={tdStyle}>₹{row.min_price.toFixed(0)}</td>
-              <td style={tdStyle}>₹{row.max_price.toFixed(0)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-
-  const thStyle = { padding: '6px 8px', textAlign: 'left', color: 'var(--ink-soft)', fontWeight: 600 };
-  const tdStyle = { padding: '5px 8px', color: 'var(--ink)' };
 
   return (
     <div>
@@ -148,7 +145,7 @@ function ViewMarket({ profile, setProfile, t }) {
       {error && !loading && (
         <ErrorCard
           title="Could not fetch forecast"
-          detail={getErrorDetail(error)}
+          detail={error.status === 401 || error.status === 403 ? 'API key issue — check your configuration.' : !error.status ? 'Network error — please check your connection.' : error.detail || 'Unexpected error.'}
           onRetry={handleSubmit}
         />
       )}
@@ -160,9 +157,9 @@ function ViewMarket({ profile, setProfile, t }) {
           {result.live_price !== null ? (
             <div className="card rise rise-1">
               <div className="page-eyebrow">live mandi · {result.live_price.source}</div>
-              <div className="bignum">₹<em>{result.live_price.today_price.toFixed(0)}</em><span className="unit">/q</span></div>
+              <div className="bignum">₹<em>{result.live_price.today_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
               <div className="small muted" style={{ marginTop: 4 }}>
-                {result.live_price.mandis_checked} mandis · state factor {result.live_price.state_factor.toFixed(2)}
+                {result.live_price.mandis_checked} mandis · state factor {result.live_price.state_factor?.toFixed(2) ?? '—'}
               </div>
               <div style={{ marginTop: 8 }}>
                 {result.live_price.live
@@ -182,17 +179,17 @@ function ViewMarket({ profile, setProfile, t }) {
             <div className="grid-3">
               <div>
                 <div className="page-eyebrow">best price</div>
-                <div className="bignum">₹<em>{result.best_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="bignum">₹<em>{result.best_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
                 <div className="small muted" style={{ marginTop: 4 }}>on {result.best_date}</div>
               </div>
               <div>
                 <div className="page-eyebrow">worst price</div>
-                <div className="bignum">₹<em>{result.worst_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="bignum">₹<em>{result.worst_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
                 <div className="small muted" style={{ marginTop: 4 }}>on {result.worst_date}</div>
               </div>
               <div>
                 <div className="page-eyebrow">average price</div>
-                <div className="bignum">₹<em>{result.avg_price.toFixed(0)}</em><span className="unit">/q</span></div>
+                <div className="bignum">₹<em>{result.avg_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
                 <div className="small muted" style={{ marginTop: 4 }}>over {forecastDays} days</div>
               </div>
             </div>
