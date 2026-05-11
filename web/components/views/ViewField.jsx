@@ -1,5 +1,23 @@
 // ViewField — live field-watch scan: weather, flood, fire, locust, AQI + helplines + WhatsApp builder
-const { useState, useEffect, useCallback } = React;
+const { useState, useEffect, useCallback, useMemo } = React;
+
+/* ---- Alert card helper ---- */
+function AlertCard({ title, risk, children }) {
+  const s = riskStyle(risk);
+  return (
+    <div className="card rise" style={{ borderColor: s.border, background: s.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+        <span style={{ fontSize: 18 }}>{s.icon}</span>
+        <span style={{ fontFamily: 'var(--display)', fontSize: 16, color: s.color }}>{title}</span>
+        <span style={{
+          marginLeft: 'auto', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+          background: s.border, color: '#fff', borderRadius: 999, padding: '2px 10px'
+        }}>{risk}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
 
 function ViewField({ profile, setProfile, t }) {
   const [city, setCity]       = useState(profile.village || '');
@@ -46,38 +64,23 @@ function ViewField({ profile, setProfile, t }) {
   };
 
   /* ---- WhatsApp message ---- */
-  const waMessage = result ? [
-    '🌾 KisanOS Field Report',
-    `Farmer: ${profile.name || 'Farmer'} | ${profile.village || result.city}`,
-    `Crop: ${profile.crop || 'General'}`,
-    `Location: ${result.city}`,
-    `Risk: ${result.overall_risk}`,
-    result.weather
-      ? `Weather: ${result.weather.temp?.toFixed(1)}°C, ${result.weather.humidity}% humidity, ${result.weather.wind?.toFixed(0)} km/h wind`
-      : '',
-    result.weather?.description || '',
-    result.flood  ? `Flood risk: ${result.flood.flood_risk}` : '',
-    result.fire?.risk !== 'NONE' ? `Fire: ${result.fire.hotspots_nearby} hotspots (${result.fire.risk})` : '',
-    'Sent via KisanOS',
-  ].filter(Boolean).join('\n') : '';
-
-  /* ---- Alert card helper ---- */
-  function AlertCard({ title, risk, children }) {
-    const s = riskStyle(risk);
-    return (
-      <div className="card rise" style={{ borderColor: s.border, background: s.bg }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-          <span style={{ fontSize: 18 }}>{s.icon}</span>
-          <span style={{ fontFamily: 'var(--display)', fontSize: 16, color: s.color }}>{title}</span>
-          <span style={{
-            marginLeft: 'auto', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
-            background: s.border, color: '#fff', borderRadius: 999, padding: '2px 10px'
-          }}>{risk}</span>
-        </div>
-        {children}
-      </div>
-    );
-  }
+  const waMessage = useMemo(() => {
+    if (!result) return '';
+    return [
+      '🌾 KisanOS Field Report',
+      `Farmer: ${profile.name || 'Farmer'} | ${profile.village || result.city}`,
+      `Crop: ${profile.crop || 'General'}`,
+      `Location: ${result.city}`,
+      `Risk: ${result.overall_risk}`,
+      result.weather
+        ? `Weather: ${result.weather.temp?.toFixed(1)}°C, ${result.weather.humidity}% humidity, ${result.weather.wind?.toFixed(0)} km/h wind`
+        : '',
+      result.weather?.description || '',
+      result.flood  ? `Flood risk: ${result.flood.flood_risk}` : '',
+      result.fire?.risk !== 'NONE' ? `Fire: ${result.fire.hotspots_nearby} hotspots (${result.fire.risk})` : '',
+      'Sent via KisanOS',
+    ].filter(Boolean).join('\n');
+  }, [result, profile]);
 
   return (
     <div className="view-fade">
@@ -160,10 +163,10 @@ function ViewField({ profile, setProfile, t }) {
               <div className="card rise" style={{ padding: '18px 20px' }}>
                 <div className="page-eyebrow">Temperature</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
-                  <em>{result.weather.temp.toFixed(1)}°C</em>
+                  <em>{result.weather.temp?.toFixed(1) ?? '—'}°C</em>
                 </div>
                 <div className="muted small" style={{ marginTop: 4 }}>
-                  feels like {result.weather.feels_like.toFixed(0)}°C
+                  feels like {result.weather.feels_like?.toFixed(0) ?? '—'}°C
                 </div>
               </div>
               <div className="card rise" style={{ padding: '18px 20px' }}>
@@ -178,7 +181,7 @@ function ViewField({ profile, setProfile, t }) {
               <div className="card rise" style={{ padding: '18px 20px' }}>
                 <div className="page-eyebrow">Wind</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
-                  <em>{result.weather.wind.toFixed(0)} km/h</em>
+                  <em>{result.weather.wind?.toFixed(0) ?? '—'} km/h</em>
                 </div>
                 <div className="muted small" style={{ marginTop: 4 }}>surface wind</div>
               </div>
@@ -291,7 +294,29 @@ function ViewField({ profile, setProfile, t }) {
               <button
                 className="btn"
                 onClick={() => {
-                  navigator.clipboard.writeText(waMessage).then(() => addToast('Copied!', 'info'));
+                  const handleCopy = () => {
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(waMessage).then(() => addToast('Copied!', 'info')).catch(() => {
+                        // fallback to execCommand
+                        const ta = document.createElement('textarea');
+                        ta.value = waMessage;
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                        addToast('Copied!', 'info');
+                      });
+                    } else {
+                      const ta = document.createElement('textarea');
+                      ta.value = waMessage;
+                      document.body.appendChild(ta);
+                      ta.select();
+                      document.execCommand('copy');
+                      document.body.removeChild(ta);
+                      addToast('Copied!', 'info');
+                    }
+                  };
+                  handleCopy();
                 }}
               >
                 📋 Copy
