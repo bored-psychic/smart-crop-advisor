@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form, Query
 from PIL import Image, UnidentifiedImageError
 
 from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse
@@ -160,9 +160,26 @@ async def analyze_symptom(
 
 
 @router.get("/crops")
-async def list_crops(_: str = Depends(require_api_key)):
-    """List all crops with available symptoms."""
+async def list_crops(
+    detailed: bool = Query(False),
+    _: str = Depends(require_api_key),
+):
+    """List all crops with available symptoms. Use ?detailed=true for full symptom metadata."""
+    if not detailed:
+        return {
+            crop: list(symptoms.keys())
+            for crop, symptoms in sorted(DISEASE_DB.items())
+        }
+    # Detailed: return [{symptom, disease, severity, type}] per crop
     return {
-        crop: list(symptoms.keys())
+        crop: [
+            {
+                "symptom": symptom,
+                "disease": data.get("disease", ""),
+                "severity": data.get("severity", "Medium"),
+                "type": data.get("type", "Disease"),
+            }
+            for symptom, data in symptoms.items()
+        ]
         for crop, symptoms in sorted(DISEASE_DB.items())
     }
