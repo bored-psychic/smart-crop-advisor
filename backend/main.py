@@ -5,8 +5,10 @@ CORS-enabled, authenticated, with lifespan model loading.
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.config import get_settings
 
 logger = logging.getLogger("kisanos")
@@ -61,9 +63,11 @@ async def lifespan(app: FastAPI):
 
     try:
         app.state.acoustic_model = acoustic_model.load()
-        logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+        logger.info("  ✅ Acoustic model loaded (YAMNet, 10 classes)")
     except Exception as e:
-        logger.warning(f"  ⚠️ Acoustic model unavailable: {e}")
+        logger.warning(
+            f"  ⚠️ YAMNet unavailable, acoustic pipeline will use API fallback: {e}"
+        )
         app.state.acoustic_model = None
 
     logger.info("🚀 KisanOS API ready!")
@@ -115,6 +119,9 @@ def create_app() -> FastAPI:
             "app": settings.APP_NAME,
             "version": settings.APP_VERSION,
         }
+
+    WEB_DIR = Path(__file__).parent.parent / "web"
+    app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="web")
 
     return app
 
