@@ -25,12 +25,12 @@ function MethodBadge({ method }){
   );
 }
 
-function TopBars({ top3 }){
+function TopBars({ top3, t }){
   if(!top3||!top3.length) return null;
   const maxVal = Math.max(...top3.map(([,p])=>p), 1);
   return (
     <div style={{marginTop:16}}>
-      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>top detections</div>
+      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>{t('top detections')}</div>
       {top3.map(([name,pct],i)=>(
         <div key={i} style={{marginBottom:8}}>
           <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:3}}>
@@ -45,13 +45,13 @@ function TopBars({ top3 }){
   );
 }
 
-function BandChart({ bandEnergy }){
+function BandChart({ bandEnergy, t }){
   if(!bandEnergy||!Object.keys(bandEnergy).length) return null;
   const entries = Object.entries(bandEnergy);
   const maxVal  = Math.max(...entries.map(([,v])=>v), 0.001);
   return (
     <div style={{marginTop:20}}>
-      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>band energy</div>
+      <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:8}}>{t('band energy')}</div>
       {entries.map(([band,val],i)=>(
         <div key={i} style={{marginBottom:7}}>
           <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:2}}>
@@ -67,7 +67,7 @@ function BandChart({ bandEnergy }){
   );
 }
 
-function RichResult({ r }){
+function RichResult({ r, t }){
   const rc = roleColor(r.role);
   return (
     <div className="rise">
@@ -109,10 +109,10 @@ function RichResult({ r }){
       {/* 4-metric grid */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14}}>
         {[
-          {label:'Confidence', value:`${Math.round(r.confidence||0)}%`},
-          {label:'Duration',   value:`${r.analyzed_seconds||0}s / ${r.duration_seconds||0}s`},
-          {label:'Sample rate',value:`${r.sample_rate||0} Hz`},
-          {label:'Energy',     value:r.energy_level||'—'},
+          {label:t('Confidence'), value:`${Math.round(r.confidence||0)}%`},
+          {label:t('Duration'),   value:`${r.analyzed_seconds||0}s / ${r.duration_seconds||0}s`},
+          {label:t('Sample rate'),value:`${r.sample_rate||0} Hz`},
+          {label:t('Energy'),     value:r.energy_level||'—'},
         ].map(({label,value})=>(
           <div key={label} style={{
             padding:'10px 12px',borderRadius:12,
@@ -126,7 +126,7 @@ function RichResult({ r }){
       </div>
 
       {/* Top-3 bars */}
-      <TopBars top3={r.top3}/>
+      <TopBars top3={r.top3} t={t}/>
 
       {/* Claude advice */}
       {r.claude_advice && (
@@ -135,7 +135,7 @@ function RichResult({ r }){
           background:'var(--leaf-soft)',borderLeft:'3px solid var(--leaf)',
           fontSize:14,lineHeight:1.6,color:'var(--ink)'
         }}>
-          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:6,fontWeight:600}}>Claude advice</div>
+          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:6,fontWeight:600}}>{t('Claude advice')}</div>
           {r.claude_advice}
         </div>
       )}
@@ -146,17 +146,17 @@ function RichResult({ r }){
           marginTop:14,padding:'10px 14px',borderRadius:12,
           background:'rgba(240,192,96,0.14)',border:'1px solid rgba(240,192,96,0.32)'
         }}>
-          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--sun)',marginBottom:6,fontWeight:600}}>quality notes</div>
+          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--sun)',marginBottom:6,fontWeight:600}}>{t('quality notes')}</div>
           {r.quality_warnings.map((w,i)=>(
             <div key={i} style={{fontSize:13,color:'var(--sun)',marginBottom:3}}>
-              {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
+              {t(window.ACOUSTIC_WARNING_LABELS?.[w] || w)}
             </div>
           ))}
         </div>
       )}
 
       {/* Band energy chart */}
-      <BandChart bandEnergy={r.band_energy}/>
+      <BandChart bandEnergy={r.band_energy} t={t}/>
 
       {/* Methodology note */}
       {r.methodology_note && (
@@ -168,14 +168,14 @@ function RichResult({ r }){
       {/* Reference library expander */}
       <details style={{marginTop:18}}>
         <summary style={{cursor:'pointer',fontSize:13,color:'var(--ink-soft)',userSelect:'none'}}>
-          Reference library ({Object.keys(window.PEST_META||{}).length} known insects)
+          {t('Reference library')} ({Object.keys(window.PEST_META||{}).length} {t('known insects')})
         </summary>
         <div style={{marginTop:10,overflowX:'auto'}}>
           <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
             <thead>
               <tr style={{borderBottom:'1px solid var(--line-2)'}}>
                 {['Icon','Name','Role','Severity','Freq range'].map(h=>(
-                  <th key={h} style={{textAlign:'left',padding:'4px 8px',color:'var(--ink-faint)',fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',fontSize:10}}>{h}</th>
+                  <th key={h} style={{textAlign:'left',padding:'4px 8px',color:'var(--ink-faint)',fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',fontSize:10}}>{t(h)}</th>
                 ))}
               </tr>
             </thead>
@@ -184,7 +184,7 @@ function RichResult({ r }){
                 <tr key={name} style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
                   <td style={{padding:'5px 8px',fontSize:18}}>{meta.icon}</td>
                   <td style={{padding:'5px 8px'}}>{name}</td>
-                  <td style={{padding:'5px 8px',color:roleColor(meta.role)}}>{meta.roleLabel}</td>
+                  <td style={{padding:'5px 8px',color:roleColor(meta.role)}}>{t(meta.roleLabel)}</td>
                   <td style={{padding:'5px 8px',color:'var(--ink-soft)',textTransform:'capitalize'}}>{meta.severity}</td>
                   <td style={{padding:'5px 8px',color:'var(--ink-faint)'}}>
                     {(r.pest===name && r.freq_range) ? r.freq_range : '—'}
@@ -241,7 +241,7 @@ function ViewAcoustic({ profile, t }){
 
     // 1. Size gate (hard block)
     if(f.size > 20 * 1024 * 1024){
-      setPreCheckError('File too large (max 20 MB)');
+      setPreCheckError(t('File too large (max 20 MB)'));
       return;
     }
 
@@ -265,7 +265,7 @@ function ViewAcoustic({ profile, t }){
       setPreCheckWarnings(warns);
     } catch(_){
       // Unsupported format — advisory only, allow submit
-      setPreCheckError("Cannot preview this audio format — upload anyway to let the server analyze it.");
+      setPreCheckError(t("Cannot preview this audio format — upload anyway to let the server analyze it."));
     }
   }
 
@@ -292,12 +292,12 @@ function ViewAcoustic({ profile, t }){
 
   // Normalize error
   function normalizeError(err){
-    if(!err) return {status:null, detail:'Unknown error', message:'Unknown error'};
+    if(!err) return {status:null, detail:t('Unknown error'), message:t('Unknown error')};
     const status  = err.status || null;
     const detail  = err.detail || err.message || String(err);
     let message;
-    if(status===401||status===403) message = 'Invalid or missing API key.';
-    else if(!status)               message = 'Network error — check your connection.';
+    if(status===401||status===403) message = t('Invalid or missing API key.');
+    else if(!status)               message = t('Network error — check your connection.');
     else                           message = detail;
     return {status, detail, message};
   }
@@ -324,24 +324,24 @@ function ViewAcoustic({ profile, t }){
   /* ===== Main render ===== */
   return (
     <div className="view-fade">
-      <Topbar crumb="Listen"/>
+      <Topbar crumb={t('Listen')}/>
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">listen</div>
-          <h1 className="page-title">Hear the bugs <em>before they show.</em></h1>
-          <p className="page-lede">Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.</p>
+          <div className="page-eyebrow">{t('listen')}</div>
+          <h1 className="page-title">{t('Hear the bugs')} <em>{t('before they show.')}</em></h1>
+          <p className="page-lede">{t("Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.")}</p>
         </div>
       </div>
 
       <div className="grid-2">
         {/* LEFT: Upload card */}
         <div className="card rise rise-1">
-          <div className="card-h"><h3>Upload a recording</h3><span className="tag">~6 seconds</span></div>
+          <div className="card-h"><h3>{t('Upload a recording')}</h3><span className="tag">{t('~6 seconds')}</span></div>
 
           {/* Crop type input */}
           <input
             className="input"
-            placeholder="Crop type (optional)"
+            placeholder={t('Crop type (optional)')}
             value={cropType}
             onChange={e=>setCropType(e.target.value)}
             style={{marginBottom:12,width:'100%'}}
@@ -359,12 +359,12 @@ function ViewAcoustic({ profile, t }){
             }}>
             <div style={{fontSize:36}}>{file?'🎵':'🎙'}</div>
             <div style={{marginTop:10,fontSize:14}}>
-              {file ? <strong>{file.name}</strong> : <strong>Drag &amp; drop your field audio here</strong>}
+              {file ? <strong>{file.name}</strong> : <strong>{t('Drag & drop your field audio here')}</strong>}
             </div>
             <div className="muted small" style={{marginTop:4}}>
               {file
-                ? `${(file.size/1024).toFixed(0)} KB · ready`
-                : 'or click to choose · wav · mp3 · m4a · ogg · webm'}
+                ? `${(file.size/1024).toFixed(0)} ${t('KB · ready')}`
+                : t('or click to choose · wav · mp3 · m4a · ogg · webm')}
             </div>
             <input ref={inputRef} type="file" accept="audio/*" style={{display:'none'}}
               onChange={e=>handleFile(e.target.files[0])}/>
@@ -400,11 +400,11 @@ function ViewAcoustic({ profile, t }){
 
           {/* Action row */}
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:14,gap:10}}>
-            <div className="muted small" style={{fontStyle:'italic'}}>tip: 15–30 cm from the stem · breathe slowly</div>
+            <div className="muted small" style={{fontStyle:'italic'}}>{t('tip: 15–30 cm from the stem · breathe slowly')}</div>
             <div style={{display:'flex',gap:8}}>
-              <button className="btn" onClick={clearAll}>clear</button>
+              <button className="btn" onClick={clearAll}>{t('clear')}</button>
               <button className="btn primary" onClick={analyze} disabled={analyzeDisabled}>
-                {loading ? '🎧 listening…' : '🔊 analyze'}
+                {loading ? t('🎧 listening…') : t('🔊 analyze')}
               </button>
             </div>
           </div>
@@ -413,7 +413,7 @@ function ViewAcoustic({ profile, t }){
         {/* RIGHT: Result card */}
         <div className="card rise rise-2">
           <div className="card-h">
-            <h3>What we heard</h3>
+            <h3>{t('What we heard')}</h3>
             {result && <span className="tag alert">{result.severity}</span>}
           </div>
 
@@ -430,12 +430,12 @@ function ViewAcoustic({ profile, t }){
           </div>
 
           {/* Loading */}
-          {loading && <Loading label="Listening to your field…"/>}
+          {loading && <Loading label={t('Listening to your field…')}/>}
 
           {/* Error */}
           {error && !loading && (
             <ErrorCard
-              title="Analysis failed"
+              title={t('Analysis failed')}
               detail={error.message}
               onRetry={analyze}
             />
@@ -443,11 +443,11 @@ function ViewAcoustic({ profile, t }){
 
           {/* Idle hint */}
           {!result && !loading && !error && (
-            <div className="muted" style={{padding:'10px 0',textAlign:'center'}}>Drop a recording on the left to begin. 🐛</div>
+            <div className="muted" style={{padding:'10px 0',textAlign:'center'}}>{t('Drop a recording on the left to begin. 🐛')}</div>
           )}
 
           {/* Rich result */}
-          {result && !loading && <RichResult r={result}/>}
+          {result && !loading && <RichResult r={result} t={t}/>}
         </div>
       </div>
     </div>
