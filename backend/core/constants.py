@@ -259,55 +259,84 @@ DISEASE_META = {
     },
 }
 
-# ── Pest Metadata (Acoustic) ─────────────────────────────────────────────────
+# ── Pest Metadata (Acoustic — YAMNet 10-class taxonomy) ──────────────────────
+# Bioacoustically-distinct insects that public datasets (ESC-50, AudioSet,
+# Xeno-canto, iNaturalist) actually have data for. The previous Helicoverpa /
+# Fall Armyworm / Rice Stem Borer / Banana Pseudostem Weevil entries were
+# scarce in open datasets and could not be reliably trained. They remain
+# accessible via the Gemini→Claude fallback (open vocabulary).
+#
+# `role` drives differentiated rendering in the frontend:
+#   pest       — negative signal, treatment advice
+#   pollinator — positive signal, protect / avoid spraying
+#   vector     — health-relevant (mosquito), not a crop pest
+#   ambient    — environment indicator, "mic is working"
+#
+# `low_signal: True` marks faint / close-range entries — the frontend adds a
+# "verify visually before treating" caveat.
 PEST_META = {
-    'Healthy Plant': {
-        'severity': 'low', 'freq_range': '<100 Hz (flat)', 'pattern': 'Flat noise floor',
-        'energy_level': 'Background',
-        'action': 'No pest detected. Continue monitoring every 7 days. Apply neem oil spray monthly as a preventive measure.',
-        'icon': '✅'
-    },
-    'Aphid Colony': {
-        'severity': 'medium', 'freq_range': '200–400 Hz', 'pattern': 'Clustered mid-freq bursts',
+    'Bee': {
+        'role': 'pollinator',
+        'severity': 'low', 'low_signal': False,
+        'freq_range': '200–300 Hz (wingbeat)',
+        'pattern': 'Warm sustained hum from foraging bees / nearby hives',
         'energy_level': 'Moderate',
-        'action': 'Apply Imidacloprid 17.8% SL @ 0.5ml/L in the evening. Repeat after 7 days. Check for ant colonies protecting aphids — destroy ant trails.',
-        'icon': '🟡'
+        'action': '✅ Bees are pollinating — protect them. Do NOT spray any insecticide during flowering or in mid-day when bees are foraging. If you must spray, apply at dusk after bee activity stops, and only use bee-safe formulations.',
+        'icon': '🐝'
     },
-    'Whitefly Infestation': {
-        'severity': 'medium', 'freq_range': '400–700 Hz', 'pattern': 'Wing-beat harmonic series',
-        'energy_level': 'Low-moderate',
-        'action': 'Install yellow sticky traps immediately. Spray Spiromesifen 22.9% SC @ 0.5ml/L or Thiamethoxam 25% WG @ 0.3g/L. Use silver reflective mulch to repel adults.',
-        'icon': '🟡'
-    },
-    'Locust Activity': {
-        'severity': 'high', 'freq_range': '50–200 Hz', 'pattern': 'High-amplitude low-freq pulses',
+    'Locust': {
+        'role': 'pest',
+        'severity': 'high', 'low_signal': False,
+        'freq_range': '50–200 Hz',
+        'pattern': 'Wingbeat + mass flight hum; very high amplitude',
         'energy_level': 'Very High',
         'action': '🚨 LOCUST SWARM — Act immediately. Contact State Agriculture Department: 1800-180-1551. Spray Chlorpyrifos 50% EC @ 2ml/L or Malathion 96% ULV aerial spray if available. Protect stored grain.',
-        'icon': '🔴'
+        'icon': '🦗'
     },
-    'Stem Borer': {
-        'severity': 'high', 'freq_range': '50–150 Hz', 'pattern': 'Low-freq gnawing rhythm',
+    'Cicada': {
+        'role': 'pest',
+        'severity': 'medium', 'low_signal': False,
+        'freq_range': '4–10 kHz (sustained)',
+        'pattern': 'Tonal sustained buzz; oviposition damage on fruit-tree twigs',
         'energy_level': 'High',
-        'action': 'Apply Cartap hydrochloride 50% SP @ 1g/L at stem base. Check for dead heart (central shoot dying). Use pheromone traps. Coragen (Chlorantraniliprole) @ 0.4ml/L for severe infestation.',
-        'icon': '🔴'
+        'action': 'For mango/coffee orchards: prune and burn oviposition-damaged twigs (look for slit-like scars). Wrap trunks with sticky bands. Spray Imidacloprid 17.8% SL @ 0.5ml/L on canopy if heavy infestation.',
+        'icon': '🟠'
     },
-    'Early Fungal Infection': {
-        'severity': 'high', 'freq_range': '800–1200 Hz', 'pattern': 'High-freq crackling',
-        'energy_level': 'Elevated',
-        'action': 'Apply Mancozeb 75% WP @ 2.5g/L within 48 hours. Improve field drainage. Reduce overhead irrigation. Repeat after 10 days. Check for lesion spread.',
-        'icon': '🔴'
+    'Cricket': {
+        'role': 'ambient',
+        'severity': 'low', 'low_signal': False,
+        'freq_range': '3–7 kHz',
+        'pattern': 'Rhythmic stridulation chirp; nighttime activity',
+        'energy_level': 'Moderate',
+        'action': 'Crickets and katydids are normal field background. Useful indicator that the mic is working and night insect pressure is present — no treatment needed unless visible leaf damage appears.',
+        'icon': '⚪'
     },
-    'Spider Mite': {
-        'severity': 'medium', 'freq_range': '1200–4000 Hz', 'pattern': 'Ultra-high freq scratching',
-        'energy_level': 'Moderate-high',
-        'action': 'Apply Abamectin 1.8% EC @ 0.5ml/L or Spiromesifen 22.9% SC @ 1ml/L. Spray underside of leaves — mites live there. Increase humidity if possible. Avoid broad-spectrum insecticides that kill predators.',
-        'icon': '🟡'
+    'Grasshopper': {
+        'role': 'pest',
+        'severity': 'medium', 'low_signal': False,
+        'freq_range': '3–10 kHz (stridulation)',
+        'pattern': 'Rasping, scraping daytime chorus from field margins',
+        'energy_level': 'Moderate',
+        'action': 'Spray Malathion 50% EC @ 2ml/L on field margins where grasshoppers concentrate. Encourage natural predators (birds, robber flies). For severe outbreaks, dawn bait spray with wheat bran + chlorpyrifos.',
+        'icon': '🟠'
     },
-    'Thrips Infestation': {
-        'severity': 'medium', 'freq_range': '350–500 Hz', 'pattern': 'Rapid mid-freq staccato',
-        'energy_level': 'Low-moderate',
-        'action': 'Apply Spinosad 45% SC @ 0.3ml/L or Fipronil 5% SC @ 1.5ml/L. Use blue sticky traps. Remove infested growing tips. Check for silvering on leaves.',
-        'icon': '🟡'
+    'Beetle': {
+        'role': 'pest',
+        'severity': 'medium', 'low_signal': False,
+        'freq_range': '100–1000 Hz',
+        'pattern': 'Coleopteran flight buzz / chewing scrape',
+        'energy_level': 'Moderate',
+        'action': 'Inspect leaves for chewing damage and round exit holes. For leaf beetles: spray Quinalphos 25% EC @ 2ml/L. For weevils on stored grain: solarize and use neem cake. Encourage ground beetles (predators) by maintaining mulched borders.',
+        'icon': '🪲'
+    },
+    'Wasp': {
+        'role': 'pest',
+        'severity': 'medium', 'low_signal': False,
+        'freq_range': '150–250 Hz (wingbeat)',
+        'pattern': 'Lower, slower hum than bees; nest-defense bursts',
+        'energy_level': 'Moderate',
+        'action': 'Most wasps are beneficial parasitoids — leave them unless a nest threatens workers. For aggressive nests near pathways, remove at dusk wearing protection or call pest control. Do NOT blanket-spray; you will kill parasitoids that suppress caterpillars.',
+        'icon': '🐝'
     },
 }
 

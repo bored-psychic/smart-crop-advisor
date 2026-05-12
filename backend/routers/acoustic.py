@@ -26,7 +26,7 @@ router = APIRouter(prefix="/api/acoustic", tags=["Acoustic Pest Detection"])
 
 PEST_ICONS = {name: meta['icon'] for name, meta in PEST_META.items()}
 
-MAX_ANALYSIS_SECONDS = 10
+MAX_ANALYSIS_SECONDS = 20
 MIN_ANALYSIS_SECONDS = 1.5
 MIN_RMS = 1e-4
 
@@ -167,50 +167,80 @@ async def _claude_acoustic(
     dsp_block = json.dumps(dsp_features, indent=2)
 
     system_text = (
-        "You are an expert bioacoustics analyst for crop pest detection. "
-        "You analyze field-audio spectrograms and supporting DSP features to "
-        "identify whatever sound is actually present — a pest, a disease "
-        "signature, ambient noise, mechanical noise, wind, birds, or silence.\n\n"
-        "REFERENCE SIGNATURES (well-studied in this tool — copy these exact "
-        "labels when the recording clearly matches one):\n"
-        "- Healthy Plant: flat noise floor, low energy across all bands\n"
-        "- Aphid Colony: clustered mid-frequency bursts 200-400 Hz\n"
-        "- Whitefly Infestation: wing-beat harmonic series 400-700 Hz\n"
-        "- Locust Activity: high-amplitude low-frequency pulses 50-200 Hz\n"
-        "- Stem Borer: rhythmic low-frequency gnawing 50-150 Hz\n"
-        "- Early Fungal Infection: high-frequency crackling 800-1200 Hz\n"
-        "- Spider Mite: ultra-high-frequency scratching 1200-4000 Hz\n"
-        "- Thrips Infestation: rapid mid-frequency staccato 350-500 Hz\n\n"
-        "OPEN VOCABULARY: identify whatever you actually hear. If the "
-        "signature clearly matches one of the labels above, copy that exact "
-        "label. Otherwise return the most specific accurate name (species or "
-        "group, e.g. 'Mealybug', 'Leafhopper', 'Fall Armyworm', 'Mechanical "
-        "/ Pump Noise', 'Wind', 'Bird Vocalization', 'Silence / Ambient'). "
-        "Do NOT force an answer into the listed labels if it doesn't fit.\n\n"
-        "When the recording is NOT a pest signal (wind, mechanical, biological-"
-        "but-non-pest like birds, ambient silence), set is_pest=false and use "
-        "the action field to tell the farmer what was heard and how to record "
-        "a cleaner sample.\n\n"
+        "You are an expert bioacoustics analyst for Indian crop fields. You "
+        "analyze field-audio spectrograms and DSP features to identify "
+        "audible insect activity — pests, pollinators, health vectors, "
+        "ambient indicators, or genuine silence. The phone mic is held "
+        "15-30 cm from the crop.\n\n"
+        "ACOUSTIC VOCABULARY (use these exact labels when the recording "
+        "matches; the role drives how the farmer is advised):\n"
+        "TIER 1 — reliably audible from a phone mic:\n"
+        "- Helicoverpa armigera (pest, 1-4 kHz broadband): larval chewing on "
+        "fruit/pods + frass fall. Cotton/Tomato/Chickpea/Pigeon Pea.\n"
+        "- Fall Armyworm (pest, 1-4 kHz broadband): larval chewing in maize "
+        "whorl + frass. Maize.\n"
+        "- Locust Activity (pest, 50-200 Hz, very high amplitude): wingbeat "
+        "+ mass flight hum. Rare but unmistakable.\n"
+        "- Grasshopper Activity (pest, 3-10 kHz stridulation): daytime "
+        "defoliation; high India relevance in dry season.\n"
+        "- Cicada Activity (pest in orchards, ambient elsewhere, 4-10 kHz "
+        "sustained buzz): oviposition damage on mango/coffee twigs.\n"
+        "- Cricket Ambient (ambient, 3-7 kHz chirp): nighttime insect "
+        "pressure proxy and 'mic is working' anchor. NOT a pest.\n"
+        "- Honey Bee Activity (pollinator, 200-300 Hz wingbeat): foraging "
+        "swarm or nearby hives. POSITIVE signal — protect, not treat.\n"
+        "TIER 2 — close-range only, lower confidence (set low_signal=true):\n"
+        "- Rice Stem Borer (pest, 50-200 Hz faint): internal stem feeding.\n"
+        "- Banana Pseudostem Weevil (pest, 50-500 Hz faint, intermittent): "
+        "boring sounds in pseudostem.\n"
+        "- Mosquito Activity (vector, 400-700 Hz wingbeat): NOT a crop "
+        "pest — health advisory only (dengue/malaria context).\n"
+        "TIER 0 — explicit silence:\n"
+        "- Quiet / No Audible Activity (ambient): noise floor only, no "
+        "insect activity. Return this confidently when nothing audible is "
+        "present — better than guessing a pest.\n\n"
+        "ROLES drive farmer guidance — be careful:\n"
+        "- pest      → treatment advice\n"
+        "- pollinator → encourage / protect, NEVER recommend insecticide\n"
+        "- vector    → health advisory (drain standing water, mosquito net)\n"
+        "- ambient   → no treatment, just an environment indicator\n\n"
+        "OPEN VOCABULARY: if the recording clearly matches a label above, "
+        "use it exactly. If it's some other identifiable sound (Mealybug, "
+        "Leafhopper, Mechanical / Pump Noise, Wind, Bird Vocalization), "
+        "return that name with is_pest=false where appropriate. Do NOT "
+        "force an answer into the labels above if it doesn't fit. Do NOT "
+        "return aphid, whitefly, spider mite, thrips, or fungal infection "
+        "from this tool — those are silent at phone-mic range and belong "
+        "to the visual-photo pipeline.\n\n"
         "CALIBRATION RULES:\n"
         "1. Spectrogram analysis is exploratory — be conservative.\n"
-        "2. Confidence MUST be ≤ 70 unless the signature is textbook and "
+        "2. Confidence ≤ 70 unless the signature is textbook and "
         "unambiguous.\n"
-        "3. For weak/partial matches, use confidence 30-55.\n"
-        "4. Use the supplied crop type to favor ecologically plausible pests.\n"
-        "5. The DSP feature block (band energies, spectral centroid, ZCR) is "
-        "more reliable than the spectrogram image — anchor your call to the "
-        "numbers when they conflict.\n\n"
+        "3. Tier 2 entries cap at confidence 60 and MUST set "
+        "low_signal=true with action text starting 'Verify visually before "
+        "treating'.\n"
+        "4. For weak/partial matches, use confidence 30-55.\n"
+        "5. For genuine silence, return Quiet / No Audible Activity with "
+        "confidence 70-90 — high confidence is honest here.\n"
+        "6. Use the supplied crop type to favor ecologically plausible "
+        "species.\n"
+        "7. The DSP feature block (band energies, spectral centroid, ZCR) "
+        "is more reliable than the spectrogram image — anchor your call to "
+        "the numbers when they conflict.\n\n"
         "Respond ONLY with valid JSON (NO markdown fences, NO commentary):\n"
-        '{"pest":"name (canonical reference label when matched)",'
+        '{"pest":"name (canonical label when matched)",'
+        '"role":"pest|pollinator|vector|ambient",'
         '"is_pest":true|false,'
+        '"low_signal":true|false,'
         '"severity":"high|medium|low",'
         '"freq_range":"e.g. 50-150 Hz",'
         '"pattern":"what you see in spectrogram + DSP",'
         '"energy_level":"Very High|High|Moderate|Low-moderate|Background",'
         '"confidence":<int 0-100>,'
-        '"action":"specific actionable advice for an Indian smallholder farmer",'
-        '"icon":"single emoji (canonical icon when matched, else your choice)",'
-        '"top3":[["Pest1",85],["Pest2",10],["Pest3",5]]}'
+        '"action":"specific advice matched to the role (treat / protect / '
+        'health / no action)",'
+        '"icon":"single emoji",'
+        '"top3":[["Label1",85],["Label2",10],["Label3",5]]}'
     )
 
     user_text = (
@@ -315,14 +345,18 @@ async def _gemini_describe_audio(
 
     audio_part = types.Part.from_bytes(data=wav_bytes, mime_type="audio/wav")
     prompt = (
-        "Listen to this short field audio recording from a farm. Describe "
-        "ALL sounds you hear in objective, specific terms — temporal pattern "
-        "(rhythmic / random / continuous / burst-like), frequency character "
-        "(high-pitched / low rumble / mid-range), texture (clicking / buzzing "
-        "/ crackling / scraping / rustling / humming), amplitude level (faint "
-        "/ moderate / strong), and any other distinctive features. "
-        "Do NOT name any pest, disease, or species — only describe what you "
-        "actually hear. 3 to 5 sentences maximum."
+        "Listen to this farm field audio recording and answer each question "
+        "on its own line in the exact format shown. Do NOT name any pest, "
+        "disease, or species.\n\n"
+        "PATTERN: <rhythmic|irregular-bursts|continuous|random|silent>\n"
+        "TEXTURE: <clicking|scraping-rasping|buzzing|humming|rushing-wind|"
+        "tonal-melodic|mixed-clicking-scraping>\n"
+        "FREQUENCY: <very-high-4kHz+|high-2to4kHz|mid-500Hz-2kHz|mid-low-200to500Hz|very-low-under-200Hz>\n"
+        "AMPLITUDE: <strong|moderate|faint>\n"
+        "AMPLITUDE_VARIATION: <organic-rises-falls|steady-constant|pulsing-regular>\n"
+        "BURST_DURATION: <under-0.5s|0.5-2s|2-5s|continuous>\n"
+        "SOUND_ORIGIN: <biological-insect|biological-bird|mechanical|wind|unknown>\n"
+        "NOTES: <one sentence of any other distinctive detail, or 'none'>"
     )
 
     for model_name in ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"]:
@@ -337,7 +371,8 @@ async def _gemini_describe_audio(
                            model_name, str(exc)[:200])
             continue
         desc = (getattr(resp, "text", None) or "").strip()
-        if desc:
+        # Require at least PATTERN and TEXTURE lines to be present
+        if desc and "PATTERN:" in desc and "TEXTURE:" in desc:
             return desc, model_name
     return None, "all_gemini_models_failed"
 
@@ -367,47 +402,89 @@ async def _claude_from_description(
 
     system_text = (
         "You are an expert entomologist and bioacoustics specialist for "
-        "Indian crop pest detection. A colleague (an AI audio listener) "
-        "heard a raw field recording and described what they heard — "
-        "without naming any pest. Using your entomological knowledge, "
-        "identify the most likely cause of the sound.\n\n"
-        "OPEN VOCABULARY: if the description clearly matches a well-studied "
-        "category, copy the exact label ('Aphid Colony', 'Whitefly "
-        "Infestation', 'Locust Activity', 'Stem Borer', 'Early Fungal "
-        "Infection', 'Spider Mite', 'Thrips Infestation', 'Healthy Plant'). "
-        "Otherwise return the most specific accurate name ('Mealybug', "
-        "'Leafhopper', 'Fall Armyworm', 'Wind', 'Bird Vocalization', "
-        "'Mechanical / Pump Noise', 'Silence / Ambient', etc.). Do NOT force "
-        "an answer into the listed labels if it doesn't fit.\n\n"
-        "When the recording is NOT a pest signal (wind, mechanical, "
-        "biological-but-non-pest like birds, ambient silence), set "
-        "is_pest=false and use the action field to advise the farmer how to "
-        "record a cleaner sample.\n\n"
+        "Indian crop fields. A colleague (an AI audio listener) heard a "
+        "raw field recording and described what they heard — without "
+        "naming any species. Using your entomological knowledge, identify "
+        "the most likely source of the sound.\n\n"
+        "ACOUSTIC VOCABULARY (use exact labels; the role drives advice):\n"
+        "TIER 1 — phone-mic detectable:\n"
+        "• Helicoverpa armigera (pest, 1-4 kHz broadband): coarse chewing "
+        "and frass fall on fruit/pods. Cotton, Tomato, Chickpea, Pigeon Pea.\n"
+        "• Fall Armyworm (pest, 1-4 kHz broadband): same texture in maize "
+        "whorl. Karnataka maize since 2018.\n"
+        "• Locust Activity (pest, 50-200 Hz, very high amplitude): wingbeat "
+        "+ mass flight hum. Rare but unmistakable. Often chattering or "
+        "whirring with organic variation.\n"
+        "• Grasshopper Activity (pest, 3-10 kHz stridulation): rasping, "
+        "scraping daytime chorus from field margins.\n"
+        "• Cicada Activity (pest in orchards / ambient elsewhere, 4-10 kHz "
+        "sustained buzz): tonal, almost continuous; mango and coffee context.\n"
+        "• Cricket Ambient (ambient, 3-7 kHz chirp): rhythmic nighttime "
+        "stridulation. NOT a pest — useful 'mic is working' indicator.\n"
+        "• Honey Bee Activity (pollinator, 200-300 Hz wingbeat): low warm "
+        "hum from foraging bees / nearby hives. POSITIVE signal.\n"
+        "TIER 2 — faint, requires close mic; mark low_signal=true:\n"
+        "• Rice Stem Borer (pest, 50-200 Hz faint): intermittent gnawing/"
+        "tapping deep inside a tiller; hollow drilling quality.\n"
+        "• Banana Pseudostem Weevil (pest, 50-500 Hz faint, intermittent): "
+        "boring/scraping inside the pseudostem.\n"
+        "• Mosquito Activity (vector — health advisory, NOT crop pest, "
+        "400-700 Hz): high-pitched whine of female wingbeat at close range.\n"
+        "TIER 0 — explicit silence:\n"
+        "• Quiet / No Audible Activity (ambient): the description shows no "
+        "biological signal — wind only, true silence, or just noise floor. "
+        "Return this confidently rather than guessing a pest.\n\n"
+        "DISAMBIGUATION RULES:\n"
+        "- Clicking, scraping, chattering, rattling with irregular timing "
+        "→ biological (insect stridulation), NOT mechanical.\n"
+        "- Reserve 'Mechanical / Pump Noise' only for steady, constant, "
+        "tonally flat hum.\n"
+        "- Aphid / whitefly / spider mite / thrips / fungal infection are "
+        "INAUDIBLE at phone-mic range — never return these labels here.\n"
+        "- A bee hum (200-300 Hz, organic, sustained, warm) is a "
+        "pollinator, not a pest. Frame it as such.\n"
+        "- A mosquito whine (400-700 Hz at close range) is a health "
+        "concern, not a crop pest. Action goes to standing-water hygiene "
+        "and dengue/malaria watch.\n\n"
+        "ROLES drive farmer guidance:\n"
+        "- pest      → treatment advice\n"
+        "- pollinator → encourage / protect, NEVER recommend insecticide\n"
+        "- vector    → health advisory (drain standing water, net at night)\n"
+        "- ambient   → no treatment, just an environment indicator\n\n"
+        "OPEN VOCABULARY: if the description doesn't match the labels "
+        "above, return the most specific accurate name (e.g. 'Mealybug', "
+        "'Leafhopper', 'Wind', 'Bird Vocalization', 'Mechanical / Pump "
+        "Noise') with is_pest=false where appropriate.\n\n"
         "CALIBRATION RULES:\n"
-        "1. Acoustic identification from a sound description is exploratory "
-        "— be conservative.\n"
-        "2. Confidence MUST be ≤ 70 unless the description is textbook and "
-        "unambiguous.\n"
-        "3. For weak/partial matches, use confidence 30-55.\n"
-        "4. Use the supplied crop type to favor ecologically plausible "
-        "pests.\n\n"
+        "1. Be honest about uncertainty.\n"
+        "2. Strong fingerprint match → confidence 70-85.\n"
+        "3. Tier 2 entries cap at 60 and MUST set low_signal=true and "
+        "action text starting 'Verify visually before treating'.\n"
+        "4. Weak / ambiguous → confidence 30-55.\n"
+        "5. Genuine silence → return Quiet / No Audible Activity at "
+        "confidence 70-90; honest silence is high-value, not a failure.\n"
+        "6. Use the supplied crop type to favor ecologically plausible "
+        "species.\n\n"
         "Respond ONLY with valid JSON (NO markdown fences, NO commentary):\n"
-        '{"pest":"name (canonical reference label when matched)",'
+        '{"pest":"name (canonical label when matched)",'
+        '"role":"pest|pollinator|vector|ambient",'
         '"is_pest":true|false,'
+        '"low_signal":true|false,'
         '"severity":"high|medium|low",'
         '"freq_range":"your best estimate, e.g. 50-150 Hz",'
-        '"pattern":"brief description of the temporal/spectral pattern",'
+        '"pattern":"brief temporal/spectral pattern",'
         '"energy_level":"Very High|High|Moderate|Low-moderate|Background",'
         '"confidence":<int 0-100>,'
-        '"action":"specific actionable advice for an Indian smallholder farmer",'
+        '"action":"specific advice matched to the role",'
         '"icon":"single emoji",'
-        '"top3":[["Pest1",85],["Pest2",10],["Pest3",5]]}'
+        '"top3":[["Label1",85],["Label2",10],["Label3",5]]}'
     )
 
     user_text = (
         f"Crop: {crop_type}.\n\n"
-        f"Audio description from {gemini_model} (Gemini's native-audio "
-        f"listener):\n\"\"\"\n{sound_description}\n\"\"\"\n\n"
+        f"Structured acoustic features extracted by {gemini_model} "
+        f"(Gemini native-audio listener — pest/species names withheld):\n"
+        f"\"\"\"\n{sound_description}\n\"\"\"\n\n"
         "Identify the pest or sound source from this description alone. "
         "Return the JSON object only."
     )
@@ -491,27 +568,45 @@ async def _gemini_classify_direct(
         return {"failed": True, "stage": "client_init", "detail": str(exc)[:200]}
 
     schema_block = (
-        '{"pest":"name","is_pest":true|false,"severity":"high|medium|low",'
+        '{"pest":"name",'
+        '"role":"pest|pollinator|vector|ambient",'
+        '"is_pest":true|false,'
+        '"low_signal":true|false,'
+        '"severity":"high|medium|low",'
         '"freq_range":"e.g. 50-150 Hz",'
         '"pattern":"brief temporal/spectral pattern",'
         '"energy_level":"Very High|High|Moderate|Low-moderate|Background",'
         '"confidence":<int 0-100>,'
-        '"action":"specific advice for an Indian smallholder farmer",'
+        '"action":"specific advice matched to the role",'
         '"icon":"single emoji",'
-        '"top3":[["Pest1",85],["Pest2",10],["Pest3",5]]}'
+        '"top3":[["Label1",85],["Label2",10],["Label3",5]]}'
     )
     prompt = (
-        "You are an expert entomologist for Indian crop pest detection. "
+        "You are an expert entomologist for Indian crop fields. "
         f"Crop: {crop_type}.\n\n"
         f"Audio description from a separate listener:\n\"\"\"\n"
         f"{sound_description}\n\"\"\"\n\n"
-        "Identify the most likely cause of the sound. Use canonical labels "
-        "where they fit ('Aphid Colony', 'Whitefly Infestation', 'Locust "
-        "Activity', 'Stem Borer', 'Early Fungal Infection', 'Spider Mite', "
-        "'Thrips Infestation', 'Healthy Plant'); otherwise use the most "
-        "specific accurate name. Set is_pest=false for non-pest signals.\n\n"
-        "Calibration: confidence MUST be ≤ 70 unless textbook-unambiguous; "
-        "use 30-55 for weak/partial matches.\n\n"
+        "Identify the most likely source of the sound. Use canonical labels "
+        "where they fit:\n"
+        "TIER 1 (phone-mic audible): 'Helicoverpa armigera', 'Fall Armyworm', "
+        "'Locust Activity', 'Grasshopper Activity', 'Cicada Activity', "
+        "'Cricket Ambient', 'Honey Bee Activity'.\n"
+        "TIER 2 (faint, set low_signal=true): 'Rice Stem Borer', "
+        "'Banana Pseudostem Weevil', 'Mosquito Activity'.\n"
+        "TIER 0 (silence): 'Quiet / No Audible Activity'.\n\n"
+        "Roles: pest → treatment; pollinator → protect (no insecticide); "
+        "vector → health advisory; ambient → no action. Bees are pollinators, "
+        "mosquitoes are health vectors, crickets are ambient — frame them "
+        "accordingly. Do NOT return aphid, whitefly, spider mite, thrips, or "
+        "fungal infection here — those are silent at phone-mic range and "
+        "belong to the visual-photo pipeline.\n\n"
+        "If the description doesn't match a label above, return the most "
+        "specific accurate name (e.g. 'Mealybug', 'Wind', 'Bird "
+        "Vocalization', 'Mechanical / Pump Noise') with is_pest=false where "
+        "appropriate.\n\n"
+        "Calibration: confidence ≤ 70 unless textbook-unambiguous; Tier 2 "
+        "caps at 60; for genuine silence return Quiet / No Audible Activity "
+        "at confidence 70-90; weak/partial 30-55.\n\n"
         f"Respond ONLY with valid JSON matching this schema:\n{schema_block}"
     )
 
@@ -586,10 +681,10 @@ def _normalize_pest_name(raw) -> Optional[str]:
     label as-is.
 
     Matching layers (case-insensitive, increasingly tolerant):
-      1. exact         "Aphid Colony"   → "Aphid Colony"
-      2. case fold     "aphid colony"   → "Aphid Colony"
-      3. plural fold   "Spider Mites"   → "Spider Mite"
-      4. unambiguous substring  "Aphids" → "Aphid Colony"
+      1. exact         "Locust Activity" → "Locust Activity"
+      2. case fold     "locust activity" → "Locust Activity"
+      3. plural fold   "Helicoverpas"    → "Helicoverpa armigera"
+      4. unambiguous substring  "Helicoverpa" → "Helicoverpa armigera"
     """
     if not isinstance(raw, str):
         return None
@@ -670,6 +765,8 @@ def _coerce_claude_prediction(raw) -> tuple[Optional[dict], Optional[str]]:
             "energy_level": meta["energy_level"],
             "icon": meta["icon"],
             "action": meta["action"],
+            "role": meta.get("role", "pest"),
+            "low_signal": bool(meta.get("low_signal", False)),
         }
     else:
         defaults = {
@@ -680,6 +777,8 @@ def _coerce_claude_prediction(raw) -> tuple[Optional[dict], Optional[str]]:
             "icon": "🐛",
             "action": "Take a closer recording or cross-check with the photo "
                       "diagnosis tab before applying treatment.",
+            "role": "pest",
+            "low_signal": False,
         }
 
     severity = str(raw.get("severity") or defaults["severity"])
@@ -692,6 +791,25 @@ def _coerce_claude_prediction(raw) -> tuple[Optional[dict], Optional[str]]:
 
     is_pest_raw = raw.get("is_pest")
     is_pest = bool(is_pest_raw) if is_pest_raw is not None else True
+
+    # Role: prefer canonical PEST_META, then AI-supplied (validated against
+    # the four allowed values), else fall back to is_pest-driven default.
+    role_raw = raw.get("role")
+    valid_roles = {"pest", "pollinator", "vector", "ambient"}
+    if canonical is not None:
+        role = defaults["role"]
+    elif isinstance(role_raw, str) and role_raw.strip().lower() in valid_roles:
+        role = role_raw.strip().lower()
+    else:
+        role = "pest" if is_pest else "ambient"
+
+    # low_signal: canonical wins; otherwise honor AI's flag for any name
+    # mentioning Tier 2 species, else default False.
+    if canonical is not None:
+        low_signal = defaults["low_signal"]
+    else:
+        low_signal_raw = raw.get("low_signal")
+        low_signal = bool(low_signal_raw) if low_signal_raw is not None else False
 
     raw_top3 = raw.get("top3") or []
     cleaned_top3: list[tuple[str, int]] = []
@@ -713,7 +831,9 @@ def _coerce_claude_prediction(raw) -> tuple[Optional[dict], Optional[str]]:
 
     coerced = {
         "pest": pest,
+        "role": role,
         "is_pest": is_pest,
+        "low_signal": low_signal,
         "severity": severity,
         "freq_range": freq_range,
         "pattern": pattern,
@@ -731,6 +851,8 @@ def _rejected(reason: str, warnings: list[str], duration: float, sr: int,
               decode: Optional[str]) -> AcousticResponse:
     return AcousticResponse(
         pest='Analysis Rejected',
+        role='ambient',
+        low_signal=False,
         severity='low',
         confidence=0,
         freq_range='N/A',
@@ -791,7 +913,7 @@ async def analyze_audio(
 
     truncated = duration > MAX_ANALYSIS_SECONDS
     if truncated:
-        warnings.append("truncated_to_10s")
+        warnings.append("truncated_to_20s")
         seg = pcm[:rate * MAX_ANALYSIS_SECONDS]
     else:
         seg = pcm
@@ -841,76 +963,74 @@ async def analyze_audio(
         "energy_variance": round(features[7], 5),
     }
 
-    # AI dispatch. The two-step Gemini → Claude pipeline is preferred when
-    # GEMINI_API_KEY is set: Gemini hears the audio (no pest names allowed in
-    # the prompt) and Claude reasons over Gemini's plain-language description.
-    # When only ANTHROPIC_API_KEY is set, we fall back to the legacy
-    # spectrogram-vision path. When neither key is set, _claude_acoustic
-    # returns the no_api_key sentinel which routes into the synthetic
-    # Random-Forest offline demo.
+    # Dispatch order:
+    #   1. YAMNet (local, primary). Trained on real audio.
+    #   2. Gemini→Claude API (fallback). Fires only when YAMNet is unavailable
+    #      or raises — e.g., TF not installed, head file missing, runtime error.
+    #   3. Claude vision on spectrogram (further fallback when only Anthropic
+    #      key is set and Gemini describe step is unreachable).
     settings_ref = get_settings()
     ai_result: Optional[dict] = None
     ai_method = "uncertain"
 
-    if settings_ref.GEMINI_API_KEY:
-        wav_bytes = _encode_wav(seg, rate)
-        sound_desc, gemini_info = await _gemini_describe_audio(wav_bytes)
-        if sound_desc:
-            ai_method = "gemini_audio"
-            if settings_ref.ANTHROPIC_API_KEY:
-                ai_result = await _claude_from_description(
-                    sound_desc, normalized_crop, gemini_info
+    yamnet_bundle = request.app.state.acoustic_model
+    if yamnet_bundle is not None:
+        try:
+            ai_result = yamnet_bundle.predict(seg, rate, crop_type=normalized_crop)
+            ai_method = "yamnet"
+        except Exception as exc:
+            logger.warning("acoustic: YAMNet predict failed: %s", exc)
+            ai_result = None
+            ai_method = "uncertain"
+
+    if ai_result is None:
+        # YAMNet unavailable — fall through to API pipeline.
+        if settings_ref.GEMINI_API_KEY:
+            wav_bytes = _encode_wav(seg, rate)
+            sound_desc, gemini_info = await _gemini_describe_audio(wav_bytes)
+            if sound_desc:
+                ai_method = "gemini_audio"
+                if settings_ref.ANTHROPIC_API_KEY:
+                    ai_result = await _claude_from_description(
+                        sound_desc, normalized_crop, gemini_info
+                    )
+                else:
+                    ai_result = await _gemini_classify_direct(
+                        sound_desc, normalized_crop, gemini_info
+                    )
+            elif settings_ref.ANTHROPIC_API_KEY and spec_bytes is not None:
+                ai_result = await _claude_acoustic(
+                    spec_bytes, normalized_crop, dsp_features_for_claude
                 )
+                ai_method = "claude_vision"
             else:
-                ai_result = await _gemini_classify_direct(
-                    sound_desc, normalized_crop, gemini_info
-                )
-        elif settings_ref.ANTHROPIC_API_KEY and spec_bytes is not None:
-            # Gemini describe step failed but Claude vision is available —
-            # graceful fallback to the legacy spectrogram path.
+                ai_result = {
+                    "failed": True,
+                    "stage": f"gemini_describe:{gemini_info or 'unknown'}",
+                    "detail": "Gemini audio listener could not produce a description.",
+                }
+        elif spec_bytes is not None:
             ai_result = await _claude_acoustic(
                 spec_bytes, normalized_crop, dsp_features_for_claude
             )
             ai_method = "claude_vision"
-        else:
-            ai_result = {
-                "failed": True,
-                "stage": f"gemini_describe:{gemini_info or 'unknown'}",
-                "detail": "Gemini audio listener could not produce a description.",
-            }
-    elif spec_bytes is not None:
-        # No Gemini key: preserve the original claude_vision-or-RFB behavior.
-        # _claude_acoustic returns the no_api_key sentinel when
-        # ANTHROPIC_API_KEY is also unset, which routes us into the
-        # offline-demo branch below.
-        ai_result = await _claude_acoustic(
-            spec_bytes, normalized_crop, dsp_features_for_claude
-        )
-        ai_method = "claude_vision"
 
     ai_pred, ai_reject_reason = _coerce_claude_prediction(ai_result)
 
     if ai_pred is not None:
         result = ai_pred
-        result["ml_used"] = False
+        result["ml_used"] = (ai_method == "yamnet")
         result["analysis_method"] = ai_method
         result["cv_accuracy"] = None
         result["cv_label"] = None
         if isinstance(ai_result, dict):
             result["claude_model_used"] = ai_result.get("_model_used")
-    elif isinstance(ai_result, dict) and ai_result.get("stage") == "no_api_key":
-        # Offline-demo path — synthetic RF, badged distinctly in the UI. No
-        # extra quality_warning entry: analysis_method='random_forest_offline_demo'
-        # is the canonical signal.
-        acoustic_bundle = request.app.state.acoustic_model
-        if acoustic_bundle is None:
-            raise HTTPException(status_code=503, detail="Acoustic model unavailable")
-        result = acoustic_bundle.predict(features, crop_type=normalized_crop)
-        result["analysis_method"] = "random_forest_offline_demo"
-        result["is_pest"] = result.get("pest") != "Healthy Plant"
+            if ai_method == "yamnet":
+                result["cv_accuracy"] = ai_result.get("_test_accuracy")
+                result["cv_label"] = "YAMNet held-out test set"
     else:
-        # AI tried but failed: analysis_method='uncertain' surfaces the real
-        # failure stage to the UI rather than dressing up a synthetic guess.
+        # All available pipelines failed. analysis_method='uncertain' surfaces
+        # the real failure stage to the UI rather than dressing up a guess.
         result = _build_uncertain_result(ai_result, ai_reject_reason)
 
     result.update(base_meta)
@@ -949,6 +1069,8 @@ def _build_uncertain_result(
 
     return {
         "pest": "Uncertain",
+        "role": "ambient",
+        "low_signal": False,
         "is_pest": None,
         "severity": "low",
         "confidence": 0,

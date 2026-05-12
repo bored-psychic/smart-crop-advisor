@@ -19,10 +19,10 @@ class AcousticResponse(BaseModel):
     claude_advice: Optional[str] = None
 
     analysis_method: Literal[
+        "yamnet",
         "claude_vision",
         "gemini_audio",
         "uncertain",
-        "random_forest_offline_demo",
         "rejected",
     ] = "rejected"
     decode_method: Optional[Literal["scipy_wav", "pydub_ffmpeg"]] = None
@@ -39,3 +39,10 @@ class AcousticResponse(BaseModel):
     claude_failure_stage: Optional[str] = None
     claude_failure_detail: Optional[str] = None
     claude_model_used: Optional[str] = None
+
+    # Audible-insect taxonomy metadata. role drives how the frontend renders
+    # results (pest=treatment, pollinator=protect, vector=health-advisory,
+    # ambient=indicator only). low_signal=True flags Tier 2 entries where
+    # the user should verify visually before treating.
+    role: Literal["pest", "pollinator", "vector", "ambient"] = "pest"
+    low_signal: bool = False
