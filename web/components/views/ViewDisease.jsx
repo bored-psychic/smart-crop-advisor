@@ -26,7 +26,7 @@ function Top3Bars({ top3 }) {
       {top3.map(([name, pct]) => (
         <div key={name} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <div style={{ width: 120, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right' }}>{name}</div>
-          <div style={{ flex: 1, height: 6, background: 'rgba(42,51,40,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
             <div style={{ width: `${(pct / max) * 100}%`, height: '100%', background: 'var(--leaf)', borderRadius: 99, transition: 'width 0.8s ease' }} />
           </div>
           <div style={{ width: 40, fontSize: 12, color: 'var(--ink-faint)', textAlign: 'right' }}>{pct}%</div>
@@ -52,19 +52,19 @@ function PhotoResult({ result }) {
         {result.disease}
       </div>
       {result.action && (
-        <div style={{ marginTop: 14, padding: '12px 14px', background: 'rgba(217,182,107,0.18)', borderRadius: 12 }}>
-          <div className="page-eyebrow" style={{ color: '#A06B1F' }}>right now</div>
+        <div style={{ marginTop: 14, padding: '12px 14px', background: 'rgba(240,192,96,0.16)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
+          <div className="page-eyebrow" style={{ color: 'var(--sun)' }}>right now</div>
           <div style={{ marginTop: 4 }}>{result.action}</div>
         </div>
       )}
       {result.treatment && (
-        <div style={{ marginTop: 10, padding: '12px 14px', background: 'rgba(199,214,189,0.4)', borderRadius: 12 }}>
+        <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
           <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>treatment</div>
           <div style={{ marginTop: 4 }}>{result.treatment}</div>
         </div>
       )}
       {result.prevention && (
-        <div style={{ marginTop: 10, padding: '12px 14px', background: 'rgba(199,214,189,0.15)', borderRadius: 12 }}>
+        <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--glass-bg-subtle)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
           <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>prevention</div>
           <div style={{ marginTop: 4 }}>{result.prevention}</div>
         </div>
@@ -85,13 +85,13 @@ function SymptomResult({ result }) {
         {result.severity && <SevTag severity={result.severity} />}
       </div>
       {result.treatment && (
-        <div style={{ padding: '12px 14px', background: 'rgba(199,214,189,0.4)', borderRadius: 12, marginBottom: 10 }}>
+        <div style={{ padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12, marginBottom: 10 }}>
           <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>treatment</div>
           <div style={{ marginTop: 4 }}>{result.treatment}</div>
         </div>
       )}
       {result.prevention && (
-        <div style={{ padding: '12px 14px', background: 'rgba(199,214,189,0.15)', borderRadius: 12 }}>
+        <div style={{ padding: '12px 14px', background: 'var(--glass-bg-subtle)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
           <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>prevention</div>
           <div style={{ marginTop: 4 }}>{result.prevention}</div>
         </div>
@@ -130,12 +130,10 @@ function PhotoPanel() {
     setLoading(true);
     setResult(null);
     setError(null);
-    window.__catMood?.('thinking', 2500);
     window.api.diseasePhoto(f, cropType)
       .then(r => {
         setResult(r);
         setLoading(false);
-        window.__catMood?.('excited', 1500);
       })
       .catch(e => {
         setError({
@@ -196,8 +194,8 @@ function PhotoPanel() {
           onDragLeave={() => setDrag(false)}
           onDrop={onDrop}
           style={{
-            borderColor: drag ? 'var(--leaf)' : 'var(--line-2)',
-            background: drag ? 'rgba(199,214,189,0.4)' : 'rgba(255,255,255,0.4)',
+            borderColor: drag ? 'var(--leaf)' : 'var(--glass-border-strong)',
+            background: drag ? 'rgba(127,217,140,0.14)' : 'var(--glass-bg-subtle)',
           }}
         >
           <div style={{ fontSize: 36 }}>🍃</div>
@@ -300,12 +298,10 @@ function SymptomPanel() {
     setAnalysisLoading(true);
     setAnalysisResult(null);
     setAnalysisError(null);
-    window.__catMood?.('thinking', 2000);
     window.api.diseaseSymptom(crop, item.symptom)
       .then(r => {
         setAnalysisResult(r);
         setAnalysisLoading(false);
-        window.__catMood?.('excited', 1500);
       })
       .catch(e => {
         setAnalysisError({

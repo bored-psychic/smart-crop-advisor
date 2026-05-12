@@ -58,9 +58,9 @@ function ViewField({ profile, setProfile, t }) {
 
   /* ---- Risk badge helpers ---- */
   const riskStyle = (risk) => {
-    if (risk === 'HIGH')   return { bg: 'rgba(182,85,58,0.08)',   border: 'var(--berry)', color: 'var(--berry)',   icon: '🔴' };
-    if (risk === 'MEDIUM') return { bg: 'rgba(160,107,31,0.08)',  border: '#A06B1F',      color: '#A06B1F',        icon: '🟡' };
-    return                        { bg: 'rgba(62,107,62,0.08)',   border: 'var(--leaf)',  color: 'var(--leaf)',    icon: '🟢' };
+    if (risk === 'HIGH')   return { bg: 'rgba(232,112,95,0.14)', border: 'var(--berry)', color: 'var(--berry)', icon: '🔴' };
+    if (risk === 'MEDIUM') return { bg: 'rgba(240,192,96,0.14)', border: 'var(--sun)',   color: 'var(--sun)',   icon: '🟡' };
+    return                        { bg: 'var(--leaf-soft)',      border: 'var(--leaf)',  color: 'var(--leaf)',  icon: '🟢' };
   };
 
   /* ---- WhatsApp message ---- */
@@ -259,7 +259,7 @@ function ViewField({ profile, setProfile, t }) {
               <tbody>
                 {GOVT_HELPLINES.map(([name, num, note], i) => (
                   <tr key={num} style={{
-                    background: i % 2 === 0 ? 'transparent' : 'rgba(199,214,189,0.2)',
+                    background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.06)',
                   }}>
                     <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>
                       {name}

@@ -1,5 +1,5 @@
-// atoms.jsx — shared UI primitives: Slider, Donut, LocationBar, VineBackdrop,
-//             Sidebar, TabBar, Topbar, mountCaterpillar, Loading, ErrorCard,
+// atoms.jsx — shared UI primitives: Slider, Donut, LocationBar,
+//             Sidebar, TabBar, Topbar, Loading, ErrorCard,
 //             useToast, ToastContainer
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
@@ -26,7 +26,7 @@ function Donut({ value, max=100, size=160, label, sub }){
   return (
     <div style={{position:'relative',width:size,height:size,margin:'0 auto'}}>
       <svg width={size} height={size} style={{transform:'rotate(-90deg)'}}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(42,51,40,0.08)" strokeWidth={stroke}/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth={stroke}/>
         <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--leaf)" strokeWidth={stroke}
           strokeDasharray={`${dash} ${c-dash}`} strokeLinecap="round" style={{transition:'stroke-dasharray 1s ease'}}/>
       </svg>
@@ -106,7 +106,7 @@ function LocationBar({ village, setVillage, state, setState, extra }){
   );
 }
 
-/* VineBackdrop is now in HTML (fixed layers); keep stub for compat */
+/* Compat stub — VineBackdrop no longer rendered */
 function VineBackdrop(){ return null; }
 
 /* ============ Sidebar — collapsible, with profile editor + language ============ */
@@ -118,9 +118,12 @@ const LANGS = [
   { code:'kn', flag:'🇮🇳', label:'ಕನ್ನಡ' },
   { code:'bn', flag:'🇮🇳', label:'বাংলা' },
   { code:'mr', flag:'🇮🇳', label:'मराठी' },
+  { code:'ml', flag:'🇮🇳', label:'മലയാളം' },
+  { code:'gu', flag:'🇮🇳', label:'ગુજરાતી' },
+  { code:'pa', flag:'🇮🇳', label:'ਪੰਜਾਬੀ' },
 ];
 
-function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, active, setActive, t }){
+function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, active, setActive, t, onLogout }){
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef(null);
   useEffect(()=>{
@@ -209,14 +212,33 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
           </div>
 
           {/* Today snippet */}
-          <div style={{marginTop:'auto',padding:'12px 12px',background:'rgba(199,214,189,0.32)',borderRadius:12,fontSize:12,color:'var(--ink-soft)',lineHeight:1.6}}>
-            <div style={{fontFamily:'var(--hand)',fontSize:18,color:'var(--ink)',marginBottom:4}}>today on the farm</div>
+          <div style={{
+            marginTop:'auto',padding:'12px 14px',
+            background:'var(--glass-bg)',border:'1px solid var(--glass-border)',
+            borderRadius:12,fontSize:12,color:'var(--ink-soft)',lineHeight:1.7
+          }}>
+            <div style={{fontFamily:'var(--display)',fontSize:18,color:'var(--ink)',marginBottom:4,letterSpacing:'-0.01em'}}>today on the farm</div>
             ☀️ 29.4°C, 64% humidity<br/>
             🌧 light rain at dusk<br/>
             🐝 bees active · safe to spray after 5pm
           </div>
-          <div style={{fontFamily:'var(--hand)',fontSize:16,color:'var(--ink-faint)',textAlign:'center',padding:'4px 6px',lineHeight:1.3}}>
+          <div style={{
+            fontFamily:'var(--display)',fontSize:15,fontStyle:'italic',
+            color:'var(--ink-faint)',textAlign:'center',padding:'4px 6px',lineHeight:1.4
+          }}>
             "a calm field today<br/>is a good harvest tomorrow."
+          </div>
+
+          {/* Footer action — sign out */}
+          <div className="sb-actions">
+            <button className="sb-action danger" onClick={onLogout} title="Sign out">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <path d="M16 17l5-5-5-5"/>
+                <path d="M21 12H9"/>
+              </svg>
+              <span>Sign out</span>
+            </button>
           </div>
         </div>
       </div>
@@ -261,189 +283,10 @@ function Topbar({ crumb }){
   );
 }
 
-/* ============ Caterpillar — context-aware mechanic ============ */
-function mountCaterpillar(host){
-  if(!host || host.dataset.mounted) return;
-  host.dataset.mounted = '1';
-  const cat = document.createElement('div');
-  cat.className = 'cat';
-  cat.innerHTML = `
-    <svg class="cat-svg" width="140" height="64" viewBox="0 0 140 64">
-      <!-- antennae -->
-      <g class="seg antennae">
-        <line x1="100" y1="22" x2="106" y2="6" stroke="#3E6B3E" stroke-width="1.4" stroke-linecap="round"/>
-        <circle cx="106" cy="6" r="2.2" fill="#B6553A"/>
-        <line x1="106" y1="22" x2="114" y2="8" stroke="#3E6B3E" stroke-width="1.4" stroke-linecap="round"/>
-        <circle cx="114" cy="8" r="2.2" fill="#B6553A"/>
-      </g>
-      <!-- body segments (back to front) -->
-      <g class="seg body"><circle cx="20" cy="35" r="7" fill="#82B082"/><ellipse cx="20" cy="38" rx="5" ry="2" fill="#C7D6BD" opacity="0.6"/></g>
-      <g class="seg body"><circle cx="34" cy="34" r="8" fill="#3E6B3E"/><ellipse cx="34" cy="37" rx="6" ry="2.5" fill="#C7D6BD" opacity="0.6"/></g>
-      <g class="seg body"><circle cx="49" cy="33" r="8.5" fill="#82B082"/><ellipse cx="49" cy="36" rx="6.5" ry="2.5" fill="#C7D6BD" opacity="0.6"/></g>
-      <g class="seg body"><circle cx="65" cy="32" r="9" fill="#3E6B3E"/><ellipse cx="65" cy="35" rx="7" ry="3" fill="#C7D6BD" opacity="0.6"/></g>
-      <g class="seg body"><circle cx="82" cy="30" r="10" fill="#82B082"/><ellipse cx="82" cy="33" rx="7.5" ry="3" fill="#C7D6BD" opacity="0.6"/></g>
-      <!-- head -->
-      <g class="seg body head">
-        <circle cx="100" cy="28" r="11" fill="#3E6B3E"/>
-        <ellipse cx="100" cy="32" rx="8" ry="3" fill="#C7D6BD" opacity="0.6"/>
-        <circle class="eye-w" cx="96" cy="25" r="2.8" fill="#FBF7EC"/>
-        <circle class="pupil" cx="96" cy="25" r="1.5" fill="#2A3328"/>
-        <ellipse class="lid" cx="96" cy="25" rx="2.8" ry="2.8" fill="#3E6B3E"/>
-        <path class="mouth" d="M95 32 q5 2 10 0" stroke="#2A3328" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        <!-- rosy cheek -->
-        <circle cx="92" cy="30" r="2" fill="#B6553A" opacity="0.35"/>
-      </g>
-      <!-- tiny legs -->
-      <g stroke="#3E6B3E" stroke-width="1.2" stroke-linecap="round">
-        <line x1="20" y1="42" x2="20" y2="46"/><line x1="34" y1="42" x2="34" y2="46"/>
-        <line x1="49" y1="42" x2="49" y2="46"/><line x1="65" y1="41" x2="65" y2="45"/>
-        <line x1="82" y1="40" x2="82" y2="44"/><line x1="100" y1="39" x2="100" y2="43"/>
-      </g>
-
-      <!-- WRENCH (held in front legs) -->
-      <g class="tool wrench">
-        <g transform="translate(0 0)">
-          <!-- wrench shaft -->
-          <rect x="92" y="14" width="3" height="14" fill="#8C9684" rx="0.6"/>
-          <!-- wrench head (open jaw) -->
-          <path d="M88 8 L88 16 L91 16 L91 11 L97 11 L97 16 L100 16 L100 8 Z" fill="#8C9684"/>
-          <circle cx="93.5" cy="13.5" r="1" fill="#5A6655"/>
-          <!-- handle wrap -->
-          <rect x="92" y="22" width="3" height="6" fill="#B6553A" rx="0.6"/>
-        </g>
-        <!-- front leg gripping wrench -->
-        <line x1="100" y1="33" x2="96" y2="28" stroke="#3E6B3E" stroke-width="1.6" stroke-linecap="round"/>
-      </g>
-
-      <!-- MAGNIFYING LENS (held up by front legs) -->
-      <g class="tool lens">
-        <!-- handle -->
-        <line x1="106" y1="26" x2="118" y2="38" stroke="#5A6655" stroke-width="2.2" stroke-linecap="round"/>
-        <!-- ring -->
-        <circle cx="104" cy="14" r="9" fill="rgba(199,214,189,0.35)" stroke="#5A6655" stroke-width="1.8"/>
-        <circle cx="104" cy="14" r="9" fill="none" stroke="#FBF7EC" stroke-width="0.6"/>
-        <!-- glint -->
-        <path class="glint" d="M99 10 q3 -3 7 -3" stroke="#FFFCF1" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0"/>
-        <!-- raised front legs -->
-        <line x1="100" y1="22" x2="100" y2="16" stroke="#3E6B3E" stroke-width="1.6" stroke-linecap="round"/>
-        <line x1="100" y1="16" x2="104" y2="14" stroke="#3E6B3E" stroke-width="1.6" stroke-linecap="round"/>
-      </g>
-    </svg>`;
-  host.appendChild(cat);
-
-  const pupil = cat.querySelector('.pupil');
-  const mouth = cat.querySelector('.mouth');
-  const head = cat.querySelector('.head');
-
-  // smooth follow
-  let curX = window.innerWidth*0.3;
-  let targetX = curX;
-  let mouseX = curX, mouseY = window.innerHeight/2;
-  let facing = 1;
-  let mood = 'idle';
-  let moodUntil = 0;
-
-  window.__catMood = (m, ms=1500)=>{
-    mood = m; moodUntil = performance.now()+ms;
-    cat.classList.toggle('excited', m==='excited');
-    cat.classList.toggle('thinking', m==='thinking');
-  };
-
-  // ===== Tool detection: any slider drag → wrench, any input focus / file drop → lens =====
-  let activeSlider = null;
-  function setTool(t){
-    cat.classList.toggle('tool-wrench', t==='wrench');
-    cat.classList.toggle('tool-lens', t==='lens');
-    if(!t){ cat.classList.remove('tool-wrench','tool-lens'); }
-  }
-  function satisfiedBounce(){
-    cat.classList.add('bounce');
-    setTimeout(()=>cat.classList.remove('bounce'), 500);
-  }
-  function antennaeWiggle(){
-    cat.classList.add('antwig');
-    setTimeout(()=>cat.classList.remove('antwig'), 1000);
-  }
-
-  document.addEventListener('pointerdown', (e)=>{
-    const el = e.target;
-    if(el.matches && el.matches('input[type=range]')){
-      activeSlider = el; setTool('wrench');
-    }
-  }, true);
-  document.addEventListener('pointerup', ()=>{
-    if(activeSlider){ activeSlider=null; setTool(null); satisfiedBounce(); }
-  }, true);
-  document.addEventListener('focusin', (e)=>{
-    const el = e.target;
-    if(el.matches && el.matches('input:not([type=range]), textarea, select')){
-      setTool('lens');
-    }
-  }, true);
-  document.addEventListener('focusout', (e)=>{
-    const el = e.target;
-    if(el.matches && el.matches('input:not([type=range]), textarea, select')){
-      setTool(null); antennaeWiggle();
-    }
-  }, true);
-  // file inputs
-  document.addEventListener('change', (e)=>{
-    if(e.target.type==='file'){ setTool(null); antennaeWiggle(); }
-  }, true);
-  // drop zone hovers — peek with lens
-  document.addEventListener('dragenter', ()=>setTool('lens'), true);
-  document.addEventListener('dragleave', ()=>setTool(null), true);
-  document.addEventListener('drop', ()=>{ setTool(null); antennaeWiggle(); }, true);
-
-  // mouse tracking
-  window.addEventListener('mousemove', e=>{
-    mouseX = e.clientX; mouseY = e.clientY;
-    targetX = Math.max(20, Math.min(window.innerWidth-140, mouseX - 70));
-  });
-  window.addEventListener('click', ()=>{ window.__catMood('excited',900); });
-
-  // periodic blink
-  setInterval(()=>{
-    if(!cat.classList.contains('tool-lens') && !cat.classList.contains('tool-wrench')){
-      cat.classList.add('blink');
-      setTimeout(()=>cat.classList.remove('blink'), 320);
-    }
-  }, 8000);
-
-  function frame(now){
-    if (now > moodUntil && mood !== 'idle') { mood='idle'; cat.classList.remove('excited','thinking'); }
-    const dx = targetX - curX;
-    curX += dx * 0.06;
-    const moving = Math.abs(dx) > 1.5;
-    const desiredFacing = (mouseX > curX + 70) ? 1 : -1;
-    if (desiredFacing !== facing && moving) facing = desiredFacing;
-    cat.style.transform = `translateX(${curX}px) scaleX(${facing})`;
-
-    // pupil tracks cursor
-    const headRect = head.getBoundingClientRect();
-    const hx = headRect.left + headRect.width/2;
-    const hy = headRect.top + headRect.height/2;
-    const ang = Math.atan2(mouseY-hy, (mouseX-hx)*facing);
-    const px = Math.cos(ang)*1.6;
-    const py = Math.sin(ang)*1.6;
-    pupil.setAttribute('cx', 96 + px);
-    pupil.setAttribute('cy', 25 + py);
-
-    if (cat.classList.contains('tool-wrench')) mouth.setAttribute('d', 'M95 32 q5 0 10 0');
-    else if (cat.classList.contains('tool-lens')) mouth.setAttribute('d', 'M96 32 q4 1 8 0');
-    else if (mood==='excited') mouth.setAttribute('d', 'M93 31 q7 5 14 0');
-    else if (mood==='thinking') mouth.setAttribute('d', 'M95 33 q5 -1 10 0');
-    else mouth.setAttribute('d', 'M95 32 q5 2 10 0');
-
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
-
 /* ============ New shared helpers ============ */
 function Loading({ label }) {
   return (
-    <div className="card rise" style={{textAlign:'center',padding:'40px 24px',background:'rgba(199,214,189,0.3)'}}>
+    <div className="card rise" style={{textAlign:'center',padding:'40px 24px'}}>
       <div style={{fontSize:32,marginBottom:12}}>🌿</div>
       <div style={{color:'var(--ink-soft)',fontSize:14,fontStyle:'italic'}}>{label || 'Loading…'}</div>
     </div>
@@ -452,7 +295,7 @@ function Loading({ label }) {
 
 function ErrorCard({ title, detail, onRetry }) {
   return (
-    <div className="card rise" style={{borderColor:'var(--berry)',background:'rgba(182,85,58,0.06)'}}>
+    <div className="card rise" style={{borderColor:'rgba(232,112,95,0.32)',background:'rgba(232,112,95,0.14)'}}>
       <div style={{color:'var(--berry)',fontFamily:'var(--display)',fontSize:20,marginBottom:8}}>{title}</div>
       {detail && <div style={{color:'var(--ink-soft)',fontSize:14,marginBottom:12}}>{detail}</div>}
       {onRetry && <button className="btn" style={{borderColor:'var(--berry)',color:'var(--berry)'}} onClick={onRetry}>↺ Try again</button>}
@@ -473,15 +316,18 @@ function useToast() {
 }
 
 function ToastContainer({ toasts }) {
-  const kindColor = {info:'var(--leaf)', warn:'#A06B1F', error:'var(--berry)'};
+  const kindColor = {info:'var(--leaf)', warn:'var(--sun)', error:'var(--berry)'};
   return (
     <div style={{position:'fixed',top:16,right:16,display:'flex',flexDirection:'column',gap:8,zIndex:9999}}>
       {toasts.map(t => (
         <div key={t.id} style={{
-          background:'#FFFCF1',border:`1px solid ${kindColor[t.kind]||kindColor.info}`,
+          background:'rgba(8,18,10,0.88)',
+          backdropFilter:'blur(20px)',
+          WebkitBackdropFilter:'blur(20px)',
+          border:'1px solid var(--glass-border)',
           color:kindColor[t.kind]||kindColor.info,
           borderRadius:999,padding:'8px 16px',fontSize:13,fontWeight:500,
-          boxShadow:'0 4px 16px -4px rgba(42,51,40,0.2)',
+          boxShadow:'0 8px 24px -8px rgba(0,0,0,0.5)',
           animation:'rise 0.3s ease both'
         }}>{t.text}</div>
       ))}
@@ -493,6 +339,6 @@ Object.assign(window, {
   Slider, Donut, INDIA_STATES, ALL_CROPS, CROP_KC_KEYS, CALAMITY_TIPS, PEST_META, ACOUSTIC_WARNING_LABELS,
   GOVT_HELPLINES,
   LocationBar, VineBackdrop, LANGS,
-  Sidebar, TabBar, Topbar, mountCaterpillar,
+  Sidebar, TabBar, Topbar,
   Loading, ErrorCard, useToast, ToastContainer
 });

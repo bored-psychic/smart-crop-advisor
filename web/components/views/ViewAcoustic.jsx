@@ -8,7 +8,7 @@ const BAR_COUNT = window.innerWidth <= 640 ? 28 : 40;
 function roleColor(role){
   if(role==='pest')       return 'var(--berry)';
   if(role==='pollinator') return 'var(--leaf)';
-  if(role==='vector')     return '#A06B1F';
+  if(role==='vector')     return 'var(--sun)';
   return 'var(--ink-faint)';
 }
 
@@ -36,7 +36,7 @@ function TopBars({ top3 }){
           <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:3}}>
             <span>{name}</span><span style={{color:'var(--ink-soft)'}}>{Math.round(pct)}%</span>
           </div>
-          <div style={{height:8,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
+          <div style={{height:8,borderRadius:4,background:'rgba(255,255,255,0.10)',overflow:'hidden'}}>
             <div style={{height:'100%',width:`${(pct/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4,transition:'width 0.8s ease'}}/>
           </div>
         </div>
@@ -58,7 +58,7 @@ function BandChart({ bandEnergy }){
             <span style={{color:'var(--ink-soft)'}}>{band}</span>
             <span style={{color:'var(--ink-faint)'}}>{val.toFixed ? val.toFixed(4) : val}</span>
           </div>
-          <div style={{height:7,borderRadius:4,background:'rgba(42,51,40,0.08)',overflow:'hidden'}}>
+          <div style={{height:7,borderRadius:4,background:'rgba(255,255,255,0.10)',overflow:'hidden'}}>
             <div style={{height:'100%',width:`${(val/maxVal)*100}%`,background:'var(--leaf)',borderRadius:4}}/>
           </div>
         </div>
@@ -78,7 +78,7 @@ function RichResult({ r }){
       <div style={{
         padding:'16px 18px',borderRadius:14,marginBottom:14,
         border:`2px solid ${rc}`,
-        background: r.role==='pest'?'rgba(182,85,58,0.06)':r.role==='pollinator'?'rgba(130,176,130,0.10)':'rgba(42,51,40,0.04)'
+        background: r.role==='pest'?'rgba(232,112,95,0.14)':r.role==='pollinator'?'var(--leaf-soft)':'var(--glass-bg)'
       }}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
           <span style={{fontSize:36}}>{r.icon || '🐛'}</span>
@@ -93,14 +93,14 @@ function RichResult({ r }){
             <span style={{
               fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',
               padding:'3px 9px',borderRadius:999,
-              background:'rgba(42,51,40,0.08)',color:'var(--ink-soft)'
+              background:'rgba(255,255,255,0.10)',color:'var(--ink-soft)'
             }}>{r.severity}</span>
           )}
         </div>
         {r.action && (
           <div style={{
             padding:'10px 13px',borderRadius:10,fontSize:14,lineHeight:1.5,
-            background: r.role==='pollinator'?'rgba(130,176,130,0.2)':'rgba(199,214,189,0.4)',
+            background:'rgba(255,255,255,0.08)',
             color: r.role==='ambient'||r.is_pest===false?'var(--ink-soft)':'var(--ink)'
           }}>{r.action}</div>
         )}
@@ -115,7 +115,9 @@ function RichResult({ r }){
           {label:'Energy',     value:r.energy_level||'—'},
         ].map(({label,value})=>(
           <div key={label} style={{
-            padding:'10px 12px',borderRadius:12,background:'rgba(199,214,189,0.3)',textAlign:'center'
+            padding:'10px 12px',borderRadius:12,
+            background:'var(--glass-bg-subtle)',border:'1px solid var(--glass-border)',
+            textAlign:'center'
           }}>
             <div style={{fontSize:16,fontWeight:700,color:'var(--ink)',fontFamily:'var(--display)'}}>{value}</div>
             <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--ink-faint)',marginTop:3}}>{label}</div>
@@ -130,7 +132,7 @@ function RichResult({ r }){
       {r.claude_advice && (
         <div style={{
           marginTop:16,padding:'12px 16px',borderRadius:12,
-          background:'rgba(130,176,130,0.15)',borderLeft:'3px solid var(--leaf)',
+          background:'var(--leaf-soft)',borderLeft:'3px solid var(--leaf)',
           fontSize:14,lineHeight:1.6,color:'var(--ink)'
         }}>
           <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:6,fontWeight:600}}>Claude advice</div>
@@ -142,11 +144,11 @@ function RichResult({ r }){
       {r.quality_warnings && r.quality_warnings.length > 0 && (
         <div style={{
           marginTop:14,padding:'10px 14px',borderRadius:12,
-          background:'rgba(160,107,31,0.08)',border:'1px solid rgba(160,107,31,0.3)'
+          background:'rgba(240,192,96,0.14)',border:'1px solid rgba(240,192,96,0.32)'
         }}>
-          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:6,fontWeight:600}}>quality notes</div>
+          <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--sun)',marginBottom:6,fontWeight:600}}>quality notes</div>
           {r.quality_warnings.map((w,i)=>(
-            <div key={i} style={{fontSize:13,color:'#A06B1F',marginBottom:3}}>
+            <div key={i} style={{fontSize:13,color:'var(--sun)',marginBottom:3}}>
               {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
             </div>
           ))}
@@ -179,7 +181,7 @@ function RichResult({ r }){
             </thead>
             <tbody>
               {Object.entries(window.PEST_META||{}).map(([name,meta])=>(
-                <tr key={name} style={{borderBottom:'1px solid rgba(42,51,40,0.06)'}}>
+                <tr key={name} style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
                   <td style={{padding:'5px 8px',fontSize:18}}>{meta.icon}</td>
                   <td style={{padding:'5px 8px'}}>{name}</td>
                   <td style={{padding:'5px 8px',color:roleColor(meta.role)}}>{meta.roleLabel}</td>
@@ -305,11 +307,9 @@ function ViewAcoustic({ profile, t }){
     setLoading(true);
     setError(null);
     setResult(null);
-    window.__catMood?.('thinking', 3000);
     try {
       const res = await window.api.acousticAnalyze(file, cropType || 'Unknown');
       setResult(res);
-      window.__catMood?.('excited', 1200);
     } catch(err){
       setError(normalizeError(err));
     } finally {
@@ -354,8 +354,8 @@ function ViewAcoustic({ profile, t }){
             onDragLeave={()=>setDrag(false)}
             onDrop={onDrop}
             style={{
-              borderColor:drag?'var(--leaf)':'var(--line-2)',
-              background:drag?'rgba(199,214,189,0.4)':'rgba(255,255,255,0.4)'
+              borderColor:drag?'var(--leaf)':'var(--glass-border-strong)',
+              background:drag?'rgba(127,217,140,0.14)':'var(--glass-bg-subtle)'
             }}>
             <div style={{fontSize:36}}>{file?'🎵':'🎙'}</div>
             <div style={{marginTop:10,fontSize:14}}>
@@ -379,10 +379,10 @@ function ViewAcoustic({ profile, t }){
           {preCheckWarnings.length > 0 && (
             <div style={{
               marginTop:12,padding:'10px 14px',borderRadius:12,
-              background:'rgba(160,107,31,0.08)',border:'1px solid rgba(160,107,31,0.3)'
+              background:'rgba(240,192,96,0.14)',border:'1px solid rgba(240,192,96,0.32)'
             }}>
               {preCheckWarnings.map((w,i)=>(
-                <div key={i} style={{fontSize:13,color:'#A06B1F',marginBottom:i<preCheckWarnings.length-1?4:0}}>
+                <div key={i} style={{fontSize:13,color:'var(--sun)',marginBottom:i<preCheckWarnings.length-1?4:0}}>
                   {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
                 </div>
               ))}
@@ -393,7 +393,7 @@ function ViewAcoustic({ profile, t }){
           {preCheckError && (
             <div style={{
               marginTop:12,padding:'10px 14px',borderRadius:12,fontSize:13,
-              border:`1px solid var(--berry)`,background:'rgba(182,85,58,0.06)',
+              border:`1px solid rgba(232,112,95,0.32)`,background:'rgba(232,112,95,0.14)',
               color:'var(--berry)'
             }}>{preCheckError}</div>
           )}

@@ -84,13 +84,13 @@ function ViewIrrigation({ profile, setProfile, t }){
   // Urgency color config
   const urgencyStyle = result ? (() => {
     if (result.urgency === 'urgent') return {
-      bg: 'rgba(182,85,58,0.08)', border: 'var(--berry)'
+      bg: 'rgba(232,112,95,0.14)', border: 'var(--berry)'
     };
     if (result.urgency === 'light') return {
-      bg: 'rgba(160,107,31,0.08)', border: '#A06B1F'
+      bg: 'rgba(240,192,96,0.14)', border: 'var(--sun)'
     };
     return {
-      bg: 'rgba(199,214,189,0.3)', border: 'var(--leaf)'
+      bg: 'var(--leaf-soft)', border: 'var(--leaf)'
     };
   })() : null;
 
@@ -151,7 +151,7 @@ function ViewIrrigation({ profile, setProfile, t }){
                     padding:'10px 8px',
                     textAlign:'center',
                     fontSize:12,
-                    ...(stage === s ? {background:'rgba(62,107,62,0.12)'} : {})
+                    ...(stage === s ? {background:'var(--leaf-soft)'} : {})
                   }}
                   onClick={() => setStage(s)}
                 >{s}</button>
@@ -227,7 +227,7 @@ function ViewIrrigation({ profile, setProfile, t }){
           </div>
 
           {/* Fertilizer card */}
-          <div className="card rise" style={{background:'rgba(62,107,62,0.06)', borderColor:'var(--leaf)'}}>
+          <div className="card rise" style={{background:'var(--leaf-soft)', borderColor:'var(--leaf)'}}>
             <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:8}}>
               fertilizer · {result.fertilizer.growth_stage}
             </div>
@@ -243,8 +243,8 @@ function ViewIrrigation({ profile, setProfile, t }){
       {/* Calamity tips — standalone, independent of result */}
       {calamityKey && CALAMITY_TIPS[calamityKey] && (
         <div style={{marginTop:24}}>
-          <div className="card rise" style={{background:'rgba(160,107,31,0.07)', borderColor:'#A06B1F'}}>
-            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'#A06B1F',marginBottom:8}}>
+          <div className="card rise" style={{background:'rgba(240,192,96,0.14)', borderColor:'var(--sun)'}}>
+            <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--sun)',marginBottom:8}}>
               weather tips · {calamityKey}
             </div>
             <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>

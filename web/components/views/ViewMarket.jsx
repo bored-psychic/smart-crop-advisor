@@ -40,9 +40,9 @@ function ForecastChart({ forecast }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 200, display: 'block' }}>
       {gridYs.map((gy, i) => (
-        <line key={i} x1={pad} y1={gy} x2={W - pad} y2={gy} stroke="rgba(42,51,40,0.06)" />
+        <line key={i} x1={pad} y1={gy} x2={W - pad} y2={gy} stroke="rgba(255,255,255,0.08)" />
       ))}
-      <path d={bandPath} fill="rgba(62,107,62,0.12)" />
+      <path d={bandPath} fill="rgba(127,217,140,0.18)" />
       <path d={mainLine} fill="none" stroke="var(--leaf)" strokeWidth="2" strokeLinecap="round" />
       {dateLabels.map(({ i, date }) => (
         <text key={i} x={xp(i)} y={H - 4} textAnchor="middle"
@@ -62,7 +62,7 @@ function ForecastTable({ forecast }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
       <thead>
-        <tr style={{ background: 'rgba(199,214,189,0.4)' }}>
+        <tr style={{ background: 'rgba(255,255,255,0.10)' }}>
           <th style={thStyle}>Date</th>
           <th style={thStyle}>Price</th>
           <th style={thStyle}>Min</th>
@@ -71,7 +71,7 @@ function ForecastTable({ forecast }) {
       </thead>
       <tbody>
         {forecast.map((row, i) => (
-          <tr key={row.date} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(199,214,189,0.18)' }}>
+          <tr key={row.date} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.05)' }}>
             <td style={tdStyle}>{row.date}</td>
             <td style={tdStyle}>₹{row.price.toFixed(0)}</td>
             <td style={tdStyle}>₹{row.min_price.toFixed(0)}</td>
@@ -163,8 +163,8 @@ function ViewMarket({ profile, setProfile, t }) {
               </div>
               <div style={{ marginTop: 8 }}>
                 {result.live_price.live
-                  ? <span className="tag" style={{ background: 'rgba(62,107,62,0.12)', color: 'var(--leaf)' }}>🟢 LIVE</span>
-                  : <span className="tag" style={{ background: 'rgba(160,107,31,0.12)', color: '#A06B1F' }}>🟡 ESTIMATED</span>
+                  ? <span className="tag" style={{ background: 'var(--leaf-soft)', color: 'var(--leaf)' }}>🟢 LIVE</span>
+                  : <span className="tag warn">🟡 ESTIMATED</span>
                 }
               </div>
             </div>
@@ -196,7 +196,7 @@ function ViewMarket({ profile, setProfile, t }) {
           </div>
 
           {/* 3. Sell advice card */}
-          <div className="card rise rise-3" style={{ background: 'rgba(160,107,31,0.08)', borderColor: 'rgba(160,107,31,0.25)' }}>
+          <div className="card rise rise-3" style={{ background: 'rgba(240,192,96,0.12)', borderColor: 'rgba(240,192,96,0.32)' }}>
             <div className="page-eyebrow">our advice</div>
             <div style={{ fontSize: 15, color: 'var(--ink)', lineHeight: 1.6, marginTop: 6 }}>{result.sell_advice}</div>
           </div>

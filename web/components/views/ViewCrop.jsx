@@ -10,7 +10,7 @@ function ProbBars({ probs }) {
       {sorted.map(([crop, prob]) => (
         <div key={crop} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <div style={{ width: 90, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right', textTransform: 'capitalize' }}>{crop}</div>
-          <div style={{ flex: 1, height: 6, background: 'rgba(42,51,40,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
             <div style={{ width: `${(prob / max) * 100}%`, height: '100%', background: 'var(--leaf)', borderRadius: 99, transition: 'width 0.8s ease' }} />
           </div>
           <div style={{ width: 36, fontSize: 12, color: 'var(--ink-faint)' }}>{(prob * 100).toFixed(0)}%</div>
@@ -36,12 +36,10 @@ function ViewCrop({ profile, setProfile, t }) {
   const handleSubmit = useCallback(() => {
     setLoading(true);
     setError(null);
-    window.__catMood?.('thinking', 2500);
     window.api.cropRecommend({ N, P, K, temperature, humidity, ph, rainfall })
       .then(r => {
         setResult(r);
         setLoading(false);
-        window.__catMood?.('excited', 1500);
       })
       .catch(e => {
         setError({
@@ -124,7 +122,7 @@ function ViewCrop({ profile, setProfile, t }) {
                 <p className="muted" style={{ maxWidth: 480, marginTop: 10 }}>{result.tip}</p>
               )}
               {result.soil && (
-                <div style={{ marginTop: 14, padding: '12px 14px', background: 'rgba(199,214,189,0.4)', borderRadius: 12 }}>
+                <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
                   <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>soil · {result.soil.soil_type}</div>
                   <div style={{ marginTop: 4, fontSize: 14 }}>{result.soil.indicator} {result.soil.advice}</div>
                 </div>
