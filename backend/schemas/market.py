@@ -5,8 +5,13 @@ from pydantic import BaseModel, Field
 
 class MarketForecastRequest(BaseModel):
     crop: str = Field(..., description="Crop name")
-    state: str = Field(..., description="Indian state name")
+    city: str = Field(..., description="City or district name (state is derived via geocoding)")
     forecast_days: int = Field(30, ge=7, le=60, description="Forecast horizon in days")
+
+
+class CityPrice(BaseModel):
+    city: str
+    price: float
 
 
 class LivePrice(BaseModel):
@@ -15,6 +20,7 @@ class LivePrice(BaseModel):
     mandis_checked: int
     state_factor: float
     live: bool
+    city_prices: list[CityPrice] = []
 
 
 class ForecastDay(BaseModel):
@@ -27,6 +33,7 @@ class ForecastDay(BaseModel):
 class MarketForecastResponse(BaseModel):
     crop: str
     state: str
+    city: str
     live_price: LivePrice | None
     forecast: list[ForecastDay]
     best_price: float

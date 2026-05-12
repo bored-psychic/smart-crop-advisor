@@ -4,13 +4,6 @@ from frontend.api_client import APIClient, run_async
 from frontend.ui_helpers import card, page_hero
 from core.language import T
 
-INDIA_STATES = [
-    "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Gujarat", "Haryana",
-    "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-    "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana",
-    "Uttar Pradesh", "Uttarakhand", "West Bengal",
-]
-
 ALL_CROPS = [
     'Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee',
     'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize',
@@ -23,32 +16,45 @@ ALL_CROPS = [
 def render():
     page_hero("MARKET PRICES", "Know before you", "sell.", "Live mandi prices for your crop and district. Sell when the moment is right.")
 
-    col_s, col_c = st.columns(2)
-    with col_s:
-        selected_state = st.selectbox(
-            f"📍 {T('Your State')}", INDIA_STATES,
-            index=INDIA_STATES.index("Karnataka") if "Karnataka" in INDIA_STATES else 0,
-            key="mkt_state"
-        )
-    with col_c:
-        crop_choice = st.selectbox(f"🌾 {T('Crop')}", ALL_CROPS, key="mkt_crop")
+    _default_city = st.session_state.get('farmer_village', '').split(',')[0].strip()
+    city_input = st.text_input(
+        f"🏙️ {T('Your City / District')}",
+        value=_default_city,
+        placeholder="e.g. Bellary, Nagpur, Warangal",
+        key="mkt_city"
+    )
+
+    crop_choice = st.selectbox(f"🌾 {T('Crop')}", ALL_CROPS, key="mkt_crop")
 
     forecast_days = st.slider(T("Forecast horizon (days)"), 7, 60, 30, key="mkt_days")
 
     if st.button(f"📈 {T('Get Live Price + Forecast')}", use_container_width=True, type="primary"):
-        with st.spinner(T("Fetching live Agmarknet data and computing forecast...")):
-            res = run_async(APIClient.get_market_price(selected_state, crop_choice, forecast_days))
-        if res:
-            st.session_state['tab3_result'] = res
+        if not city_input.strip():
+            st.error(T("Please enter your city or district name."))
         else:
-            card(T("Market API unavailable. Check backend connection."), severity="error")
+            with st.spinner(T("Resolving location and fetching live Agmarknet data...")):
+                res = run_async(APIClient.get_market_price(city_input.strip(), crop_choice, forecast_days))
+            if res:
+                st.session_state['tab3_result'] = res
+            else:
+                card(T("Market API unavailable or city not recognised. Check the city name and backend connection."), severity="error")
 
     if 'tab3_result' in st.session_state:
         r3      = st.session_state['tab3_result']
         live    = r3.get('live_price')
         crop_r  = r3['crop']
         state_r = r3['state']
+        city_r  = r3.get('city', '')
         factor  = r3['state_factor']
+        location_label = f"{city_r}, {state_r}" if city_r else state_r
+
+        # Derived state badge
+        st.markdown(
+            f'<div style="display:inline-block;background:rgba(34,197,94,0.12);border:1px solid '
+            f'rgba(34,197,94,0.3);border-radius:20px;padding:4px 14px;font-size:12px;'
+            f'color:#22C55E;font-weight:600;margin-bottom:12px">📍 {state_r}</div>',
+            unsafe_allow_html=True,
+        )
 
         if live and live.get('live'):
             tp = live['today_price']
@@ -63,7 +69,7 @@ def render():
                   <div style="font-size:2rem;font-weight:700;color:#22C55E;font-family:monospace">
                     ₹{tp:,.0f}<span style="font-size:1rem;color:#6B8F6B"> /qtl</span>
                   </div>
-                  <div style="font-size:12px;color:#6B8F6B">{crop_r} · {state_r}</div>
+                  <div style="font-size:12px;color:#6B8F6B">{crop_r} · {location_label}</div>
                 </div>
                 <div style="margin-left:auto;text-align:right">
                   <div style="font-size:11px;color:#6B8F6B">State adj. factor</div>
@@ -72,7 +78,16 @@ def render():
               </div>
             </div>""", unsafe_allow_html=True)
         else:
-            card(f"&#128161; {T('Agmarknet API unavailable — showing Prophet forecast calibrated for')} {state_r}. {T('Factor')}: {factor:.2f}&times;", severity="info")
+            card(f"&#128161; {T('Agmarknet API unavailable — showing Prophet forecast calibrated for')} {location_label}. {T('Factor')}: {factor:.2f}&times;", severity="info")
+
+        # Karnataka city-wise price chart
+        city_prices = live.get('city_prices', []) if live else []
+        if state_r.lower() == 'karnataka' and city_prices:
+            st.markdown(f"#### {T('Karnataka — Price by District')} · {crop_r}")
+            cp_df = pd.DataFrame(city_prices).set_index('city').rename(columns={'price': 'Price (₹/qtl)'})
+            st.bar_chart(cp_df)
+            state_avg = live['today_price'] if live else 0
+            st.caption(f"📊 State average: ₹{state_avg:,.0f}/qtl · Source: Agmarknet Live")
 
         forecast_list = r3.get('forecast', [])
         if forecast_list:
@@ -98,7 +113,7 @@ def render():
 
             card(f"&#128640; <b>{T(r3['sell_advice'])}</b>", severity="success" if "Wait" in r3['sell_advice'] else "warning")
 
-            st.markdown(f"#### {T('Price Forecast Chart')} — {crop_r} · {state_r}")
+            st.markdown(f"#### {T('Price Forecast Chart')} — {crop_r} · {location_label}")
             chart_df = ff.set_index('Date')[['Price', 'Min', 'Max']]
             st.line_chart(chart_df)
             st.caption(f"📊 {T('State factor applied')}: {factor:.2f}× · Prophet trend decomposition")
