@@ -72,7 +72,7 @@ def render():
           <div style='font-size:0.88rem;color:#2A3328;margin-bottom:6px;'>
             <b style='color:#3E6B3E;'>&#128737; {T('Prevention')}:</b> {T(vr['prevention'])}
           </div>
-          <div style='font-size:0.8rem;color:#3E6B3E;font-family:JetBrains Mono,monospace;'>
+          <div style='font-size:0.8rem;color:#1A2E1A;font-family:JetBrains Mono,monospace;'>
             &#9889; {T(vr['action'])}
           </div>
         </div>
