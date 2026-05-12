@@ -180,12 +180,12 @@ function ViewMarket({ profile, setProfile, t }) {
               <div>
                 <div className="page-eyebrow">{t('best price')}</div>
                 <div className="bignum">₹<em>{result.best_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
-                <div className="small muted" style={{ marginTop: 4 }}>on {result.best_date}</div>
+                <div className="small muted" style={{ marginTop: 4 }}>{t('on')} {result.best_date}</div>
               </div>
               <div>
                 <div className="page-eyebrow">{t('worst price')}</div>
                 <div className="bignum">₹<em>{result.worst_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
-                <div className="small muted" style={{ marginTop: 4 }}>on {result.worst_date}</div>
+                <div className="small muted" style={{ marginTop: 4 }}>{t('on')} {result.worst_date}</div>
               </div>
               <div>
                 <div className="page-eyebrow">{t('average price')}</div>
