@@ -1,6 +1,13 @@
 // ViewField — live field-watch scan: weather, flood, fire, locust, AQI + helplines + WhatsApp builder
 const { useState, useEffect, useCallback, useMemo } = React;
 
+/* ---- Risk badge helpers (module scope so AlertCard can use them) ---- */
+function riskStyle(risk) {
+  if (risk === 'HIGH')   return { bg: 'rgba(232,112,95,0.14)', border: 'var(--berry)', color: 'var(--berry)', icon: '🔴' };
+  if (risk === 'MEDIUM') return { bg: 'rgba(240,192,96,0.14)', border: 'var(--sun)',   color: 'var(--sun)',   icon: '🟡' };
+  return                        { bg: 'var(--leaf-soft)',      border: 'var(--leaf)',  color: 'var(--leaf)',  icon: '🟢' };
+}
+
 /* ---- Alert card helper ---- */
 function AlertCard({ title, risk, children }) {
   const s = riskStyle(risk);
@@ -53,13 +60,6 @@ function ViewField({ profile, setProfile, t }) {
       doScan(profile.village.trim());
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  /* ---- Risk badge helpers ---- */
-  const riskStyle = (risk) => {
-    if (risk === 'HIGH')   return { bg: 'rgba(232,112,95,0.14)', border: 'var(--berry)', color: 'var(--berry)', icon: '🔴' };
-    if (risk === 'MEDIUM') return { bg: 'rgba(240,192,96,0.14)', border: 'var(--sun)',   color: 'var(--sun)',   icon: '🟡' };
-    return                        { bg: 'var(--leaf-soft)',      border: 'var(--leaf)',  color: 'var(--leaf)',  icon: '🟢' };
-  };
 
   /* ---- WhatsApp message ---- */
   const waMessage = useMemo(() => {

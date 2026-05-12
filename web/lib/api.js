@@ -69,8 +69,8 @@ window.api = {
     return _req('/disease/crops' + (qs ? '?' + qs : ''));
   },
 
-  marketForecast: (crop, state, forecast_days) =>
-    _req('/market/forecast', { method: 'POST', body: { crop, state, forecast_days } }),
+  marketForecast: (crop, city, forecast_days) =>
+    _req('/market/forecast', { method: 'POST', body: { crop, city, forecast_days } }),
 
   irrigationAdvise: (body) => _req('/irrigation/advise', { method: 'POST', body }),
 

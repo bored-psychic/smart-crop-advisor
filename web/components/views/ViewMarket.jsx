@@ -95,7 +95,7 @@ function ViewMarket({ profile, setProfile, t }) {
     setError(null);
     setResult(null);
     try {
-      const data = await window.api.marketForecast(crop, profile.state, forecastDays);
+      const data = await window.api.marketForecast(crop, profile.village, forecastDays);
       setResult(data);
     } catch (err) {
       setError({
@@ -106,7 +106,7 @@ function ViewMarket({ profile, setProfile, t }) {
     } finally {
       setLoading(false);
     }
-  }, [crop, profile.state, forecastDays]);
+  }, [crop, profile.village, forecastDays]);
 
   return (
     <div>
@@ -154,7 +154,7 @@ function ViewMarket({ profile, setProfile, t }) {
         <div className="view-fade">
 
           {/* 1. Live price card */}
-          {result.live_price !== null ? (
+          {result.live_price ? (
             <div className="card rise rise-1">
               <div className="page-eyebrow">live mandi · {result.live_price.source}</div>
               <div className="bignum">₹<em>{result.live_price.today_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>

@@ -383,7 +383,7 @@ function ErrorCard({ title, detail, onRetry }) {
   return (
     <div className="card rise" style={{borderColor:'rgba(232,112,95,0.32)',background:'rgba(232,112,95,0.14)'}}>
       <div style={{color:'var(--berry)',fontFamily:'var(--display)',fontSize:20,marginBottom:8}}>{title}</div>
-      {detail && <div style={{color:'var(--ink-soft)',fontSize:14,marginBottom:12}}>{detail}</div>}
+      {detail && <div style={{color:'var(--ink-soft)',fontSize:14,marginBottom:12}}>{typeof detail === 'string' ? detail : JSON.stringify(detail)}</div>}
       {onRetry && <button className="btn" style={{borderColor:'var(--berry)',color:'var(--berry)'}} onClick={onRetry}>↺ Try again</button>}
     </div>
   );

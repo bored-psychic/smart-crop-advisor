@@ -1,7 +1,7 @@
 // ViewCrop — wired to /api/crop/recommend
 const { useState, useCallback } = React;
 
-function ProbBars({ probs }) {
+function ProbBars({ probs, t }) {
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const max = sorted[0]?.[1] || 1;
   return (
@@ -141,7 +141,7 @@ function ViewCrop({ profile, setProfile, t }) {
               </div>
             </div>
           </div>
-          {result.all_probabilities && <ProbBars probs={result.all_probabilities} />}
+          {result.all_probabilities && <ProbBars probs={result.all_probabilities} t={t} />}
         </div>
       )}
     </div>
