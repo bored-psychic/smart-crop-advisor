@@ -318,7 +318,7 @@ function ViewAcoustic({ profile, t }){
   }
 
   // Analyze button disabled: loading OR size-hard-block only
-  const isSizeBlock = preCheckError && preCheckError.startsWith('File too large');
+  const isSizeBlock = file && file.size > 20 * 1024 * 1024;
   const analyzeDisabled = loading || isSizeBlock || !file;
 
   /* ===== Main render ===== */
