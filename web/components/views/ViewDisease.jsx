@@ -1,10 +1,7 @@
-// ViewDisease — photo + symptom flows with real API
-const { useState, useEffect, useRef, useMemo, useCallback } = React;
+// ViewDisease — photo flow with real API
+const { useState, useEffect, useRef, useCallback } = React;
 
 const FALLBACK_CROPS = ['Tomato','Potato','Rice','Cotton','Wheat','Maize','Banana','Sugarcane'];
-
-// Fix #1: module-level cache so the "already fetched" guard survives re-mounts
-let _detailedCropsCache = null;
 
 function SevTag({ severity }) {
   const color = severity === 'High' ? 'var(--berry)'
@@ -17,7 +14,7 @@ function SevTag({ severity }) {
   );
 }
 
-function Top3Bars({ top3 }) {
+function Top3Bars({ top3, t }) {
   if (!top3 || top3.length === 0) return null;
   const max = top3[0]?.[1] || 1;
   return (
@@ -36,7 +33,7 @@ function Top3Bars({ top3 }) {
   );
 }
 
-function PhotoResult({ result }) {
+function PhotoResult({ result, t }) {
   const sevColor = result.severity === 'High' ? 'var(--berry)'
                  : result.severity === 'Medium' ? '#A06B1F'
                  : 'var(--leaf)';
@@ -69,38 +66,12 @@ function PhotoResult({ result }) {
           <div style={{ marginTop: 4 }}>{result.prevention}</div>
         </div>
       )}
-      <Top3Bars top3={result.top3} />
+      <Top3Bars top3={result.top3} t={t} />
     </div>
   );
 }
 
-function SymptomResult({ result }) {
-  return (
-    <div className="card rise" style={{ marginTop: 18 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
-        <div style={{ fontFamily: 'var(--display)', fontSize: 26, color: 'var(--ink)' }}>{result.disease}</div>
-        {result.disease_type && (
-          <span className="tag">{result.disease_type}</span>
-        )}
-        {result.severity && <SevTag severity={result.severity} />}
-      </div>
-      {result.treatment && (
-        <div style={{ padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12, marginBottom: 10 }}>
-          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>treatment</div>
-          <div style={{ marginTop: 4 }}>{result.treatment}</div>
-        </div>
-      )}
-      {result.prevention && (
-        <div style={{ padding: '12px 14px', background: 'var(--glass-bg-subtle)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
-          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>prevention</div>
-          <div style={{ marginTop: 4 }}>{result.prevention}</div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PhotoPanel() {
+function PhotoPanel({ t }) {
   const [cropList, setCropList] = useState(null);
   const [cropsLoading, setCropsLoading] = useState(true);
   const [cropType, setCropType] = useState('Tomato');
@@ -209,10 +180,6 @@ function PhotoPanel() {
             onChange={handleFileChange}
           />
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-          <button className="btn ghost">📸 Use camera</button>
-          <button className="btn ghost">🔊 Read aloud</button>
-        </div>
       </div>
 
       <div className="card rise rise-2">
@@ -232,197 +199,14 @@ function PhotoPanel() {
             onRetry={() => { if (file) analyzeFile(file); }}
           />
         )}
-        {!loading && result && <PhotoResult result={result} />}
+        {!loading && result && <PhotoResult result={result} t={t} />}
       </div>
     </div>
   );
 }
 
-function SymptomPanel() {
-  // Fix #1: removed cropsRef useRef — using module-level _detailedCropsCache instead
-  const [cropsLoading, setCropsLoading] = useState(false);
-  const [cropsError, setCropsError] = useState(null);
-  const [cropList, setCropList] = useState([]);
-  // Fix #3: store full crops data object in state so symptoms memo is reactive
-  const [cropsData, setCropsData] = useState(null);
-  const [selectedCrop, setSelectedCrop] = useState('');
-  const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [analysisError, setAnalysisError] = useState(null);
-  const [analysisResult, setAnalysisResult] = useState(null);
-  // Fix #7: track last clicked symptom so the analysis error card can retry
-  const [lastClickedSymptom, setLastClickedSymptom] = useState(null);
-
-  // Fix #2: extract fetch into a named useCallback so both useEffect and onRetry call the same path
-  const loadCrops = useCallback(() => {
-    // Fix #1: guard against re-fetch using the module-level cache
-    if (_detailedCropsCache) {
-      setCropsData(_detailedCropsCache);
-      const names = Object.keys(_detailedCropsCache);
-      setCropList(names);
-      setSelectedCrop(prev => prev || names[0] || '');
-      return;
-    }
-    setCropsLoading(true);
-    setCropsError(null);
-    window.api.diseaseCrops({ detailed: true })
-      .then(data => {
-        _detailedCropsCache = data;
-        setCropsData(data);
-        const names = Object.keys(data);
-        setCropList(names);
-        setSelectedCrop(names[0] || '');
-        setCropsLoading(false);
-      })
-      .catch(e => {
-        setCropsError({
-          status: e.status || null,
-          detail: e.detail || e.message || String(e),
-          message: e.message || String(e),
-        });
-        setCropsLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    loadCrops();
-  }, [loadCrops]);
-
-  // Fix #3: derive symptoms from cropsData state (reactive), not from the module variable
-  const symptoms = useMemo(() => {
-    if (!cropsData || !selectedCrop) return [];
-    return cropsData[selectedCrop] || [];
-  }, [cropsData, selectedCrop]);
-
-  const handleSymptomClick = useCallback((crop, item) => {
-    setLastClickedSymptom(item);
-    setAnalysisLoading(true);
-    setAnalysisResult(null);
-    setAnalysisError(null);
-    window.api.diseaseSymptom(crop, item.symptom)
-      .then(r => {
-        setAnalysisResult(r);
-        setAnalysisLoading(false);
-      })
-      .catch(e => {
-        setAnalysisError({
-          status: e.status || null,
-          detail: e.detail || e.message || String(e),
-          message: e.message || String(e),
-        });
-        setAnalysisLoading(false);
-      });
-  }, []);
-
-  function symptomErrMsg(e) {
-    if (!e) return 'Something went wrong.';
-    if (e.status === 401 || e.status === 403) return 'API key issue — check your config.js setup.';
-    if (!e.status && e.message) return 'No connection — check your network and try again.';
-    return e.detail || e.message || 'Lookup failed.';
-  }
-
-  const sevColor = (sev) =>
-    sev === 'High' ? 'var(--berry)' : sev === 'Medium' ? '#A06B1F' : 'var(--leaf)';
-
-  if (cropsLoading) {
-    return <Loading label="Loading symptom library…" />;
-  }
-
-  if (cropsError) {
-    return (
-      <ErrorCard
-        title="Could not load symptoms"
-        detail={symptomErrMsg(cropsError)}
-        // Fix #2: retry calls the shared loadCrops, first clearing the module cache
-        onRetry={() => {
-          _detailedCropsCache = null;
-          setCropsData(null);
-          loadCrops();
-        }}
-      />
-    );
-  }
-
-  return (
-    <div>
-      <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <label style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 500 }}>Crop</label>
-        <select
-          className="input"
-          style={{ width: 180 }}
-          value={selectedCrop}
-          onChange={e => {
-            setSelectedCrop(e.target.value);
-            setAnalysisResult(null);
-            setAnalysisError(null);
-          }}
-        >
-          {cropList.map(c => <option key={c}>{c}</option>)}
-        </select>
-      </div>
-
-      {symptoms.length === 0 && (
-        <div className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>No symptoms found for this crop.</div>
-      )}
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-        {symptoms.map((item, i) => (
-          <button
-            key={i}
-            // Fix #4: changed from "tile" to "btn ghost" per design system
-            className="btn ghost"
-            style={{ padding: '8px 12px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 4 }}
-            onClick={() => handleSymptomClick(selectedCrop, item)}
-          >
-            <div style={{ fontSize: 13, color: 'var(--ink)', lineHeight: 1.5 }}>{item.symptom}</div>
-            {item.severity && (
-              <span
-                className="tag"
-                style={{
-                  fontSize: 11,
-                  color: sevColor(item.severity),
-                  borderColor: sevColor(item.severity) + '40',
-                  background: sevColor(item.severity) + '14',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                {item.severity}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {analysisLoading && (
-        <div style={{ marginTop: 18 }}>
-          <Loading label="Looking up disease…" />
-        </div>
-      )}
-      {!analysisLoading && analysisError && (
-        <div style={{ marginTop: 18 }}>
-          <ErrorCard
-            title="Could not analyze symptom"
-            detail={symptomErrMsg(analysisError)}
-            // Fix #7: retry replays the last clicked symptom
-            onRetry={() => { if (lastClickedSymptom) handleSymptomClick(selectedCrop, lastClickedSymptom); }}
-          />
-        </div>
-      )}
-      {!analysisLoading && analysisResult && (
-        <SymptomResult result={analysisResult} />
-      )}
-    </div>
-  );
-}
 
 function ViewDisease({ profile, t }) {
-  const [method, setMethod] = useState('photo');
-  const [symptomMounted, setSymptomMounted] = useState(false);
-
-  function switchMethod(m) {
-    setMethod(m);
-    if (m === 'symptom') setSymptomMounted(true);
-  }
-
   return (
     <div className="view-fade">
       <Topbar crumb="Leaf Doctor" />
@@ -430,33 +214,11 @@ function ViewDisease({ profile, t }) {
         <div>
           <div className="page-eyebrow">leaf doctor</div>
           <h1 className="page-title">A <em>second pair of eyes</em> for sick leaves.</h1>
-          <p className="page-lede">Snap a photo of a worried leaf, or describe what you see. We'll gently look it over and tell you what's likely going on, with the kindest fix.</p>
+          <p className="page-lede">Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.</p>
         </div>
       </div>
 
-      {/* Method toggle */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 18 }}>
-        <button
-          className={method === 'photo' ? 'btn primary' : 'btn ghost'}
-          onClick={() => switchMethod('photo')}
-        >
-          📷 Photo
-        </button>
-        <button
-          className={method === 'symptom' ? 'btn primary' : 'btn ghost'}
-          onClick={() => switchMethod('symptom')}
-        >
-          📋 Describe symptoms
-        </button>
-      </div>
-
-      {method === 'photo' && <PhotoPanel />}
-
-      {symptomMounted && (
-        <div style={{ display: method === 'symptom' ? 'block' : 'none' }}>
-          <SymptomPanel />
-        </div>
-      )}
+      <PhotoPanel t={t} />
     </div>
   );
 }
