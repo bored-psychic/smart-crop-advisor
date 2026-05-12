@@ -2,11 +2,11 @@
 const { useState, useCallback } = React;
 
 /* ---- SVG forecast chart ---- */
-function ForecastChart({ forecast }) {
+function ForecastChart({ forecast, t }) {
   if (!forecast || forecast.length < 2) {
     return (
       <div className="muted" style={{ padding: '20px', textAlign: 'center' }}>
-        Not enough data to chart.
+        {t('Not enough data to chart.')}
       </div>
     );
   }
@@ -58,15 +58,15 @@ function ForecastChart({ forecast }) {
 const thStyle = { padding: '6px 8px', textAlign: 'left', color: 'var(--ink-soft)', fontWeight: 600 };
 const tdStyle = { padding: '5px 8px', color: 'var(--ink)' };
 
-function ForecastTable({ forecast }) {
+function ForecastTable({ forecast, t }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.10)' }}>
-          <th style={thStyle}>Date</th>
-          <th style={thStyle}>Price</th>
-          <th style={thStyle}>Min</th>
-          <th style={thStyle}>Max</th>
+          <th style={thStyle}>{t('Date')}</th>
+          <th style={thStyle}>{t('Price')}</th>
+          <th style={thStyle}>{t('Min')}</th>
+          <th style={thStyle}>{t('Max')}</th>
         </tr>
       </thead>
       <tbody>
@@ -110,12 +110,12 @@ function ViewMarket({ profile, setProfile, t }) {
 
   return (
     <div>
-      <Topbar crumb="Market" />
+      <Topbar crumb={t('Market')} />
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">market</div>
-          <h1 className="page-title">A <em>fair price,</em> a calm decision.</h1>
-          <p className="page-lede">We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.</p>
+          <div className="page-eyebrow">{t('market')}</div>
+          <h1 className="page-title">{t('A')} <em>{t('fair price,')}</em> {t('a calm decision.')}</h1>
+          <p className="page-lede">{t("We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.")}</p>
         </div>
       </div>
 
@@ -133,19 +133,19 @@ function ViewMarket({ profile, setProfile, t }) {
 
       <div className="card rise rise-2" style={{ display: 'flex', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 220 }}>
-          <Slider label="Forecast horizon" unit="days" min={7} max={60} value={forecastDays} onChange={setForecastDays} />
+          <Slider label={t('Forecast horizon')} unit={t('days')} min={7} max={60} value={forecastDays} onChange={setForecastDays} />
         </div>
         <button className="btn primary" onClick={handleSubmit} style={{ whiteSpace: 'nowrap', marginBottom: 2 }}>
-          📊 Get forecast
+          {t('📊 Get forecast')}
         </button>
       </div>
 
-      {loading && <Loading label="Fetching market data…" />}
+      {loading && <Loading label={t('Fetching market data…')} />}
 
       {error && !loading && (
         <ErrorCard
-          title="Could not fetch forecast"
-          detail={error.status === 401 || error.status === 403 ? 'API key issue — check your configuration.' : !error.status ? 'Network error — please check your connection.' : error.detail || 'Unexpected error.'}
+          title={t('Could not fetch forecast')}
+          detail={error.status === 401 || error.status === 403 ? t('API key issue — check your configuration.') : !error.status ? t('Network error — please check your connection.') : error.detail || t('Unexpected error.')}
           onRetry={handleSubmit}
         />
       )}
@@ -156,21 +156,21 @@ function ViewMarket({ profile, setProfile, t }) {
           {/* 1. Live price card */}
           {result.live_price ? (
             <div className="card rise rise-1">
-              <div className="page-eyebrow">live mandi · {result.live_price.source}</div>
+              <div className="page-eyebrow">{t('live mandi')} · {result.live_price.source}</div>
               <div className="bignum">₹<em>{result.live_price.today_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
               <div className="small muted" style={{ marginTop: 4 }}>
-                {result.live_price.mandis_checked} mandis · state factor {result.live_price.state_factor?.toFixed(2) ?? '—'}
+                {result.live_price.mandis_checked} {t('mandis')} · {t('state factor')} {result.live_price.state_factor?.toFixed(2) ?? '—'}
               </div>
               <div style={{ marginTop: 8 }}>
                 {result.live_price.live
-                  ? <span className="tag" style={{ background: 'var(--leaf-soft)', color: 'var(--leaf)' }}>🟢 LIVE</span>
-                  : <span className="tag warn">🟡 ESTIMATED</span>
+                  ? <span className="tag" style={{ background: 'var(--leaf-soft)', color: 'var(--leaf)' }}>{t('🟢 LIVE')}</span>
+                  : <span className="tag warn">{t('🟡 ESTIMATED')}</span>
                 }
               </div>
             </div>
           ) : (
             <div className="card rise rise-1" style={{ color: 'var(--ink-soft)', fontStyle: 'italic' }}>
-              Live mandi data not available — showing model forecast only.
+              {t('Live mandi data not available — showing model forecast only.')}
             </div>
           )}
 
@@ -178,36 +178,36 @@ function ViewMarket({ profile, setProfile, t }) {
           <div className="card rise rise-2">
             <div className="grid-3">
               <div>
-                <div className="page-eyebrow">best price</div>
+                <div className="page-eyebrow">{t('best price')}</div>
                 <div className="bignum">₹<em>{result.best_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
                 <div className="small muted" style={{ marginTop: 4 }}>on {result.best_date}</div>
               </div>
               <div>
-                <div className="page-eyebrow">worst price</div>
+                <div className="page-eyebrow">{t('worst price')}</div>
                 <div className="bignum">₹<em>{result.worst_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
                 <div className="small muted" style={{ marginTop: 4 }}>on {result.worst_date}</div>
               </div>
               <div>
-                <div className="page-eyebrow">average price</div>
+                <div className="page-eyebrow">{t('average price')}</div>
                 <div className="bignum">₹<em>{result.avg_price?.toFixed(0) ?? '—'}</em><span className="unit">/q</span></div>
-                <div className="small muted" style={{ marginTop: 4 }}>over {forecastDays} days</div>
+                <div className="small muted" style={{ marginTop: 4 }}>{t('over')} {forecastDays} {t('days')}</div>
               </div>
             </div>
           </div>
 
           {/* 3. Sell advice card */}
           <div className="card rise rise-3" style={{ background: 'rgba(240,192,96,0.12)', borderColor: 'rgba(240,192,96,0.32)' }}>
-            <div className="page-eyebrow">our advice</div>
+            <div className="page-eyebrow">{t('our advice')}</div>
             <div style={{ fontSize: 15, color: 'var(--ink)', lineHeight: 1.6, marginTop: 6 }}>{result.sell_advice}</div>
           </div>
 
           {/* 4. SVG forecast chart */}
           <div className="card rise rise-4">
             <div className="card-h" style={{ marginBottom: 12 }}>
-              <h3 style={{ margin: 0 }}>Price forecast · {result.crop}</h3>
+              <h3 style={{ margin: 0 }}>{t('Price forecast')} · {result.crop}</h3>
               <span className="tag">📍 {result.state}</span>
             </div>
-            <ForecastChart forecast={result.forecast} />
+            <ForecastChart forecast={result.forecast} t={t} />
           </div>
 
           {/* 5. Full forecast table expander */}
@@ -215,10 +215,10 @@ function ViewMarket({ profile, setProfile, t }) {
             <div className="card rise rise-5">
               <details>
                 <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--ink-soft)', userSelect: 'none', padding: '4px 0' }}>
-                  Full forecast table ({result.forecast.length} days)
+                  {t('Full forecast table')} ({result.forecast.length} {t('days')})
                 </summary>
                 <div style={{ marginTop: 12, overflowX: 'auto' }}>
-                  <ForecastTable forecast={result.forecast} />
+                  <ForecastTable forecast={result.forecast} t={t} />
                 </div>
               </details>
             </div>
