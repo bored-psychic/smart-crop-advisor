@@ -38,8 +38,13 @@ def _resample_to_16k(pcm: np.ndarray, src_rate: int) -> np.ndarray:
     pcm = pcm.astype(np.float32, copy=False)
     if src_rate == SAMPLE_RATE:
         return pcm
-    import librosa
-    return librosa.resample(pcm, orig_sr=src_rate, target_sr=SAMPLE_RATE)
+    from math import gcd
+    from scipy.signal import resample_poly
+    g = gcd(int(src_rate), SAMPLE_RATE)
+    up = SAMPLE_RATE // g
+    down = int(src_rate) // g
+    resampled = resample_poly(pcm, up, down)
+    return resampled.astype(np.float32, copy=False)
 
 
 class YAMNetBundle:

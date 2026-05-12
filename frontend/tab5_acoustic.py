@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import struct
 import wave
 import numpy as np
 from frontend.api_client import APIClient, run_async
@@ -60,6 +61,25 @@ def _precheck_audio_upload(audio_bytes: bytes, filename: str, mime_type: str) ->
             errors.append("Audio is likely too short. Record at least 1.5 seconds (recommended 4-10 seconds).")
         warnings.append("Detailed sample-rate/silence checks are available for WAV previews only.")
         return len(errors) == 0, errors, warnings
+
+    # Header short-circuit — reject empty/malformed WAVs without reading any PCM.
+    # Standard RIFF/WAVE layout: 'RIFF'(4) size(4) 'WAVE'(4) 'fmt '(4) ...
+    if len(audio_bytes) < 44:
+        return False, ["WAV file too small to contain a valid header. Re-record and upload again."], warnings
+    if audio_bytes[0:4] != b"RIFF" or audio_bytes[8:12] != b"WAVE":
+        return False, ["File does not look like a valid WAV (missing RIFF/WAVE magic)."], warnings
+    # Locate 'fmt ' chunk in the first 256 bytes — defensive for nonstandard headers.
+    fmt_idx = audio_bytes.find(b"fmt ", 12, 256)
+    if fmt_idx < 0:
+        return False, ["WAV header is malformed (no fmt chunk)."], warnings
+    try:
+        # fmt chunk: id(4) size(4) audio_fmt(2) n_channels(2) sample_rate(4) ...
+        hdr_sr = struct.unpack_from("<I", audio_bytes, fmt_idx + 12)[0]
+        if hdr_sr and hdr_sr < 8000:
+            errors.append(f"Sample rate is {hdr_sr} Hz. Please re-record at 8 kHz or higher.")
+            return False, errors, warnings
+    except struct.error:
+        pass  # Fall through to full wave.open which surfaces a clearer error.
 
     try:
         with wave.open(io.BytesIO(audio_bytes), "rb") as wf:

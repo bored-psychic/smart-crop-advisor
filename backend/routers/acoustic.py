@@ -9,9 +9,7 @@ from typing import Optional
 
 import numpy as np
 import scipy.io.wavfile as wav
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+from PIL import Image
 
 from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
 from backend.schemas.acoustic import AcousticResponse
@@ -111,17 +109,38 @@ def _band_energies(seg: np.ndarray, rate: int) -> dict:
 
 
 def _spectrogram_png(seg: np.ndarray, rate: int) -> bytes:
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.specgram(seg, Fs=rate, cmap='inferno', NFFT=512, noverlap=256)
-    ax.set_xlabel('Time (s)')
-    ax.set_ylabel('Frequency (Hz)')
-    ax.set_ylim(0, min(8000, rate // 2))
-    ax.set_title('Field Audio Spectrogram')
+    """Render a mel-spectrogram PNG directly via librosa + PIL (no matplotlib).
+
+    Output is a single-channel inferno-mapped image, top = high freq.
+    """
+    import librosa
+
+    fmax = min(8000, rate // 2)
+    mel = librosa.feature.melspectrogram(
+        y=seg.astype(np.float32, copy=False),
+        sr=rate, n_fft=512, hop_length=256, n_mels=128, fmax=fmax,
+    )
+    log_mel = librosa.power_to_db(mel, ref=np.max)
+
+    # Normalize to 0..1
+    lo, hi = float(log_mel.min()), float(log_mel.max())
+    norm = (log_mel - lo) / (hi - lo + 1e-9)
+    # Flip so high freq is on top
+    norm = norm[::-1, :]
+
+    # Apply a coarse inferno-like RGB lookup (purple→orange→yellow).
+    x = norm
+    r = np.clip(1.5 * x - 0.2, 0, 1)
+    g = np.clip(1.7 * x - 0.8, 0, 1)
+    b = np.clip(0.4 + 0.9 * np.sin(np.pi * x) - 0.5 * x, 0, 1)
+    rgb = (np.stack([r, g, b], axis=-1) * 255.0).astype(np.uint8)
+
+    img = Image.fromarray(rgb, mode='RGB')
+    # Upscale a bit so downstream consumers get a reasonable PNG.
+    img = img.resize((max(640, rgb.shape[1] * 4), 320), Image.BILINEAR)
     buf = io.BytesIO()
-    fig.savefig(buf, format='png', dpi=80, bbox_inches='tight')
-    plt.close(fig)
-    buf.seek(0)
-    return buf.read()
+    img.save(buf, format='PNG', optimize=True)
+    return buf.getvalue()
 
 
 def _strip_markdown_fences(text: str) -> str:
@@ -162,7 +181,7 @@ async def _claude_acoustic(
         return {"failed": True, "stage": "sdk_import",
                 "detail": str(exc)[:200]}
 
-    client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=15.0)
     img_b64 = base64.standard_b64encode(spec_bytes).decode()
     dsp_block = json.dumps(dsp_features, indent=2)
 
@@ -398,7 +417,7 @@ async def _claude_from_description(
         return {"failed": True, "stage": "sdk_import",
                 "detail": str(exc)[:200]}
 
-    client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=15.0)
 
     system_text = (
         "You are an expert entomologist and bioacoustics specialist for "
