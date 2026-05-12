@@ -20,14 +20,13 @@ function AlertCard({ title, risk, children }) {
 }
 
 function ViewField({ profile, setProfile, t }) {
-  const [city, setCity]       = useState(profile.village || '');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [result, setResult]   = useState(null);
   const { toasts, add: addToast } = useToast();
 
   const doScan = useCallback(async (scanCity) => {
-    const target = (scanCity || city).trim();
+    const target = (scanCity || profile.village || '').trim();
     if (!target) return;
     setLoading(true);
     setError(null);
@@ -47,9 +46,8 @@ function ViewField({ profile, setProfile, t }) {
     } finally {
       setLoading(false);
     }
-  }, [city]);
+  }, [profile.village]);
 
-  // Auto-scan on mount if city is pre-filled
   useEffect(() => {
     if ((profile.village || '').trim().length > 0) {
       doScan(profile.village.trim());
@@ -99,23 +97,13 @@ function ViewField({ profile, setProfile, t }) {
         village={profile.village} setVillage={v => setProfile({ ...profile, village: v })}
         state={profile.state}     setState={s => setProfile({ ...profile, state: s })}
         extra={
-          <React.Fragment>
-            <input
-              className="input"
-              value={city}
-              onChange={e => setCity(e.target.value)}
-              placeholder="Nearest city"
-              style={{ width: 160 }}
-              onKeyDown={e => e.key === 'Enter' && doScan()}
-            />
-            <button
-              className="btn primary"
-              onClick={() => doScan()}
-              disabled={loading}
-            >
-              🛰 Scan now
-            </button>
-          </React.Fragment>
+          <button
+            className="btn primary"
+            onClick={() => doScan()}
+            disabled={loading}
+          >
+            🛰 Scan now
+          </button>
         }
       />
 

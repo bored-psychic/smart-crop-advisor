@@ -11,7 +11,6 @@ function ViewIrrigation({ profile, setProfile, t }){
   const [temperature, setTemperature] = useState(32);
   const [humidity, setHumidity]   = useState(45);
   const [windSpeed, setWindSpeed] = useState(12);
-  const [city, setCity]           = useState('');
   const [autofilling, setAutofilling] = useState(false);
   const [autofillNote, setAutofillNote] = useState('');
   const [calamityKey, setCalamityKey]   = useState(null);
@@ -19,29 +18,28 @@ function ViewIrrigation({ profile, setProfile, t }){
   const [error, setError]         = useState(null);
   const [result, setResult]       = useState(null);
 
-  // 400ms debounce for city → weather autofill
   const debounceRef = useRef(null);
 
   useEffect(() => {
     return () => clearTimeout(debounceRef.current);
   }, []);
 
-  const handleCityChange = useCallback((val) => {
-    setCity(val);
+  // Autofill weather from LocationBar village field
+  useEffect(() => {
+    const val = (profile.village || '').trim();
     setAutofillNote('');
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (val.trim().length > 2) {
+    if (val.length > 2) {
       debounceRef.current = setTimeout(async () => {
         setAutofilling(true);
         try {
-          const data = await window.api.fieldWatchScan(val.trim());
+          const data = await window.api.fieldWatchScan(val);
           const w = data.weather;
           if (w) {
             if (w.temp     != null) setTemperature(parseFloat(w.temp));
             if (w.humidity != null) setHumidity(parseFloat(w.humidity));
             if (w.wind     != null) setWindSpeed(parseFloat(w.wind));
-            setAutofillNote(`Autofilled from ${val.trim()}`);
-            // calamity detection
+            setAutofillNote(`Autofilled from ${val}`);
             const desc = (w.description || '').toLowerCase();
             const matched = Object.keys(CALAMITY_TIPS).find(k => desc.includes(k));
             setCalamityKey(matched || null);
@@ -53,7 +51,7 @@ function ViewIrrigation({ profile, setProfile, t }){
         }
       }, 400);
     }
-  }, []);
+  }, [profile.village]);
 
   async function handleSubmit(){
     setLoading(true);
@@ -109,9 +107,13 @@ function ViewIrrigation({ profile, setProfile, t }){
         village={profile.village} setVillage={v => setProfile({...profile, village: v})}
         state={profile.state}     setState={s  => setProfile({...profile, state: s})}
         extra={
-          <select className="input" value={crop} onChange={e => setCrop(e.target.value)}>
-            {CROP_KC_KEYS.map(c => <option key={c}>{c}</option>)}
-          </select>
+          <>
+            <select className="input" value={crop} onChange={e => setCrop(e.target.value)}>
+              {CROP_KC_KEYS.map(c => <option key={c}>{c}</option>)}
+            </select>
+            {autofilling && <span style={{fontSize:12, color:'var(--ink-faint)', fontStyle:'italic'}}>scanning…</span>}
+            {autofillNote && !autofilling && <span style={{fontSize:12, color:'var(--leaf)', fontStyle:'italic'}}>{autofillNote}</span>}
+          </>
         }
       />
 
@@ -119,25 +121,6 @@ function ViewIrrigation({ profile, setProfile, t }){
         {/* LEFT — Your field */}
         <div className="card rise rise-1">
           <div className="card-h"><h3>Your field</h3></div>
-
-          {/* City autofill */}
-          <div className="field">
-            <div className="field-label">
-              <span className="name">City for weather autofill</span>
-              {autofilling && <span style={{fontSize:12, color:'var(--ink-faint)', fontStyle:'italic', marginLeft:8}}>scanning…</span>}
-            </div>
-            <input
-              className="input"
-              type="text"
-              placeholder="e.g. Nagpur"
-              value={city}
-              onChange={e => handleCityChange(e.target.value)}
-              style={{width:'100%', marginBottom:4}}
-            />
-            {autofillNote && (
-              <div style={{fontSize:12, color:'var(--leaf)', fontStyle:'italic'}}>{autofillNote}</div>
-            )}
-          </div>
 
           {/* Growth stage tiles */}
           <div className="field">
