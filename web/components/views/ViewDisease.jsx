@@ -19,7 +19,7 @@ function Top3Bars({ top3, t }) {
   const max = top3[0]?.[1] || 1;
   return (
     <div style={{ marginTop: 14 }}>
-      <div className="page-eyebrow" style={{ marginBottom: 8 }}>top matches</div>
+      <div className="page-eyebrow" style={{ marginBottom: 8 }}>{t('top matches')}</div>
       {top3.map(([name, pct]) => (
         <div key={name} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <div style={{ width: 120, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'right' }}>{name}</div>
@@ -41,7 +41,7 @@ function PhotoResult({ result, t }) {
     <div className="rise">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
         <span className="tag" style={{ color: 'var(--ink-faint)', borderColor: 'var(--line-2)', fontSize: 11 }}>
-          via {result.model_used || 'Vision API'}
+          {t('via')} {result.model_used || 'Vision API'}
         </span>
         <SevTag severity={result.severity} />
       </div>
@@ -50,19 +50,19 @@ function PhotoResult({ result, t }) {
       </div>
       {result.action && (
         <div style={{ marginTop: 14, padding: '12px 14px', background: 'rgba(240,192,96,0.16)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
-          <div className="page-eyebrow" style={{ color: 'var(--sun)' }}>right now</div>
+          <div className="page-eyebrow" style={{ color: 'var(--sun)' }}>{t('right now')}</div>
           <div style={{ marginTop: 4 }}>{result.action}</div>
         </div>
       )}
       {result.treatment && (
         <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
-          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>treatment</div>
+          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>{t('treatment')}</div>
           <div style={{ marginTop: 4 }}>{result.treatment}</div>
         </div>
       )}
       {result.prevention && (
         <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--glass-bg-subtle)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
-          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>prevention</div>
+          <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>{t('prevention')}</div>
           <div style={{ marginTop: 4 }}>{result.prevention}</div>
         </div>
       )}
@@ -138,20 +138,20 @@ function PhotoPanel({ t }) {
     }
   }, [analyzeFile]);
 
-  function errorMsg(e) {
-    if (!e) return 'Something went wrong.';
-    if (e.status === 401 || e.status === 403) return 'API key issue — check your config.js setup.';
-    if (!e.status && e.message) return 'No connection — check your network and try again.';
-    return e.detail || e.message || 'Analysis failed.';
+  function errorMsg(e, t) {
+    if (!e) return t('Something went wrong.');
+    if (e.status === 401 || e.status === 403) return t('API key issue — check your config.js setup.');
+    if (!e.status && e.message) return t('No connection — check your network and try again.');
+    return e.detail || e.message || t('Analysis failed.');
   }
 
   return (
     <div className="grid-2">
       <div className="card rise rise-1">
         <div className="card-h">
-          <h3>Send a photo</h3>
+          <h3>{t('Send a photo')}</h3>
           {cropsLoading ? (
-            <span className="muted small" style={{ fontStyle: 'italic' }}>loading crops…</span>
+            <span className="muted small" style={{ fontStyle: 'italic' }}>{t('loading crops…')}</span>
           ) : (
             <select className="input" style={{ width: 140 }} value={cropType} onChange={e => setCropType(e.target.value)}>
               {(cropList || FALLBACK_CROPS).map(c => <option key={c}>{c}</option>)}
@@ -170,8 +170,8 @@ function PhotoPanel({ t }) {
           }}
         >
           <div style={{ fontSize: 36 }}>🍃</div>
-          <div style={{ marginTop: 10, fontSize: 14 }}><strong>Drop a leaf photo here</strong></div>
-          <div className="muted small" style={{ marginTop: 4 }}>or click to choose · jpg, png, webp</div>
+          <div style={{ marginTop: 10, fontSize: 14 }}><strong>{t('Drop a leaf photo here')}</strong></div>
+          <div className="muted small" style={{ marginTop: 4 }}>{t('or click to choose · jpg, png, webp')}</div>
           <input
             ref={fileRef}
             type="file"
@@ -184,17 +184,17 @@ function PhotoPanel({ t }) {
 
       <div className="card rise rise-2">
         <div className="card-h">
-          <h3>What we see</h3>
+          <h3>{t('What we see')}</h3>
           {result && <SevTag severity={result.severity} />}
         </div>
         {!loading && !result && !error && (
-          <div className="muted" style={{ padding: '30px 0', textAlign: 'center' }}>Send a photo and we'll have a look. 🌿</div>
+          <div className="muted" style={{ padding: '30px 0', textAlign: 'center' }}>{t("Send a photo and we'll have a look. 🌿")}</div>
         )}
-        {loading && <Loading label="Analyzing leaf…" />}
+        {loading && <Loading label={t('Analyzing leaf…')} />}
         {!loading && error && (
           <ErrorCard
-            title="Could not analyze photo"
-            detail={errorMsg(error)}
+            title={t('Could not analyze photo')}
+            detail={errorMsg(error, t)}
             // Fix #5: retry uses the file stored in state, not stale fileRef.current.files
             onRetry={() => { if (file) analyzeFile(file); }}
           />
@@ -209,12 +209,12 @@ function PhotoPanel({ t }) {
 function ViewDisease({ profile, t }) {
   return (
     <div className="view-fade">
-      <Topbar crumb="Leaf Doctor" />
+      <Topbar crumb={t('Leaf Doctor')} />
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">leaf doctor</div>
-          <h1 className="page-title">A <em>second pair of eyes</em> for sick leaves.</h1>
-          <p className="page-lede">Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.</p>
+          <div className="page-eyebrow">{t('leaf doctor')}</div>
+          <h1 className="page-title">{t('A')} <em>{t('second pair of eyes')}</em> {t('for sick leaves.')}</h1>
+          <p className="page-lede">{t("Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.")}</p>
         </div>
       </div>
 
