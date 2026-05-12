@@ -383,7 +383,7 @@ function ViewAcoustic({ profile, t }){
             }}>
               {preCheckWarnings.map((w,i)=>(
                 <div key={i} style={{fontSize:13,color:'var(--sun)',marginBottom:i<preCheckWarnings.length-1?4:0}}>
-                  {window.ACOUSTIC_WARNING_LABELS?.[w] || w}
+                  {t(window.ACOUSTIC_WARNING_LABELS?.[w] || w)}
                 </div>
               ))}
             </div>
