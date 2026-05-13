@@ -3,7 +3,7 @@ const { useState, useEffect, useRef, useCallback } = React;
 
 const GROWTH_STAGES = ['Initial', 'Development', 'Mid-season', 'Late season'];
 
-function ViewIrrigation({ profile, setProfile, t }){
+function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
   const [crop, setCrop]           = useState('Cotton');
   const [stage, setStage]         = useState('Mid-season');
   const [fieldArea, setFieldArea] = useState(2.0);
@@ -18,40 +18,31 @@ function ViewIrrigation({ profile, setProfile, t }){
   const [error, setError]         = useState(null);
   const [result, setResult]       = useState(null);
 
-  const debounceRef = useRef(null);
+  const autoRunRef = useRef(false);
 
+  // Read prefetched weather from App (fetched on city change, before tab opens)
   useEffect(() => {
-    return () => clearTimeout(debounceRef.current);
-  }, []);
+    setAutofilling(!!fieldLoading);
+    const w = fieldData && fieldData.weather;
+    if (!w) return;
+    if (w.temp     != null) setTemperature(parseFloat(w.temp));
+    if (w.humidity != null) setHumidity(parseFloat(w.humidity));
+    if (w.wind     != null) setWindSpeed(parseFloat(w.wind));
+    if (w.rain_1h  != null) setLastRain(Math.min(100, Math.max(0, parseFloat(w.rain_1h) * 24)));
+    setAutofillNote(`Autofilled from ${fieldData.city || profile.village}`);
+    const desc = (w.description || '').toLowerCase();
+    const matched = Object.keys(CALAMITY_TIPS).find(k => desc.includes(k));
+    setCalamityKey(matched || null);
+    autoRunRef.current = true;
+  }, [fieldData, fieldLoading]);
 
-  // Autofill weather from LocationBar village field
+  // Auto-run calculation after autofill settles
   useEffect(() => {
-    const val = (profile.village || '').trim();
-    setAutofillNote('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (val.length > 2) {
-      debounceRef.current = setTimeout(async () => {
-        setAutofilling(true);
-        try {
-          const data = await window.api.fieldWatchScan(val);
-          const w = data.weather;
-          if (w) {
-            if (w.temp     != null) setTemperature(parseFloat(w.temp));
-            if (w.humidity != null) setHumidity(parseFloat(w.humidity));
-            if (w.wind     != null) setWindSpeed(parseFloat(w.wind));
-            setAutofillNote(`Autofilled from ${val}`);
-            const desc = (w.description || '').toLowerCase();
-            const matched = Object.keys(CALAMITY_TIPS).find(k => desc.includes(k));
-            setCalamityKey(matched || null);
-          }
-        } catch (_) {
-          // silently ignore autofill errors
-        } finally {
-          setAutofilling(false);
-        }
-      }, 400);
-    }
-  }, [profile.village]);
+    if (!autoRunRef.current) return;
+    autoRunRef.current = false;
+    const h = setTimeout(() => { handleSubmit(); }, 50);
+    return () => clearTimeout(h);
+  }, [temperature, humidity, windSpeed, lastRain]);
 
   async function handleSubmit(){
     setLoading(true);
@@ -94,12 +85,12 @@ function ViewIrrigation({ profile, setProfile, t }){
 
   return (
     <div className="view-fade">
-      <Topbar crumb="Watering"/>
+      <Topbar crumb={t('Watering')}/>
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">water</div>
-          <h1 className="page-title">Just enough water, <em>just in time.</em></h1>
-          <p className="page-lede">We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.</p>
+          <div className="page-eyebrow">{t('water')}</div>
+          <h1 className="page-title">{t('Just enough water,')} <em>{t('just in time.')}</em></h1>
+          <p className="page-lede">{t("We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.")}</p>
         </div>
       </div>
 
@@ -120,11 +111,11 @@ function ViewIrrigation({ profile, setProfile, t }){
       <div className="grid-2">
         {/* LEFT — Your field */}
         <div className="card rise rise-1">
-          <div className="card-h"><h3>Your field</h3></div>
+          <div className="card-h"><h3>{t('Your field')}</h3></div>
 
           {/* Growth stage tiles */}
           <div className="field">
-            <div className="field-label"><span className="name">Growth stage</span></div>
+            <div className="field-label"><span className="name">{t('Growth stage')}</span></div>
             <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8}}>
               {GROWTH_STAGES.map(s => (
                 <button
@@ -137,31 +128,31 @@ function ViewIrrigation({ profile, setProfile, t }){
                     ...(stage === s ? {background:'var(--leaf-soft)'} : {})
                   }}
                   onClick={() => setStage(s)}
-                >{s}</button>
+                >{t(s)}</button>
               ))}
             </div>
           </div>
 
-          <Slider label="Field area"    unit="ac"   min={0.5} max={20}  step={0.1} value={fieldArea}   onChange={setFieldArea}/>
-          <Slider label="Recent rain"   unit="mm"   min={0}   max={100}            value={lastRain}    onChange={setLastRain}/>
-          <Slider label="Temperature"   unit="°C"   min={10}  max={48}  step={0.5} value={temperature} onChange={setTemperature}/>
-          <Slider label="Humidity"      unit="%"    min={10}  max={100}            value={humidity}    onChange={setHumidity}/>
-          <Slider label="Wind speed"    unit="km/h" min={0}   max={50}             value={windSpeed}   onChange={setWindSpeed}/>
+          <Slider label={t('Field area')}   unit={t('ac')}   min={0.5} max={20}  step={0.1} value={fieldArea}   onChange={setFieldArea}/>
+          <Slider label={t('Recent rain')}  unit={t('mm')}   min={0}   max={100}            value={lastRain}    onChange={setLastRain}/>
+          <Slider label={t('Temperature')}  unit="°C"        min={10}  max={48}  step={0.5} value={temperature} onChange={setTemperature}/>
+          <Slider label={t('Humidity')}     unit="%"         min={10}  max={100}            value={humidity}    onChange={setHumidity}/>
+          <Slider label={t('Wind speed')}   unit={t('km/h')} min={0}   max={50}             value={windSpeed}   onChange={setWindSpeed}/>
         </div>
 
         {/* RIGHT — Get advice */}
         <div className="card rise rise-2">
-          <div className="card-h"><h3>Get advice</h3></div>
+          <div className="card-h"><h3>{t('Get advice')}</h3></div>
           <div style={{padding:'12px 0'}}>
             <button className="btn primary" onClick={handleSubmit} disabled={loading} style={{width:'100%'}}>
-              Calculate irrigation
+              {t('Calculate irrigation')}
             </button>
           </div>
-          {loading && <Loading label="Calculating irrigation…"/>}
+          {loading && <Loading label={t('Calculating irrigation…')}/>}
           {error   && (
             <ErrorCard
-              title="Could not calculate"
-              detail={!error.status ? 'No connection — check your network and try again.' : error.detail}
+              title={t('Could not calculate')}
+              detail={!error.status ? t('No connection — check your network and try again.') : error.detail}
               onRetry={handleSubmit}
             />
           )}
@@ -175,7 +166,7 @@ function ViewIrrigation({ profile, setProfile, t }){
           {/* 3 metric tiles */}
           <div className="grid-3">
             <div className="card rise" style={{textAlign:'center'}}>
-              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Water needed</div>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>{t('Water needed')}</div>
               <div className="bignum">
                 <em>{result.total_litres.toLocaleString()}</em>
                 <span className="unit"> L</span>
@@ -184,7 +175,7 @@ function ViewIrrigation({ profile, setProfile, t }){
             </div>
 
             <div className="card rise" style={{textAlign:'center'}}>
-              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Net irrigation</div>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>{t('Net irrigation')}</div>
               <div className="bignum">
                 <em>{result.net_irrigation_mm}</em>
                 <span className="unit"> mm/day</span>
@@ -192,7 +183,7 @@ function ViewIrrigation({ profile, setProfile, t }){
             </div>
 
             <div className="card rise" style={{textAlign:'center'}}>
-              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>Crop Kc factor</div>
+              <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>{t('Crop Kc factor')}</div>
               <div className="bignum"><em>{result.Kc}</em></div>
               <div style={{fontSize:13,color:'var(--ink-soft)',marginTop:4}}>{result.crop} · {stage}</div>
             </div>
@@ -204,7 +195,7 @@ function ViewIrrigation({ profile, setProfile, t }){
             borderColor: urgencyStyle.border,
           }}>
             <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:urgencyStyle.border,marginBottom:8}}>
-              urgency · {result.urgency}
+              {t('urgency')} · {result.urgency}
             </div>
             <div style={{color:'var(--ink)',lineHeight:1.6}}>{result.advice}</div>
           </div>
@@ -212,10 +203,10 @@ function ViewIrrigation({ profile, setProfile, t }){
           {/* Fertilizer card */}
           <div className="card rise" style={{background:'var(--leaf-soft)', borderColor:'var(--leaf)'}}>
             <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--leaf)',marginBottom:8}}>
-              fertilizer · {result.fertilizer.growth_stage}
+              {t('fertilizer')} · {result.fertilizer.growth_stage}
             </div>
             <div style={{color:'var(--ink)',marginBottom:6}}>
-              <strong>Nitrogen:</strong> {result.fertilizer.nitrogen}
+              <strong>{t('Nitrogen:')}</strong> {result.fertilizer.nitrogen}
             </div>
             <div style={{color:'var(--ink-soft)',fontSize:13,fontStyle:'italic'}}>{result.fertilizer.tip}</div>
           </div>
@@ -228,7 +219,7 @@ function ViewIrrigation({ profile, setProfile, t }){
         <div style={{marginTop:24}}>
           <div className="card rise" style={{background:'rgba(240,192,96,0.14)', borderColor:'var(--sun)'}}>
             <div style={{fontSize:10,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--sun)',marginBottom:8}}>
-              weather tips · {calamityKey}
+              {t('weather tips')} · {calamityKey}
             </div>
             <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>
               {CALAMITY_TIPS[calamityKey].map((tip, i) => (
