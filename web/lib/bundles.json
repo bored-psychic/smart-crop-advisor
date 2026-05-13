@@ -355,7 +355,14 @@
     "📈 Sample rate resampled to 16 kHz": "📈 Sample rate resampled to 16 kHz",
     "Pollinator": "Pollinator",
     "Pest": "Pest",
-    "Ambient": "Ambient"
+    "Ambient": "Ambient",
+    "your name": "your name",
+    "village": "village",
+    "phone": "phone",
+    "primary crop": "primary crop",
+    "language": "language",
+    "today on the farm": "today on the farm",
+    "Sign out": "Sign out"
   },
   "hi": {
     "Crop Recommender": "फसल सिफ़ारिशकर्ता",
@@ -713,7 +720,14 @@
     "Could not analyze soil": "मिट्टी का विश्लेषण नहीं हो सका",
     "API key misconfigured. Open web/config.js and verify the dev key.": "API कुंजी गलत — web/config.js जाँचें।",
     "No connection — check your network and try again.": "कोई कनेक्शन नहीं — नेटवर्क जाँचें।",
-    "soil": "मिट्टी"
+    "soil": "मिट्टी",
+    "your name": "आपका नाम",
+    "village": "गाँव",
+    "phone": "फोन",
+    "primary crop": "मुख्य फसल",
+    "language": "भाषा",
+    "today on the farm": "आज खेत में",
+    "Sign out": "साइन आउट"
   },
   "te": {
     "Crop Recommender": "పంట సిఫార్సుదారు",

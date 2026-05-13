@@ -223,7 +223,7 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
             </div>
             <ul style={{margin:0, paddingLeft:20, color:'var(--ink)', lineHeight:1.8}}>
               {CALAMITY_TIPS[calamityKey].map((tip, i) => (
-                <li key={i}>{tip}</li>
+                <li key={i}>{t(tip)}</li>
               ))}
             </ul>
           </div>

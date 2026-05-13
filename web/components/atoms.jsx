@@ -263,27 +263,27 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
             <div className="profile-row">
               <div className="avatar">{initials}</div>
               <div style={{flex:1,minWidth:0}}>
-                <input className="profile-name-input" value={profile.name} onChange={e=>setProfile({...profile,name:e.target.value})} placeholder="your name"/>
+                <input className="profile-name-input" value={profile.name} onChange={e=>setProfile({...profile,name:e.target.value})} placeholder={t('your name')}/>
                 <div style={{fontSize:11,color:'var(--ink-faint)',marginTop:-2}}>{t('farmer · since 2019')}</div>
               </div>
             </div>
             <div className="profile-field">
               <span className="ic">📍</span>
-              <input value={profile.village} onChange={e=>setProfile({...profile,village:e.target.value})} placeholder="village"/>
+              <input value={profile.village} onChange={e=>setProfile({...profile,village:e.target.value})} placeholder={t('village')}/>
             </div>
             <div className="profile-field">
               <span className="ic">📞</span>
-              <input value={profile.phone} onChange={e=>setProfile({...profile,phone:e.target.value})} placeholder="phone"/>
+              <input value={profile.phone} onChange={e=>setProfile({...profile,phone:e.target.value})} placeholder={t('phone')}/>
             </div>
             <div className="profile-field">
               <span className="ic">🌱</span>
-              <input value={profile.crop} onChange={e=>setProfile({...profile,crop:e.target.value})} placeholder="primary crop"/>
+              <input value={profile.crop} onChange={e=>setProfile({...profile,crop:e.target.value})} placeholder={t('primary crop')}/>
             </div>
           </div>
 
           {/* Language pill */}
           <div ref={langRef} style={{position:'relative'}}>
-            <div style={{fontSize:10,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6,padding:'0 4px'}}>language</div>
+            <div style={{fontSize:10,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6,padding:'0 4px'}}>{t('language')}</div>
             <button className={`lang-pill ${langOpen?'open':''}`} onClick={(e)=>{e.stopPropagation();setLangOpen(!langOpen)}}>
               <span className="flag">{langObj.flag}</span>
               <span>{langObj.label}</span>
@@ -306,7 +306,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
             background:'var(--glass-bg)',border:'1px solid var(--glass-border)',
             borderRadius:12,fontSize:12,color:'var(--ink-soft)',lineHeight:1.7
           }}>
-            <div style={{fontFamily:'var(--display)',fontSize:18,color:'var(--ink)',marginBottom:4,letterSpacing:'-0.01em'}}>today on the farm</div>
+            <div style={{fontFamily:'var(--display)',fontSize:18,color:'var(--ink)',marginBottom:4,letterSpacing:'-0.01em'}}>{t('today on the farm')}</div>
             ☀️ 29.4°C, 64% humidity<br/>
             🌧 light rain at dusk<br/>
             🐝 bees active · safe to spray after 5pm
@@ -326,7 +326,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
                 <path d="M16 17l5-5-5-5"/>
                 <path d="M21 12H9"/>
               </svg>
-              <span>Sign out</span>
+              <span>{t('Sign out')}</span>
             </button>
           </div>
         </div>
