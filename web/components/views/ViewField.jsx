@@ -26,10 +26,13 @@ function AlertCard({ title, risk, children }) {
   );
 }
 
-function ViewField({ profile, setProfile, t }) {
+function ViewField({ profile, setProfile, t, fieldData, fieldLoading }) {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
-  const [result, setResult]   = useState(null);
+  const [result, setResult]   = useState(fieldData || null);
+
+  // Reflect prefetched data from App as it arrives
+  useEffect(() => { if (fieldData) setResult(fieldData); }, [fieldData]);
   const { toasts, add: addToast } = useToast();
 
   const doScan = useCallback(async (scanCity) => {
@@ -55,11 +58,8 @@ function ViewField({ profile, setProfile, t }) {
     }
   }, [profile.village]);
 
-  useEffect(() => {
-    if ((profile.village || '').trim().length > 0) {
-      doScan(profile.village.trim());
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // App-level prefetch covers village changes; doScan() remains for manual "Scan now"
+  useEffect(() => { setLoading(!!fieldLoading); }, [fieldLoading]);
 
   /* ---- WhatsApp message ---- */
   const waMessage = useMemo(() => {
@@ -82,14 +82,14 @@ function ViewField({ profile, setProfile, t }) {
 
   return (
     <div className="view-fade">
-      <Topbar crumb="Field Watch" />
+      <Topbar crumb={t('Field Watch')} />
       <ToastContainer toasts={toasts} />
 
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">field</div>
-          <h1 className="page-title">A <em>quiet daily check-in</em> for your land.</h1>
-          <p className="page-lede">Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.</p>
+          <div className="page-eyebrow">{t('field')}</div>
+          <h1 className="page-title">{t('A')} <em>{t('quiet daily check-in')}</em> {t('for your land.')}</h1>
+          <p className="page-lede">{t("Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.")}</p>
         </div>
       </div>
 
@@ -102,21 +102,21 @@ function ViewField({ profile, setProfile, t }) {
             onClick={() => doScan()}
             disabled={loading}
           >
-            🛰 Scan now
+            {t('🛰 Scan now')}
           </button>
         }
       />
 
-      {loading && <Loading label="Scanning field…" />}
+      {loading && <Loading label={t('Scanning field…')} />}
 
       {error && !loading && (
         <ErrorCard
           title={
             error.status === 401 || error.status === 403
-              ? 'Access denied'
+              ? t('Access denied')
               : error.status === 0
-                ? 'Network error'
-                : `Error ${error.status || ''}`
+                ? t('Network error')
+                : t('Error') + ' ' + (error.status || '')
           }
           detail={error.detail || error.message}
           onRetry={() => doScan()}
@@ -139,7 +139,7 @@ function ViewField({ profile, setProfile, t }) {
                   fontFamily: 'var(--display)', fontSize: 28,
                   color: s.color, letterSpacing: '0.04em'
                 }}>
-                  {result.overall_risk} RISK · {result.city}
+                  {result.overall_risk} {t('RISK')} · {result.city}
                 </div>
               </div>
             );
@@ -149,16 +149,16 @@ function ViewField({ profile, setProfile, t }) {
           {result.weather && (
             <div className="grid-4" style={{ marginBottom: 18 }}>
               <div className="card rise" style={{ padding: '18px 20px' }}>
-                <div className="page-eyebrow">Temperature</div>
+                <div className="page-eyebrow">{t('Temperature')}</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
                   <em>{result.weather.temp?.toFixed(1) ?? '—'}°C</em>
                 </div>
                 <div className="muted small" style={{ marginTop: 4 }}>
-                  feels like {result.weather.feels_like?.toFixed(0) ?? '—'}°C
+                  {t('feels like')} {result.weather.feels_like?.toFixed(0) ?? '—'}°C
                 </div>
               </div>
               <div className="card rise" style={{ padding: '18px 20px' }}>
-                <div className="page-eyebrow">Humidity</div>
+                <div className="page-eyebrow">{t('Humidity')}</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
                   <em>{result.weather.humidity}%</em>
                 </div>
@@ -167,18 +167,18 @@ function ViewField({ profile, setProfile, t }) {
                 </div>
               </div>
               <div className="card rise" style={{ padding: '18px 20px' }}>
-                <div className="page-eyebrow">Wind</div>
+                <div className="page-eyebrow">{t('Wind')}</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
                   <em>{result.weather.wind?.toFixed(0) ?? '—'} km/h</em>
                 </div>
-                <div className="muted small" style={{ marginTop: 4 }}>surface wind</div>
+                <div className="muted small" style={{ marginTop: 4 }}>{t('surface wind')}</div>
               </div>
               <div className="card rise" style={{ padding: '18px 20px' }}>
-                <div className="page-eyebrow">Rain 1h</div>
+                <div className="page-eyebrow">{t('Rain 1h')}</div>
                 <div className="bignum" style={{ fontSize: 32, marginTop: 6 }}>
                   <em>{result.weather.rain_1h != null ? result.weather.rain_1h : 0} mm</em>
                 </div>
-                <div className="muted small" style={{ marginTop: 4 }}>last hour</div>
+                <div className="muted small" style={{ marginTop: 4 }}>{t('last hour')}</div>
               </div>
             </div>
           )}
@@ -186,34 +186,34 @@ function ViewField({ profile, setProfile, t }) {
           {/* 3. Alert cards */}
           <div className="grid-2" style={{ marginBottom: 18 }}>
             {result.flood && (
-              <AlertCard title="Flood risk" risk={result.flood.flood_risk}>
+              <AlertCard title={t('Flood risk')} risk={result.flood.flood_risk}>
                 <div style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
-                  Rain 48h: <strong>{result.flood.rain_48h} mm</strong>
+                  {t('Rain 48h:')} <strong>{result.flood.rain_48h} mm</strong>
                 </div>
               </AlertCard>
             )}
 
             {result.fire && (
-              <AlertCard title="Fire" risk={result.fire.risk}>
+              <AlertCard title={t('Fire')} risk={result.fire.risk}>
                 <div style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
-                  Hotspots nearby: <strong>{result.fire.hotspots_nearby}</strong>
+                  {t('Hotspots nearby:')} <strong>{result.fire.hotspots_nearby}</strong>
                 </div>
                 {result.fire.source && (
                   <div style={{ fontSize: 11, color: 'var(--ink-faint)', marginTop: 4 }}>
-                    source: {result.fire.source}
+                    {t('source:')} {result.fire.source}
                   </div>
                 )}
               </AlertCard>
             )}
 
             {result.locust && (
-              <AlertCard title="Locust" risk={result.locust.risk}>
+              <AlertCard title={t('Locust')} risk={result.locust.risk}>
                 <div style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
-                  Swarms nearby: <strong>{result.locust.swarms_nearby}</strong>
+                  {t('Swarms nearby:')} <strong>{result.locust.swarms_nearby}</strong>
                 </div>
                 {result.locust.source && (
                   <div style={{ fontSize: 11, color: 'var(--ink-faint)', marginTop: 4 }}>
-                    source: {result.locust.source}
+                    {t('source:')} {result.locust.source}
                   </div>
                 )}
               </AlertCard>
@@ -221,7 +221,7 @@ function ViewField({ profile, setProfile, t }) {
 
             {result.aqi && (
               <AlertCard
-                title="Air Quality"
+                title={t('Air Quality')}
                 risk={result.aqi.value > 200 ? 'HIGH' : result.aqi.value > 100 ? 'MEDIUM' : 'LOW'}
               >
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
@@ -241,7 +241,7 @@ function ViewField({ profile, setProfile, t }) {
           {/* 4. Helplines table */}
           <div className="card rise" style={{ marginBottom: 18 }}>
             <div className="card-h">
-              <h3>Emergency helplines</h3>
+              <h3>{t('Emergency helplines')}</h3>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
@@ -250,7 +250,7 @@ function ViewField({ profile, setProfile, t }) {
                     background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.06)',
                   }}>
                     <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>
-                      {name}
+                      {t(name)}
                     </td>
                     <td style={{ padding: '10px 12px', fontSize: 14 }}>
                       <a href={`tel:${num}`} style={{ color: 'var(--leaf)', fontWeight: 600, textDecoration: 'none' }}>
@@ -258,7 +258,7 @@ function ViewField({ profile, setProfile, t }) {
                       </a>
                     </td>
                     <td style={{ padding: '10px 12px', fontSize: 12, color: 'var(--ink-faint)' }}>
-                      {note}
+                      {t(note)}
                     </td>
                   </tr>
                 ))}
@@ -269,7 +269,7 @@ function ViewField({ profile, setProfile, t }) {
           {/* 5. WhatsApp builder */}
           <div className="card rise" style={{ marginBottom: 18 }}>
             <div className="card-h">
-              <h3>Send to WhatsApp</h3>
+              <h3>{t('Send to WhatsApp')}</h3>
             </div>
             <textarea
               readOnly
@@ -307,7 +307,7 @@ function ViewField({ profile, setProfile, t }) {
                   handleCopy();
                 }}
               >
-                📋 Copy
+                {t('📋 Copy')}
               </button>
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(waMessage)}`}
@@ -315,7 +315,7 @@ function ViewField({ profile, setProfile, t }) {
                 rel="noopener noreferrer"
                 className="btn primary"
               >
-                📲 Open WhatsApp
+                {t('📲 Open WhatsApp')}
               </a>
               {profile.phone && (
                 <a
@@ -324,7 +324,7 @@ function ViewField({ profile, setProfile, t }) {
                   rel="noopener noreferrer"
                   className="btn ghost"
                 >
-                  Send to my number
+                  {t('Send to my number')}
                 </a>
               )}
             </div>
