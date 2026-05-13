@@ -345,7 +345,17 @@
     "💧 Check soil moisture levels": "💧 Check soil moisture levels",
     "🌤️ Good day for transplanting": "🌤️ Good day for transplanting",
     "💧 Moderate irrigation needed": "💧 Moderate irrigation needed",
-    "🌱 Apply fertilizers today": "🌱 Apply fertilizers today"
+    "🌱 Apply fertilizers today": "🌱 Apply fertilizers today",
+    "farmer · since 2019": "farmer · since 2019",
+    "a calm field today is a good harvest tomorrow.": "a calm field today is a good harvest tomorrow.",
+    "⏱ Recording too short — need at least 3 seconds": "⏱ Recording too short — need at least 3 seconds",
+    "🔇 Too quiet — hold mic closer to the plant stem": "🔇 Too quiet — hold mic closer to the plant stem",
+    "✂️ Long recording — analyzed first 20 seconds": "✂️ Long recording — analyzed first 20 seconds",
+    "📉 Low sample rate may reduce accuracy": "📉 Low sample rate may reduce accuracy",
+    "📈 Sample rate resampled to 16 kHz": "📈 Sample rate resampled to 16 kHz",
+    "Pollinator": "Pollinator",
+    "Pest": "Pest",
+    "Ambient": "Ambient"
   },
   "hi": {
     "Crop Recommender": "फसल सिफ़ारिशकर्ता",

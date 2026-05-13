@@ -111,7 +111,7 @@ function Donut({ value, max=100, size=160, label, sub }){
           strokeDasharray={`${dash} ${c-dash}`} strokeLinecap="round" style={{transition:'stroke-dasharray 1s ease'}}/>
       </svg>
       <div className="donut-num">
-        <div className="bignum"><em>{Math.round(value)}</em><span className="unit">%</span></div>
+        <div className="bignum"><em>{Number(value).toFixed(2)}</em><span className="unit">%</span></div>
         <div style={{fontSize:11,color:'var(--ink-faint)',marginTop:4,letterSpacing:'0.06em',textTransform:'uppercase'}}>{label}</div>
         {sub && <div style={{fontSize:11,color:'var(--leaf)',marginTop:2,fontStyle:'italic'}}>{sub}</div>}
       </div>
@@ -121,11 +121,14 @@ function Donut({ value, max=100, size=160, label, sub }){
 
 const INDIA_STATES = ["Andhra Pradesh","Assam","Bihar","Chhattisgarh","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Odisha","Punjab","Rajasthan","Tamil Nadu","Telangana","Uttar Pradesh","Uttarakhand","West Bengal"];
 
+// Only crops with a trained Prophet price model on disk
+// (backend/price_model_<lower>.json). Keep names single-word so
+// `crop.lower()` maps cleanly to the model filename.
 const ALL_CROPS = [
-  "Wheat","Rice","Maize","Barley","Pearl Millet","Sorghum","Chickpea",
-  "Pigeon Pea","Black Gram","Green Gram","Lentil","Mustard","Groundnut",
-  "Soybean","Sunflower","Sesame","Castor","Cotton","Sugarcane","Jute",
-  "Potato","Onion","Tomato","Banana","Coconut","Mango"
+  "Wheat","Rice","Maize","Chickpea","Pigeonpeas","Blackgram","Mungbean",
+  "Mothbeans","Kidneybeans","Lentil","Cotton","Jute","Coffee","Potato",
+  "Onion","Tomato","Banana","Coconut","Mango","Apple","Orange","Papaya",
+  "Grapes","Pomegranate","Watermelon","Muskmelon"
 ];
 
 const CROP_KC_KEYS = [
@@ -261,7 +264,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
               <div className="avatar">{initials}</div>
               <div style={{flex:1,minWidth:0}}>
                 <input className="profile-name-input" value={profile.name} onChange={e=>setProfile({...profile,name:e.target.value})} placeholder="your name"/>
-                <div style={{fontSize:11,color:'var(--ink-faint)',marginTop:-2}}>farmer · since 2019</div>
+                <div style={{fontSize:11,color:'var(--ink-faint)',marginTop:-2}}>{t('farmer · since 2019')}</div>
               </div>
             </div>
             <div className="profile-field">
@@ -312,7 +315,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
             fontFamily:'var(--display)',fontSize:15,fontStyle:'italic',
             color:'var(--ink-faint)',textAlign:'center',padding:'4px 6px',lineHeight:1.4
           }}>
-            "a calm field today<br/>is a good harvest tomorrow."
+            {t('a calm field today is a good harvest tomorrow.')}
           </div>
 
           {/* Footer action — sign out */}

@@ -41,11 +41,36 @@ function App() {
   }, [active, authed]);
   const [profile, setProfile] = useState({
     name:    'Ramesh Kumar',
-    village: 'Nandyal',
-    state:   'Andhra Pradesh',
+    village: 'Bengaluru',
+    state:   'Karnataka',
     phone:   '',
     crop:    'Cotton',
   });
+
+  // Shared live field-watch data, prefetched on village change so every tab
+  // (irrigation, crop, field) can read weather/flood/fire without re-fetching.
+  const [fieldData, setFieldData] = useState(null);
+  const [fieldLoading, setFieldLoading] = useState(false);
+  const fieldFetchRef = useRef({ city: '', timer: null });
+  useEffect(() => {
+    const city = (profile.village || '').trim();
+    if (fieldFetchRef.current.timer) clearTimeout(fieldFetchRef.current.timer);
+    if (city.length < 2) { setFieldData(null); return; }
+    if (city.toLowerCase() === fieldFetchRef.current.city) return;
+    fieldFetchRef.current.timer = setTimeout(async () => {
+      setFieldLoading(true);
+      try {
+        const data = await window.api.fieldWatchScan(city);
+        fieldFetchRef.current.city = city.toLowerCase();
+        setFieldData(data);
+      } catch (_) {
+        setFieldData(null);
+      } finally {
+        setFieldLoading(false);
+      }
+    }, 400);
+    return () => clearTimeout(fieldFetchRef.current.timer);
+  }, [profile.village]);
 
   // tab bloom transition
   const [displayTab, setDisplayTab] = useState(active);
@@ -122,7 +147,7 @@ function App() {
           <TabBar active={active} setActive={switchTab} t={t} />
           <div className="tab-content-wrap" ref={wrapRef}>
             <div className={`tab-content ${phase !== 'idle' ? phase : ''}`}>
-              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} t={t} />
+              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} t={t} fieldData={fieldData} fieldLoading={fieldLoading} />
             </div>
           </div>
         </main>
