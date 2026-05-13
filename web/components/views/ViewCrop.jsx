@@ -1,5 +1,5 @@
 // ViewCrop — wired to /api/crop/recommend
-const { useState, useCallback } = React;
+const { useState, useCallback, useEffect, useRef } = React;
 
 function ProbBars({ probs, t }) {
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, 8);
@@ -13,7 +13,7 @@ function ProbBars({ probs, t }) {
           <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
             <div style={{ width: `${(prob / max) * 100}%`, height: '100%', background: 'var(--leaf)', borderRadius: 99, transition: 'width 0.8s ease' }} />
           </div>
-          <div style={{ width: 36, fontSize: 12, color: 'var(--ink-faint)' }}>{(prob * 100).toFixed(0)}%</div>
+          <div style={{ width: 36, fontSize: 12, color: 'var(--ink-faint)' }}>{Number(prob).toFixed(2)}%</div>
         </div>
       ))}
     </div>
@@ -32,6 +32,39 @@ function ViewCrop({ profile, setProfile, t }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [wxNote, setWxNote] = useState('');
+  const [wxLoading, setWxLoading] = useState(false);
+  const wxDebounceRef = useRef(null);
+  const wxLastCityRef = useRef('');
+
+  useEffect(() => () => clearTimeout(wxDebounceRef.current), []);
+
+  useEffect(() => {
+    const val = (profile.village || '').trim();
+    if (wxDebounceRef.current) clearTimeout(wxDebounceRef.current);
+    if (val.length < 3 || val.toLowerCase() === wxLastCityRef.current) return;
+    wxDebounceRef.current = setTimeout(async () => {
+      setWxLoading(true);
+      try {
+        const data = await window.api.fieldWatchScan(val);
+        const w = data && data.weather;
+        if (w) {
+          if (w.temp != null) setTemp(Math.min(45, Math.max(8, parseFloat(w.temp))));
+          if (w.humidity != null) setHum(Math.min(100, Math.max(14, parseFloat(w.humidity))));
+          const rf24 = (w.rain_1h != null ? parseFloat(w.rain_1h) : 0) * 24;
+          if (rf24 > 0) setRain(Math.min(300, Math.max(20, rf24)));
+          wxLastCityRef.current = val.toLowerCase();
+          setWxNote(`Live weather · ${data.city || val}: ${w.temp?.toFixed(1)}°C, ${w.humidity}% humidity${w.description ? ' · ' + w.description : ''}`);
+        } else {
+          setWxNote(`No live weather for "${val}"`);
+        }
+      } catch (_) {
+        setWxNote(`Couldn't fetch weather for "${val}"`);
+      } finally {
+        setWxLoading(false);
+      }
+    }, 500);
+  }, [profile.village]);
 
   const handleSubmit = useCallback(() => {
     setLoading(true);
@@ -58,36 +91,39 @@ function ViewCrop({ profile, setProfile, t }) {
 
   return (
     <div className="view-fade">
-      <Topbar crumb="Crop Advisor" />
+      <Topbar crumb={t('Crop Advisor')} />
       <div className="page-head">
         <div>
-          <div className="page-eyebrow">crop advisor</div>
-          <h1 className="page-title">Find what your soil <em>wants to grow.</em></h1>
-          <p className="page-lede">Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.</p>
+          <div className="page-eyebrow">{t('crop advisor')}</div>
+          <h1 className="page-title">{t('Find what your soil')} <em>{t('wants to grow.')}</em></h1>
+          <p className="page-lede">{t("Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.")}</p>
         </div>
       </div>
 
       <LocationBar
         village={profile.village} setVillage={v => setProfile({ ...profile, village: v })}
         state={profile.state} setState={s => setProfile({ ...profile, state: s })}
-        extra={<span className="tag">🌦 kharif season</span>}
+        extra={<span className="tag">{t('🌦 kharif season')}</span>}
       />
 
       <div className="grid-2">
         <div className="card rise rise-1">
           <div className="card-h"><h3>{t('Soil')}</h3><span className="meta">npk · ph</span></div>
-          <Slider label="Nitrogen" unit="kg/ha" min={0} max={140} value={N} onChange={setN}
-            hint={N < 40 ? 'a little hungry' : N < 90 ? 'just right' : 'plenty'} />
-          <Slider label="Phosphorus" unit="kg/ha" min={5} max={145} value={P} onChange={setP} />
-          <Slider label="Potassium" unit="kg/ha" min={5} max={205} value={K} onChange={setK} />
-          <Slider label="Soil pH" unit="" min={3.5} max={9.5} step={0.1} value={ph} onChange={setPh}
-            hint={ph < 5.5 ? 'acidic' : ph < 7.5 ? 'sweet spot' : 'a touch alkaline'} />
+          <Slider label={t('Nitrogen')} unit="kg/ha" min={0} max={140} value={N} onChange={setN}
+            hint={N < 40 ? t('a little hungry') : N < 90 ? t('just right') : t('plenty')} />
+          <Slider label={t('Phosphorus')} unit="kg/ha" min={5} max={145} value={P} onChange={setP} />
+          <Slider label={t('Potassium')} unit="kg/ha" min={5} max={205} value={K} onChange={setK} />
+          <Slider label={t('Soil pH')} unit="" min={3.5} max={9.5} step={0.1} value={ph} onChange={setPh}
+            hint={ph < 5.5 ? t('acidic') : ph < 7.5 ? t('sweet spot') : t('a touch alkaline')} />
         </div>
         <div className="card rise rise-2">
-          <div className="card-h"><h3>{t('Weather')}</h3><span className="meta">your local feel</span></div>
-          <Slider label="Temperature" unit="°C" min={8} max={45} step={0.5} value={temperature} onChange={setTemp} />
-          <Slider label="Humidity" unit="%" min={14} max={100} value={humidity} onChange={setHum} />
-          <Slider label="Rainfall" unit="mm" min={20} max={300} step={5} value={rainfall} onChange={setRain} />
+          <div className="card-h"><h3>{t('Weather')}</h3><span className="meta">{wxLoading ? t('fetching live…') : t('your local feel')}</span></div>
+          {wxNote && (
+            <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 10 }}>{wxNote}</div>
+          )}
+          <Slider label={t('Temperature')} unit="°C" min={8} max={45} step={0.5} value={temperature} onChange={setTemp} />
+          <Slider label={t('Humidity')} unit="%" min={14} max={100} value={humidity} onChange={setHum} />
+          <Slider label={t('Rainfall')} unit="mm" min={20} max={300} step={5} value={rainfall} onChange={setRain} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
             <button className="btn primary" onClick={handleSubmit} disabled={loading}>
               {loading ? t('🌿 Analyzing…') : t('🌱 Suggest a crop')}
@@ -102,9 +138,9 @@ function ViewCrop({ profile, setProfile, t }) {
       {error && !loading && (
         <ErrorCard
           title={error.status === 401 || error.status === 403
-            ? 'API key misconfigured. Open web/config.js and verify the dev key.'
-            : 'Could not analyze soil'}
-          detail={!error.status && error.message ? 'No connection — check your network and try again.' : error.detail}
+            ? t('API key misconfigured. Open web/config.js and verify the dev key.')
+            : t('Could not analyze soil')}
+          detail={!error.status && error.message ? t('No connection — check your network and try again.') : error.detail}
           onRetry={handleSubmit}
         />
       )}
@@ -112,7 +148,7 @@ function ViewCrop({ profile, setProfile, t }) {
       {result && !loading && (
         <div className="card rise" style={{ marginTop: 18 }}>
           <div className="grid-2" style={{ gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: 36 }}>
-            <Donut value={result.top_crop.confidence * 100} label="confidence" />
+            <Donut value={result.top_crop.confidence} label="confidence" />
             <div>
               <div className="page-eyebrow">{t('our recommendation')}</div>
               <div style={{ fontFamily: 'var(--display)', fontSize: 60, letterSpacing: '-0.02em', color: 'var(--ink)', marginTop: 4, lineHeight: 1.1 }}>
@@ -123,7 +159,7 @@ function ViewCrop({ profile, setProfile, t }) {
               )}
               {result.soil && (
                 <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
-                  <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>soil · {result.soil.soil_type}</div>
+                  <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>{t('soil')} · {result.soil.soil_type}</div>
                   <div style={{ marginTop: 4, fontSize: 14 }}>{result.soil.indicator} {result.soil.advice}</div>
                 </div>
               )}
@@ -134,7 +170,7 @@ function ViewCrop({ profile, setProfile, t }) {
                     <div key={c.crop} className="tile" style={{ padding: '10px 14px' }}>
                       <span style={{ fontSize: 18, marginRight: 8 }}>{c.emoji}</span>
                       <span style={{ textTransform: 'capitalize' }}>{c.crop}</span>
-                      <span style={{ color: 'var(--ink-faint)', marginLeft: 8, fontSize: 12 }}>{(c.confidence * 100).toFixed(0)}%</span>
+                      <span style={{ color: 'var(--ink-faint)', marginLeft: 8, fontSize: 12 }}>{Number(c.confidence).toFixed(2)}%</span>
                     </div>
                   ))}
                 </div>
