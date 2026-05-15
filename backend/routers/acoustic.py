@@ -1,10 +1,12 @@
 """Acoustic pest detection router."""
 
 import base64
+import hashlib
 import importlib
 import io
 import json
 import logging
+from collections import OrderedDict
 from typing import Optional
 
 import numpy as np
@@ -28,6 +30,37 @@ MAX_ANALYSIS_SECONDS = 20
 MIN_ANALYSIS_SECONDS = 1.5
 MIN_RMS = 1e-4
 
+# Audio-hash response cache. The full pipeline (resample + YAMNet + maybe two
+# API round-trips) is expensive and deterministic for a fixed input; users
+# retry the same upload often enough that an LRU keyed on sha256(audio_bytes,
+# crop_type) saves real money and latency. Bounded so it can't grow without
+# limit on a long-running process.
+_RESPONSE_CACHE: "OrderedDict[str, dict]" = OrderedDict()
+_RESPONSE_CACHE_MAX = 64
+
+
+def _cache_key(audio_bytes: bytes, crop_type: str) -> str:
+    h = hashlib.sha256()
+    h.update(audio_bytes)
+    h.update(b"|")
+    h.update((crop_type or "").encode("utf-8"))
+    return h.hexdigest()
+
+
+def _cache_get(key: str) -> Optional[dict]:
+    if key in _RESPONSE_CACHE:
+        _RESPONSE_CACHE.move_to_end(key)
+        return _RESPONSE_CACHE[key]
+    return None
+
+
+def _cache_put(key: str, value: dict) -> None:
+    _RESPONSE_CACHE[key] = value
+    _RESPONSE_CACHE.move_to_end(key)
+    while len(_RESPONSE_CACHE) > _RESPONSE_CACHE_MAX:
+        _RESPONSE_CACHE.popitem(last=False)
+
+
 METHODOLOGY_NOTE = (
     "Exploratory tool. Acoustic pest detection from spectrograms is an "
     "experimental signal — confirm pest identification by visual inspection "
@@ -43,7 +76,8 @@ def _decode_audio(audio_bytes: bytes) -> tuple[Optional[np.ndarray], int, Option
     """
     try:
         rate, data = wav.read(io.BytesIO(audio_bytes))
-        return _to_mono_float(data), int(rate), "scipy_wav"
+        pcm = _to_mono_float(data)
+        return _normalize_lufs(pcm, int(rate)), int(rate), "scipy_wav"
     except Exception:
         pass
 
@@ -62,14 +96,25 @@ def _decode_audio(audio_bytes: bytes) -> tuple[Optional[np.ndarray], int, Option
             pcm = (samples.astype(np.float32) - 128.0) / 128.0
         else:
             pcm = samples.astype(np.float32)
-        return pcm, rate, "pydub_ffmpeg"
+        return _normalize_lufs(pcm, rate), rate, "pydub_ffmpeg"
     except Exception:
         return None, 0, None
 
 
 def _to_mono_float(data: np.ndarray) -> np.ndarray:
     if data.ndim > 1:
-        data = data[:, 0]
+        # Average channels rather than picking ch0 — preserves signal when one
+        # channel is dead (some phone mics record silence on the second
+        # channel) and avoids halving SNR on healthy stereo recordings.
+        channel_rms = [
+            float(np.sqrt(np.mean(data[:, c].astype(np.float32) ** 2)))
+            for c in range(data.shape[1])
+        ]
+        if max(channel_rms) > 0 and min(channel_rms) < 1e-6:
+            live = int(np.argmax(channel_rms))
+            data = data[:, live]
+        else:
+            data = data.mean(axis=1)
     if data.dtype == np.int16:
         return data.astype(np.float32) / 32768.0
     if data.dtype == np.int32:
@@ -77,6 +122,28 @@ def _to_mono_float(data: np.ndarray) -> np.ndarray:
     if data.dtype == np.uint8:
         return (data.astype(np.float32) - 128.0) / 128.0
     return data.astype(np.float32)
+
+
+def _normalize_lufs(pcm: np.ndarray, rate: int, target_lufs: float = -23.0) -> np.ndarray:
+    """Normalize PCM to target integrated loudness (LUFS).
+
+    Skips normalization when the clip is too quiet/short to measure (silence,
+    sub-second clips). Clipping guard ensures the output stays in [-1, 1].
+    """
+    try:
+        import pyloudnorm as pyln
+    except ImportError:
+        return pcm
+    meter = pyln.Meter(rate)
+    loudness = meter.integrated_loudness(pcm)
+    if not np.isfinite(loudness) or loudness < -70.0:
+        return pcm
+    gain_linear = 10.0 ** ((target_lufs - loudness) / 20.0)
+    normalized = (pcm * gain_linear).astype(np.float32)
+    peak = np.abs(normalized).max()
+    if peak > 0.99:
+        normalized *= 0.99 / peak
+    return normalized
 
 
 def _encode_wav(pcm: np.ndarray, rate: int) -> bytes:
@@ -90,6 +157,68 @@ def _encode_wav(pcm: np.ndarray, rate: int) -> bytes:
     buf = io.BytesIO()
     wav.write(buf, rate, int16)
     return buf.getvalue()
+
+
+def _snr_and_onsets(seg: np.ndarray, rate: int) -> dict:
+    """Estimate signal-to-noise ratio (dB) and onset density (onsets/sec).
+
+    SNR uses framed RMS — signal = 90th percentile, noise floor = 10th
+    percentile. This is robust to short bursts and silences. Onset density
+    is a useful prior for distinguishing chewing/stridulation (high onset
+    rate) from sustained tonal sounds like bee hum or mechanical noise
+    (very low onset rate).
+    """
+    try:
+        import librosa
+    except Exception:
+        return {"snr_db": None, "onset_density_per_sec": None}
+
+    frame = 2048
+    hop = 512
+    rms = librosa.feature.rms(y=seg.astype(np.float32, copy=False),
+                              frame_length=frame, hop_length=hop)[0]
+    if rms.size < 4:
+        snr_db = None
+    else:
+        signal = float(np.percentile(rms, 90))
+        noise = float(np.percentile(rms, 10))
+        snr_db = round(20.0 * np.log10(max(signal, 1e-9) / max(noise, 1e-9)), 2)
+
+    try:
+        onsets = librosa.onset.onset_detect(
+            y=seg.astype(np.float32, copy=False), sr=rate, units="time",
+        )
+        duration = len(seg) / rate if rate else 0.0
+        density = round(float(len(onsets)) / duration, 3) if duration > 0 else 0.0
+    except Exception:
+        density = None
+
+    # Weather noise heuristic: high spectral flatness (wind/rain ≈ white noise),
+    # low onset density (no discrete insect events), and low-band energy
+    # dominance (wind is sub-500 Hz heavy) all point toward non-biological noise.
+    try:
+        seg_f = seg.astype(np.float32, copy=False)
+        flatness = float(np.mean(librosa.feature.spectral_flatness(y=seg_f)))
+        fft_mag = np.abs(np.fft.rfft(seg_f))
+        freqs = np.fft.rfftfreq(len(seg_f), 1.0 / rate)
+        low_energy = fft_mag[freqs < 500].mean() if (freqs < 500).any() else 0.0
+        total_energy = fft_mag.mean() or 1e-9
+        low_ratio = float(low_energy / total_energy)
+        onset_score = max(0.0, 1.0 - ((density or 0.0) / 3.0))
+        weather_noise_score = round(
+            0.5 * min(flatness * 4, 1.0) +
+            0.3 * onset_score +
+            0.2 * min(low_ratio, 1.0),
+            3,
+        )
+    except Exception:
+        weather_noise_score = 0.0
+
+    return {
+        "snr_db": snr_db,
+        "onset_density_per_sec": density,
+        "weather_noise_score": weather_noise_score,
+    }
 
 
 def _band_energies(seg: np.ndarray, rate: int) -> dict:
@@ -904,6 +1033,12 @@ async def analyze_audio(
     if not contents:
         return _rejected("Empty upload — no audio data received.", ["empty_upload"], 0.0, 0, None)
 
+    cache_key = _cache_key(contents, normalized_crop)
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        logger.info("acoustic: cache hit (sha=%s…)", cache_key[:12])
+        return AcousticResponse(**cached)
+
     pcm, rate, decode_method = _decode_audio(contents)
     if pcm is None:
         return _rejected(
@@ -943,6 +1078,7 @@ async def analyze_audio(
         warnings.append(f"high_sample_rate_{rate}Hz")
 
     band_energy = _band_energies(seg, rate)
+    snr_onset = _snr_and_onsets(seg, rate)
 
     try:
         spec_bytes = _spectrogram_png(seg, rate)
@@ -980,6 +1116,8 @@ async def analyze_audio(
         "zero_crossing_rate": round(features[5], 4),
         "peak_freq_bin": int(features[6]),
         "energy_variance": round(features[7], 5),
+        "snr_db": snr_onset.get("snr_db"),
+        "onset_density_per_sec": snr_onset.get("onset_density_per_sec"),
     }
 
     # Dispatch order:
@@ -993,12 +1131,22 @@ async def analyze_audio(
     ai_method = "uncertain"
 
     yamnet_bundle = request.app.state.acoustic_model
+    yamnet_abstain_reason: Optional[str] = None
     if yamnet_bundle is not None:
         try:
-            ai_result = yamnet_bundle.predict(seg, rate, crop_type=normalized_crop)
+            ai_result = yamnet_bundle.predict(
+                seg, rate, crop_type=normalized_crop,
+                weather_noise_score=snr_onset.get("weather_noise_score", 0.0),
+            )
             ai_method = "yamnet"
         except Exception as exc:
-            logger.warning("acoustic: YAMNet predict failed: %s", exc)
+            # Import here to avoid pulling TF/joblib at module load.
+            from backend.ml.yamnet_model import YAMNetAbstain
+            if isinstance(exc, YAMNetAbstain):
+                logger.info("acoustic: YAMNet abstained: %s", exc)
+                yamnet_abstain_reason = str(exc)
+            else:
+                logger.warning("acoustic: YAMNet predict failed: %s", exc)
             ai_result = None
             ai_method = "uncertain"
 
@@ -1047,20 +1195,28 @@ async def analyze_audio(
             if ai_method == "yamnet":
                 result["cv_accuracy"] = ai_result.get("_test_accuracy")
                 result["cv_label"] = "YAMNet held-out test set"
+                result["all_class_confidence"] = ai_result.get("all_class_confidence")
+                result["crop_prior_applied"] = bool(ai_result.get("_crop_prior_applied"))
+                result["calibration_temperature"] = ai_result.get("_temperature")
+                result["weather_noise_score"] = ai_result.get("weather_noise_score")
     else:
         # All available pipelines failed. analysis_method='uncertain' surfaces
         # the real failure stage to the UI rather than dressing up a guess.
-        result = _build_uncertain_result(ai_result, ai_reject_reason)
+        result = _build_uncertain_result(
+            ai_result, ai_reject_reason, yamnet_abstain_reason
+        )
 
     result.update(base_meta)
     if not result.get("band_energy"):
         result["band_energy"] = band_energy
+    _cache_put(cache_key, result)
     return AcousticResponse(**result)
 
 
 def _build_uncertain_result(
     claude_result: Optional[dict],
     reject_reason: Optional[str],
+    yamnet_abstain_reason: Optional[str] = None,
 ) -> dict:
     """Construct the schema dict for the new analysis_method='uncertain' branch.
 
@@ -1069,14 +1225,20 @@ def _build_uncertain_result(
     surface the real failure (api_call/json_parse/validation/etc.) instead
     of dressing up a synthetic RF guess.
     """
-    reason = (reject_reason or "unknown").strip()
-    if ":" in reason:
-        stage, _, detail = reason.partition(":")
-        stage = stage.strip() or "unknown"
-        detail = detail.strip()
+    if yamnet_abstain_reason and not claude_result:
+        # YAMNet abstained AND no API path produced a result. Surface the
+        # abstain reason instead of the empty 'unknown' fallback.
+        stage = "yamnet_abstain"
+        detail = yamnet_abstain_reason
     else:
-        stage = reason
-        detail = ""
+        reason = (reject_reason or "unknown").strip()
+        if ":" in reason:
+            stage, _, detail = reason.partition(":")
+            stage = stage.strip() or "unknown"
+            detail = detail.strip()
+        else:
+            stage = reason
+            detail = ""
 
     model_tried: Optional[str] = None
     if isinstance(claude_result, dict):

@@ -119,6 +119,50 @@ def collect_dataset(min_clips: int) -> tuple[np.ndarray, np.ndarray, list[str]]:
     return np.vstack(X_rows), np.array(y_rows), species_seen
 
 
+def _fit_temperature(clf, X_val: np.ndarray, y_val: np.ndarray) -> float:
+    """Fit a single-parameter temperature scalar T that minimizes NLL on the
+    validation set. Uses decision_function logits when available; otherwise
+    falls back to log(predict_proba). Returns T ∈ [0.5, 5.0]; 1.0 = no-op.
+
+    Temperature scaling is the standard "calibrate confidence after the fact"
+    trick — it preserves argmax (so accuracy doesn't change) but makes the
+    softmax values mean something closer to true probabilities. Important
+    for the runtime abstain gate, which thresholds on top1 probability.
+    """
+    try:
+        from scipy.optimize import minimize_scalar
+    except Exception as exc:
+        log.warning("scipy not available; skipping temperature scaling (%s)", exc)
+        return 1.0
+
+    if hasattr(clf, "decision_function"):
+        logits = np.atleast_2d(clf.decision_function(X_val))
+    else:
+        proba = clf.predict_proba(X_val)
+        logits = np.log(np.clip(proba, 1e-9, 1.0))
+
+    if logits.ndim != 2 or logits.shape[0] != len(y_val):
+        log.warning("Unexpected logits shape %s; T=1.0", logits.shape)
+        return 1.0
+
+    n_classes = logits.shape[1]
+    y_oh = np.eye(n_classes)[y_val]
+
+    def nll(T: float) -> float:
+        T = max(float(T), 1e-3)
+        scaled = logits / T
+        scaled = scaled - scaled.max(axis=1, keepdims=True)
+        p = np.exp(scaled)
+        p = p / p.sum(axis=1, keepdims=True)
+        return float(-np.mean(np.sum(y_oh * np.log(p + 1e-9), axis=1)))
+
+    res = minimize_scalar(nll, bounds=(0.5, 5.0), method="bounded")
+    T = float(res.x) if res.success else 1.0
+    log.info("Fitted temperature T=%.3f (val NLL %.4f → %.4f)",
+             T, nll(1.0), nll(T))
+    return T
+
+
 def train_head(X: np.ndarray, y_enc: np.ndarray) -> tuple[object, dict]:
     """Try LogReg → MLP if needed. Return (best_clf, metrics_dict)."""
     X_trainval, X_test, y_trainval, y_test = train_test_split(
@@ -154,6 +198,8 @@ def train_head(X: np.ndarray, y_enc: np.ndarray) -> tuple[object, dict]:
     f1_per_class = f1_score(y_test, test_pred, average=None, labels=np.unique(y_test))
     cm = confusion_matrix(y_test, test_pred, labels=np.unique(y_test)).tolist()
 
+    temperature = _fit_temperature(chosen, X_val, y_val)
+
     metrics = {
         "val_accuracy": float(val_acc),
         "test_accuracy": test_acc,
@@ -162,6 +208,7 @@ def train_head(X: np.ndarray, y_enc: np.ndarray) -> tuple[object, dict]:
         "classification_report": classification_report(
             y_test, test_pred, labels=np.unique(y_test), zero_division=0
         ),
+        "temperature": temperature,
     }
     return chosen, metrics
 
@@ -190,6 +237,7 @@ def main() -> int:
         "per_class_f1": {le.inverse_transform([k])[0]: v
                          for k, v in metrics["per_class_f1"].items()},
         "confusion_matrix": metrics["confusion_matrix"],
+        "temperature": metrics["temperature"],
         "trained_at": dt.datetime.utcnow().isoformat() + "Z",
     }
 

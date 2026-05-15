@@ -208,6 +208,14 @@ def render():
             badge_text = "🧠 YAMNet · local model"
             if isinstance(cv_acc, (int, float)) and cv_acc > 0:
                 badge_text = f"🧠 YAMNet · local model · {cv_acc * 100:.1f}% test accuracy"
+            extras = []
+            T = r.get('calibration_temperature')
+            if isinstance(T, (int, float)) and abs(T - 1.0) > 1e-3:
+                extras.append(f"calibrated T={T:.2f}")
+            if r.get('crop_prior_applied'):
+                extras.append("crop prior on")
+            if extras:
+                badge_text += " · " + " · ".join(extras)
             st.markdown(
                 f'<span style="background:#1F2937;color:#A7F3D0;padding:4px 12px;border-radius:20px;'
                 f'font-size:12px;font-weight:600">{badge_text}</span>',
@@ -318,6 +326,24 @@ def render():
                     f'</div>',
                     unsafe_allow_html=True
                 )
+
+        all_conf = r.get('all_class_confidence')
+        if all_conf:
+            _method_label = {
+                'yamnet':        'YAMNet · local model',
+                'gemini_audio':  'Gemini → Claude · API path',
+                'claude_vision': 'Claude Vision · spectrogram',
+            }.get(method, method or 'AI')
+            with st.expander(f"📈 {T('All-class probabilities')} ({_method_label})"):
+                st.caption(T("Calibrated softmax over every trained class, "
+                             "after crop-prior reweighting. Useful for "
+                             "spotting near-ties or implausible calls."))
+                conf_df = (
+                    pd.DataFrame.from_dict(all_conf, orient='index',
+                                           columns=[T('Confidence %')])
+                    .sort_values(T('Confidence %'), ascending=False)
+                )
+                st.bar_chart(conf_df)
 
         if r.get('claude_advice'):
             card(f"<b style='color:#166534;'>&#129302; {T('AI Farm Advisor')}:</b> <span style='color:#1A2E1A;'>{r['claude_advice']}</span>", severity="info")

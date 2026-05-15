@@ -40,6 +40,18 @@ class AcousticResponse(BaseModel):
     claude_failure_detail: Optional[str] = None
     claude_model_used: Optional[str] = None
 
+    # YAMNet diagnostics — only populated when analysis_method == 'yamnet'.
+    # all_class_confidence: full softmax (post-calibration, post-crop-prior)
+    # surfaced for transparency. crop_prior_applied / calibration_temperature
+    # let the UI explain *why* the call is what it is.
+    all_class_confidence: Optional[dict] = None
+    crop_prior_applied: Optional[bool] = None
+    calibration_temperature: Optional[float] = None
+
+    # Weather noise diagnostic — 0.0 (clean) to 1.0 (heavy wind/rain).
+    # Populated only when YAMNet ran; None on API-fallback paths.
+    weather_noise_score: Optional[float] = None
+
     # Audible-insect taxonomy metadata. role drives how the frontend renders
     # results (pest=treatment, pollinator=protect, vector=health-advisory,
     # ambient=indicator only). low_signal=True flags Tier 2 entries where

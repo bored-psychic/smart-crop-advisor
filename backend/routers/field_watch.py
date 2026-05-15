@@ -1,5 +1,6 @@
 """Field Watch router — satellite intelligence scan."""
 
+import asyncio
 from fastapi import APIRouter, Depends
 from backend.schemas.field_watch import (
     FieldWatchRequest, FieldWatchResponse,
@@ -48,34 +49,27 @@ async def scan_field(
             lon=lon,
         )
 
-    # 2. Flood forecast
-    flood = None
+    # 2-5. Fan out flood/fire/locust/aqi concurrently — these are independent.
+    flood = fire = locust = aqi = None
     if lat and lon:
-        flood_data = await weather_svc.get_forecast_rain(lat, lon)
-        if flood_data:
-            flood = FloodAlert(**flood_data)
-
-    # 3. Wildfire hotspots
-    fire = None
-    if lat and lon:
-        fire_data = await firms_svc.get_hotspots(lat, lon)
-        fire = FireAlert(
-            hotspots_nearby=fire_data['hotspots_nearby'],
-            risk=fire_data['risk'],
-            source=fire_data['source'],
+        flood_data, fire_data, locust_data, aqi_data = await asyncio.gather(
+            weather_svc.get_forecast_rain(lat, lon),
+            firms_svc.get_hotspots(lat, lon),
+            locust_svc.get_swarms(lat, lon),
+            weather_svc.get_aqi(lat, lon),
+            return_exceptions=True,
         )
-
-    # 4. Locust swarms
-    locust = None
-    if lat and lon:
-        locust_data = await locust_svc.get_swarms(lat, lon)
-        locust = LocustAlert(**locust_data)
-
-    # 5. AQI
-    aqi = None
-    if lat and lon:
-        aqi_data = await weather_svc.get_aqi(lat, lon)
-        if aqi_data:
+        if isinstance(flood_data, dict):
+            flood = FloodAlert(**flood_data)
+        if isinstance(fire_data, dict):
+            fire = FireAlert(
+                hotspots_nearby=fire_data['hotspots_nearby'],
+                risk=fire_data['risk'],
+                source=fire_data['source'],
+            )
+        if isinstance(locust_data, dict):
+            locust = LocustAlert(**locust_data)
+        if isinstance(aqi_data, dict):
             aqi = AQIInfo(**aqi_data)
 
     # Overall risk

@@ -338,7 +338,45 @@ PEST_META = {
         'action': 'Most wasps are beneficial parasitoids — leave them unless a nest threatens workers. For aggressive nests near pathways, remove at dusk wearing protection or call pest control. Do NOT blanket-spray; you will kill parasitoids that suppress caterpillars.',
         'icon': '🐝'
     },
+    'Quiet': {
+        'role': 'ambient',
+        'severity': 'low', 'low_signal': False,
+        'freq_range': 'noise floor only',
+        'pattern': 'No audible biological activity above background',
+        'energy_level': 'Background',
+        'action': 'No audible insect activity in this recording — that is a valid result, not a failure. Silent pests like aphids, whiteflies, spider mites and thrips cannot be heard at phone-mic range; use the Disease photo tab for those.',
+        'icon': '🤫'
+    },
+    'Non-biological': {
+        'role': 'ambient',
+        'severity': 'low', 'low_signal': False,
+        'freq_range': 'varies (wind / mechanical)',
+        'pattern': 'Wind, pump, traffic, or other non-insect noise dominating the recording',
+        'energy_level': 'Moderate',
+        'action': 'Recording is dominated by wind, machinery, or other non-biological sound. Shield the mic from wind, move 15–30 cm from the plant base, and re-record 4–10 s of steady field audio.',
+        'icon': '🌬️'
+    },
 }
+
+# ── Crop × Pest Ecological Priors (acoustic YAMNet path) ─────────────────────
+# Multiplicative weights applied to YAMNet softmax before argmax, to bias
+# toward ecologically plausible species for the selected crop. Values:
+#   1.0  = expected / common for this crop
+#   0.5  = neutral (no prior either way) — default for unlisted (crop, pest)
+#   ≤0.3 = ecologically unlikely
+# Quiet / Non-biological intentionally stay at 1.0 across crops — refusing to
+# guess is always a valid call. Unknown crops fall through to the neutral
+# default for every class.
+CROP_PEST_PRIORS = {
+    "Rice":     {"Grasshopper": 1.0, "Cricket": 1.0, "Locust": 0.7, "Bee": 0.5, "Wasp": 0.5, "Beetle": 0.5, "Cicada": 0.2, "Quiet": 1.0, "Non-biological": 1.0},
+    "Maize":    {"Grasshopper": 1.0, "Beetle": 1.0, "Locust": 0.9, "Bee": 0.7, "Wasp": 0.5, "Cricket": 0.6, "Cicada": 0.2, "Quiet": 1.0, "Non-biological": 1.0},
+    "Cotton":   {"Beetle": 1.0, "Bee": 1.0, "Wasp": 0.8, "Grasshopper": 0.7, "Locust": 0.7, "Cricket": 0.5, "Cicada": 0.2, "Quiet": 1.0, "Non-biological": 1.0},
+    "Banana":   {"Bee": 1.0, "Wasp": 0.7, "Beetle": 0.7, "Grasshopper": 0.4, "Cricket": 0.5, "Cicada": 0.3, "Locust": 0.3, "Quiet": 1.0, "Non-biological": 1.0},
+    "Chickpea": {"Bee": 1.0, "Beetle": 1.0, "Wasp": 0.6, "Grasshopper": 0.6, "Locust": 0.7, "Cricket": 0.5, "Cicada": 0.2, "Quiet": 1.0, "Non-biological": 1.0},
+    "Tomato":   {"Bee": 1.0, "Wasp": 0.8, "Beetle": 0.9, "Grasshopper": 0.5, "Cricket": 0.5, "Locust": 0.4, "Cicada": 0.2, "Quiet": 1.0, "Non-biological": 1.0},
+    "Mango":    {"Cicada": 1.0, "Bee": 1.0, "Wasp": 0.7, "Beetle": 0.7, "Grasshopper": 0.4, "Cricket": 0.5, "Locust": 0.3, "Quiet": 1.0, "Non-biological": 1.0},
+}
+CROP_PEST_PRIOR_DEFAULT = 0.5
 
 # ── Government Helplines ──────────────────────────────────────────────────────
 GOVT_HELPLINES = [
