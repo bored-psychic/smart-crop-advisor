@@ -52,12 +52,3 @@ class ModelManager:
         except ImportError:
             pass
         return None, None
-
-    @staticmethod
-    @lru_cache(maxsize=1)
-    def load_acoustic_model():
-        path = _model_path('acoustic_model.pkl')
-        if os.path.exists(path):
-            with open(path, 'rb') as f:
-                return pickle.load(f)
-        return None

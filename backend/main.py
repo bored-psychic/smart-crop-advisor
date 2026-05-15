@@ -5,8 +5,10 @@ CORS-enabled, authenticated, with lifespan model loading.
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.config import get_settings
 
 logger = logging.getLogger("kisanos")
@@ -48,6 +50,15 @@ async def lifespan(app: FastAPI):
     try:
         app.state.disease_model = disease_model.load()
         logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+        # Warmup: dummy forward pass to JIT-compile the graph.
+        try:
+            import numpy as _np
+            from PIL import Image as _Image
+            _dummy = _Image.fromarray(_np.zeros((224, 224, 3), dtype=_np.uint8))
+            app.state.disease_model.predict_from_image(_dummy)
+            logger.info("  🔥 Disease model warmed")
+        except Exception as _e:
+            logger.warning(f"  ⚠️ Disease warmup skipped: {_e}")
     except Exception as e:
         logger.warning(f"  ⚠️ Disease model unavailable: {e}")
         app.state.disease_model = None
@@ -61,9 +72,19 @@ async def lifespan(app: FastAPI):
 
     try:
         app.state.acoustic_model = acoustic_model.load()
-        logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+        logger.info("  ✅ Acoustic model loaded (YAMNet, 10 classes)")
+        # Warmup: 1s of silence through YAMNet to JIT graph.
+        try:
+            import numpy as _np
+            _silence = _np.zeros(16000, dtype=_np.float32)
+            app.state.acoustic_model.predict(_silence, 16000, crop_type="warmup")
+            logger.info("  🔥 YAMNet warmed")
+        except Exception as _e:
+            logger.warning(f"  ⚠️ YAMNet warmup skipped: {_e}")
     except Exception as e:
-        logger.warning(f"  ⚠️ Acoustic model unavailable: {e}")
+        logger.warning(
+            f"  ⚠️ YAMNet unavailable, acoustic pipeline will use API fallback: {e}"
+        )
         app.state.acoustic_model = None
 
     logger.info("🚀 KisanOS API ready!")
@@ -115,6 +136,9 @@ def create_app() -> FastAPI:
             "app": settings.APP_NAME,
             "version": settings.APP_VERSION,
         }
+
+    WEB_DIR = Path(__file__).parent.parent / "web"
+    app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="web")
 
     return app
 

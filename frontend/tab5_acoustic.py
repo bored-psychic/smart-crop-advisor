@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import struct
 import wave
 import numpy as np
 from frontend.api_client import APIClient, run_async
@@ -8,19 +9,18 @@ from frontend.ui_helpers import card, page_hero
 from core.language import T
 
 PEST_META = {
-    'Healthy Plant':         {'severity': 'low',    'freq_range': '<100 Hz (flat)',  'pattern': 'Flat noise floor',               'energy_level': 'Background',     'icon': '✅'},
-    'Aphid Colony':          {'severity': 'medium', 'freq_range': '200–400 Hz',      'pattern': 'Clustered mid-freq bursts',       'energy_level': 'Moderate',       'icon': '🟡'},
-    'Whitefly Infestation':  {'severity': 'medium', 'freq_range': '400–700 Hz',      'pattern': 'Wing-beat harmonic series',       'energy_level': 'Low-moderate',   'icon': '🟡'},
-    'Locust Activity':       {'severity': 'high',   'freq_range': '50–200 Hz',       'pattern': 'High-amplitude low-freq pulses',  'energy_level': 'Very High',      'icon': '🔴'},
-    'Stem Borer':            {'severity': 'high',   'freq_range': '50–150 Hz',       'pattern': 'Low-freq gnawing rhythm',         'energy_level': 'High',           'icon': '🔴'},
-    'Early Fungal Infection':{'severity': 'high',   'freq_range': '800–1200 Hz',     'pattern': 'High-freq crackling',             'energy_level': 'Elevated',       'icon': '🔴'},
-    'Spider Mite':           {'severity': 'medium', 'freq_range': '1200–4000 Hz',    'pattern': 'Ultra-high freq scratching',      'energy_level': 'Moderate-high',  'icon': '🟡'},
-    'Thrips Infestation':    {'severity': 'medium', 'freq_range': '350–500 Hz',      'pattern': 'Rapid mid-freq staccato',         'energy_level': 'Low-moderate',   'icon': '🟡'},
+    'Bee':            {'role': 'pollinator', 'severity': 'low',    'low_signal': False, 'freq_range': '200–300 Hz (wingbeat)',                'pattern': 'Warm sustained hum from foraging bees',         'energy_level': 'Moderate',     'icon': '🐝'},
+    'Locust':         {'role': 'pest',       'severity': 'high',   'low_signal': False, 'freq_range': '50–200 Hz',                            'pattern': 'Wingbeat + mass flight hum; very high amplitude','energy_level': 'Very High',    'icon': '🦗'},
+    'Cicada':         {'role': 'pest',       'severity': 'medium', 'low_signal': False, 'freq_range': '4–10 kHz (sustained)',                 'pattern': 'Tonal sustained buzz',                          'energy_level': 'High',         'icon': '🟠'},
+    'Cricket':        {'role': 'ambient',    'severity': 'low',    'low_signal': False, 'freq_range': '3–7 kHz',                              'pattern': 'Rhythmic stridulation chirp',                   'energy_level': 'Moderate',     'icon': '⚪'},
+    'Grasshopper':    {'role': 'pest',       'severity': 'medium', 'low_signal': False, 'freq_range': '3–10 kHz (stridulation)',              'pattern': 'Rasping daytime chorus from field margins',     'energy_level': 'Moderate',     'icon': '🟠'},
+    'Beetle':         {'role': 'pest',       'severity': 'medium', 'low_signal': False, 'freq_range': '100–1000 Hz',                          'pattern': 'Coleopteran flight buzz / chewing scrape',      'energy_level': 'Moderate',     'icon': '🪲'},
+    'Wasp':           {'role': 'pest',       'severity': 'medium', 'low_signal': False, 'freq_range': '150–250 Hz (wingbeat)',                'pattern': 'Lower, slower hum than bees',                   'energy_level': 'Moderate',     'icon': '🐝'},
 }
 
 
 _WARNING_LABEL = {
-    'truncated_to_10s': '✂️ Recording was longer than 10s — only the first 10s were analyzed.',
+    'truncated_to_20s': '✂️ Recording was longer than 20s — only the first 20s were analyzed.',
     'too_short':         '⏱️ Recording too short for reliable analysis.',
     'below_noise_floor': '🔇 Recording is essentially silent.',
     'decode_failed':     '🛑 Could not decode this audio format on the server.',
@@ -61,6 +61,25 @@ def _precheck_audio_upload(audio_bytes: bytes, filename: str, mime_type: str) ->
             errors.append("Audio is likely too short. Record at least 1.5 seconds (recommended 4-10 seconds).")
         warnings.append("Detailed sample-rate/silence checks are available for WAV previews only.")
         return len(errors) == 0, errors, warnings
+
+    # Header short-circuit — reject empty/malformed WAVs without reading any PCM.
+    # Standard RIFF/WAVE layout: 'RIFF'(4) size(4) 'WAVE'(4) 'fmt '(4) ...
+    if len(audio_bytes) < 44:
+        return False, ["WAV file too small to contain a valid header. Re-record and upload again."], warnings
+    if audio_bytes[0:4] != b"RIFF" or audio_bytes[8:12] != b"WAVE":
+        return False, ["File does not look like a valid WAV (missing RIFF/WAVE magic)."], warnings
+    # Locate 'fmt ' chunk in the first 256 bytes — defensive for nonstandard headers.
+    fmt_idx = audio_bytes.find(b"fmt ", 12, 256)
+    if fmt_idx < 0:
+        return False, ["WAV header is malformed (no fmt chunk)."], warnings
+    try:
+        # fmt chunk: id(4) size(4) audio_fmt(2) n_channels(2) sample_rate(4) ...
+        hdr_sr = struct.unpack_from("<I", audio_bytes, fmt_idx + 12)[0]
+        if hdr_sr and hdr_sr < 8000:
+            errors.append(f"Sample rate is {hdr_sr} Hz. Please re-record at 8 kHz or higher.")
+            return False, errors, warnings
+    except struct.error:
+        pass  # Fall through to full wave.open which surfaces a clearer error.
 
     try:
         with wave.open(io.BytesIO(audio_bytes), "rb") as wf:
@@ -115,7 +134,7 @@ def render():
 
     acoustic_crop = st.selectbox(
         T("Which crop did you record?"),
-        ['Tomato', 'Rice', 'Wheat', 'Cotton', 'Maize', 'Potato', 'Banana', 'Chickpea'],
+        ['Rice', 'Maize', 'Cotton', 'Banana', 'Chickpea', 'Tomato', 'Mango'],
         key="acoustic_crop"
     )
 
@@ -184,22 +203,24 @@ def render():
                          "to upload a leaf photo instead."))
             return
 
-        if method == 'random_forest_offline_demo':
+        if method == 'yamnet':
             cv_acc = r.get('cv_accuracy')
-            cv_lbl = r.get('cv_label') or 'cross-validation'
-            badge_text = "🟡 OFFLINE DEMO — synthetic-data model · NOT a real prediction"
+            badge_text = "🧠 YAMNet · local model"
             if isinstance(cv_acc, (int, float)) and cv_acc > 0:
-                badge_text = (
-                    f"🟡 OFFLINE DEMO — synthetic-data model · NOT a real prediction · "
-                    f"{cv_acc * 100:.1f}% on {cv_lbl}"
-                )
+                badge_text = f"🧠 YAMNet · local model · {cv_acc * 100:.1f}% test accuracy"
+            extras = []
+            T = r.get('calibration_temperature')
+            if isinstance(T, (int, float)) and abs(T - 1.0) > 1e-3:
+                extras.append(f"calibrated T={T:.2f}")
+            if r.get('crop_prior_applied'):
+                extras.append("crop prior on")
+            if extras:
+                badge_text += " · " + " · ".join(extras)
             st.markdown(
-                f'<span style="background:#3B2F0F;color:#FBE7A1;padding:4px 12px;border-radius:20px;'
+                f'<span style="background:#1F2937;color:#A7F3D0;padding:4px 12px;border-radius:20px;'
                 f'font-size:12px;font-weight:600">{badge_text}</span>',
                 unsafe_allow_html=True
             )
-            st.caption(T("Set ANTHROPIC_API_KEY to enable real Claude bioacoustics. "
-                         "This synthetic Random Forest is for offline UI demos only."))
             st.markdown("")
         elif method == 'gemini_audio':
             model_used = r.get('claude_model_used') or 'gemini+claude'
@@ -228,24 +249,45 @@ def render():
         with meta_cols[2]:
             st.caption(f"**Decoder:** {r.get('decode_method', '–')}")
 
-        pest_name = r.get('pest', 'Unknown')
-        severity  = r.get('severity', 'low')
-        icon      = r.get('icon', '⚠️')
-        _smap_a   = {'high': 'error', 'medium': 'warning', 'low': 'success'}
-        _conf_a   = r.get('confidence', 0)
+        pest_name  = r.get('pest', 'Unknown')
+        severity   = r.get('severity', 'low')
+        icon       = r.get('icon', '⚠️')
+        role       = r.get('role', 'pest')
+        low_signal = bool(r.get('low_signal', False))
+        _conf_a    = r.get('confidence', 0)
+
+        if low_signal and role == 'pest':
+            st.warning(T("⚠️ Low-confidence acoustic signal — verify visually before applying any treatment."))
+
+        _role_card_severity = {'pollinator': 'success', 'vector': 'info', 'ambient': 'info'}
+        _pest_card_severity = {'high': 'error', 'medium': 'warning', 'low': 'success'}
+        card_sev = _role_card_severity.get(role, _pest_card_severity.get(severity, 'warning'))
+
+        _meta_line = {
+            'pollinator': f"{T('role')} &middot; POLLINATOR ({T('positive signal')})",
+            'vector':     f"{T('role')} &middot; HEALTH VECTOR ({T('not a crop pest')})",
+            'ambient':    f"{T('role')} &middot; ENVIRONMENT INDICATOR",
+        }.get(role, f"{T('severity')} &middot; {severity.upper()}")
+
+        _action_label = {
+            'pollinator': f"&#127800; {T('What to do')}:",
+            'vector':     f"&#129707; {T('Health advisory')}:",
+            'ambient':    f"&#8505;&#65039; {T('What this means')}:",
+        }.get(role, f"&#128138; {T('Action')}:")
+
         card(f"""
         <div style='font-family:Space Grotesk,sans-serif;'>
-          <div style='font-size:1.3rem;font-weight:700;color:#E2F5DF;margin-bottom:3px;'>
+          <div style='font-size:1.3rem;font-weight:700;color:#1A2E1A;margin-bottom:3px;'>
             {icon}&nbsp;{T(pest_name)}
           </div>
-          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#4ADE80;margin-bottom:10px;'>
-            {T('severity')} &middot; {severity.upper()}{f" &nbsp;&#183;&nbsp; {T('confidence')} {_conf_a}%" if _conf_a > 0 else ""}
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.72rem;color:#2D5A1B;margin-bottom:10px;'>
+            {_meta_line}{f" &nbsp;&#183;&nbsp; {T('confidence')} {_conf_a}%" if _conf_a > 0 else ""}
           </div>
-          <div style='font-size:0.88rem;color:#E2F5DF;'>
-            <b style='color:#22C55E;'>&#128138; {T('Action')}:</b> {T(r.get('action', ''))}
+          <div style='font-size:0.88rem;color:#1A2E1A;'>
+            <b style='color:#166534;'>{_action_label}</b> {T(r.get('action', ''))}
           </div>
         </div>
-        """, severity=_smap_a.get(severity, 'warning'))
+        """, severity=card_sev)
 
         if _conf_a > 0:
             st.progress(_conf_a / 100)
@@ -256,25 +298,55 @@ def render():
             st.metric(T("Signal Energy"), r.get('energy_level', 'N/A'))
         with col2:
             st.metric(T("Spectral Pattern"), r.get('pattern', 'N/A'))
-            st.metric(T("Risk Level"), severity.upper())
+            if role == 'pest':
+                st.metric(T("Risk Level"), severity.upper())
+            else:
+                _role_compact = {'pollinator': 'POLLINATOR', 'vector': 'HEALTH', 'ambient': 'AMBIENT'}.get(role, severity.upper())
+                st.metric(T("Role"), _role_compact)
 
         if r.get('top3'):
             st.markdown(f"#### 📊 {T('Top Predictions')}")
             for p_name, pct in r['top3']:
-                meta = PEST_META.get(p_name, {'icon': '🐛', 'severity': 'medium'})
-                sev_color = {'high': '#FF4B4B', 'medium': '#FFA500', 'low': '#21BA45'}.get(meta.get('severity', 'low'), '#888')
+                meta = PEST_META.get(p_name, {'icon': '🐛', 'severity': 'medium', 'role': 'pest'})
+                p_role = meta.get('role', 'pest')
+                if p_role == 'pollinator':
+                    bar_color = '#21BA45'
+                elif p_role == 'vector':
+                    bar_color = '#3B82F6'
+                elif p_role == 'ambient':
+                    bar_color = '#9CA3AF'
+                else:
+                    bar_color = {'high': '#FF4B4B', 'medium': '#FFA500', 'low': '#21BA45'}.get(meta.get('severity', 'low'), '#888')
                 st.markdown(
                     f'<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'
                     f'<div style="width:130px;font-size:13px">{meta.get("icon","🐛")}&nbsp;{p_name}</div>'
                     f'<div style="flex:1;height:10px;background:#eee;border-radius:5px;overflow:hidden">'
-                    f'<div style="width:{pct}%;height:100%;background:{sev_color};border-radius:5px"></div></div>'
+                    f'<div style="width:{pct}%;height:100%;background:{bar_color};border-radius:5px"></div></div>'
                     f'<div style="width:38px;font-size:13px;font-weight:600;text-align:right">{pct}%</div>'
                     f'</div>',
                     unsafe_allow_html=True
                 )
 
+        all_conf = r.get('all_class_confidence')
+        if all_conf:
+            _method_label = {
+                'yamnet':        'YAMNet · local model',
+                'gemini_audio':  'Gemini → Claude · API path',
+                'claude_vision': 'Claude Vision · spectrogram',
+            }.get(method, method or 'AI')
+            with st.expander(f"📈 {T('All-class probabilities')} ({_method_label})"):
+                st.caption(T("Calibrated softmax over every trained class, "
+                             "after crop-prior reweighting. Useful for "
+                             "spotting near-ties or implausible calls."))
+                conf_df = (
+                    pd.DataFrame.from_dict(all_conf, orient='index',
+                                           columns=[T('Confidence %')])
+                    .sort_values(T('Confidence %'), ascending=False)
+                )
+                st.bar_chart(conf_df)
+
         if r.get('claude_advice'):
-            card(f"<b style='color:#22C55E;'>&#129302; {T('AI Farm Advisor')}:</b> {r['claude_advice']}", severity="info")
+            card(f"<b style='color:#166534;'>&#129302; {T('AI Farm Advisor')}:</b> <span style='color:#1A2E1A;'>{r['claude_advice']}</span>", severity="info")
 
         if r.get('band_energy'):
             st.markdown(f"#### 📊 {T('Frequency Band Energy')}")
@@ -285,14 +357,21 @@ def render():
             st.caption(f"ℹ️ {r['methodology_note']}")
 
     st.divider()
-    with st.expander(f"🔬 {T('Reference Signatures (8 well-known) — Claude can also detect others')}"):
-        st.caption(T("These eight signatures are the ones the tool was originally tuned for. "
-                     "Claude can return any pest, disease, or non-pest sound it identifies — "
-                     "the table below is just the canonical reference set."))
+    with st.expander(f"🔬 {T('Acoustic Reference Library — what the mic can hear')}"):
+        st.caption(T("Audible-insect taxonomy: pests, pollinators (positive signal), health vectors, "
+                     "and ambient indicators. Silent pests like aphids, whiteflies, spider mites and "
+                     "thrips are routed to the Disease/photo tab instead — phone mics cannot pick them up."))
+        _role_label = {
+            'pest': 'Pest',
+            'pollinator': 'Pollinator (positive)',
+            'vector': 'Health vector',
+            'ambient': 'Ambient indicator',
+        }
         data = {
-            T('Pest / Condition'): list(PEST_META.keys()),
-            T('Frequency Range'):  [m['freq_range'] for m in PEST_META.values()],
-            T('Pattern'):          [m['pattern']    for m in PEST_META.values()],
-            T('Risk'):             [m['severity'].upper() for m in PEST_META.values()],
+            T('Label'):           list(PEST_META.keys()),
+            T('Role'):            [_role_label.get(m.get('role', 'pest'), 'Pest') for m in PEST_META.values()],
+            T('Frequency Range'): [m['freq_range'] for m in PEST_META.values()],
+            T('Pattern'):         [m['pattern']    for m in PEST_META.values()],
+            T('Confidence'):      ['Tier 2 — verify visually' if m.get('low_signal') else 'Tier 1' for m in PEST_META.values()],
         }
         st.table(pd.DataFrame(data))

@@ -1,8 +1,9 @@
 """Market price + forecast router."""
 
-from fastapi import APIRouter, Request, Depends
-from backend.schemas.market import MarketForecastRequest, MarketForecastResponse, LivePrice, ForecastDay
+from fastapi import APIRouter, Request, Depends, HTTPException
+from backend.schemas.market import MarketForecastRequest, MarketForecastResponse, LivePrice, ForecastDay, CityPrice
 from backend.services.market_service import get_market_service
+from backend.services.weather_service import resolve_city_state
 from backend.ml import price_model
 from backend.data.state_prices import STATE_PRICE_FACTORS
 from backend.auth import require_api_key
@@ -16,24 +17,43 @@ async def get_forecast(
     request: Request,
     _: str = Depends(require_api_key),
 ):
-    """Get live mandi price + Prophet forecast with state calibration."""
+    """Get live mandi price + Prophet forecast. State is derived from city via geocoding."""
+    state = await resolve_city_state(req.city)
+    if not state:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Could not determine state for city '{req.city}'. Please check the city name.",
+        )
+
     market_svc = get_market_service()
 
     # Live Agmarknet price
-    live_data = await market_svc.get_live_price(req.crop, req.state)
-    live_price = LivePrice(**live_data) if live_data else None
+    live_data = await market_svc.get_live_price(req.crop, state)
+
+    live_price = None
+    if live_data:
+        city_prices = [CityPrice(**cp) for cp in live_data.get('city_prices', [])]
+        live_price = LivePrice(
+            today_price=live_data['today_price'],
+            source=live_data['source'],
+            mandis_checked=live_data['mandis_checked'],
+            state_factor=live_data['state_factor'],
+            live=live_data['live'],
+            city_prices=city_prices,
+        )
 
     # Prophet forecast
     price_models = request.app.state.price_models
     forecast_result = price_model.forecast(
-        price_models, req.crop, req.state, req.forecast_days
+        price_models, req.crop, state, req.forecast_days
     )
 
     if forecast_result is None:
-        state_factor = STATE_PRICE_FACTORS.get(req.state, {}).get(req.crop, 1.0)
+        state_factor = STATE_PRICE_FACTORS.get(state, {}).get(req.crop, 1.0)
         return MarketForecastResponse(
             crop=req.crop,
-            state=req.state,
+            state=state,
+            city=req.city,
             live_price=live_price,
             forecast=[],
             best_price=live_data['today_price'] if live_data else 0,
@@ -47,7 +67,8 @@ async def get_forecast(
 
     return MarketForecastResponse(
         crop=req.crop,
-        state=req.state,
+        state=state,
+        city=req.city,
         live_price=live_price,
         forecast=[ForecastDay(**f) for f in forecast_result['forecast']],
         best_price=forecast_result['best_price'],

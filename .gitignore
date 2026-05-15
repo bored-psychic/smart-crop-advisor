@@ -22,3 +22,12 @@ Thumbs.db
 *.npy
 *.onnx
 *.onnx.data
+*.joblib
+
+# YAMNet training data (large, fetched by scripts/fetch_audio_dataset.py)
+data/audio_samples/
+data/_cache/
+backend/models/yamnet_head.joblib
+
+# Web SPA local API config (copy from config.example.js)
+web/config.js

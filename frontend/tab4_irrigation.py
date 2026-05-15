@@ -184,7 +184,7 @@ def render():
         <span style='color:#1A2E1A;'> {T(growth_stage)}</span>&nbsp;&nbsp;
         <span style='font-family:JetBrains Mono,monospace;font-size:0.8rem;color:#15803D;'>N dose:</span>
         <span style='color:#1A2E1A;'> {T(fert['nitrogen'])}</span><br>
-        <span style='font-size:0.88rem;color:#374151;'>{T(fert['tip'])}</span>
+        <span style='font-size:0.88rem;color:#1A2E1A;'>{T(fert['tip'])}</span>
         """, severity="info", dark=True)
 
         with st.expander(f"🔬 {T('Calculation Details (FAO-56 Method)')}"):

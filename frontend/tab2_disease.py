@@ -10,12 +10,22 @@ SEVERITY_ICON = {'High': '🔴', 'Medium': '🟡', 'Low': '🟢'}
 TYPE_ICON     = {'Disease': '🦠', 'Pest': '🐛'}
 
 
+@st.cache_data(ttl=3600)
+def _sorted_crops() -> list[str]:
+    return sorted(DISEASE_DB.keys())
+
+
+@st.cache_data(ttl=3600)
+def _crop_items(crop: str) -> list[tuple]:
+    return list(DISEASE_DB[crop].items())
+
+
 def render():
     page_hero("LEAF DOCTOR", "See what your leaves", "are trying to say.", "Upload a photo. Claude reads the signs — spots, yellowing, lesions — before the damage spreads.")
 
     st.markdown(f"#### 📸 {T('Method 1 — Photo Diagnosis (Recommended)')}")
 
-    _all_crops_d = sorted(DISEASE_DB.keys())
+    _all_crops_d = _sorted_crops()
     selected_crop_v = st.selectbox(f"🌱 {T('Select Crop for Diagnosis')}", _all_crops_d, key="v2_crop")
 
     vision_file = st.file_uploader(
@@ -72,7 +82,7 @@ def render():
           <div style='font-size:0.88rem;color:#2A3328;margin-bottom:6px;'>
             <b style='color:#3E6B3E;'>&#128737; {T('Prevention')}:</b> {T(vr['prevention'])}
           </div>
-          <div style='font-size:0.8rem;color:#3E6B3E;font-family:JetBrains Mono,monospace;'>
+          <div style='font-size:0.8rem;color:#1A2E1A;font-family:JetBrains Mono,monospace;'>
             &#9889; {T(vr['action'])}
           </div>
         </div>
@@ -85,13 +95,13 @@ def render():
 
     fcol1, fcol2, fcol3 = st.columns([2, 1, 1])
     with fcol1:
-        selected_crop = st.selectbox(f"🌱 {T('Crop')}", sorted(DISEASE_DB.keys()), key="symp_crop")
+        selected_crop = st.selectbox(f"🌱 {T('Crop')}", _sorted_crops(), key="symp_crop")
     with fcol2:
         filter_type = st.selectbox(T("Type"), ["All", "Disease", "Pest"], key="symp_type")
     with fcol3:
         filter_sev = st.selectbox(T("Severity"), ["All", "High", "Medium", "Low"], key="symp_sev")
 
-    all_items = list(DISEASE_DB[selected_crop].items())
+    all_items = list(_crop_items(selected_crop))
     if filter_type != "All":
         all_items = [(s, d) for s, d in all_items if d.get('type', 'Disease') == filter_type]
     if filter_sev != "All":

@@ -121,6 +121,38 @@ async def _async_sleep(seconds: float):
     await asyncio.sleep(seconds)
 
 
+_geocode_cache: dict[str, tuple[float, str | None]] = {}
+_GEOCODE_TTL = 3600  # 1 hour
+
+
+async def resolve_city_state(city: str) -> str | None:
+    """Return the Indian state name for a city using OWM Geocoding API."""
+    key = city.lower().strip()
+    if key in _geocode_cache:
+        ts, state = _geocode_cache[key]
+        if time.time() - ts < _GEOCODE_TTL:
+            return state
+
+    settings = get_settings()
+    try:
+        url = (
+            f"http://api.openweathermap.org/geo/1.0/direct"
+            f"?q={city},IN&limit=1&appid={settings.OWM_API_KEY}"
+        )
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(url)
+            results = r.json()
+        if results and isinstance(results, list):
+            state = results[0].get('state')
+            _geocode_cache[key] = (time.time(), state)
+            return state
+    except Exception:
+        pass
+
+    _geocode_cache[key] = (time.time(), None)
+    return None
+
+
 # Singleton instance
 _weather_service: WeatherService | None = None
 

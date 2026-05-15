@@ -47,5 +47,7 @@ async def recommend_crop(
             advice=soil['advice'],
             indicator=soil['indicator'],
         ),
-        all_probabilities=result['all_probs'],
+        all_probabilities=dict(
+            sorted(result['all_probs'].items(), key=lambda kv: -kv[1])[:5]
+        ),
     )

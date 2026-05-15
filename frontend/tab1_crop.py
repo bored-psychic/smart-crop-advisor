@@ -39,56 +39,61 @@ def render():
         }
         with st.spinner(T("Consulting the Swarm...")):
             res = run_async(APIClient.recommend_crop(data))
-            if res:
-                top_obj  = res['top_crop']
-                top_crop = top_obj['crop']
-                top_conf = top_obj['confidence']
-                emoji    = top_obj.get('emoji') or CROP_EMOJI.get(top_crop.lower(), '🌱')
+        if res:
+            st.session_state['tab1_result'] = res
+        else:
+            st.session_state.pop('tab1_result', None)
+            card(T("Swarm offline. Check backend connection."), severity="error")
 
-                soil_obj    = res['soil']
-                soil_type   = soil_obj['soil_type']
-                soil_advice = soil_obj['advice']
+    if 'tab1_result' in st.session_state:
+        res = st.session_state['tab1_result']
+        top_obj  = res['top_crop']
+        top_crop = top_obj['crop']
+        top_conf = top_obj['confidence']
+        emoji    = top_obj.get('emoji') or CROP_EMOJI.get(top_crop.lower(), '🌱')
 
-                alt   = res.get('alternatives', [])
-                crop2 = alt[0]['crop']       if len(alt) > 0 else ''
-                conf2 = alt[0]['confidence'] if len(alt) > 0 else 0.0
-                crop3 = alt[1]['crop']       if len(alt) > 1 else ''
-                conf3 = alt[1]['confidence'] if len(alt) > 1 else 0.0
+        soil_obj    = res['soil']
+        soil_type   = soil_obj['soil_type']
+        soil_advice = soil_obj['advice']
 
-                card(f"""
-                <div style='font-family:Space Grotesk,sans-serif;'>
-                  <div style='font-size:1.7rem;font-weight:700;color:#22C55E;margin-bottom:2px;'>
-                    {emoji}&nbsp;{top_crop.upper()}
-                  </div>
-                  <div style='font-family:JetBrains Mono,monospace;font-size:0.78rem;color:#4ADE80;'>
-                    {T('Best Crop')} &middot; {T('confidence')} {top_conf:.1f}%
-                  </div>
-                </div>""", severity="success")
-                card(f"<b style='color:#22C55E'>&#128161; {T('Tip')}:</b> {T(res['tip'])}", severity="info")
-                card(f"<b style='color:#22C55E'>&#127757; {T('Soil')}:</b> {T(soil_type)} &nbsp;&#183;&nbsp; <b style='color:#22C55E'>{T('Advice')}:</b> {T(soil_advice)}", severity="warning")
+        alt   = res.get('alternatives', [])
+        crop2 = alt[0]['crop']       if len(alt) > 0 else ''
+        conf2 = alt[0]['confidence'] if len(alt) > 0 else 0.0
+        crop3 = alt[1]['crop']       if len(alt) > 1 else ''
+        conf3 = alt[1]['confidence'] if len(alt) > 1 else 0.0
 
-                st.markdown(f"#### {T('Other Options')}")
-                r2, r3 = st.columns(2)
-                with r2:
-                    st.metric(label=f"{CROP_EMOJI.get(crop2.lower(), '🌱')} #2 — {crop2.capitalize()}", value=f"{conf2:.1f}%")
-                with r3:
-                    st.metric(label=f"{CROP_EMOJI.get(crop3.lower(), '🌱')} #3 — {crop3.capitalize()}", value=f"{conf3:.1f}%")
+        card(f"""
+        <div style='font-family:Space Grotesk,sans-serif;'>
+          <div style='font-size:1.7rem;font-weight:700;color:#22C55E;margin-bottom:2px;'>
+            {emoji}&nbsp;{top_crop.upper()}
+          </div>
+          <div style='font-family:JetBrains Mono,monospace;font-size:0.78rem;color:#4ADE80;'>
+            {T('Best Crop')} &middot; {T('confidence')} {top_conf:.1f}%
+          </div>
+        </div>""", severity="success")
+        card(f"<b style='color:#166534'>&#128161; {T('Tip')}:</b> <span style='color:#1A2E1A;'>{T(res['tip'])}</span>", severity="info")
+        card(f"<b style='color:#166534'>&#127757; {T('Soil')}:</b> <span style='color:#1A2E1A;'>{T(soil_type)}</span> &nbsp;&#183;&nbsp; <b style='color:#166534'>{T('Advice')}:</b> <span style='color:#1A2E1A;'>{T(soil_advice)}</span>", severity="warning")
 
-                st.markdown(f"#### {T('Confidence Across Top 8 Crops')}")
-                all_probs = res.get('all_probabilities', {})
-                chart_df = pd.DataFrame({
-                    'Crop': [c.capitalize() for c in all_probs],
-                    'Confidence (%)': list(all_probs.values()),
-                }).sort_values('Confidence (%)', ascending=False).head(8)
-                st.bar_chart(chart_df.set_index('Crop'))
+        st.markdown(f"#### {T('Other Options')}")
+        r2, r3 = st.columns(2)
+        with r2:
+            st.metric(label=f"{CROP_EMOJI.get(crop2.lower(), '🌱')} #2 — {crop2.capitalize()}", value=f"{conf2:.1f}%")
+        with r3:
+            st.metric(label=f"{CROP_EMOJI.get(crop3.lower(), '🌱')} #3 — {crop3.capitalize()}", value=f"{conf3:.1f}%")
 
-                with st.expander(f"📋 {T('Your Input Summary')}"):
-                    summary = pd.DataFrame({
-                        T('Parameter'): [T('Nitrogen (N)'), T('Phosphorus (P)'), T('Potassium (K)'),
-                                         T('Temperature'), T('Humidity'), T('pH'), T('Rainfall')],
-                        T('Value'): [f"{N} kg/ha", f"{P} kg/ha", f"{K} kg/ha",
-                                     f"{temperature} °C", f"{humidity} %", str(ph), f"{rainfall} mm"]
-                    })
-                    st.table(summary)
-            else:
-                card(T("Swarm offline. Check backend connection."), severity="error")
+        st.markdown(f"#### {T('Confidence Across Top 8 Crops')}")
+        all_probs = res.get('all_probabilities', {})
+        chart_df = pd.DataFrame({
+            'Crop': [c.capitalize() for c in all_probs],
+            'Confidence (%)': list(all_probs.values()),
+        }).sort_values('Confidence (%)', ascending=False).head(8)
+        st.bar_chart(chart_df.set_index('Crop'))
+
+        with st.expander(f"📋 {T('Your Input Summary')}"):
+            summary = pd.DataFrame({
+                T('Parameter'): [T('Nitrogen (N)'), T('Phosphorus (P)'), T('Potassium (K)'),
+                                 T('Temperature'), T('Humidity'), T('pH'), T('Rainfall')],
+                T('Value'): [f"{N} kg/ha", f"{P} kg/ha", f"{K} kg/ha",
+                             f"{temperature} °C", f"{humidity} %", str(ph), f"{rainfall} mm"]
+            })
+            st.table(summary)
