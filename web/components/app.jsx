@@ -8,6 +8,8 @@ const VIEW_MAP = {
   irrigation: ViewIrrigation,
   acoustic:   ViewAcoustic,
   field:      ViewField,
+  soil:       ViewSoil,
+  dosage:     ViewDosage,
 };
 
 const CRUMB_MAP = {
@@ -17,6 +19,8 @@ const CRUMB_MAP = {
   irrigation: 'Watering',
   acoustic:   'Listen to Field',
   field:      'Field Watch',
+  soil:       'Soil Health',
+  dosage:     'Dosage Advisor',
 };
 
 function App() {
