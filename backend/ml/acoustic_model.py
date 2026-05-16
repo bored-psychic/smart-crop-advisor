@@ -1,16 +1,20 @@
 """
 Acoustic model loader — thin compatibility shim.
 
-The old synthetic Random Forest has been replaced by YAMNet (see
-backend/ml/yamnet_model.py). This module now does two things:
+The local acoustic backbone is PANNs CNN14 (see backend/ml/panns_model.py),
+which replaced YAMNet for higher AudioSet mAP and a larger 2048-dim embedding.
+The YAMNet wrapper (backend/ml/yamnet_model.py) is kept in the tree as an
+unused fallback but is no longer loaded at startup.
+
+This module does two things:
 
 1. Re-exports `_features_from_pcm` (still used by the router for the DSP
    feature panel passed to the Gemini→Claude fallback) and
    `_normalize_crop_type` (still used by the router for the crop dropdown).
-2. Provides `load()` that returns the YAMNet bundle, tolerating TF import
-   failures by re-raising — `backend/main.py` catches and sets
-   `app.state.acoustic_model = None`, which cleanly drops the pipeline to
-   the API-only fallback.
+2. Provides `load()` that returns the PANNs bundle, tolerating torch /
+   panns_inference import failures or a missing checkpoint by re-raising —
+   `backend/main.py` catches and sets `app.state.acoustic_model = None`,
+   which cleanly drops the pipeline to the API-only fallback.
 """
 
 from __future__ import annotations
@@ -80,7 +84,7 @@ def _features_from_pcm(raw: np.ndarray, rate: int) -> list[float] | None:
 
 
 def load():
-    """Load the YAMNet bundle. Re-raises on TF/model failure so callers can
-    fall through to the API-only path."""
-    from backend.ml import yamnet_model
-    return yamnet_model.load()
+    """Load the PANNs CNN14 bundle. Re-raises on torch / checkpoint / head
+    failure so callers can fall through to the API-only path."""
+    from backend.ml import panns_model
+    return panns_model.load()

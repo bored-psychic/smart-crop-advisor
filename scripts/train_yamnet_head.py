@@ -213,6 +213,50 @@ def train_head(X: np.ndarray, y_enc: np.ndarray) -> tuple[object, dict]:
     return chosen, metrics
 
 
+_NON_BIO_LABELS = frozenset({"Non-biological", "Quiet"})
+_BIO_GATE_THRESHOLD = 0.25  # reject if P(biological) < this (conservative)
+
+
+def train_bio_gate(
+    X: np.ndarray, y_str: np.ndarray
+) -> tuple[object, float] | None:
+    """Train a binary bio/non-bio gate on the same embeddings as the species head.
+
+    Returns (gate_clf, threshold) when sufficient non-bio data exists, else None.
+    The gate runs before the species head and raises YAMNetAbstain when a clip
+    is clearly non-biological (wind, rain, engine, etc.).
+    """
+    non_bio_mask = np.array([c in _NON_BIO_LABELS for c in y_str])
+    n_non_bio = int(non_bio_mask.sum())
+    n_bio = int((~non_bio_mask).sum())
+
+    if n_non_bio < 10:
+        log.info(
+            "Bio gate skipped — only %d non-bio clips (need ≥10). "
+            "Fetch Non-biological/ data first.",
+            n_non_bio,
+        )
+        return None
+
+    log.info(
+        "Training bio gate (n_bio=%d, n_non_bio=%d) …", n_bio, n_non_bio
+    )
+    bio_labels = (~non_bio_mask).astype(int)  # 1=biological, 0=non-biological
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, bio_labels, test_size=0.20, random_state=42, stratify=bio_labels,
+    )
+
+    gate_clf = LogisticRegression(
+        max_iter=1000, class_weight="balanced", n_jobs=-1
+    )
+    gate_clf.fit(X_train, y_train)
+
+    test_acc = float(accuracy_score(y_test, gate_clf.predict(X_test)))
+    log.info("Bio gate test accuracy: %.3f", test_acc)
+    return gate_clf, _BIO_GATE_THRESHOLD
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-clips", type=int, default=20,
@@ -228,6 +272,8 @@ def main() -> int:
 
     clf, metrics = train_head(X, y_enc)
 
+    bio_gate_result = train_bio_gate(X, y_str)
+
     bundle = {
         "clf": clf,
         "label_encoder": le,
@@ -240,6 +286,10 @@ def main() -> int:
         "temperature": metrics["temperature"],
         "trained_at": dt.datetime.utcnow().isoformat() + "Z",
     }
+    if bio_gate_result is not None:
+        bundle["bio_gate_clf"] = bio_gate_result[0]
+        bundle["bio_gate_threshold"] = bio_gate_result[1]
+        log.info("Bio gate included in bundle (threshold=%.2f)", bio_gate_result[1])
 
     MODEL_OUT.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(bundle, MODEL_OUT)

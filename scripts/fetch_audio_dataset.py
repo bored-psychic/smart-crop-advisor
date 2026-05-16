@@ -61,6 +61,10 @@ SPECIES = [
     "Grasshopper", "Beetle", "Wasp",
 ]
 
+# Non-biological training class — feeds the bio/non-bio gate in the two-stage
+# local pipeline. Populated from ESC-50 ambient-noise categories.
+NON_BIO_CLASS = "Non-biological"
+
 
 def _slug(species: str) -> str:
     """Filesystem-safe folder name (Moth/Butterfly → Moth_Butterfly)."""
@@ -72,13 +76,23 @@ ESC50_ZIP_URL = "https://github.com/karolpiczak/ESC-50/archive/refs/heads/master
 ESC50_CATEGORY_TO_SPECIES = {
     "cricket": "Cricket",
     "insects": "Cricket",   # ESC-50 "insects" is dominated by cricket-like
-    # Note: ESC-50 has no bee/mosquito/locust/cicada/etc. classes natively.
+    # Non-biological ambient-noise categories → bio/non-bio gate training data.
+    "wind": NON_BIO_CLASS,
+    "rain": NON_BIO_CLASS,
+    "sea_waves": NON_BIO_CLASS,
+    "crackling_fire": NON_BIO_CLASS,
+    "engine": NON_BIO_CLASS,
+    "clock_tick": NON_BIO_CLASS,
+    "water_drops": NON_BIO_CLASS,
+    "thunderstorm": NON_BIO_CLASS,
+    "toilet_flush": NON_BIO_CLASS,
+    "pouring_water": NON_BIO_CLASS,
 }
 
 
 def fetch_esc50(target_dir: Path, max_per_species: int) -> dict[str, int]:
     """Download ESC-50 zip once, extract clips for our classes."""
-    counts: dict[str, int] = {sp: 0 for sp in SPECIES}
+    counts: dict[str, int] = {sp: 0 for sp in SPECIES + [NON_BIO_CLASS]}
     zip_path = CACHE_DIR / "esc50.zip"
 
     if not zip_path.exists():
@@ -192,11 +206,20 @@ def fetch_xeno_canto(target_dir: Path, max_per_species: int) -> dict[str, int]:
 # ── iNaturalist (best-effort search) ──────────────────────────────────────────
 INAT_API = "https://api.inaturalist.org/v1/observations"
 INAT_QUERIES = {
-    "Bee":     ["Apis", "Bombus"],
-    "Locust":  ["Locusta", "Schistocerca"],
-    "Cicada":  ["Magicicada", "Cicadidae"],
-    "Beetle":  ["Coleoptera", "Cerambycidae", "Scarabaeidae"],
-    "Wasp":    ["Vespa", "Polistes", "Vespidae"],
+    "Bee":          ["Apis", "Bombus", "Xylocopa", "Halictus", "Osmia",
+                     "Megachile", "Anthophora", "Andrena"],
+    "Locust":       ["Locusta", "Schistocerca", "Nomadacris", "Dociostaurus",
+                     "Chortoicetes", "Melanoplus"],
+    "Cicada":       ["Magicicada", "Cicadidae", "Cryptotympana", "Tibicen",
+                     "Neotibicen", "Meimuna", "Graptopsaltria", "Dundubia"],
+    "Cricket":      ["Gryllidae", "Gryllus", "Acheta", "Teleogryllus",
+                     "Oecanthus", "Gryllotalpa", "Nemobius"],
+    "Grasshopper":  ["Chorthippus", "Acrididae", "Gomphocerinae", "Acrida",
+                     "Melanoplinae", "Tettigoniidae", "Conocephalus", "Ruspolia"],
+    "Beetle":       ["Cerambycidae", "Elateridae", "Passalidae", "Lucanus",
+                     "Dynastinae", "Scolytinae", "Dytiscidae", "Prionus"],
+    "Wasp":         ["Vespa", "Vespula", "Dolichovespula", "Polistes",
+                     "Sceliphron", "Pepsis", "Bembix", "Sphecius"],
 }
 
 
@@ -211,9 +234,9 @@ def fetch_inaturalist(target_dir: Path, max_per_species: int) -> dict[str, int]:
             if counts[species] >= max_per_species:
                 break
             page = 1
-            while counts[species] < max_per_species and page <= 10:
+            while counts[species] < max_per_species and page <= 50:
                 q = {"taxon_name": taxon_name, "sounds": "true",
-                     "quality_grade": "research", "per_page": 50, "page": page}
+                     "per_page": 50, "page": page}
                 try:
                     r = requests.get(INAT_API, params=q, timeout=30)
                     r.raise_for_status()
@@ -265,7 +288,7 @@ def fetch_inaturalist(target_dir: Path, max_per_species: int) -> dict[str, int]:
 # ── Coverage report ───────────────────────────────────────────────────────────
 def coverage_report(target_dir: Path) -> dict[str, int]:
     counts: dict[str, int] = {}
-    for sp in SPECIES:
+    for sp in SPECIES + [NON_BIO_CLASS]:
         d = target_dir / _slug(sp)
         n = len(list(d.glob("*.wav"))) if d.exists() else 0
         counts[sp] = n

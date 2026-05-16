@@ -1,17 +1,21 @@
 """Acoustic pest detection router."""
 
 import base64
+import datetime as dt
 import hashlib
 import importlib
 import io
 import json
 import logging
+import uuid
 from collections import OrderedDict
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import scipy.io.wavfile as wav
 from PIL import Image
+from pydantic import BaseModel
 
 from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
 from backend.schemas.acoustic import AcousticResponse
@@ -23,6 +27,16 @@ from backend.core.constants import PEST_META
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/acoustic", tags=["Acoustic Pest Detection"])
+
+# Active-learning feedback storage. Clips are saved as 16-bit WAV; feedback
+# entries are written as JSONL. The retrain script picks these up.
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+FEEDBACK_CLIPS_DIR = _REPO_ROOT / "data" / "feedback_clips"
+FEEDBACK_QUEUE_FILE = _REPO_ROOT / "data" / "feedback_queue" / "feedback.jsonl"
+AUDIO_SAMPLES_DIR = _REPO_ROOT / "data" / "audio_samples"
+
+# Save clips for farmer review when top-1 confidence is below this value (%).
+FEEDBACK_CONFIDENCE_THRESHOLD = 60
 
 PEST_ICONS = {name: meta['icon'] for name, meta in PEST_META.items()}
 
@@ -59,6 +73,74 @@ def _cache_put(key: str, value: dict) -> None:
     _RESPONSE_CACHE.move_to_end(key)
     while len(_RESPONSE_CACHE) > _RESPONSE_CACHE_MAX:
         _RESPONSE_CACHE.popitem(last=False)
+
+
+# ── Feedback / active-learning helpers ────────────────────────────────────────
+
+def _save_feedback_clip(pcm: np.ndarray, rate: int) -> str:
+    """Write decoded PCM to feedback_clips/ and return the clip UUID."""
+    FEEDBACK_CLIPS_DIR.mkdir(parents=True, exist_ok=True)
+    clip_id = str(uuid.uuid4())
+    out = FEEDBACK_CLIPS_DIR / f"{clip_id}.wav"
+    int16 = np.clip(pcm * 32767.0, -32768, 32767).astype(np.int16)
+    buf = io.BytesIO()
+    wav.write(buf, rate, int16)
+    out.write_bytes(buf.getvalue())
+    return clip_id
+
+
+class _FeedbackBody(BaseModel):
+    clip_id: str
+    corrected_label: str
+    predicted_label: str = ""
+    confidence: int = 0
+    crop_type: str = "Unknown"
+    analysis_method: str = "panns"
+
+
+@router.post("/feedback")
+async def submit_feedback(body: _FeedbackBody, _: str = Depends(require_api_key)):
+    """Record a farmer label correction and move the clip to the training queue.
+
+    Called by the frontend when a user submits the "Help improve the AI" widget.
+    The clip UUID must match a file already saved in FEEDBACK_CLIPS_DIR (created
+    at analysis time when confidence was below FEEDBACK_CONFIDENCE_THRESHOLD).
+    If the corrected_label is "skip" the clip is left in place but not queued.
+    """
+    label = (body.corrected_label or "").strip()
+    if not label or label.lower() == "skip":
+        return {"status": "skipped"}
+
+    clip_src = FEEDBACK_CLIPS_DIR / f"{body.clip_id}.wav"
+    if not clip_src.exists():
+        raise HTTPException(status_code=404, detail="clip_id not found")
+
+    # Copy clip to the matching training-data folder so the next retrain run
+    # picks it up automatically via collect_dataset().
+    dest_dir = AUDIO_SAMPLES_DIR / label.replace("/", "_").replace(" ", "_")
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / f"feedback_{body.clip_id}.wav"
+    dest.write_bytes(clip_src.read_bytes())
+
+    # Append to JSONL queue for audit / statistics.
+    FEEDBACK_QUEUE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    entry = {
+        "timestamp": dt.datetime.utcnow().isoformat() + "Z",
+        "clip_id": body.clip_id,
+        "predicted_label": body.predicted_label,
+        "corrected_label": label,
+        "confidence": body.confidence,
+        "crop_type": body.crop_type,
+        "analysis_method": body.analysis_method,
+    }
+    with FEEDBACK_QUEUE_FILE.open("a") as fh:
+        fh.write(json.dumps(entry) + "\n")
+
+    logger.info(
+        "feedback: clip %s labelled as '%s' (was '%s' @ %d%%)",
+        body.clip_id, label, body.predicted_label, body.confidence,
+    )
+    return {"status": "ok", "dest": str(dest)}
 
 
 METHODOLOGY_NOTE = (
@@ -1121,37 +1203,40 @@ async def analyze_audio(
     }
 
     # Dispatch order:
-    #   1. YAMNet (local, primary). Trained on real audio.
-    #   2. Gemini→Claude API (fallback). Fires only when YAMNet is unavailable
-    #      or raises — e.g., TF not installed, head file missing, runtime error.
+    #   1. PANNs CNN14 (local, primary). Trained on real audio.
+    #   2. Gemini→Claude API (fallback). Fires only when the local model is
+    #      unavailable or raises — e.g., torch not installed, head file
+    #      missing, checkpoint missing, runtime error.
     #   3. Claude vision on spectrogram (further fallback when only Anthropic
     #      key is set and Gemini describe step is unreachable).
     settings_ref = get_settings()
     ai_result: Optional[dict] = None
     ai_method = "uncertain"
 
-    yamnet_bundle = request.app.state.acoustic_model
-    yamnet_abstain_reason: Optional[str] = None
-    if yamnet_bundle is not None:
+    local_bundle = request.app.state.acoustic_model
+    local_abstain_reason: Optional[str] = None
+    if local_bundle is not None:
         try:
-            ai_result = yamnet_bundle.predict(
+            ai_result = local_bundle.predict(
                 seg, rate, crop_type=normalized_crop,
                 weather_noise_score=snr_onset.get("weather_noise_score", 0.0),
             )
-            ai_method = "yamnet"
+            # Bundle self-reports which backbone ran via _model_used; fall back
+            # to "panns" since that's the only backbone wired today.
+            ai_method = (ai_result or {}).get("_model_used", "panns")
         except Exception as exc:
-            # Import here to avoid pulling TF/joblib at module load.
-            from backend.ml.yamnet_model import YAMNetAbstain
-            if isinstance(exc, YAMNetAbstain):
-                logger.info("acoustic: YAMNet abstained: %s", exc)
-                yamnet_abstain_reason = str(exc)
+            # Lazy imports — avoid pulling torch/joblib at module load.
+            from backend.ml.panns_model import PANNsAbstain
+            if isinstance(exc, PANNsAbstain):
+                logger.info("acoustic: PANNs abstained: %s", exc)
+                local_abstain_reason = str(exc)
             else:
-                logger.warning("acoustic: YAMNet predict failed: %s", exc)
+                logger.warning("acoustic: PANNs predict failed: %s", exc)
             ai_result = None
             ai_method = "uncertain"
 
     if ai_result is None:
-        # YAMNet unavailable — fall through to API pipeline.
+        # Local model unavailable — fall through to API pipeline.
         if settings_ref.GEMINI_API_KEY:
             wav_bytes = _encode_wav(seg, rate)
             sound_desc, gemini_info = await _gemini_describe_audio(wav_bytes)
@@ -1186,29 +1271,45 @@ async def analyze_audio(
 
     if ai_pred is not None:
         result = ai_pred
-        result["ml_used"] = (ai_method == "yamnet")
+        result["ml_used"] = ai_method in ("panns", "yamnet")
         result["analysis_method"] = ai_method
         result["cv_accuracy"] = None
         result["cv_label"] = None
         if isinstance(ai_result, dict):
             result["claude_model_used"] = ai_result.get("_model_used")
-            if ai_method == "yamnet":
+            if ai_method in ("panns", "yamnet"):
                 result["cv_accuracy"] = ai_result.get("_test_accuracy")
-                result["cv_label"] = "YAMNet held-out test set"
+                result["cv_label"] = (
+                    "PANNs CNN14 held-out test set" if ai_method == "panns"
+                    else "YAMNet held-out test set"
+                )
                 result["all_class_confidence"] = ai_result.get("all_class_confidence")
                 result["crop_prior_applied"] = bool(ai_result.get("_crop_prior_applied"))
                 result["calibration_temperature"] = ai_result.get("_temperature")
                 result["weather_noise_score"] = ai_result.get("weather_noise_score")
+                result["yamnet_noise_score"] = ai_result.get("yamnet_noise_score")
     else:
         # All available pipelines failed. analysis_method='uncertain' surfaces
         # the real failure stage to the UI rather than dressing up a guess.
         result = _build_uncertain_result(
-            ai_result, ai_reject_reason, yamnet_abstain_reason
+            ai_result, ai_reject_reason, local_abstain_reason
         )
 
     result.update(base_meta)
     if not result.get("band_energy"):
         result["band_energy"] = band_energy
+
+    # Active-learning hook: save clip for feedback when confidence is low.
+    # 'uncertain' always qualifies; local-model paths qualify below the
+    # threshold (covers both PANNs and the YAMNet fallback if ever re-enabled).
+    _method = result.get("analysis_method", "")
+    _conf = int(result.get("confidence", 0))
+    if _method == "uncertain" or (_method in ("panns", "yamnet") and _conf < FEEDBACK_CONFIDENCE_THRESHOLD):
+        try:
+            result["clip_id"] = _save_feedback_clip(seg, rate)
+        except Exception as _exc:
+            logger.warning("acoustic: could not save feedback clip: %s", _exc)
+
     _cache_put(cache_key, result)
     return AcousticResponse(**result)
 
@@ -1216,7 +1317,7 @@ async def analyze_audio(
 def _build_uncertain_result(
     claude_result: Optional[dict],
     reject_reason: Optional[str],
-    yamnet_abstain_reason: Optional[str] = None,
+    local_abstain_reason: Optional[str] = None,
 ) -> dict:
     """Construct the schema dict for the new analysis_method='uncertain' branch.
 
@@ -1225,11 +1326,11 @@ def _build_uncertain_result(
     surface the real failure (api_call/json_parse/validation/etc.) instead
     of dressing up a synthetic RF guess.
     """
-    if yamnet_abstain_reason and not claude_result:
-        # YAMNet abstained AND no API path produced a result. Surface the
-        # abstain reason instead of the empty 'unknown' fallback.
-        stage = "yamnet_abstain"
-        detail = yamnet_abstain_reason
+    if local_abstain_reason and not claude_result:
+        # Local model abstained AND no API path produced a result. Surface
+        # the abstain reason instead of the empty 'unknown' fallback.
+        stage = "local_abstain"
+        detail = local_abstain_reason
     else:
         reason = (reject_reason or "unknown").strip()
         if ":" in reason:

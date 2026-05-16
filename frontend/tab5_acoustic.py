@@ -356,6 +356,43 @@ def render():
         if r.get('methodology_note'):
             st.caption(f"ℹ️ {r['methodology_note']}")
 
+        clip_id = r.get('clip_id')
+        feedback_key = f"tab5_feedback_done_{clip_id}" if clip_id else None
+        if clip_id and not st.session_state.get(feedback_key):
+            st.markdown("")
+            with st.expander(f"🔁 {T('Help improve the AI — what did you actually hear?')}", expanded=False):
+                st.caption(T("Your correction trains the local model. Takes 5 seconds."))
+                _species_choices = list(PEST_META.keys())
+                _all_choices = _species_choices + [
+                    "Wind / Rain / Engine noise",
+                    "Silence / Nothing",
+                    T("Not sure (skip)"),
+                ]
+                corrected = st.radio(
+                    T("What was this sound?"),
+                    _all_choices,
+                    index=len(_all_choices) - 1,
+                    key=f"tab5_feedback_choice_{clip_id}",
+                )
+                if st.button(T("Submit correction"), key=f"tab5_feedback_submit_{clip_id}"):
+                    label = corrected if corrected not in (T("Not sure (skip)"),) else "skip"
+                    ok = run_async(APIClient.submit_acoustic_feedback(
+                        clip_id=clip_id,
+                        corrected_label=label,
+                        predicted_label=r.get('pest', ''),
+                        confidence=r.get('confidence', 0),
+                        crop_type=acoustic_crop,
+                        analysis_method=r.get('analysis_method', 'yamnet'),
+                    ))
+                    st.session_state[feedback_key] = True
+                    if label == "skip" or ok:
+                        st.success(T("Thanks! Your feedback helps improve future predictions."))
+                    else:
+                        st.warning(T("Could not save feedback — backend unreachable."))
+                    st.rerun()
+        elif feedback_key and st.session_state.get(feedback_key):
+            st.caption(f"✅ {T('Feedback submitted — thank you!')}")
+
     st.divider()
     with st.expander(f"🔬 {T('Acoustic Reference Library — what the mic can hear')}"):
         st.caption(T("Audible-insect taxonomy: pests, pollinators (positive signal), health vectors, "

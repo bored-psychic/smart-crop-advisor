@@ -141,7 +141,10 @@ class YAMNetBundle:
     def __init__(self, yamnet, clf, label_encoder, classes: list[str],
                  test_accuracy: Optional[float] = None,
                  trained_at: Optional[str] = None,
-                 temperature: float = 1.0):
+                 temperature: float = 1.0,
+                 confounder_indices: Optional[list[int]] = None,
+                 bio_gate_clf=None,
+                 bio_gate_threshold: float = 0.25):
         self.yamnet = yamnet
         self.clf = clf
         self.le = label_encoder
@@ -149,6 +152,9 @@ class YAMNetBundle:
         self.test_accuracy = test_accuracy
         self.trained_at = trained_at
         self.temperature = float(temperature) if temperature else 1.0
+        self.confounder_indices: list[int] = confounder_indices or []
+        self.bio_gate_clf = bio_gate_clf
+        self.bio_gate_threshold = float(bio_gate_threshold)
 
     def predict(self, pcm: np.ndarray, rate: int,
                 crop_type: str = "Unknown",
@@ -163,9 +169,38 @@ class YAMNetBundle:
             raise ValueError("audio too short for YAMNet (<0.5 s after resample)")
 
         # YAMNet returns (scores, embeddings, log_mel). embeddings: (frames, 1024)
-        _, emb, _ = self.yamnet(wave_16k)
+        scores_raw, emb, _ = self.yamnet(wave_16k)
         emb_np = emb.numpy()
         n_frames = emb_np.shape[0]
+
+        # Use YAMNet's own 521-class AudioSet scores to detect non-biological
+        # confounders (wind, rain, engine, pump) more accurately than DSP alone.
+        yamnet_noise_score = 0.0
+        if self.confounder_indices:
+            mean_scores = scores_raw.numpy().mean(axis=0)  # (521,)
+            yamnet_noise_score = float(
+                np.clip(mean_scores[self.confounder_indices].sum(), 0.0, 1.0)
+            )
+
+        blended_noise = float(np.clip(
+            max(weather_noise_score, yamnet_noise_score), 0.0, 1.0
+        ))
+
+        # Stage 1: bio/non-bio gate. A dedicated binary classifier trained on
+        # insect embeddings (bio=1) vs ambient-noise embeddings (bio=0). Runs
+        # on the mean-pooled full-clip embedding before the windowed species
+        # head, so non-biological clips are rejected early and cheaply.
+        if self.bio_gate_clf is not None:
+            feat_mean = emb_np.mean(axis=0).reshape(1, -1)
+            if hasattr(self.bio_gate_clf, "predict_proba"):
+                bio_proba = float(self.bio_gate_clf.predict_proba(feat_mean)[0][1])
+            else:
+                bio_proba = 1.0  # no probability support — let through
+            if bio_proba < self.bio_gate_threshold:
+                raise YAMNetAbstain(
+                    f"non_biological: bio_proba={bio_proba:.2f} "
+                    f"threshold={self.bio_gate_threshold:.2f}"
+                )
 
         # Sliding-window: chunk frames into ≈3 s windows, mean-pool each, run
         # the head, then median-aggregate the resulting softmax vectors. Falls
@@ -198,8 +233,8 @@ class YAMNetBundle:
         # classes upward, then renormalize. Threshold 0.4 avoids false muting
         # on mildly noisy clips; weight caps at 0.6 so the gate never fully
         # zeroes a confident detection.
-        if weather_noise_score > 0.4:
-            weight = weather_noise_score * 0.6
+        if blended_noise > 0.4:
+            weight = blended_noise * 0.6
             non_bio_idx = [
                 i for i, c in enumerate(ordered_classes)
                 if c in ("Quiet", "Non-biological")
@@ -265,7 +300,8 @@ class YAMNetBundle:
             "_temperature": self.temperature,
             "_crop_prior_applied": prior_applied,
             "_n_windows": n_windows,
-            "weather_noise_score": round(float(weather_noise_score), 3),
+            "weather_noise_score": round(blended_noise, 3),
+            "yamnet_noise_score": round(yamnet_noise_score, 3),
         }
 
 
@@ -290,8 +326,41 @@ def load() -> YAMNetBundle:
     logger.info("Loading YAMNet from TF Hub: %s", YAMNET_TFHUB)
     yamnet = hub.load(YAMNET_TFHUB)
 
+    _CONFOUNDER_SUBSTRINGS = (
+        "wind", "rain", "rustling", "white noise", "pink noise",
+        "static", "engine", "motor vehicle", "pump",
+    )
+    try:
+        raw_names = yamnet.class_names()
+        class_name_list = [
+            c.numpy().decode("utf-8") if hasattr(c, "numpy") else str(c)
+            for c in raw_names
+        ]
+        confounder_indices = [
+            i for i, n in enumerate(class_name_list)
+            if any(s in n.lower() for s in _CONFOUNDER_SUBSTRINGS)
+        ]
+        logger.info(
+            "YAMNet confounder indices (%d classes): %s",
+            len(confounder_indices), confounder_indices,
+        )
+    except Exception as exc:
+        logger.warning("Could not extract YAMNet class names for confounder gate: %s", exc)
+        confounder_indices = []
+
     logger.info("Loading classifier head: %s", HEAD_PATH)
     bundle_dict = joblib.load(HEAD_PATH)
+
+    bio_gate_clf = bundle_dict.get("bio_gate_clf")
+    if bio_gate_clf is not None:
+        logger.info(
+            "Bio gate loaded (threshold=%.2f)",
+            bundle_dict.get("bio_gate_threshold", 0.25),
+        )
+    else:
+        logger.info(
+            "No bio gate in bundle — retrain with Non-biological/ data to enable Stage 1"
+        )
 
     _SINGLETON = YAMNetBundle(
         yamnet=yamnet,
@@ -301,6 +370,9 @@ def load() -> YAMNetBundle:
         test_accuracy=bundle_dict.get("test_accuracy"),
         trained_at=bundle_dict.get("trained_at"),
         temperature=bundle_dict.get("temperature", 1.0),
+        confounder_indices=confounder_indices,
+        bio_gate_clf=bio_gate_clf,
+        bio_gate_threshold=bundle_dict.get("bio_gate_threshold", 0.25),
     )
     logger.info(
         "YAMNet ready — %d classes, test_accuracy=%.3f, T=%.2f",

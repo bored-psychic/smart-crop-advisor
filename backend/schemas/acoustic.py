@@ -19,6 +19,7 @@ class AcousticResponse(BaseModel):
     claude_advice: Optional[str] = None
 
     analysis_method: Literal[
+        "panns",
         "yamnet",
         "claude_vision",
         "gemini_audio",
@@ -40,7 +41,7 @@ class AcousticResponse(BaseModel):
     claude_failure_detail: Optional[str] = None
     claude_model_used: Optional[str] = None
 
-    # YAMNet diagnostics — only populated when analysis_method == 'yamnet'.
+    # Local-model diagnostics — populated when analysis_method ∈ {'panns', 'yamnet'}.
     # all_class_confidence: full softmax (post-calibration, post-crop-prior)
     # surfaced for transparency. crop_prior_applied / calibration_temperature
     # let the UI explain *why* the call is what it is.
@@ -48,9 +49,13 @@ class AcousticResponse(BaseModel):
     crop_prior_applied: Optional[bool] = None
     calibration_temperature: Optional[float] = None
 
-    # Weather noise diagnostic — 0.0 (clean) to 1.0 (heavy wind/rain).
-    # Populated only when YAMNet ran; None on API-fallback paths.
+    # Weather noise diagnostics — 0.0 (clean) to 1.0 (heavy wind/rain).
+    # weather_noise_score: blended max(DSP heuristic, AudioSet confounder mass).
+    # yamnet_noise_score: raw confounder-class probability mass (named for
+    # backwards-compat; under PANNs it sources from CNN14's 527-class output).
+    # Both populated only when the local model ran; None on API-fallback paths.
     weather_noise_score: Optional[float] = None
+    yamnet_noise_score: Optional[float] = None
 
     # Audible-insect taxonomy metadata. role drives how the frontend renders
     # results (pest=treatment, pollinator=protect, vector=health-advisory,
@@ -58,3 +63,9 @@ class AcousticResponse(BaseModel):
     # the user should verify visually before treating.
     role: Literal["pest", "pollinator", "vector", "ambient"] = "pest"
     low_signal: bool = False
+
+    # Active-learning feedback hook. Populated when confidence is low enough
+    # that farmer correction would be valuable. Frontend uses this to show the
+    # "Help improve the AI" widget; submitting feedback moves the clip to the
+    # training queue.
+    clip_id: Optional[str] = None

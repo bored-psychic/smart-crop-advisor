@@ -119,6 +119,28 @@ class APIClient:
         )
 
     @staticmethod
+    async def submit_acoustic_feedback(
+        clip_id: str,
+        corrected_label: str,
+        predicted_label: str = "",
+        confidence: int = 0,
+        crop_type: str = "Unknown",
+        analysis_method: str = "yamnet",
+    ):
+        return await _post_json(
+            "/acoustic/feedback",
+            json={
+                "clip_id": clip_id,
+                "corrected_label": corrected_label,
+                "predicted_label": predicted_label,
+                "confidence": confidence,
+                "crop_type": crop_type,
+                "analysis_method": analysis_method,
+            },
+            timeout=httpx.Timeout(10.0, connect=3.0),
+        )
+
+    @staticmethod
     async def irrigation_advice(data: dict):
         return await _post_json(
             "/irrigation/advise",

@@ -72,18 +72,24 @@ async def lifespan(app: FastAPI):
 
     try:
         app.state.acoustic_model = acoustic_model.load()
-        logger.info("  ✅ Acoustic model loaded (YAMNet, 10 classes)")
-        # Warmup: 1s of silence through YAMNet to JIT graph.
+        n_classes = len(getattr(app.state.acoustic_model, "classes", []) or [])
+        logger.info(f"  ✅ Acoustic model loaded (PANNs CNN14, {n_classes} classes)")
+        # Warmup: 1 s of silence at 32 kHz (CNN14 input rate) to prime the
+        # forward pass. Abstain on silence is expected — we only care that
+        # the embedding path executes without error.
         try:
             import numpy as _np
-            _silence = _np.zeros(16000, dtype=_np.float32)
-            app.state.acoustic_model.predict(_silence, 16000, crop_type="warmup")
-            logger.info("  🔥 YAMNet warmed")
+            _silence = _np.zeros(32000, dtype=_np.float32)
+            try:
+                app.state.acoustic_model.predict(_silence, 32000, crop_type="warmup")
+            except Exception:
+                pass  # abstain on silence is fine; the forward pass ran
+            logger.info("  🔥 PANNs CNN14 warmed")
         except Exception as _e:
-            logger.warning(f"  ⚠️ YAMNet warmup skipped: {_e}")
+            logger.warning(f"  ⚠️ PANNs warmup skipped: {_e}")
     except Exception as e:
         logger.warning(
-            f"  ⚠️ YAMNet unavailable, acoustic pipeline will use API fallback: {e}"
+            f"  ⚠️ PANNs unavailable, acoustic pipeline will use API fallback: {e}"
         )
         app.state.acoustic_model = None
 
