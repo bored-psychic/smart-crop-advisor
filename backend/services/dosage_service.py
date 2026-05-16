@@ -5,6 +5,7 @@ Loads data/dosage_db.json once and caches in module-level _DB.
 
 import asyncio
 import json
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -14,6 +15,8 @@ from backend.config import get_settings
 from backend.schemas.dosage import DosageAdvice
 from backend.services import market
 
+logger = logging.getLogger(__name__)
+
 # ---------------------------------------------------------------------------
 # Module-level DB cache
 # ---------------------------------------------------------------------------
@@ -22,6 +25,8 @@ _DB: list[dict] | None = None
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DB_PATH = _REPO_ROOT / "data" / "dosage_db.json"
+
+_HAIKU_MODEL = "claude-haiku-4-5-20251001"
 
 
 def _load_db() -> list:
@@ -76,6 +81,33 @@ _YIELD_T_PER_ACRE = {
 }
 
 
+def _strip_json_fences(text: str) -> str:
+    """Remove ```json ... ``` or ``` ... ``` fences from Claude's output."""
+    s = text.strip()
+    if s.startswith("```"):
+        s = s.lstrip("`")
+        if s.lower().startswith("json"):
+            s = s[4:]
+        s = s.lstrip()
+        if s.endswith("```"):
+            s = s[:-3].rstrip()
+    return s.strip()
+
+
+_FALLBACK_ERROR = DosageAdvice(
+    chemical_name="Consult local agricultural officer",
+    formulation="",
+    total_quantity_ml=0,
+    water_litres=0,
+    timing="As advised",
+    reapply_after_days=14,
+    total_cost_inr=0,
+    roi_protected_inr=None,
+    narrative="AI could not generate a recommendation for this pest. Please consult your local Krishi Vigyan Kendra.",
+    source="llm_fallback",
+)
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
@@ -119,9 +151,9 @@ async def _generate_narrative(
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY not set")
 
-        client = AsyncAnthropic(api_key=api_key)
+        client = AsyncAnthropic(api_key=api_key, timeout=15.0)
         message = await client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=_HAIKU_MODEL,
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -132,27 +164,14 @@ async def _generate_narrative(
 
 async def _llm_fallback(pest_id: str, crop: str, area_acres: float = 1.0) -> DosageAdvice:
     """Use Haiku to generate a best-effort dosage advisory when the DB has no match."""
-    _FALLBACK_ERROR = DosageAdvice(
-        chemical_name="Consult local agricultural officer",
-        formulation="",
-        total_quantity_ml=0,
-        water_litres=0,
-        timing="As advised",
-        reapply_after_days=14,
-        total_cost_inr=0,
-        roi_protected_inr=None,
-        narrative="AI could not generate a recommendation for this pest. Please consult your local Krishi Vigyan Kendra.",
-        source="llm_fallback",
-    )
-
     try:
         api_key = get_settings().ANTHROPIC_API_KEY
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY not set")
 
-        client = AsyncAnthropic(api_key=api_key)
+        client = AsyncAnthropic(api_key=api_key, timeout=15.0)
         message = await client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=_HAIKU_MODEL,
             max_tokens=300,
             system="You are an Indian agricultural expert. Provide practical pesticide recommendations for Indian farmers. Respond ONLY with valid JSON.",
             messages=[
@@ -169,46 +188,47 @@ async def _llm_fallback(pest_id: str, crop: str, area_acres: float = 1.0) -> Dos
             ],
         )
 
-        raw = message.content[0].text.strip()
-        # Strip markdown code fences if present
-        if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
+        raw = _strip_json_fences(message.content[0].text)
         data = json.loads(raw)
 
-        total_quantity_ml = data["dose_ml_per_acre"] * area_acres
-        water_litres = data["water_l_per_acre"] * area_acres
-        total_cost_inr = (total_quantity_ml / 1000) * data["cost_per_litre_inr"]
+        dose_ml = float(data.get("dose_ml_per_acre", 200))
+        water_l = float(data.get("water_l_per_acre", 200))
+        cost_per_l = float(data.get("cost_per_litre_inr", 500))
+        reapply = int(data.get("reapply_days", 7))
+
+        total_quantity_ml = dose_ml * area_acres
+        water_litres = water_l * area_acres
+        total_cost_inr = (total_quantity_ml / 1000) * cost_per_l
         roi_protected_inr = None
 
         narrative = await _generate_narrative(
             pest_id=pest_id,
             crop=crop,
-            chemical_name=data["chemical_name"],
-            formulation=data["formulation"],
+            chemical_name=data.get("chemical_name", "recommended pesticide"),
+            formulation=data.get("formulation", ""),
             total_quantity_ml=total_quantity_ml,
             water_litres=water_litres,
             area_acres=area_acres,
             total_cost_inr=total_cost_inr,
             roi_protected_inr=roi_protected_inr,
-            reapply_days=data["reapply_days"],
-            timing=data["timing"],
+            reapply_days=reapply,
+            timing=data.get("timing", "as recommended"),
         )
 
         return DosageAdvice(
-            chemical_name=data["chemical_name"],
-            formulation=data["formulation"],
+            chemical_name=data.get("chemical_name", "recommended pesticide"),
+            formulation=data.get("formulation", ""),
             total_quantity_ml=total_quantity_ml,
             water_litres=water_litres,
-            timing=data["timing"],
-            reapply_after_days=data["reapply_days"],
+            timing=data.get("timing", "as recommended"),
+            reapply_after_days=reapply,
             total_cost_inr=total_cost_inr,
             roi_protected_inr=roi_protected_inr,
             narrative=narrative,
             source="llm_fallback",
         )
-    except Exception:
+    except Exception as exc:
+        logger.warning("dosage llm_fallback failed: %s", exc)
         return _FALLBACK_ERROR
 
 

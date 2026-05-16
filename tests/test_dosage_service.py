@@ -4,7 +4,7 @@ import pytest
 import asyncio
 from unittest.mock import patch, AsyncMock, MagicMock
 
-from backend.services.dosage_service import _crop_stage_bucket, lookup, _generate_narrative
+from backend.services.dosage_service import _crop_stage_bucket, lookup, _generate_narrative, _HAIKU_MODEL
 from backend.schemas.dosage import DosageAdvice
 
 
@@ -193,3 +193,35 @@ def test_generate_narrative_returns_string():
     assert isinstance(result, str)
     assert len(result) > 0
     assert result == expected_text
+
+
+# ---------------------------------------------------------------------------
+# 7. _generate_narrative uses correct model and max_tokens
+# ---------------------------------------------------------------------------
+
+def test_generate_narrative_uses_correct_model():
+    """_generate_narrative should call Haiku with _HAIKU_MODEL and max_tokens=200."""
+    expected_text = "Apply pesticide at dawn. Reapply after 7 days if needed."
+    mock_client = _make_mock_anthropic(expected_text)
+
+    with patch("backend.services.dosage_service.AsyncAnthropic", return_value=mock_client):
+        with patch("backend.services.dosage_service.get_settings") as mock_settings:
+            mock_settings.return_value.ANTHROPIC_API_KEY = "test-key"
+            run(_generate_narrative(
+                pest_id="aphid",
+                crop="wheat",
+                chemical_name="Imidacloprid",
+                formulation="SL 17.8%",
+                total_quantity_ml=100.0,
+                water_litres=200.0,
+                area_acres=1.0,
+                total_cost_inr=50.0,
+                roi_protected_inr=None,
+                reapply_days=7,
+                timing="early morning",
+            ))
+
+    mock_client.messages.create.assert_called_once()
+    call_kwargs = mock_client.messages.create.call_args
+    assert call_kwargs.kwargs["model"] == _HAIKU_MODEL
+    assert call_kwargs.kwargs["max_tokens"] == 200
