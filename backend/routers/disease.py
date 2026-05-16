@@ -14,6 +14,7 @@ from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomRespon
 from core.disease_db import DISEASE_DB
 from backend.auth import require_api_key
 from backend.config import get_settings
+from backend.services import dosage_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/disease", tags=["Disease Detection"])
@@ -125,7 +126,18 @@ async def analyze_image(
 
     claude_result = await _claude_diagnose(contents, crop_type, media_type)
     if claude_result:
-        return DiseaseResult(**claude_result)
+        result_obj = DiseaseResult(**claude_result)
+        try:
+            result_obj.dosage_advice = await dosage_service.lookup(
+                pest_id=result_obj.disease,
+                crop=crop_type,
+                crop_stage_days=0,
+                area_acres=1.0,
+                state=None,
+            )
+        except Exception:
+            pass
+        return result_obj
 
     disease_bundle = request.app.state.disease_model
     if disease_bundle is None:
@@ -133,7 +145,18 @@ async def analyze_image(
     rgb_array = np.asarray(img.convert('RGB'), dtype=np.uint8)
     result = disease_bundle.predict_from_image(rgb_array)
 
-    return DiseaseResult(**result)
+    result_obj = DiseaseResult(**result)
+    try:
+        result_obj.dosage_advice = await dosage_service.lookup(
+            pest_id=result_obj.disease,
+            crop=crop_type,
+            crop_stage_days=0,
+            area_acres=1.0,
+            state=None,
+        )
+    except Exception:
+        pass
+    return result_obj
 
 
 @router.post("/analyze-symptom", response_model=SymptomResponse)
@@ -150,7 +173,7 @@ async def analyze_symptom(
         raise HTTPException(status_code=404, detail=f"Symptom not found for crop '{req.crop}'")
 
     data = crop_diseases[req.symptom]
-    return SymptomResponse(
+    response = SymptomResponse(
         disease=data['disease'],
         severity=data['severity'],
         disease_type=data.get('type', 'Disease'),
@@ -159,6 +182,17 @@ async def analyze_symptom(
         crop=req.crop,
         symptom=req.symptom,
     )
+    try:
+        response.dosage_advice = await dosage_service.lookup(
+            pest_id=data['disease'],
+            crop=req.crop,
+            crop_stage_days=0,
+            area_acres=1.0,
+            state=None,
+        )
+    except Exception:
+        pass
+    return response
 
 
 @router.get("/crops")

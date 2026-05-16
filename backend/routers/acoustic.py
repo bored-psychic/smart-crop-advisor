@@ -23,6 +23,7 @@ from backend.ml.acoustic_model import _features_from_pcm, _normalize_crop_type
 from backend.auth import require_api_key
 from backend.config import get_settings
 from backend.core.constants import PEST_META
+from backend.services import dosage_service
 
 logger = logging.getLogger(__name__)
 
@@ -1318,6 +1319,19 @@ async def analyze_audio(
             result["clip_id"] = _save_feedback_clip(seg, rate)
         except Exception as _exc:
             logger.warning("acoustic: could not save feedback clip: %s", _exc)
+
+    if result.get("role") == "pest" and result.get("pest") not in ("Uncertain", "Unknown", "Analysis Rejected"):
+        try:
+            _dosage = await dosage_service.lookup(
+                pest_id=result["pest"],
+                crop=normalized_crop,
+                crop_stage_days=0,
+                area_acres=1.0,
+                state=None,
+            )
+            result["dosage_advice"] = _dosage.model_dump()
+        except Exception:
+            pass
 
     _cache_put(cache_key, result)
     return AcousticResponse(**result)
