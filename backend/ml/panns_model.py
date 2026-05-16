@@ -207,7 +207,7 @@ class PANNsBundle:
 
         # Weather noise gate: when wind/rain noise dominates, suppress pest
         # probabilities and lift Non-biological/Quiet, then renormalize.
-        if blended_noise > 0.4:
+        if blended_noise > 0.5:
             weight = blended_noise * 0.6
             non_bio_idx = [
                 i for i, c in enumerate(ordered_classes)

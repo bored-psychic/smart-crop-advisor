@@ -98,7 +98,7 @@ AUG_VARIANTS_EVAL = ("clean",)
 #   - Locust → Grasshopper: same Orthopteran stridulation; locusts are
 #     just gregarious-phase grasshoppers. Acoustic boundary at this scale
 #     hovers near chance (Locust F1 0.57→0.59 across runs).
-LABEL_REMAP = {"Wasp": "Bee", "Locust": "Grasshopper", "Cricket": "Grasshopper"}
+LABEL_REMAP = {"Wasp": "Bee", "Locust": "Grasshopper"}
 
 
 def _slug_to_species(slug: str) -> str:

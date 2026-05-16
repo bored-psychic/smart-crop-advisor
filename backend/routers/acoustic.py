@@ -275,9 +275,13 @@ def _snr_and_onsets(seg: np.ndarray, rate: int) -> dict:
     except Exception:
         density = None
 
-    # Weather noise heuristic: high spectral flatness (wind/rain ≈ white noise),
-    # low onset density (no discrete insect events), and low-band energy
-    # dominance (wind is sub-500 Hz heavy) all point toward non-biological noise.
+    # Weather noise heuristic: high spectral flatness (wind/rain ≈ white noise)
+    # and low onset density both point to non-biological noise.
+    # low_ratio (sub-500 Hz dominance) only contributes when flatness is ALSO
+    # elevated — insects (locusts, grasshoppers) have strong low-freq wingbeats
+    # that are TONAL, not flat; treating them as wind causes false Non-biological
+    # predictions. Wind is both flat AND low-freq heavy; insect wings are only
+    # the latter.
     try:
         seg_f = seg.astype(np.float32, copy=False)
         flatness = float(np.mean(librosa.feature.spectral_flatness(y=seg_f)))
@@ -287,10 +291,15 @@ def _snr_and_onsets(seg: np.ndarray, rate: int) -> dict:
         total_energy = fft_mag.mean() or 1e-9
         low_ratio = float(low_energy / total_energy)
         onset_score = max(0.0, 1.0 - ((density or 0.0) / 3.0))
+        flatness_norm = min(flatness * 4, 1.0)
+        # Joint signal: only penalise for low-freq dominance when the spectrum
+        # is also flat (wind/rain). A tonal wingbeat scores high low_ratio but
+        # low flatness → near-zero joint, avoiding false noise classification.
+        low_ratio_penalty = low_ratio * flatness_norm
         weather_noise_score = round(
-            0.5 * min(flatness * 4, 1.0) +
+            0.5 * flatness_norm +
             0.3 * onset_score +
-            0.2 * min(low_ratio, 1.0),
+            0.2 * low_ratio_penalty,
             3,
         )
     except Exception:
