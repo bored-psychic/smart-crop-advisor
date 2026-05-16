@@ -3,13 +3,17 @@ import functools
 import time
 import logging
 from typing import Any, Optional, Callable
-from core.config import settings
+from backend.config import get_settings
 
 # ── Redis Fallback Logic ───────────────────────────────────────────────────
 _IN_MEMORY_CACHE = {}
 
+_pool = None
+REDIS_AVAILABLE = False
+
 try:
     import redis.asyncio as redis
+    settings = get_settings()
     _pool = redis.ConnectionPool(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
@@ -18,9 +22,9 @@ try:
         decode_responses=True
     )
     REDIS_AVAILABLE = True
-except (ImportError, Exception):
+except (ImportError, Exception) as e:
     REDIS_AVAILABLE = False
-    logging.warning("Redis not found or connection failed. Falling back to In-Memory LRU.")
+    logging.warning(f"Redis not available, falling back to In-Memory LRU: {e}")
 
 def get_redis_client():
     if not REDIS_AVAILABLE:

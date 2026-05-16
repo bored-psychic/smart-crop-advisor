@@ -125,7 +125,7 @@ def create_app() -> FastAPI:
     )
 
     # ── Register routers ─────────────────────────────────────────────
-    from backend.routers import crop, disease, market, irrigation, acoustic, field_watch
+    from backend.routers import crop, disease, market, irrigation, acoustic, field_watch, soil
 
     app.include_router(crop.router)
     app.include_router(disease.router)
@@ -133,6 +133,7 @@ def create_app() -> FastAPI:
     app.include_router(irrigation.router)
     app.include_router(acoustic.router)
     app.include_router(field_watch.router)
+    app.include_router(soil.router)
 
     # ── Health check ─────────────────────────────────────────────────
     @app.get("/health", tags=["System"])
