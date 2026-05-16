@@ -120,13 +120,13 @@
     "pest_id": "stem_borer",
     "crop": "rice",
     "crop_stage_bucket": "flowering",
-    "chemical_name": "Fipronil",
-    "formulation": "5SC",
-    "dose_ml_per_acre": 600,
+    "chemical_name": "Chlorantraniliprole",
+    "formulation": "18.5SC",
+    "dose_ml_per_acre": 60,
     "water_l_per_acre": 200,
     "timing": "evening",
     "reapply_days": 21,
-    "cost_per_litre_inr": 950,
+    "cost_per_litre_inr": 8500,
     "yield_loss_if_untreated_pct": 45
   },
   {
@@ -146,13 +146,13 @@
     "pest_id": "stem_borer",
     "crop": "wheat",
     "crop_stage_bucket": "seedling",
-    "chemical_name": "Monocrotophos",
-    "formulation": "36SL",
+    "chemical_name": "Chlorpyrifos",
+    "formulation": "20EC",
     "dose_ml_per_acre": 350,
     "water_l_per_acre": 200,
     "timing": "dawn or dusk",
     "reapply_days": 10,
-    "cost_per_litre_inr": 320,
+    "cost_per_litre_inr": 680,
     "yield_loss_if_untreated_pct": 20
   },
   {
@@ -198,13 +198,13 @@
     "pest_id": "whitefly",
     "crop": "tomato",
     "crop_stage_bucket": "flowering",
-    "chemical_name": "Imidacloprid",
-    "formulation": "17.8SL",
-    "dose_ml_per_acre": 80,
+    "chemical_name": "Spiromesifen",
+    "formulation": "22.9SC",
+    "dose_ml_per_acre": 200,
     "water_l_per_acre": 150,
     "timing": "early morning",
     "reapply_days": 14,
-    "cost_per_litre_inr": 1200,
+    "cost_per_litre_inr": 3200,
     "yield_loss_if_untreated_pct": 30
   },
   {
@@ -249,14 +249,14 @@
   {
     "pest_id": "fusarium_wilt",
     "crop": "wheat",
-    "crop_stage_bucket": "vegetative",
-    "chemical_name": "Propiconazole",
-    "formulation": "25EC",
+    "crop_stage_bucket": "seedling",
+    "chemical_name": "Carbendazim",
+    "formulation": "50WP",
     "dose_ml_per_acre": 200,
     "water_l_per_acre": 200,
-    "timing": "early morning",
+    "timing": "seed treatment before sowing",
     "reapply_days": 14,
-    "cost_per_litre_inr": 780,
+    "cost_per_litre_inr": 380,
     "yield_loss_if_untreated_pct": 25
   },
   {
@@ -343,7 +343,7 @@
     "crop_stage_bucket": "vegetative",
     "chemical_name": "Validamycin",
     "formulation": "3L",
-    "dose_ml_per_acre": 800,
+    "dose_ml_per_acre": 450,
     "water_l_per_acre": 200,
     "timing": "early morning",
     "reapply_days": 10,
@@ -575,13 +575,13 @@
     "pest_id": "stem_borer",
     "crop": "cotton",
     "crop_stage_bucket": "vegetative",
-    "chemical_name": "Fipronil",
-    "formulation": "5SC",
-    "dose_ml_per_acre": 600,
+    "chemical_name": "Chlorantraniliprole",
+    "formulation": "18.5SC",
+    "dose_ml_per_acre": 60,
     "water_l_per_acre": 200,
     "timing": "evening",
     "reapply_days": 14,
-    "cost_per_litre_inr": 950,
+    "cost_per_litre_inr": 8500,
     "yield_loss_if_untreated_pct": 25
   },
   {
@@ -624,19 +624,6 @@
     "yield_loss_if_untreated_pct": 25
   },
   {
-    "pest_id": "leaf_curl",
-    "crop": "maize",
-    "crop_stage_bucket": "seedling",
-    "chemical_name": "Thiamethoxam",
-    "formulation": "25WG",
-    "dose_ml_per_acre": 80,
-    "water_l_per_acre": 150,
-    "timing": "early morning",
-    "reapply_days": 14,
-    "cost_per_litre_inr": 2800,
-    "yield_loss_if_untreated_pct": 20
-  },
-  {
     "pest_id": "powdery_mildew",
     "crop": "rice",
     "crop_stage_bucket": "vegetative",
@@ -663,7 +650,7 @@
     "yield_loss_if_untreated_pct": 10
   },
   {
-    "pest_id": "blast",
+    "pest_id": "blight",
     "crop": "maize",
     "crop_stage_bucket": "vegetative",
     "chemical_name": "Azoxystrobin",
