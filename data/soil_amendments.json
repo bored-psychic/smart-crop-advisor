@@ -1,0 +1,200 @@
+{
+  "nutrient_ranges": {
+    "optimal": {
+      "N": {"min": 40, "max": 100, "unit": "kg/ha", "description": "Nitrogen"},
+      "P": {"min": 20, "max": 80, "unit": "kg/ha", "description": "Phosphorus"},
+      "K": {"min": 100, "max": 200, "unit": "kg/ha", "description": "Potassium"},
+      "pH": {"min": 6.0, "max": 7.5, "unit": "pH", "description": "Soil pH"}
+    },
+    "deficient": {
+      "N": {"max": 25, "severity": "high"},
+      "P": {"max": 15, "severity": "high"},
+      "K": {"max": 80, "severity": "high"},
+      "pH_acidic": {"max": 5.5, "severity": "high"},
+      "pH_alkaline": {"min": 7.5, "severity": "medium"}
+    },
+    "excess": {
+      "N": {"min": 120, "severity": "medium"},
+      "P": {"min": 90, "severity": "medium"},
+      "K": {"min": 220, "severity": "low"},
+      "pH_acidic": {"min": 4.5, "severity": "high"}
+    }
+  },
+  "amendments": {
+    "pH_correction": {
+      "acidic": [
+        {
+          "name": "Agricultural Lime (CaCO3)",
+          "type": "pH increaser",
+          "deficiency_target": "pH < 5.5",
+          "dose_kg_per_acre": 2000,
+          "dose_kg_per_hectare": 5000,
+          "time_to_effect_days": 30,
+          "application_method": "Broadcast and incorporate 15 cm deep",
+          "notes": "Most cost-effective. Slow-acting. Also adds calcium."
+        },
+        {
+          "name": "Hydrated Lime (Ca(OH)2)",
+          "type": "pH increaser",
+          "deficiency_target": "pH < 5.5 (urgent)",
+          "dose_kg_per_acre": 800,
+          "dose_kg_per_hectare": 2000,
+          "time_to_effect_days": 10,
+          "application_method": "Slurry application, water immediately",
+          "notes": "Fast-acting but more expensive. For quick pH boost."
+        }
+      ],
+      "alkaline": [
+        {
+          "name": "Gypsum (CaSO4·2H2O)",
+          "type": "pH reducer (indirect)",
+          "deficiency_target": "pH > 7.5",
+          "dose_kg_per_acre": 1000,
+          "dose_kg_per_hectare": 2500,
+          "time_to_effect_days": 30,
+          "application_method": "Broadcast and water in",
+          "notes": "Doesn't lower pH directly; improves soil structure to reduce lime effects"
+        },
+        {
+          "name": "Elemental Sulfur",
+          "type": "pH reducer",
+          "deficiency_target": "pH > 7.5 (severe)",
+          "dose_kg_per_acre": 500,
+          "dose_kg_per_hectare": 1250,
+          "time_to_effect_days": 60,
+          "application_method": "Broadcast; soil microbes oxidize S → H2SO4",
+          "notes": "Slow but effective. Most economical for long-term correction."
+        }
+      ]
+    },
+    "nitrogen": {
+      "deficient": [
+        {
+          "name": "Urea (46% N)",
+          "type": "soluble synthetic",
+          "deficiency_source": "N < 25 kg/ha",
+          "dose_kg_per_acre": 100,
+          "dose_kg_per_hectare": 250,
+          "application_method": "Dissolve in water and apply at V4-V6 growth stage. Split application: 30% basal, 40% at boot, 30% late season.",
+          "time_to_effect_days": 7,
+          "application_timing": "Split: 30% basal, 40% at V4-V6, 30% at boot",
+          "notes": "Fast N source. Cheap. Apply with water to avoid volatilization loss."
+        },
+        {
+          "name": "DAP (Diammonium Phosphate, 18% N + 46% P2O5)",
+          "type": "compound synthetic",
+          "deficiency_source": "N < 25 + P < 15",
+          "dose_kg_per_acre": 150,
+          "dose_kg_per_hectare": 375,
+          "application_method": "Broadcast basal application at sowing, incorporate 10 cm deep with soil.",
+          "time_to_effect_days": 14,
+          "application_timing": "Basal at sowing",
+          "notes": "Dual nutrient boost. Excellent for N+P co-deficiency."
+        },
+        {
+          "name": "FYM (Farm Yard Manure, ~0.5% N)",
+          "type": "organic",
+          "deficiency_source": "N < 25 (chronic)",
+          "dose_tonnes_per_acre": 10,
+          "dose_tonnes_per_hectare": 25,
+          "application_timing": "15 days before planting",
+          "notes": "Also improves soil texture, water retention, organic matter. Slow-release."
+        }
+      ]
+    },
+    "phosphorus": {
+      "deficient": [
+        {
+          "name": "Single Super Phosphate (SSP, 16% P2O5)",
+          "type": "soluble synthetic",
+          "deficiency_source": "P < 15 kg/ha",
+          "dose_kg_per_acre": 200,
+          "dose_kg_per_hectare": 500,
+          "application_method": "Broadcast basal application at sowing, incorporate 10 cm deep into soil.",
+          "time_to_effect_days": 21,
+          "application_timing": "Basal at sowing",
+          "notes": "Cost-effective. Also adds sulfur (12% S). Slow dissolution in high-pH soils."
+        },
+        {
+          "name": "DAP (Diammonium Phosphate, 46% P2O5 + 18% N)",
+          "type": "compound synthetic",
+          "deficiency_source": "P < 15 + N < 25",
+          "dose_kg_per_acre": 150,
+          "dose_kg_per_hectare": 375,
+          "application_timing": "Basal at sowing",
+          "notes": "High P concentration. Excellent for P+N co-deficiency."
+        },
+        {
+          "name": "Bone Meal (organic, ~11% P2O5)",
+          "type": "organic",
+          "deficiency_source": "P < 15 (chronic)",
+          "dose_kg_per_acre": 300,
+          "dose_kg_per_hectare": 750,
+          "application_timing": "15 days before planting",
+          "notes": "Slow-release. Also adds calcium. Excellent for long-term P build-up."
+        }
+      ]
+    },
+    "potassium": {
+      "deficient": [
+        {
+          "name": "Muriate of Potash (MOP, KCl, 60% K2O)",
+          "type": "soluble synthetic",
+          "deficiency_source": "K < 80 kg/ha",
+          "dose_kg_per_acre": 100,
+          "dose_kg_per_hectare": 250,
+          "application_timing": "Basal at sowing or split 50-50 basal+boot",
+          "notes": "Most common. However, high chloride—avoid for tobacco/potato/grapes if possible."
+        },
+        {
+          "name": "Potassium Sulfate (SOP, 48% K2O + 18% S)",
+          "type": "soluble synthetic",
+          "deficiency_source": "K < 80 kg/ha (chloride-sensitive crops)",
+          "dose_kg_per_acre": 120,
+          "dose_kg_per_hectare": 300,
+          "application_timing": "Basal at sowing",
+          "notes": "Premium option. No chloride. Also adds sulfur. Higher cost."
+        },
+        {
+          "name": "Wood Ash (K2O ~4%, + Ca, Mg)",
+          "type": "organic byproduct",
+          "deficiency_source": "K < 80 (minor deficiency)",
+          "dose_tonnes_per_acre": 2,
+          "dose_tonnes_per_hectare": 5,
+          "application_timing": "Before planting or top-dress",
+          "notes": "Slow K release. Also raises pH (use cautiously in alkaline soils). Free if available."
+        }
+      ]
+    },
+    "organic_matter": {
+      "deficient": [
+        {
+          "name": "FYM (Farm Yard Manure, ~2% OM)",
+          "type": "organic",
+          "deficiency_source": "organic_matter < 2%",
+          "dose_tonnes_per_acre": 10,
+          "dose_tonnes_per_hectare": 25,
+          "application_timing": "15 days before planting",
+          "notes": "Improves water holding, aeration, microbial activity. Cheap source if on-farm."
+        },
+        {
+          "name": "Compost (fully decomposed, ~3–5% OM)",
+          "type": "processed organic",
+          "deficiency_source": "organic_matter < 2% (premium quality)",
+          "dose_tonnes_per_acre": 5,
+          "dose_tonnes_per_hectare": 12,
+          "application_timing": "2 weeks before planting",
+          "notes": "Faster nutrient release than FYM. Higher OM per ton. More expensive."
+        },
+        {
+          "name": "Green Manure (legume cover crop)",
+          "type": "in-situ organic build-up",
+          "deficiency_source": "organic_matter < 2% (long-term strategy)",
+          "dose_area_acres": 1,
+          "application_timing": "Off-season. Plow in 4-6 weeks before main crop.",
+          "notes": "Free nitrogen via legume fixation. Excellent for soil health. Requires planning."
+        }
+      ]
+    }
+  }
+}

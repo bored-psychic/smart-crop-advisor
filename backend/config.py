@@ -43,6 +43,12 @@ class Settings(BaseSettings):
     # ── Upload Limits ────────────────────────────────────────────────────
     MAX_IMAGE_BYTES: int = 10 * 1024 * 1024  # 10 MB
 
+    # ── Redis Configuration ─────────────────────────────────────────────
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+    REDIS_PASSWORD: str = ""
+
     # ── Cache TTLs (seconds) ─────────────────────────────────────────────
     WEATHER_CACHE_TTL: int = 300       # 5 minutes
     FORECAST_CACHE_TTL: int = 1800     # 30 minutes
