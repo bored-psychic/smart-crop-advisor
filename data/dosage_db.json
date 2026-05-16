@@ -650,19 +650,6 @@
     "yield_loss_if_untreated_pct": 10
   },
   {
-    "pest_id": "blight",
-    "crop": "maize",
-    "crop_stage_bucket": "vegetative",
-    "chemical_name": "Azoxystrobin",
-    "formulation": "23SC",
-    "dose_ml_per_acre": 200,
-    "water_l_per_acre": 200,
-    "timing": "early morning",
-    "reapply_days": 14,
-    "cost_per_litre_inr": 3600,
-    "yield_loss_if_untreated_pct": 20
-  },
-  {
     "pest_id": "armyworm",
     "crop": "rice",
     "crop_stage_bucket": "harvest",

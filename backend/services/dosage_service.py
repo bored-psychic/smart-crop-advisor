@@ -21,11 +21,16 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DB_PATH = _REPO_ROOT / "data" / "dosage_db.json"
 
 
-def _load_db() -> list[dict]:
+def _load_db() -> list:
     global _DB
     if _DB is None:
-        with open(_DB_PATH, "r", encoding="utf-8") as f:
-            _DB = json.load(f)
+        try:
+            with open(_DB_PATH) as f:
+                _DB = json.load(f)
+        except FileNotFoundError:
+            raise RuntimeError(f"dosage_db.json not found at {_DB_PATH}")
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"dosage_db.json is malformed: {exc}")
     return _DB
 
 
