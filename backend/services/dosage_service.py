@@ -8,6 +8,9 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from anthropic import AsyncAnthropic
+
+from backend.config import get_settings
 from backend.schemas.dosage import DosageAdvice
 from backend.services import market
 
@@ -77,8 +80,136 @@ _YIELD_T_PER_ACRE = {
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _llm_fallback(pest_id: str, crop: str) -> DosageAdvice:
-    raise NotImplementedError("llm_fallback not yet implemented")
+async def _generate_narrative(
+    pest_id: str,
+    crop: str,
+    chemical_name: str,
+    formulation: str,
+    total_quantity_ml: float,
+    water_litres: float,
+    area_acres: float,
+    total_cost_inr: float,
+    roi_protected_inr: Optional[float],
+    reapply_days: int,
+    timing: str,
+) -> str:
+    """Generate a plain-English farmer advisory narrative using claude-haiku-4-5-20251001."""
+    if roi_protected_inr is not None:
+        prompt = (
+            f"You are advising an Indian farmer. A {pest_id} has been detected on their {crop}.\n"
+            f"Dosage: {total_quantity_ml:.0f}ml of {chemical_name} {formulation} diluted in {water_litres:.0f}L water per acre.\n"
+            f"Area: {area_acres} acres. Total chemical cost: ₹{total_cost_inr:.0f}.\n"
+            f"Spray timing: {timing}. Reapply after {reapply_days} days if pest persists.\n"
+            f"ROI: Treating protects an estimated ₹{roi_protected_inr:.0f} in yield value.\n"
+            "Write 3 sentences in simple English: what to do, when, and why it's worth the cost.\n"
+            "No markdown. No bullet points. Plain paragraph."
+        )
+    else:
+        prompt = (
+            f"You are advising an Indian farmer. A {pest_id} has been detected on their {crop}.\n"
+            f"Dosage: {total_quantity_ml:.0f}ml of {chemical_name} {formulation} diluted in {water_litres:.0f}L water per acre.\n"
+            f"Area: {area_acres} acres. Total chemical cost: ₹{total_cost_inr:.0f}.\n"
+            f"Spray timing: {timing}. Reapply after {reapply_days} days if pest persists.\n"
+            "Write 2 sentences in simple English: what to do and when.\n"
+            "No markdown. No bullet points. Plain paragraph."
+        )
+
+    try:
+        api_key = get_settings().ANTHROPIC_API_KEY
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not set")
+
+        client = AsyncAnthropic(api_key=api_key)
+        message = await client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=200,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return message.content[0].text.strip()
+    except Exception:
+        return f"Apply {chemical_name} {formulation} at the recommended dose. Follow label instructions."
+
+
+async def _llm_fallback(pest_id: str, crop: str, area_acres: float = 1.0) -> DosageAdvice:
+    """Use Haiku to generate a best-effort dosage advisory when the DB has no match."""
+    _FALLBACK_ERROR = DosageAdvice(
+        chemical_name="Consult local agricultural officer",
+        formulation="",
+        total_quantity_ml=0,
+        water_litres=0,
+        timing="As advised",
+        reapply_after_days=14,
+        total_cost_inr=0,
+        roi_protected_inr=None,
+        narrative="AI could not generate a recommendation for this pest. Please consult your local Krishi Vigyan Kendra.",
+        source="llm_fallback",
+    )
+
+    try:
+        api_key = get_settings().ANTHROPIC_API_KEY
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not set")
+
+        client = AsyncAnthropic(api_key=api_key)
+        message = await client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system="You are an Indian agricultural expert. Provide practical pesticide recommendations for Indian farmers. Respond ONLY with valid JSON.",
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        f"Pest/disease '{pest_id}' detected on '{crop}'. "
+                        "Provide a pesticide recommendation for Indian farmers. "
+                        'JSON format: {"chemical_name": "...", "formulation": "...", '
+                        '"dose_ml_per_acre": 0, "water_l_per_acre": 0, "timing": "...", '
+                        '"reapply_days": 0, "cost_per_litre_inr": 0, "yield_loss_if_untreated_pct": 0}'
+                    ),
+                }
+            ],
+        )
+
+        raw = message.content[0].text.strip()
+        # Strip markdown code fences if present
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        data = json.loads(raw)
+
+        total_quantity_ml = data["dose_ml_per_acre"] * area_acres
+        water_litres = data["water_l_per_acre"] * area_acres
+        total_cost_inr = (total_quantity_ml / 1000) * data["cost_per_litre_inr"]
+        roi_protected_inr = None
+
+        narrative = await _generate_narrative(
+            pest_id=pest_id,
+            crop=crop,
+            chemical_name=data["chemical_name"],
+            formulation=data["formulation"],
+            total_quantity_ml=total_quantity_ml,
+            water_litres=water_litres,
+            area_acres=area_acres,
+            total_cost_inr=total_cost_inr,
+            roi_protected_inr=roi_protected_inr,
+            reapply_days=data["reapply_days"],
+            timing=data["timing"],
+        )
+
+        return DosageAdvice(
+            chemical_name=data["chemical_name"],
+            formulation=data["formulation"],
+            total_quantity_ml=total_quantity_ml,
+            water_litres=water_litres,
+            timing=data["timing"],
+            reapply_after_days=data["reapply_days"],
+            total_cost_inr=total_cost_inr,
+            roi_protected_inr=roi_protected_inr,
+            narrative=narrative,
+            source="llm_fallback",
+        )
+    except Exception:
+        return _FALLBACK_ERROR
 
 
 async def _get_roi(
@@ -172,15 +303,29 @@ async def lookup(
                 key=lambda e: _stage_distance(e["crop_stage_bucket"], stage_bucket),
             )
 
-    # e) No match — LLM fallback (stub)
+    # e) No match — LLM fallback
     if entry is None:
-        return _llm_fallback(pest_id, crop)
+        return await _llm_fallback(pest_id, crop, area_acres)
 
     # Compute derived fields
     total_quantity_ml = entry["dose_ml_per_acre"] * area_acres
     water_litres = entry["water_l_per_acre"] * area_acres
     total_cost_inr = (total_quantity_ml / 1000) * entry["cost_per_litre_inr"]
     roi_protected_inr = await _get_roi(entry, crop, state, area_acres)
+
+    narrative = await _generate_narrative(
+        pest_id=pest_id,
+        crop=crop,
+        chemical_name=entry["chemical_name"],
+        formulation=entry["formulation"],
+        total_quantity_ml=total_quantity_ml,
+        water_litres=water_litres,
+        area_acres=area_acres,
+        total_cost_inr=total_cost_inr,
+        roi_protected_inr=roi_protected_inr,
+        reapply_days=entry["reapply_days"],
+        timing=entry["timing"],
+    )
 
     return DosageAdvice(
         chemical_name=entry["chemical_name"],
@@ -191,6 +336,6 @@ async def lookup(
         reapply_after_days=entry["reapply_days"],
         total_cost_inr=total_cost_inr,
         roi_protected_inr=roi_protected_inr,
-        narrative="",
+        narrative=narrative,
         source="db",
     )
