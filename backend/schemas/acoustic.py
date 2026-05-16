@@ -2,6 +2,7 @@
 
 from typing import Optional, Literal
 from pydantic import BaseModel, Field
+from backend.schemas.dosage import DosageAdvice
 
 
 class AcousticResponse(BaseModel):
@@ -69,3 +70,6 @@ class AcousticResponse(BaseModel):
     # "Help improve the AI" widget; submitting feedback moves the clip to the
     # training queue.
     clip_id: Optional[str] = None
+
+    # Dosage recommendation — populated when role == "pest" and pest is identified.
+    dosage_advice: Optional[DosageAdvice] = None

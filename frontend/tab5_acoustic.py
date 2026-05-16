@@ -292,6 +292,19 @@ def render():
         if _conf_a > 0:
             st.progress(_conf_a / 100)
 
+        if role == 'pest':
+            da = r.get('dosage_advice')
+            if da:
+                st.markdown(f"### {T('Recommended Action')}")
+                col1, col2, col3 = st.columns(3)
+                col1.metric(T("Chemical"), f"{da['chemical_name']} {da['formulation']}")
+                col2.metric(T("Quantity"), f"{da['total_quantity_ml']:.0f} ml/acre")
+                col3.metric(T("Total Cost"), f"₹{da['total_cost_inr']:.0f}")
+                if da.get('narrative'):
+                    st.info(da['narrative'])
+                if da.get('roi_protected_inr'):
+                    st.success(f"{T('Treating protects an estimated')} ₹{da['roi_protected_inr']:.0f} {T('in yield value.')}")
+
         col1, col2 = st.columns(2)
         with col1:
             st.metric(T("Dominant Frequency"), r.get('freq_range', 'N/A'))
