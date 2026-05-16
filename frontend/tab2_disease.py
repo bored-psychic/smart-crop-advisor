@@ -89,6 +89,18 @@ def render():
         """, severity=_smap.get(_sev, "warning"))
         st.progress(_conf / 100)
 
+        da = vr.get('dosage_advice')
+        if da:
+            st.markdown(f"### {T('Recommended Treatment')}")
+            col1, col2, col3 = st.columns(3)
+            col1.metric(T("Chemical"), f"{da['chemical_name']} {da['formulation']}")
+            col2.metric(T("Total Cost"), f"₹{da['total_cost_inr']:.0f}")
+            if da.get('roi_protected_inr'):
+                col3.metric(T("Yield Protected"), f"₹{da['roi_protected_inr']:.0f}")
+            if da.get('narrative'):
+                st.info(da['narrative'])
+            st.caption(f"{T('Reapply after')} {da['reapply_after_days']} {T('days')} · {T('Spray at')} {da['timing']}")
+
     st.divider()
     st.markdown(f"#### 🔬 {T('Method 2 — Symptom / Pest Checker')}")
     st.caption(T("Covers diseases AND pests. All crops included."))
@@ -151,6 +163,7 @@ def render():
                         'prevention': api_res['prevention'],
                     },
                     'crop': api_res['crop'], 'symptom': api_res['symptom'],
+                    'dosage_advice': api_res.get('dosage_advice'),
                 }
             else:
                 st.session_state['tab2_symp_result'] = {
@@ -185,6 +198,18 @@ def render():
           </div>
         </div>
         """, severity=_smap2.get(severity, "info"))
+
+        _symp_da = st.session_state['tab2_symp_result'].get('dosage_advice')
+        if _symp_da:
+            st.markdown(f"### {T('Recommended Treatment')}")
+            col1, col2, col3 = st.columns(3)
+            col1.metric(T("Chemical"), f"{_symp_da['chemical_name']} {_symp_da['formulation']}")
+            col2.metric(T("Total Cost"), f"₹{_symp_da['total_cost_inr']:.0f}")
+            if _symp_da.get('roi_protected_inr'):
+                col3.metric(T("Yield Protected"), f"₹{_symp_da['roi_protected_inr']:.0f}")
+            if _symp_da.get('narrative'):
+                st.info(_symp_da['narrative'])
+            st.caption(f"{T('Reapply after')} {_symp_da['reapply_after_days']} {T('days')} · {T('Spray at')} {_symp_da['timing']}")
 
     st.divider()
     st.caption(T("Vision AI: disease_model.tflite/h5 when TensorFlow available · 26+ crops · 50+ diseases & pests"))
