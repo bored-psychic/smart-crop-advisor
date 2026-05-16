@@ -344,6 +344,8 @@ function TabBar({ active, setActive, t }){
     { k:'irrigation', label: t('Watering') },
     { k:'acoustic',   label: t('Listen to Field') },
     { k:'field',      label: t('Field Watch') },
+    { k:'soil',       label: t('Soil Health') },
+    { k:'dosage',     label: t('Dosage Advisor') },
   ];
   return (
     <div className="tabbar-wrap">

@@ -82,6 +82,10 @@ window.api = {
   },
 
   fieldWatchScan: (city) => _req('/field-watch/scan', { method: 'POST', body: { city } }),
+
+  soilAnalyze: (body) => _req('/soil/analyze', { method: 'POST', body }),
+
+  dosageRecommend: (body) => _req('/dosage/recommend', { method: 'POST', body }),
 };
 
 window.ApiError = ApiError;
