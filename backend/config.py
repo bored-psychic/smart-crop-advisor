@@ -59,6 +59,15 @@ class Settings(BaseSettings):
     MAX_RETRIES: int = 3
     RETRY_BACKOFF_BASE: float = 0.5    # seconds
 
+    # Alert System
+    MSG91_API_KEY: str = ""
+    MSG91_SENDER_ID: str = "KISANOS"
+    VAPID_PRIVATE_KEY: str = ""
+    VAPID_PUBLIC_KEY: str = ""
+    VAPID_EMAIL: str = "mailto:admin@kisanos.app"
+    SQLITE_PATH: str = "kisanos.db"
+    ALERT_CHECK_INTERVAL_HOURS: int = 6
+
     def model_path(self, filename: str) -> str:
         """Resolve full path to a model file."""
         return os.path.join(self.MODEL_DIR, filename)
