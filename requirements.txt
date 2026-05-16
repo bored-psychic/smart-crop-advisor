@@ -36,3 +36,10 @@ uvicorn[standard]
 pydantic-settings
 python-dotenv
 python-multipart
+
+# ── Alert System ─────────────────────────────────
+aiosqlite>=0.20.0
+apscheduler>=3.10.0
+pywebpush>=2.0.0
+py-vapid>=1.9.0
+httpx>=0.27.0
