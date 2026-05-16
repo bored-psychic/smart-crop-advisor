@@ -6,7 +6,8 @@ import json
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
+import numpy as np
+from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form, Query
 from PIL import Image, UnidentifiedImageError
 
 from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse
@@ -34,7 +35,7 @@ async def _claude_diagnose(image_bytes: bytes, crop_type: str, media_type: str) 
 
     try:
         from anthropic import AsyncAnthropic
-        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=15.0)
         img_b64 = base64.standard_b64encode(image_bytes).decode()
         resp = await client.messages.create(
             model="claude-sonnet-4-6",
@@ -129,7 +130,8 @@ async def analyze_image(
     disease_bundle = request.app.state.disease_model
     if disease_bundle is None:
         raise HTTPException(status_code=503, detail="Disease model unavailable")
-    result = disease_bundle.predict_from_image(img)
+    rgb_array = np.asarray(img.convert('RGB'), dtype=np.uint8)
+    result = disease_bundle.predict_from_image(rgb_array)
 
     return DiseaseResult(**result)
 
@@ -160,9 +162,26 @@ async def analyze_symptom(
 
 
 @router.get("/crops")
-async def list_crops(_: str = Depends(require_api_key)):
-    """List all crops with available symptoms."""
+async def list_crops(
+    detailed: bool = Query(False),
+    _: str = Depends(require_api_key),
+):
+    """List all crops with available symptoms. Use ?detailed=true for full symptom metadata."""
+    if not detailed:
+        return {
+            crop: list(symptoms.keys())
+            for crop, symptoms in sorted(DISEASE_DB.items())
+        }
+    # Detailed: return [{symptom, disease, severity, type}] per crop
     return {
-        crop: list(symptoms.keys())
+        crop: [
+            {
+                "symptom": symptom,
+                "disease": data.get("disease", ""),
+                "severity": data.get("severity", "Medium"),
+                "type": data.get("type", "Disease"),
+            }
+            for symptom, data in symptoms.items()
+        ]
         for crop, symptoms in sorted(DISEASE_DB.items())
     }

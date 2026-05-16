@@ -5,8 +5,10 @@ CORS-enabled, authenticated, with lifespan model loading.
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.config import get_settings
 
 logger = logging.getLogger("kisanos")
@@ -48,6 +50,15 @@ async def lifespan(app: FastAPI):
     try:
         app.state.disease_model = disease_model.load()
         logger.info("  ✅ Disease model loaded (TFLite/HSV)")
+        # Warmup: dummy forward pass to JIT-compile the graph.
+        try:
+            import numpy as _np
+            from PIL import Image as _Image
+            _dummy = _Image.fromarray(_np.zeros((224, 224, 3), dtype=_np.uint8))
+            app.state.disease_model.predict_from_image(_dummy)
+            logger.info("  🔥 Disease model warmed")
+        except Exception as _e:
+            logger.warning(f"  ⚠️ Disease warmup skipped: {_e}")
     except Exception as e:
         logger.warning(f"  ⚠️ Disease model unavailable: {e}")
         app.state.disease_model = None
@@ -61,9 +72,25 @@ async def lifespan(app: FastAPI):
 
     try:
         app.state.acoustic_model = acoustic_model.load()
-        logger.info("  ✅ Acoustic model loaded (Random Forest, 8 classes)")
+        n_classes = len(getattr(app.state.acoustic_model, "classes", []) or [])
+        logger.info(f"  ✅ Acoustic model loaded (PANNs CNN14, {n_classes} classes)")
+        # Warmup: 1 s of silence at 32 kHz (CNN14 input rate) to prime the
+        # forward pass. Abstain on silence is expected — we only care that
+        # the embedding path executes without error.
+        try:
+            import numpy as _np
+            _silence = _np.zeros(32000, dtype=_np.float32)
+            try:
+                app.state.acoustic_model.predict(_silence, 32000, crop_type="warmup")
+            except Exception:
+                pass  # abstain on silence is fine; the forward pass ran
+            logger.info("  🔥 PANNs CNN14 warmed")
+        except Exception as _e:
+            logger.warning(f"  ⚠️ PANNs warmup skipped: {_e}")
     except Exception as e:
-        logger.warning(f"  ⚠️ Acoustic model unavailable: {e}")
+        logger.warning(
+            f"  ⚠️ PANNs unavailable, acoustic pipeline will use API fallback: {e}"
+        )
         app.state.acoustic_model = None
 
     logger.info("🚀 KisanOS API ready!")
@@ -115,6 +142,9 @@ def create_app() -> FastAPI:
             "app": settings.APP_NAME,
             "version": settings.APP_VERSION,
         }
+
+    WEB_DIR = Path(__file__).parent.parent / "web"
+    app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="web")
 
     return app
 

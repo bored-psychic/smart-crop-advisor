@@ -12,6 +12,18 @@ prophet
 scipy
 pydub
 
+# ── YAMNet Acoustic Pipeline ────────────────────
+tensorflow>=2.13,<2.16
+tensorflow-hub>=0.14
+librosa>=0.10
+joblib
+pyloudnorm>=0.1.1
+
+# ── PANNs CNN14 backbone ─────────────────────────
+torch>=2.0.0
+torchaudio>=2.0.0
+panns_inference>=0.1.0
+
 # ── Translation / Speech ────────────────────────
 requests
 httpx

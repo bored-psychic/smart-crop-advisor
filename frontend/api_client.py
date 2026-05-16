@@ -94,10 +94,10 @@ class APIClient:
         return await _post_json("/crop/recommend", json=data)
 
     @staticmethod
-    async def get_market_price(state: str, crop: str, forecast_days: int = 30):
+    async def get_market_price(city: str, crop: str, forecast_days: int = 30):
         return await _post_json(
             "/market/forecast",
-            json={"crop": crop, "state": state, "forecast_days": forecast_days},
+            json={"crop": crop, "city": city, "forecast_days": forecast_days},
             timeout=httpx.Timeout(30.0, connect=3.0),
         )
 
@@ -114,7 +114,30 @@ class APIClient:
         return await _post_json(
             "/acoustic/analyze",
             files={"file": ("audio.wav", audio_bytes, "audio/wav")},
+            data={"crop_type": crop_type},
             timeout=httpx.Timeout(45.0, connect=5.0),
+        )
+
+    @staticmethod
+    async def submit_acoustic_feedback(
+        clip_id: str,
+        corrected_label: str,
+        predicted_label: str = "",
+        confidence: int = 0,
+        crop_type: str = "Unknown",
+        analysis_method: str = "yamnet",
+    ):
+        return await _post_json(
+            "/acoustic/feedback",
+            json={
+                "clip_id": clip_id,
+                "corrected_label": corrected_label,
+                "predicted_label": predicted_label,
+                "confidence": confidence,
+                "crop_type": crop_type,
+                "analysis_method": analysis_method,
+            },
+            timeout=httpx.Timeout(10.0, connect=3.0),
         )
 
     @staticmethod

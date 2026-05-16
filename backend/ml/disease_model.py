@@ -7,6 +7,8 @@ Phase 3 — Heuristic Transmutation:
   Complexity: O(n) where n = pixel count. ~100x faster than original.
 """
 
+import functools
+
 import numpy as np
 from backend.config import get_settings
 from backend.core.constants import DISEASE_META
@@ -23,10 +25,19 @@ class DiseaseModelBundle:
         """
         PRIMARY: TFLite/Keras model inference.
         FALLBACK: Vectorized HSV pixel analysis.
+
+        Accepts either a PIL Image or an HxWx3 uint8/float32 numpy array.
+        Decode/RGB-conversion happens once at the boundary.
         """
+        if isinstance(img, np.ndarray):
+            rgb_uint8 = img if img.dtype == np.uint8 else np.clip(img, 0, 255).astype(np.uint8)
+        else:
+            rgb_uint8 = np.asarray(img.convert('RGB'), dtype=np.uint8)
+
         # ── Model inference ─────────────────────────────────────────────
         if self.model is not None and self.class_names is not None:
             try:
+                import cv2  # local import — only needed on the model path
                 is_tflite = hasattr(self.model, 'get_input_details')
 
                 if is_tflite:
@@ -34,9 +45,8 @@ class DiseaseModelBundle:
                     out_details = self.model.get_output_details()
                     inp_shape = inp_details[0]['shape']
                     h, w = int(inp_shape[1]), int(inp_shape[2])
-                    img_resized = img.convert('RGB').resize((w, h))
-                    img_array = np.array(img_resized, dtype=np.float32) / 255.0
-                    img_batch = np.expand_dims(img_array, axis=0)
+                    resized = cv2.resize(rgb_uint8, (w, h), interpolation=cv2.INTER_AREA)
+                    img_batch = (resized.astype(np.float32) / 255.0)[None, ...]
                     self.model.set_tensor(inp_details[0]['index'], img_batch)
                     self.model.invoke()
                     preds = self.model.get_tensor(out_details[0]['index'])[0]
@@ -44,9 +54,8 @@ class DiseaseModelBundle:
                 else:
                     inp_shape = self.model.input_shape
                     h, w = int(inp_shape[1]), int(inp_shape[2])
-                    img_resized = img.convert('RGB').resize((w, h))
-                    img_array = np.array(img_resized, dtype=np.float32) / 255.0
-                    img_batch = np.expand_dims(img_array, axis=0)
+                    resized = cv2.resize(rgb_uint8, (w, h), interpolation=cv2.INTER_AREA)
+                    img_batch = (resized.astype(np.float32) / 255.0)[None, ...]
                     preds = self.model.predict(img_batch, verbose=0)[0]
                     model_label = 'Keras (disease_model.h5)'
 
@@ -78,10 +87,11 @@ class DiseaseModelBundle:
                 pass  # Fall through to HSV
 
         # ── Vectorized HSV fallback (Psyho-optimized) ───────────────────
-        return analyze_hsv_vectorized(img)
+        return analyze_hsv_vectorized(rgb_uint8)
 
 
-def analyze_hsv_vectorized(img) -> dict:
+def analyze_hsv_vectorized(img) -> dict:  # noqa: C901
+    """`img` may be a PIL Image or an HxWx3 uint8 numpy array."""
     """
     Heuristic Supremacy — O(n) vectorized HSV analysis.
 
@@ -93,8 +103,17 @@ def analyze_hsv_vectorized(img) -> dict:
     Complexity: O(n) where n = 30,000 pixels (200×150)
     Performance: ~100x faster than per-pixel colorsys calls
     """
-    img_rgb = img.convert('RGB').resize((200, 150))
-    pixels = np.array(img_rgb, dtype=np.float32) / 255.0
+    if isinstance(img, np.ndarray):
+        try:
+            import cv2
+            resized = cv2.resize(img, (200, 150), interpolation=cv2.INTER_AREA)
+        except Exception:
+            from PIL import Image as _Image
+            resized = np.asarray(_Image.fromarray(img).resize((200, 150)), dtype=np.uint8)
+        pixels = resized.astype(np.float32) / 255.0
+    else:
+        img_rgb = img.convert('RGB').resize((200, 150))
+        pixels = np.array(img_rgb, dtype=np.float32) / 255.0
     total = pixels.shape[0] * pixels.shape[1]
 
     r, g, b = pixels[..., 0], pixels[..., 1], pixels[..., 2]
@@ -186,6 +205,7 @@ def _get_disease_meta(class_name: str) -> dict:
     return DISEASE_META['default']
 
 
+@functools.lru_cache(maxsize=1)
 def load() -> DiseaseModelBundle:
     """Load disease model + class names. Returns bundle with None model if unavailable."""
     import os
