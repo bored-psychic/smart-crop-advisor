@@ -79,12 +79,14 @@ a{color:var(--leaf)}
 .bg-photo[data-tab="irrigation"] { background-image:url('/assets/bg-irrigation.jpg') }
 .bg-photo[data-tab="acoustic"]   { background-image:url('/assets/bg-acoustic.jpg') }
 .bg-photo[data-tab="field"]      { background-image:url('/assets/bg-field.jpg') }
+.bg-photo[data-tab="alerts"]     { background-image:url('/assets/bg-alerts.jpg') }
 body[data-tab="crop"]       .bg-photo[data-tab="crop"]       { opacity:1 }
 body[data-tab="disease"]    .bg-photo[data-tab="disease"]    { opacity:1 }
 body[data-tab="market"]     .bg-photo[data-tab="market"]     { opacity:1 }
 body[data-tab="irrigation"] .bg-photo[data-tab="irrigation"] { opacity:1 }
 body[data-tab="acoustic"]   .bg-photo[data-tab="acoustic"]   { opacity:1 }
 body[data-tab="field"]      .bg-photo[data-tab="field"]      { opacity:1 }
+body[data-tab="alerts"]     .bg-photo[data-tab="alerts"]     { opacity:1 }
 .bg-overlay{
   position:fixed;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg, var(--photo-vignette-top) 0%, var(--photo-vignette-bottom) 100%);
@@ -605,6 +607,7 @@ h4{ font-family:var(--display);font-weight:500;font-size:16px;color:var(--ink);m
   <div class="bg-photo" data-tab="irrigation"></div>
   <div class="bg-photo" data-tab="acoustic"></div>
   <div class="bg-photo" data-tab="field"></div>
+  <div class="bg-photo" data-tab="alerts"></div>
   <div class="bg-photo" data-auth="login"></div>
 </div>
 <div class="bg-overlay" aria-hidden="true"></div>
