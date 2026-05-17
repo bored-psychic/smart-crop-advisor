@@ -9,7 +9,11 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from backend.config import get_settings
+from backend.services.db import init_db
+from backend.services.alerts import check_and_send_alerts
+from backend.routers import subscriptions as subscriptions_router
 
 logger = logging.getLogger("kisanos")
 
@@ -17,6 +21,7 @@ logger = logging.getLogger("kisanos")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load all ML models once at startup — zero cold-start on first request."""
+    _scheduler = None
     settings = get_settings()
 
     # Validate API key in production
@@ -93,9 +98,22 @@ async def lifespan(app: FastAPI):
         )
         app.state.acoustic_model = None
 
+    # Alert system — DB tables + scheduled checker
+    await init_db()
+    _scheduler = AsyncIOScheduler()
+    _scheduler.add_job(
+        check_and_send_alerts,
+        "interval",
+        hours=get_settings().ALERT_CHECK_INTERVAL_HOURS,
+        id="alert_check",
+    )
+    _scheduler.start()
+
     logger.info("🚀 KisanOS API ready!")
     yield
     logger.info("🛑 KisanOS API shutting down")
+    if _scheduler is not None:
+        _scheduler.shutdown(wait=False)
 
 
 def create_app() -> FastAPI:
@@ -135,6 +153,7 @@ def create_app() -> FastAPI:
     app.include_router(field_watch.router)
     app.include_router(soil.router)
     app.include_router(dosage.router)
+    app.include_router(subscriptions_router.router)
 
     # ── Health check ─────────────────────────────────────────────────
     @app.get("/health", tags=["System"])
