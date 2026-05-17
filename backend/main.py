@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from backend.config import get_settings
+from backend.middleware.locale import LocaleMiddleware
 from backend.services.db import init_db
 from backend.services.alerts import check_and_send_alerts
 from backend.routers import subscriptions as subscriptions_router
@@ -141,6 +142,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # ── LocaleMiddleware ─────────────────────────────────────────────
+    # Parses Accept-Language header and attaches request.state.lang
+    app.add_middleware(LocaleMiddleware)
 
     # ── Register routers ─────────────────────────────────────────────
     from backend.routers import crop, disease, market, irrigation, acoustic, field_watch, soil, dosage
