@@ -54,6 +54,8 @@ async function _req(path, opts = {}) {
 window.api = {
   cropRecommend: (body) => _req('/crop/recommend', { method: 'POST', body }),
 
+  diseaseTreatmentPrice: (body) => _req('/disease/treatment-price', { method: 'POST', body }),
+
   diseasePhoto: (file, crop_type) => {
     const fd = new FormData();
     fd.append('file', file);
@@ -86,6 +88,13 @@ window.api = {
   soilAnalyze: (body) => _req('/soil/analyze', { method: 'POST', body }),
 
   dosageRecommend: (body) => _req('/dosage/recommend', { method: 'POST', body }),
+
+  alertsSubscribe:     (body) => _req('/alerts/subscribe',        { method: 'POST', body }),
+  alertsUnsubscribe:   (id)   => _req(`/alerts/unsubscribe/${id}`, { method: 'DELETE' }),
+  alertsHistory:       (phone)=> _req(`/alerts/history?phone=${encodeURIComponent(phone)}`),
+  alertsPushSubscribe: (body) => _req('/alerts/push-subscribe',   { method: 'POST', body }),
+  alertsVapidKey:      ()     => _req('/alerts/vapid-public-key'),
+  alertsTrigger:       ()     => _req('/alerts/trigger-check',    { method: 'POST' }),
 };
 
 window.ApiError = ApiError;
