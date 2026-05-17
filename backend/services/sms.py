@@ -17,7 +17,7 @@ async def send_sms(phone: str, message: str) -> bool:
     url = "https://www.fast2sms.com/dev/bulkV2"
     params = {
         "authorization": settings.FAST2SMS_API_KEY,
-        "variables_values": message,
+        "message": message,
         "route": "q",          # quick route; switch to 'dlt' once DLT template approved
         "numbers": number,
     }
