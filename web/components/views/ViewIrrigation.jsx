@@ -95,6 +95,7 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
       </div>
 
       <LocationBar
+        t={t}
         village={profile.village} setVillage={v => setProfile({...profile, village: v})}
         state={profile.state}     setState={s  => setProfile({...profile, state: s})}
         extra={
@@ -102,7 +103,7 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
             <select className="input" value={crop} onChange={e => setCrop(e.target.value)}>
               {CROP_KC_KEYS.map(c => <option key={c}>{c}</option>)}
             </select>
-            {autofilling && <span style={{fontSize:12, color:'var(--ink-faint)', fontStyle:'italic'}}>scanning…</span>}
+            {autofilling && <span style={{fontSize:12, color:'var(--ink-faint)', fontStyle:'italic'}}>{t('scanning…')}</span>}
             {autofillNote && !autofilling && <span style={{fontSize:12, color:'var(--leaf)', fontStyle:'italic'}}>{autofillNote}</span>}
           </>
         }
@@ -151,6 +152,7 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
           {loading && <Loading label={t('Calculating irrigation…')}/>}
           {error   && (
             <ErrorCard
+              t={t}
               title={t('Could not calculate')}
               detail={!error.status ? t('No connection — check your network and try again.') : error.detail}
               onRetry={handleSubmit}
@@ -178,7 +180,7 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
               <div style={{fontSize:11,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--ink-faint)',marginBottom:6}}>{t('Net irrigation')}</div>
               <div className="bignum">
                 <em>{result.net_irrigation_mm}</em>
-                <span className="unit"> mm/day</span>
+                <span className="unit"> {t('mm/day')}</span>
               </div>
             </div>
 

@@ -435,6 +435,7 @@ function ViewAcoustic({ profile, t }){
           {/* Error */}
           {error && !loading && (
             <ErrorCard
+              t={t}
               title={t('Analysis failed')}
               detail={error.message}
               onRetry={analyze}
@@ -448,6 +449,7 @@ function ViewAcoustic({ profile, t }){
 
           {/* Rich result */}
           {result && !loading && <RichResult r={result} t={t}/>}
+
         </div>
       </div>
     </div>

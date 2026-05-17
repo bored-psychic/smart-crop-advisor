@@ -47,12 +47,12 @@ function Login({ onSignIn, t }) {
       <form className="auth-card" onSubmit={submit} noValidate>
         <div className="auth-brand">
           <span className="leaf-dot" aria-hidden="true" />
-          <span className="name">Kisan<em>OS</em></span>
+          <span className="name">{tr('Kisan')}<em>{tr('OS')}</em></span>
         </div>
         <h1 className="auth-title">{tr('Welcome back')}</h1>
         <p className="auth-sub">{tr('Sign in to your farm dashboard.')}</p>
 
-        <div className="auth-tabs" role="tablist" aria-label="Sign in method">
+        <div className="auth-tabs" role="tablist" aria-label={tr('Sign in method')}>
           <button type="button" role="tab" aria-selected={mode === 'email'}
                   className={mode === 'email' ? 'active' : ''}
                   onClick={() => switchMode('email')}>

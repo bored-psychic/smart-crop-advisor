@@ -234,6 +234,7 @@ function ViewField({ profile, setProfile, t, fieldData, fieldLoading }) {
       </div>
 
       <LocationBar
+        t={t}
         village={profile.village} setVillage={v => setProfile({ ...profile, village: v })}
         state={profile.state}     setState={s => setProfile({ ...profile, state: s })}
         extra={
@@ -251,6 +252,7 @@ function ViewField({ profile, setProfile, t, fieldData, fieldLoading }) {
 
       {error && !loading && (
         <ErrorCard
+          t={t}
           title={
             error.status === 401 || error.status === 403
               ? t('Access denied')

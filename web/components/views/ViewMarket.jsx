@@ -120,6 +120,7 @@ function ViewMarket({ profile, setProfile, t }) {
       </div>
 
       <LocationBar
+        t={t}
         village={profile.village}
         setVillage={v => setProfile({ ...profile, village: v })}
         state={profile.state}
@@ -144,6 +145,7 @@ function ViewMarket({ profile, setProfile, t }) {
 
       {error && !loading && (
         <ErrorCard
+          t={t}
           title={t('Could not fetch forecast')}
           detail={error.status === 401 || error.status === 403 ? t('API key issue — check your configuration.') : !error.status ? t('Network error — please check your connection.') : error.detail || t('Unexpected error.')}
           onRetry={handleSubmit}

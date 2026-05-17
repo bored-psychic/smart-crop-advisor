@@ -176,7 +176,7 @@ const GOVT_HELPLINES = [
   ['State Agriculture Dept','18004252',    'Disease outbreak reporting'],
 ];
 
-function LocationBar({ village, setVillage, state, setState, extra }){
+function LocationBar({ village, setVillage, state, setState, extra, t }){
   useEffect(() => {
     if (!village) return;
     const derived = CITY_TO_STATE[village.trim().toLowerCase()];
@@ -186,7 +186,7 @@ function LocationBar({ village, setVillage, state, setState, extra }){
   return (
     <div className="locbar rise rise-1">
       <span className="pin">📍</span>
-      <input className="input" value={village} onChange={e=>setVillage(e.target.value)} placeholder="Your village or town"/>
+      <input className="input" value={village} onChange={e=>setVillage(e.target.value)} placeholder={t ? t('Your village or town') : 'Your village or town'}/>
       <select className="input" value={state} onChange={e=>setState(e.target.value)}>
         {INDIA_STATES.map(s=><option key={s}>{s}</option>)}
       </select>
@@ -226,7 +226,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
     <aside className="sidebar">
       {/* Toggle (pressed-leaf shape on edge) — wrapped so it stays visible despite overflow:hidden */}
       <div className="sb-toggle-host">
-        <button className="sb-toggle" onClick={()=>setCollapsed(!collapsed)} aria-label="Toggle sidebar">
+        <button className="sb-toggle" onClick={()=>setCollapsed(!collapsed)} aria-label={t('Toggle sidebar')}>
           <svg viewBox="0 0 28 28">
             <path className="leaf-shape" d="M14 2 C 22 2, 26 8, 26 14 C 26 22, 20 26, 14 26 C 8 26, 2 22, 2 14 C 2 8, 6 2, 14 2 Z M14 2 C 14 8, 14 20, 14 26"/>
             <path className="arrow" d={collapsed ? "M11 9 L17 14 L11 19" : "M17 9 L11 14 L17 19"}/>
@@ -253,8 +253,8 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
               <path d="M17 14 C 26 14, 29 6, 29 6 C 29 6, 25 18, 17 18 Z" fill="#6B9B6B"/>
             </svg>
             <div>
-              <div className="brand-name">Kisan<em>OS</em></div>
-              <div className="brand-tag"><span className="live-dot"></span> a quiet companion</div>
+              <div className="brand-name">{t('Kisan')}<em>{t('OS')}</em></div>
+              <div className="brand-tag"><span className="live-dot"></span> {t('a quiet companion')}</div>
             </div>
           </div>
 
@@ -320,7 +320,7 @@ function Sidebar({ collapsed, setCollapsed, profile, setProfile, lang, setLang, 
 
           {/* Footer action — sign out */}
           <div className="sb-actions">
-            <button className="sb-action danger" onClick={onLogout} title="Sign out">
+            <button className="sb-action danger" onClick={onLogout} title={t('Sign out')}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <path d="M16 17l5-5-5-5"/>
@@ -382,12 +382,12 @@ function Loading({ label }) {
   );
 }
 
-function ErrorCard({ title, detail, onRetry }) {
+function ErrorCard({ title, detail, onRetry, t }) {
   return (
     <div className="card rise" style={{borderColor:'rgba(232,112,95,0.32)',background:'rgba(232,112,95,0.14)'}}>
       <div style={{color:'var(--berry)',fontFamily:'var(--display)',fontSize:20,marginBottom:8}}>{title}</div>
       {detail && <div style={{color:'var(--ink-soft)',fontSize:14,marginBottom:12}}>{typeof detail === 'string' ? detail : JSON.stringify(detail)}</div>}
-      {onRetry && <button className="btn" style={{borderColor:'var(--berry)',color:'var(--berry)'}} onClick={onRetry}>↺ Try again</button>}
+      {onRetry && <button className="btn" style={{borderColor:'var(--berry)',color:'var(--berry)'}} onClick={onRetry}>{t ? t('↺ Try again') : '↺ Try again'}</button>}
     </div>
   );
 }
