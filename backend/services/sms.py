@@ -15,15 +15,15 @@ async def send_sms(phone: str, message: str) -> bool:
     number = phone.lstrip("+").removeprefix("91")
 
     url = "https://www.fast2sms.com/dev/bulkV2"
-    headers = {"authorization": settings.FAST2SMS_API_KEY}
     params = {
+        "authorization": settings.FAST2SMS_API_KEY,
         "variables_values": message,
         "route": "q",          # quick route; switch to 'dlt' once DLT template approved
         "numbers": number,
     }
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
-            resp = await client.get(url, headers=headers, params=params)
+            resp = await client.get(url, params=params)
             resp.raise_for_status()
             logger.info(f"SMS sent to {phone}: {resp.text}")
             return True
