@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "ক্রপ সুপারিশকারী",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "রোগ + দৃষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "বাজার মূল্য",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "সেচ",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "অ্যাকোস্টিক",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "মাঠ পর্যবেক্ষণ",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "আপনার ক্ষেত্রের জন্য সেরা ফসল খুঁজুন",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "নীচে আপনার মাটি এবং জলবায়ু বিবরণ লিখুন.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "জোরে নির্দেশাবলী পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "অবস্থান থেকে অটো-ফিল জলবায়ু",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "তাপমাত্রা, আর্দ্রতা এবং বৃষ্টিপাত স্বয়ংক্রিয়ভাবে পূরণ করতে আপনার শহরে প্রবেশ করুন",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "আবহাওয়া পান",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "মাটির পুষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "জলবায়ু অবস্থা",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "নাইট্রোজেন (N)- কেজি/হেক্টর",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "ফসফরাস (P)- কেজি/হেক্টর",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "পটাসিয়াম (কে)- কেজি/হেক্টর",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "মাটির pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "তাপমাত্রা (°সে)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "আর্দ্রতা (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "বৃষ্টিপাত (মিমি)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "ফসলের সুপারিশ পান",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "সেরা ফসল",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "আত্মবিশ্বাস",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "টিপ",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "শনাক্ত করা মাটির ধরন",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "মাটির পরামর্শ",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "উচ্চস্বরে ফলাফল পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "অন্যান্য বিকল্প",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "শীর্ষ 8 ফসল জুড়ে আত্মবিশ্বাস",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "আপনার ইনপুট সারাংশ",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "প্যারামিটার",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "মান",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "ফসলের রোগ, কীটপতঙ্গ এবং দৃষ্টি এআই",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "তাত্ক্ষণিক AI নির্ণয়ের জন্য একটি ফটো আপলোড করুন · অথবা নীচে ফসল + উপসর্গ/কীটপতঙ্গ নির্বাচন করুন৷",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "পদ্ধতি 1 — ফটো নির্ণয় (প্রস্তাবিত)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "পদ্ধতি 2 - উপসর্গ পরীক্ষক",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "নির্ণয়ের জন্য ফসল নির্বাচন করুন",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "আপনার রাজ্য",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "পাতা/কান্ড/ফলের ছবি আপলোড করুন",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "ফটো থেকে নির্ণয় করুন",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "পিক্সেল প্যাটার্ন বিশ্লেষণ করা হচ্ছে...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "এআই কনফিডেন্স",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "চিকিৎসা",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "প্রতিরোধ",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "সনাক্ত করা হয়েছে",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "হোয়াটসঅ্যাপে শেয়ার করুন",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "কম আত্মবিশ্বাস — আক্রান্ত পাতার একটি পরিষ্কার, ভালভাবে আলোকিত ক্লোজ-আপ চেষ্টা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "অবস্থান নোট",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "দিবালোক",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "ক্ষতিগ্রস্ত এলাকায় ক্লোজ-আপ",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "তীক্ষ্ণ, কোন অস্পষ্ট",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "ফসল",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "লক্ষণ পরিলক্ষিত হয়",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "লক্ষণ / কীটপতঙ্গ দ্বারা নির্ণয় করুন",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "লক্ষণ দ্বারা নির্ণয় করুন",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "লাইভ মান্ডি দাম",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "Agmarknet থেকে রিয়েল-টাইম দাম। নবী দ্বারা চালিত রাষ্ট্র-ক্যালিব্রেটেড 30-দিনের পূর্বাভাস।",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "নির্দেশাবলী পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "পূর্বাভাস দিগন্ত (দিন)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "লাইভ মূল্য + পূর্বাভাস পান",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "সেরা মূল্য",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "সর্বনিম্ন মূল্য",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "গড় / 30D",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "বিক্রির জন্য অপেক্ষা করুন",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "এখন বিক্রি করুন",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "বাজার পরামর্শ পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "মূল্য পূর্বাভাস চার্ট",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "সম্পূর্ণ পূর্বাভাস টেবিল",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "পূর্বাভাস নির্ভুলতা",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "স্মার্ট সেচ ও সার উপদেষ্টা",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "আপনার ফসল এবং আবহাওয়ার উপর ভিত্তি করে সুনির্দিষ্ট জল এবং সার সুপারিশ পান।",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "লাইভ ওয়েদার (অটো-ফিল)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "আপনার শহরের নাম লিখুন",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "টেম্প",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "বাতাস",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "বৃষ্টি 1 ঘন্টা",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "ক্রপ বিবরণ",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "বৃদ্ধির পর্যায়",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "মাঠ এলাকা (একর)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "গত 3 দিনে বৃষ্টিপাত (মিমি)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "আজকের আবহাওয়া",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "সেচের পরামর্শ পান",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "পানির প্রয়োজন",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "নেট সেচ",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "মোট জল",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "জন্য",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "একর",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "আজ কোন সেচের প্রয়োজন নেই!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "সাম্প্রতিক বৃষ্টিপাত যথেষ্ট।",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "হালকা সেচ বাঞ্ছনীয়",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "আবেদন করুন",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "জরুরীভাবে সেচের প্রয়োজন",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "সার সুপারিশ",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "অ্যাকোস্টিক পেস্ট ডিটেক্টর",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "আপনি কোন ফসল রেকর্ড করেছেন?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "ক্ষেত্র অডিও রেকর্ডিং আপলোড করুন",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "কীটপতঙ্গের জন্য বিশ্লেষণ করুন",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "সনাক্তকরণ আত্মবিশ্বাস",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "প্রভাবশালী ফ্রিকোয়েন্সি",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "সংকেত শক্তি",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "বর্ণালী প্যাটার্ন",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "ঝুঁকির স্তর",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "প্রস্তাবিত কর্ম",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "হোয়াটসঅ্যাপে কীটপতঙ্গের সতর্কতা শেয়ার করুন",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "ফিল্ড ওয়াচ — স্যাটেলাইট ইন্টেলিজেন্স",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "লাইভ স্যাটেলাইট আবহাওয়া, দাবানলের সতর্কতা, বন্যার সতর্কতা, পঙ্গপালের ঝাঁকের ডেটা এবং বায়ুর গুণমান — সবই এক জায়গায়। আপনি এই ট্যাব খুললে প্রতিবারই আপডেট হয়।",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "আপনার শহর / নিকটবর্তী শহর",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "বিজ্ঞপ্তির জন্য হোয়াটসঅ্যাপ নম্বর (প্রতি লাইনে একটি, 91 সহ)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "কৃষকের নাম",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "আপনার ফসল",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "এখন আমার ক্ষেত্র স্ক্যান করুন",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "সামগ্রিক ক্ষেত্রের ঝুঁকি",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "বর্তমান আবহাওয়া",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "বন্যার ঝুঁকি (পরবর্তী ৪৮ ঘণ্টা)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "ওয়াইল্ড ফায়ার / ফিল্ড ফায়ার সতর্কতা",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "মরুভূমি পঙ্গপাল সতর্কতা",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "বায়ুর গুণমান",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "ক্ষেত্র সতর্কতা সারাংশ পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "পরিচিতিগুলিতে ক্ষেত্র সতর্কতা পাঠান",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "জরুরী হেল্পলাইন",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "আপলোড করা ছবি",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "ফাইল",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "মাত্রা",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "বিশ্লেষণ করা হচ্ছে...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "দিনের আলোর ছবি পরিষ্কার করুন, ক্ষতিগ্রস্ত এলাকার ক্লোজ-আপ।",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "শহর খুঁজে পাওয়া যায় নি। অনুগ্রহ করে বানান পরীক্ষা করুন বা কাছাকাছি একটি শহর চেষ্টা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "আপনার শহরের নাম লিখুন.",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "অডিও অনুপলব্ধ",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "ট্যাব তথ্য পড়ুন",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "ফসল উপদেষ্টা",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "পাতার ডাক্তার",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "জল দেওয়া",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "মাঠ শুনুন",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "মাটি",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "আবহাওয়া",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "মাটি ও জলবায়ু বিশ্লেষণ হচ্ছে…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "আমাদের সুপারিশ",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "এগুলোও ভালো",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "সব ফসল",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "রিসেট",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 ফসল পরামর্শ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 বিশ্লেষণ…",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "নাইট্রোজেন",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "ফসফরাস",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "পটাশিয়াম",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "তাপমাত্রা",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "আর্দ্রতা",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "বৃষ্টিপাত",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "ফসল পরামর্শদাতা",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "আপনার মাটি কী",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "চাষ করতে চায়।",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "পাতা ডাক্তার",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "একটি",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "দ্বিতীয় দৃষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "অসুস্থ পাতার জন্য।",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "বাজার",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "বাজার",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "জল",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "শুনুন",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "শুনুন",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "মাঠ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "ছবি পাঠান",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "আমরা কী দেখলাম",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "রেকর্ডিং আপলোড করুন",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "আমরা কী শুনলাম",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "সেচ হিসাব করুন",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "পরামর্শ নিন",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 এখন স্ক্যান করুন",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "জরুরি হেল্পলাইন",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "পরাগায়নকারী",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "পোকা",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "পরিবেশ",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "প্রাথমিক",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "বিকাশ",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "মধ্য-মৌসুম",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "শেষ-মৌসুম",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "সর্বোত্তম দাম",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "সর্বনিম্ন দাম",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "গড় দাম",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "আমাদের পরামর্শ",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "দিন",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "তারিখ",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "দাম",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "সর্বনিম্ন",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "সর্বোচ্চ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "আত্মবিশ্বাস",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "সময়কাল",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "নমুনা হার",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "শক্তি",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "তীব্রতা",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "ভূমিকা",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "নাম",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "আইকন",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "কম্পাঙ্ক পরিসর",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "মুছুন",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "কৃষক · ২০১৯ থেকে",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "আজকের শান্ত মাঠ আগামীকালের ভালো ফসল।",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "শীর্ষ মিল",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "মাধ্যমে",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "এখনই",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "চিকিৎসা",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "প্রতিরোধ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "পূর্বাভাস সময়সীমা",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 পূর্বাভাস পান",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "মান্ডি",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "রাজ্য কারণ",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "তারিখে",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 সরাসরি",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 আনুমানিক",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "ঝুঁকি",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "মতো অনুভব হচ্ছে",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "পৃষ্ঠ বায়ু",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "শেষ ঘণ্টা",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "বন্যার ঝুঁকি",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "৪৮ ঘণ্টার বৃষ্টি:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "আগুন",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "কাছের হটস্পট:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "উৎস:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "পঙ্গপাল",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "কাছের ঝাঁক:",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "WhatsApp-এ পাঠান",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 কপি",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 WhatsApp খুলুন",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "আমার নম্বরে পাঠান",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "কিসান কল সেন্টার",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "বিনামূল্যে · 24/7 · সব ভারতীয় ভাষা",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM কিসান হেল্পলাইন",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM কিসান প্রকল্পের তথ্য",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF জরুরি",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "বন্যা, ভূমিকম্প, দুর্যোগ",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "অ্যাম্বুলেন্স",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "চিকিৎসা জরুরি",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "পুলিশ",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "নিরাপত্তা / চুরি",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "রাজ্য কৃষি বিভাগ",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "রোগ প্রাদুর্ভাব রিপোর্ট",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "প্রয়োজনীয় জল",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "নিট সেচ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "ফসল Kc কারণ",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "জরুরিতা",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "সার",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "নাইট্রোজেন:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "আবহাওয়া পরামর্শ",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "মাঠের আয়তন",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "একর",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "সাম্প্রতিক বৃষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "মিমি",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "বায়ু গতি",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "কিমি/ঘণ্টা",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "মাটি",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "মাঠ স্ক্যান হচ্ছে…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "প্রবেশাধিকার অস্বীকৃত",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "নেটওয়ার্ক ত্রুটি",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "ত্রুটি",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API কী সমস্যা — config.js পরীক্ষা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API কী সমস্যা — কনফিগারেশন পরীক্ষা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API কী ভুল — web/config.js পরীক্ষা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "বিশ্লেষণ ব্যর্থ হয়েছে",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "বিশ্লেষণ ব্যর্থ হয়েছে।",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "পাতা বিশ্লেষণ করছি…",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "সেচ হিসাব করছি…",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "এই অডিও ফরম্যাট দেখানো সম্ভব নয় — তবুও আপলোড করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude পরামর্শ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "ছবি বিশ্লেষণ করা যায়নি",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "মাটি বিশ্লেষণ করা যায়নি",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "হিসাব করা যায়নি",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "পূর্বাভাস পাওয়া যায়নি",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "ফসলের ধরন (ঐচ্ছিক)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "মাঠের অডিও এখানে টেনে আনুন",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "এখানে পাতার ছবি দিন",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "শুরু করতে বাম দিকে রেকর্ডিং দিন। 🐛",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "বাজারের তথ্য আনছি…",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "ফাইল অনেক বড় (সর্বোচ্চ 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "সম্পূর্ণ পূর্বাভাস সারণি",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "বৃদ্ধির পর্যায়",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "পোকার শব্দ শুনুন",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "কয়েক সেকেন্ড গাছের কাছে ফোন ধরুন। কীটের শব্দ শুনে এক সপ্তাহ আগে সতর্ক করব।",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "অবৈধ বা অনুপস্থিত API কী।",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "ঠিক যতটুকু জল,",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · প্রস্তুত",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "আপনার মাঠ শুনছি…",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "লাইভ মান্ডি তথ্য নেই — শুধু মডেল পূর্বাভাস দেখাচ্ছি।",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "নেটওয়ার্ক ত্রুটি — সংযোগ পরীক্ষা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "নেটওয়ার্ক ত্রুটি — দয়া করে সংযোগ পরীক্ষা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "সংযোগ নেই — নেটওয়ার্ক পরীক্ষা করে আবার চেষ্টা করুন।",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "চার্টের জন্য পর্যাপ্ত তথ্য নেই।",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "মূল্য পূর্বাভাস",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "রেফারেন্স লাইব্রেরি",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "ছবি পাঠান আমরা দেখব। 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "সাইন আউট",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "উদ্বিগ্ন পাতার ছবি তুলুন। যত্নসহকারে দেখে কী হচ্ছে বলব।",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "কিছু একটা ভুল হয়েছে।",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "আপনার মাঠ সম্পর্কে বলুন। 26 ফসলের মধ্যে আপনার জমির জন্য সেরাটি সুপারিশ করব।",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "অপ্রত্যাশিত ত্রুটি।",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "অজানা ত্রুটি",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "FAO জল গণনা করে সহজভাবে বলি: আজ কত লিটার, পরের সেচ কখন।",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "মান্ডির দাম দেখে বলি এখন বেচবেন নাকি কিছুদিন অপেক্ষা করবেন।",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "আবহাওয়া, আগুন, পঙ্গপাল, মাটি — সব এক শান্ত দৃশ্যে।",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "আপনার মাঠ",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "একটি শান্ত সিদ্ধান্ত।",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "একটু কম",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "একটু ক্ষারীয়",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "অম্লীয়",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "ব্যান্ড শক্তি",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "দেখা দেওয়ার আগেই।",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "ন্যায্য মূল্য,",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "লাইভ তথ্য আনছি…",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "আপনার জমির জন্য।",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "ঠিক সময়মতো।",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "সঠিক পরিমাণ",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "পরিচিত পোকামাকড়",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "ভাষা",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "লাইভ মান্ডি",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "ফসল লোড হচ্ছে…",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "অথবা ক্লিক করুন · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "অথবা ক্লিক করুন · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "তে",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "ফোন",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "প্রচুর",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "প্রধান ফসল",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "গুণমান নোট",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "শান্ত দৈনিক পরীক্ষা",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "আদর্শ মাত্রা",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "টিপস: কাণ্ড থেকে 15–30 সেমি · ধীরে শ্বাস নিন",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "আজ মাঠে",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "শীর্ষ সনাক্তকরণ",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "গ্রাম",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "আপনার স্থানীয় অনুভব",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "আপনার নাম",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 সেকেন্ড",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ রেকর্ডিং অনেক ছোট — কমপক্ষে 3 সেকেন্ড চাই",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ কীটনাশক ছিটানোর জন্য ভালো দিন",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ গবাদি পশু আশ্রয়ে নিয়ে যান",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ দীর্ঘ রেকর্ডিং — প্রথম 20 সেকেন্ড বিশ্লেষণ করা হয়েছে",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ আজ সেচ কমান",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 মাঠের চারপাশে আইল তৈরি করুন",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ রোপণের জন্য ভালো দিন",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 খরিফ মৌসুম",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ বায়ু চলাচল উন্নত করুন",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 আজ সার দিন",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 সার দেবেন না — ধুয়ে যাবে",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 তুষার কেটে না যাওয়া পর্যন্ত ছাঁটাই করবেন না",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 রোপণের উপযুক্ত সময়",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 সংবেদনশীল ফসল কাপড়ে ঢাকুন",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 ফসল ঝরে পড়ছে কিনা দেখুন",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 ছত্রাক রোগের দিকে নজর রাখুন",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 শুনছি…",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 প্রতিরোধমূলক ছত্রাকনাশক দিন",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 মাটির আর্দ্রতা স্তর পরীক্ষা করুন",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 নিষ্কাশন নালা পরিষ্কার করুন",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 অঙ্কুরোদগমের জন্য ভালো",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 সেচ বাড়ান — তাপ চাপ হতে পারে",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 মাঝারি সেচ প্রয়োজন",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 নমুনা হার 16 kHz তে পরিবর্তন করা হয়েছে",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 কম নমুনা হার নির্ভুলতা কমাতে পারে",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 বন্যা হলে কৃষি অফিসে যোগাযোগ করুন",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 অনেক শান্ত — মাইক কান্ডের কাছে ধরুন",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 বিশ্লেষণ",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 তুষারের আগে হালকা সেচ শিকড় রক্ষা করে",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 বাইরের কাজ কমান",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 ফসল কাটার জন্য উপযুক্ত",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 অবিলম্বে সমস্ত মাঠের কাজ বন্ধ করুন",
+    "context": "",
+    "role": ""
+  }
+}

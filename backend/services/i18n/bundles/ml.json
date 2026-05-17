@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "വിള ശുപാർശ",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "രോഗം + വിഷൻ",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "വിപണി വിലകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "ജലസേചനം",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "ശബ്ദ വിശകലനം",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "വയൽ നിരീക്ഷണം",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "നിങ്ങളുടെ വയലിന് ഏറ്റവും അനുയോജ്യമായ വിള കണ്ടെത്തുക",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "നിങ്ങളുടെ മണ്ണിന്റെയും കാലാവസ്ഥയുടെയും വിശദാംശങ്ങൾ താഴെ നൽകുക.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "നിർദ്ദേശങ്ങൾ ഉറക്കെ വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "ലൊക്കേഷനിൽ നിന്ന് കാലാവസ്ഥ സ്വയം പൂരിപ്പിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "താപനില, ആർദ്രത, മഴ എന്നിവ സ്വയം പൂരിപ്പിക്കാൻ നിങ്ങളുടെ നഗരം നൽകുക",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "കാലാവസ്ഥ നേടുക",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "മണ്ണിന്റെ പോഷകങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "കാലാവസ്ഥാ സാഹചര്യങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "നൈട്രജൻ (N) — കിലോ/ഹെക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "ഫോസ്ഫറസ് (P) — കിലോ/ഹെക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "പൊട്ടാസ്യം (K) — കിലോ/ഹെക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "മണ്ണിന്റെ pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "താപനില (°C)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "ആർദ്രത (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "മഴ (mm)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "വിള ശുപാർശ നേടുക",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "മികച്ച വിള",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "കൃത്യത",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "നുറുങ്ങ്",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "കണ്ടെത്തിയ മണ്ണിന്റെ തരം",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "മണ്ണ് സംബന്ധിച്ച ഉപദേശം",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "ഫലം ഉറക്കെ വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "മറ്റ് ഓപ്ഷനുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "മികച്ച 8 വിളകളിലെ കൃത്യത",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "നിങ്ങളുടെ ഇൻപുട്ട് സംഗ്രഹം",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "പാരാമീറ്റർ",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "മൂല്യം",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "വിള രോഗം, കീടം, വിഷൻ AI",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "തൽക്ഷണ AI നിർണ്ണയത്തിനായി ഒരു ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക · അല്ലെങ്കിൽ താഴെ വിളയും ലക്ഷണവും/കീടവും തിരഞ്ഞെടുക്കുക.",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "രീതി 1 — ഫോട്ടോ നിർണ്ണയം (ശുപാർശ ചെയ്യുന്നു)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "രീതി 2 — ലക്ഷണ പരിശോധന",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "നിർണ്ണയത്തിനായി വിള തിരഞ്ഞെടുക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "നിങ്ങളുടെ സംസ്ഥാനം",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "ഇല / തണ്ട് / പഴത്തിന്റെ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "ഫോട്ടോയിൽ നിന്ന് നിർണ്ണയിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "പിക്സൽ പാറ്റേണുകൾ വിശകലനം ചെയ്യുന്നു...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "AI കൃത്യത",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "ചികിത്സ",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "പ്രതിരോധം",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "കണ്ടെത്തി",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "WhatsApp-ൽ പങ്കിടുക",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "കുറഞ്ഞ കൃത്യത — ബാധിത ഇലയുടെ വ്യക്തവും നന്നായി പ്രകാശിതവുമായ ക്ലോസപ്പ് പരീക്ഷിക്കുക.",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "ലൊക്കേഷൻ കുറിപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "പകൽ വെളിച്ചം",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "ബാധിത പ്രദേശത്തിന്റെ ക്ലോസപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "വ്യക്തം, മങ്ങലില്ല",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "വിള",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "നിരീക്ഷിച്ച ലക്ഷണം",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "ലക്ഷണം / കീടം വഴി നിർണ്ണയിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "ലക്ഷണം വഴി നിർണ്ണയിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "തത്സമയ മണ്ഡി വിലകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "അഗ്മാർക്നെറ്റിൽ നിന്നുള്ള തത്സമയ വിലകൾ. Prophet പവർ ചെയ്യുന്ന സംസ്ഥാന-ക്രമീകൃത 30-ദിന പ്രവചനം.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "നിർദ്ദേശങ്ങൾ വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "പ്രവചന കാലയളവ് (ദിവസങ്ങൾ)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "തത്സമയ വില + പ്രവചനം നേടുക",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "മികച്ച വില",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "ഏറ്റവും കുറഞ്ഞ വില",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "ശരാശരി / 30 ദിവസം",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "വിൽക്കാൻ കാത്തിരിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "ഇപ്പോൾ വിൽക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "വിപണി ഉപദേശം വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "വില പ്രവചന ചാർട്ട്",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "പൂർണ്ണ പ്രവചന പട്ടിക",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "പ്രവചന കൃത്യത",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "സ്മാർട്ട് ജലസേചന & വള ഉപദേശകൻ",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "നിങ്ങളുടെ വിളയും കാലാവസ്ഥയും അടിസ്ഥാനമാക്കി കൃത്യമായ ജല-വള ശുപാർശകൾ നേടുക.",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "തത്സമയ കാലാവസ്ഥ (സ്വയം പൂരിപ്പിക്കൽ)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "നിങ്ങളുടെ നഗരത്തിന്റെ പേര് നൽകുക",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "താപം",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "കാറ്റ്",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "മഴ 1 മ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "വിള വിശദാംശങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "വളർച്ചാ ഘട്ടം",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "വയൽ വിസ്തീർണ്ണം (ഏക്കർ)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "കഴിഞ്ഞ 3 ദിവസത്തെ മഴ (mm)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "ഇന്നത്തെ കാലാവസ്ഥ",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "ജലസേചന ഉപദേശം നേടുക",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "ജല ആവശ്യം",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "നെറ്റ് ജലസേചനം",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "ആകെ വെള്ളം",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "വേണ്ടി",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "ഏക്കർ",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "ഇന്ന് ജലസേചനം ആവശ്യമില്ല!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "സമീപകാല മഴ മതിയാകും.",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "ലഘു ജലസേചനം ശുപാർശ ചെയ്യുന്നു",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "പ്രയോഗിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "ജലസേചനം അടിയന്തരമായി ആവശ്യമാണ്",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "വള ശുപാർശ",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "ശബ്ദ കീട ഡിറ്റക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "ഏത് വിളയാണ് നിങ്ങൾ റെക്കോർഡ് ചെയ്തത്?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "വയൽ ഓഡിയോ റെക്കോർഡിംഗ് അപ്‌ലോഡ് ചെയ്യുക",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "കീടങ്ങൾക്കായി വിശകലനം ചെയ്യുക",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "കണ്ടെത്തലിന്റെ കൃത്യത",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "പ്രബല ആവൃത്തി",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "സിഗ്നൽ ഊർജ്ജം",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "സ്പെക്ട്രൽ പാറ്റേൺ",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "അപകട നില",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "ശുപാർശ ചെയ്ത നടപടി",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "WhatsApp-ൽ കീട മുന്നറിയിപ്പ് പങ്കിടുക",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "വയൽ നിരീക്ഷണം — ഉപഗ്രഹ ഇന്റലിജൻസ്",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "തത്സമയ ഉപഗ്രഹ കാലാവസ്ഥ, കാട്ടുതീ മുന്നറിയിപ്പുകൾ, വെള്ളപ്പൊക്ക മുന്നറിയിപ്പുകൾ, വെട്ടുകിളി കൂട്ട ഡാറ്റ, വായു ഗുണനിലവാരം — എല്ലാം ഒരിടത്ത്. ഈ ടാബ് തുറക്കുമ്പോഴെല്ലാം അപ്‌ഡേറ്റാകുന്നു.",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "നിങ്ങളുടെ നഗരം / ഏറ്റവും അടുത്ത പട്ടണം",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "അറിയിക്കാനുള്ള WhatsApp നമ്പറുകൾ (ഓരോ വരിയിലും ഒന്ന്, 91 സഹിതം)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "കർഷകന്റെ പേര്",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "നിങ്ങളുടെ വിള",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "എന്റെ വയൽ ഇപ്പോൾ സ്കാൻ ചെയ്യുക",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "മൊത്തത്തിലുള്ള വയൽ അപകടം",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "നിലവിലെ കാലാവസ്ഥ",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "വെള്ളപ്പൊക്ക അപകടം (അടുത്ത 48 മണിക്കൂർ)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "കാട്ടുതീ / വയൽ തീ മുന്നറിയിപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "മരുഭൂമി വെട്ടുകിളി മുന്നറിയിപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "വായു ഗുണനിലവാരം",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "വയൽ മുന്നറിയിപ്പ് സംഗ്രഹം വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "കോൺടാക്റ്റുകൾക്ക് വയൽ മുന്നറിയിപ്പ് അയയ്ക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "അടിയന്തര ഹെൽപ്പ്‌ലൈനുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "അപ്‌ലോഡ് ചെയ്ത ഫോട്ടോ",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "ഫയൽ",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "അളവുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "വിശകലനം ചെയ്യുന്നു...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "വ്യക്തമായ പകൽ ഫോട്ടോ, ബാധിത പ്രദേശത്തിന്റെ ക്ലോസപ്പ്.",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "നഗരം കണ്ടെത്തിയില്ല. അക്ഷരവിന്യാസം പരിശോധിക്കുക അല്ലെങ്കിൽ സമീപത്തെ ഒരു നഗരം പരീക്ഷിക്കുക.",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "നിങ്ങളുടെ നഗരത്തിന്റെ പേര് നൽകുക.",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "ഓഡിയോ ലഭ്യമല്ല",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "ടാബ് വിവരം വായിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "വിള ഉപദേശകൻ",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "ഇല ഡോക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "നനയ്ക്കൽ",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "വയൽ കേൾക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "മണ്ണ്",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "കാലാവസ്ഥ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "മണ്ണും കാലാവസ്ഥയും വിശകലനം ചെയ്യുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "ഞങ്ങളുടെ ശുപാർശ",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "ഇതും മികച്ചതാണ്",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "എല്ലാ വിളകളും",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "പുനഃസജ്ജമാക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 ഒരു വിള നിർദ്ദേശിക്കുക",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 വിശകലനം ചെയ്യുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "നൈട്രജൻ",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "ഫോസ്ഫറസ്",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "പൊട്ടാസ്യം",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "താപനില",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "ആർദ്രത",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "മഴ",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "വിള ഉപദേഷ്ടാവ്",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "നിങ്ങളുടെ മണ്ണ് എന്ത്",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "കൃഷി ചെയ്യാൻ ആഗ്രഹിക്കുന്നു.",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "ഇല ഡോക്ടർ",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "ഒരു",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "രണ്ടാം കണ്ണ്",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "രോഗഗ്രസ്ത ഇലകൾക്ക്.",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "വിപണി",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "വിപണി",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "വെള്ളം",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "കേൾക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "കേൾക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "വയൽ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "ഫോട്ടോ അയക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "ഞങ്ങൾ കണ്ടത്",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "റെക്കോർഡിംഗ് അപ്‌ലോഡ് ചെയ്യൂ",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "ഞങ്ങൾ കേട്ടത്",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "ജലസേചനം കണക്കാക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "ഉപദേശം നേടൂ",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 ഇപ്പോൾ സ്കാൻ ചെയ്യൂ",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "അടിയന്തര ഹെൽപ്‌ലൈൻ",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "പരാഗണകാരി",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "കീടം",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "പരിസ്ഥിതി",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "പ്രാരംഭ",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "വളർച്ച",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "മധ്യ-സീസൺ",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "അവസാന സീസൺ",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "മികച്ച വില",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "ഏറ്റവും കുറഞ്ഞ വില",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "ശരാശരി വില",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "ഞങ്ങളുടെ ഉപദേശം",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "ദിവസങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "തീയതി",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "വില",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "ഏറ്റവും കുറഞ്ഞ",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "ഏറ്റവും കൂടിയ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "ആത്മവിശ്വാസം",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "ദൈർഘ്യം",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "സാമ്പിൾ നിരക്ക്",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "ഊർജ്ജം",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "തീവ്രത",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "പങ്ക്",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "പേര്",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "ഐക്കൺ",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "ആവൃത്തി ശ്രേണി",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "മായ്ക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "കർഷകൻ · 2019 മുതൽ",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "ഇന്നത്തെ ശാന്തമായ വയൽ നാളത്തെ നല്ല വിളവ്.",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "മികച്ച ഫലങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "വഴി",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "ഇപ്പോൾ",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "ചികിത്സ",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "പ്രതിരോധം",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "പ്രവചന കാലം",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 പ്രവചനം നേടൂ",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "മണ്ടികൾ",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "സംസ്ഥാന ഘടകം",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "ന്",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 തൽസമയം",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 കണക്കാക്കിയത്",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "അപകടം",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "പോലെ തോന്നുന്നു",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "ഉപരിതല കാറ്റ്",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "കഴിഞ്ഞ മണിക്കൂർ",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "വെള്ളപ്പൊക്ക അപകടം",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "48 മണിക്കൂർ മഴ:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "തീ",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "സമീപത്തെ ഹോട്ട്‌സ്പോട്ടുകൾ:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "ഉറവിടം:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "വെട്ടുക്കിളി",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "സമീപത്തെ കൂട്ടങ്ങൾ:",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "WhatsApp-ൽ അയക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 പകർത്തൂ",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 WhatsApp തുറക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "എന്റെ നമ്പറിലേക്ക് അയക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "കിസാൻ കോൾ സെന്റർ",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "സൗജന്യം · 24/7 · എല്ലാ ഭാരതീയ ഭാഷകളും",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM കിസാൻ ഹെൽപ്‌ലൈൻ",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM കിസാൻ പദ്ധതി വിവരങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF അടിയന്തരം",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "വെള്ളപ്പൊക്കം, ഭൂകമ്പം, ദുരന്തം",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "ആംബുലൻസ്",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "വൈദ്യ അടിയന്തരം",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "പൊലീസ്",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "സുരക്ഷ / മോഷണം",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "സംസ്ഥാന കൃഷി വകുപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "രോഗ വ്യാപന റിപ്പോർട്ട്",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "ആവശ്യമായ വെള്ളം",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "നികര ജലസേചനം",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "വിള Kc ഘടകം",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "അടിയന്തരം",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "വളം",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "നൈട്രജൻ:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "കാലാവസ്ഥ നുറുങ്ങുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "വയലിന്റെ വിസ്തൃതി",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "ഏക്കർ",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "സമീപകാല മഴ",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "മിമി",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "കാറ്റിന്റെ വേഗത",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "കിമി/മണിക്കൂർ",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "മണ്ണ്",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "വയൽ സ്കാൻ ചെയ്യുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "ആക്സസ് നിഷേധിച്ചു",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "നെറ്റ്‌വർക്ക് പിശക്",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "പിശക്",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API കീ പ്രശ്നം — config.js പരിശോധിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API കീ പ്രശ്നം — കോൺഫിഗറേഷൻ പരിശോധിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API കീ തെറ്റ് — web/config.js പരിശോധിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "വിശകലനം പരാജയപ്പെട്ടു",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "വിശകലനം പരാജയപ്പെട്ടു.",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "ഇല വിശകലനം ചെയ്യുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "ജലസേചനം കണക്കാക്കുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "ഈ ഓഡിയോ ഫോർമാറ്റ് കാണിക്കാൻ കഴിയില്ല — എങ്കിലും അപ്‌ലോഡ് ചെയ്യൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude ഉപദേശം",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "ഫോട്ടോ വിശകലനം ചെയ്യാൻ കഴിഞ്ഞില്ല",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "മണ്ണ് വിശകലനം ചെയ്യാൻ കഴിഞ്ഞില്ല",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "കണക്കാക്കാൻ കഴിഞ്ഞില്ല",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "പ്രവചനം ലഭിച്ചില്ല",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "വിള തരം (ഐഛികം)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "വയലിന്റെ ഓഡിയോ ഇവിടെ വലിച്ചിടൂ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "ഇവിടെ ഇലയുടെ ഫോട്ടോ ഇടൂ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "ആരംഭിക്കാൻ ഇടതുവശത്ത് റെക്കോർഡിംഗ് ഇടൂ. 🐛",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "വിപണി ഡേറ്റ കൊണ്ടുവരുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "ഫയൽ വളരെ വലുതാണ് (പരമാവധി 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "പൂർണ്ണ പ്രവചന പട്ടിക",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "വളർച്ചാ ഘട്ടം",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "കീടങ്ങളുടെ ശബ്ദം കേൾക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "ഏതാനും സെക്കൻഡ് ചെടിക്കരികിൽ ഫോൺ പിടിക്കൂ. കീടശബ്ദങ്ങൾ കേട്ട് ഒരാഴ്ച മുമ്പ് മുന്നറിയിപ്പ് നൽകും.",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "അസാധുവായ അല്ലെങ്കിൽ ഇല്ലാത്ത API കീ.",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "ആവശ്യത്തിന് വെള്ളം,",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · തയ്യാർ",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "നിങ്ങളുടെ വയൽ കേൾക്കുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "ലൈവ് മണ്ടി ഡേറ്റ ഇല്ല — മോഡൽ പ്രവചനം മാത്രം.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "നെറ്റ്‌വർക്ക് പിശക് — കണക്ഷൻ പരിശോധിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "നെറ്റ്‌വർക്ക് പിശക് — ദയവായി കണക്ഷൻ പരിശോധിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "കണക്ഷൻ ഇല്ല — നെറ്റ്‌വർക്ക് പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "ചാർട്ടിന് ആവശ്യത്തിന് ഡേറ്റ ഇല്ല.",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "വില പ്രവചനം",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "റഫറൻസ് ലൈബ്രറി",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "ഫോട്ടോ അയക്കൂ ഞങ്ങൾ നോക്കാം. 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "സൈൻ ഔട്ട്",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "ആശങ്കയുള്ള ഇലയുടെ ഫോട്ടോ എടുക്കൂ. ശ്രദ്ധാപൂർവ്വം നോക്കി എന്ത് സംഭവിക്കുന്നെന്ന് പറയാം.",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "എന്തോ തെറ്റ് സംഭവിച്ചു.",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "നിങ്ങളുടെ വയലിനെക്കുറിച്ച് പറയൂ. 26 വിളകളിൽ ഏറ്റവും അനുയോജ്യമായത് നിർദ്ദേശിക്കും.",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "അപ്രതീക്ഷിത പിശക്.",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "അജ്ഞാത പിശക്",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "FAO ജലഗണിതം ചെയ്ത് ലളിതമായി പറയും: ഇന്ന് എത്ര ലിറ്റർ, അടുത്ത നനവ് എപ്പോൾ.",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "മണ്ടി വില നോക്കി ഇപ്പോൾ വിൽക്കണോ കാക്കണോ എന്ന് പറയും.",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "കാലാവസ്ഥ, തീ, വെട്ടുക്കിളി, മണ്ണ് — എല്ലാം ഒരു ശാന്ത ദൃശ്യത്തിൽ.",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "നിങ്ങളുടെ വയൽ",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "ഒരു ശാന്തമായ തീരുമാനം.",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "അൽപം കുറവ്",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "അൽപം ക്ഷാരം",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "അമ്ലം",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "ബാൻഡ് ഊർജ്ജം",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "കാണുന്നതിന് മുമ്പ്.",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "ന്യായ വില,",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "ലൈവ് ഡേറ്റ കൊണ്ടുവരുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "നിങ്ങളുടെ ഭൂമിക്ക്.",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "കൃത്യസമയത്ത്.",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "ശരിയായ അളവ്",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "അറിയപ്പെടുന്ന കീടങ്ങൾ",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "ഭാഷ",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "ലൈവ് മണ്ടി",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "വിളകൾ ലോഡ് ആകുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "അല്ലെങ്കിൽ ക്ലിക്ക് ചെയ്യൂ · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "അല്ലെങ്കിൽ ക്ലിക്ക് ചെയ്യൂ · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "ൽ",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "ഫോൺ",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "ധാരാളം",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "പ്രധാന വിള",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "ഗുണനിലവാര കുറിപ്പുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "ശാന്തമായ ദൈനംദിന പരിശോധന",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "ആദർശ നില",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "നുറുങ്ങ്: തണ്ടിൽ നിന്ന് 15–30 സെ.മീ. · പതുക്കെ ശ്വസിക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "ഇന്ന് വയലിൽ",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "മുൻനിര കണ്ടെത്തലുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "ഗ്രാമം",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "നിങ്ങളുടെ പ്രാദേശിക അനുഭവം",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "നിങ്ങളുടെ പേര്",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 സെക്കൻഡ്",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ റെക്കോർഡിംഗ് വളരെ കുറവ് — കുറഞ്ഞത് 3 സെക്കൻഡ് വേണം",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ കീടനാശിനി തളിക്കാൻ നല്ല ദിവസം",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ കന്നുകാലികളെ അഭയത്തിലേക്ക് മാറ്റൂ",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ നീണ്ട റെക്കോർഡിംഗ് — ആദ്യ 20 സെക്കൻഡ് വിശകലനം ചെയ്തു",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ ഇന്ന് ജലസേചനം കുറയ്ക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 വയലുകൾക്ക് ചുറ്റും ബണ്ട് ഉണ്ടാക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ നടീൽ ചെയ്യാൻ നല്ല ദിവസം",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 ഖരിഫ് സീസൺ",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ വായുസഞ്ചാരം മെച്ചപ്പെടുത്തൂ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 ഇന്ന് വളം ഇടൂ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 വളം ഇടരുത് — ഒഴുകിപ്പോകും",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 മഞ്ഞ് കഴിയുന്നതുവരെ കൊമ്പ് കത്രിക്കരുത്",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 നടീലിന് അനുയോജ്യമായ സമയം",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 ലോലമായ വിളകൾ തുണി കൊണ്ട് മൂടൂ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 വിളകൾ വാടുന്നുണ്ടോ നോക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 ഫംഗൽ രോഗം ശ്രദ്ധിക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 കേൾക്കുന്നു…",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 പ്രതിരോധ ഫംഗസ്‌നാശിനി ഇടൂ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 മണ്ണിലെ ഈർപ്പ നില പരിശോധിക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 നീർചാലുകൾ വൃത്തിയാക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 മുളക്കാൻ നല്ലത്",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 ജലസേചനം കൂട്ടൂ — ചൂടിന്റെ സമ്മർദ്ദം വരാം",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 മിതമായ ജലസേചനം ആവശ്യം",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 സാമ്പിൾ നിരക്ക് 16 kHz ആക്കി",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 കുറഞ്ഞ സാമ്പിൾ നിരക്ക് കൃത്യത കുറയ്ക്കാം",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 വെള്ളപ്പൊക്കമുണ്ടെങ്കിൽ കൃഷി ഓഫീസ് ബന്ധപ്പെടൂ",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 വളരെ ശാന്തം — മൈക്ക് തണ്ടിന് അടുത്ത് പിടിക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 വിശകലനം",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 മഞ്ഞിന് മുമ്പ് ഭാര ജലസേചനം വേരുകൾ സംരക്ഷിക്കും",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 പുറത്തെ ജോലി കുറയ്ക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 കൊയ്ത്തിന് അനുയോജ്യം",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 ഉടനടി എല്ലാ വയൽ ജോലിയും നിർത്തൂ",
+    "context": "",
+    "role": ""
+  }
+}

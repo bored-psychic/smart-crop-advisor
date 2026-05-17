@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "ಬೆಳೆ ಶಿಫಾರಸುದಾರ",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "ರೋಗ + ದೃಷ್ಟಿ",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "ಮಾರ್ಕೆಟ್ ಬೆಲೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "ನೀರಾವರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "ಅಕೌಸ್ಟಿಕ್",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "ಹೊಲ ಕಾವಲು",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "ನಿಮ್ಮ ಹೊಲಕ್ಕೆ ಉತ್ತಮ ಬೆಳೆಯನ್ನು ಹುಡುಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "ನಿಮ್ಮ ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನದ ವಿವರಗಳನ್ನು ಕೆಳಗೆ ನಮೂದಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "ಸೂಚನೆಗಳನ್ನು ಗಟ್ಟಿಯಾಗಿ ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "ಸ್ಥಳದಿಂದ ಸ್ವಯಂ ತುಂಬುವ ಹವಾಮಾನ",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "ತಾಪಮಾನ, ಆರ್ದ್ರತೆ ಮತ್ತು ಮಳೆಯನ್ನು ಸ್ವಯಂ ತುಂಬಲು ನಿಮ್ಮ ನಗರವನ್ನು ನಮೂದಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "ಹವಾಮಾನ ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "ಮಣ್ಣಿನ ಪೋಷಕಾಂಶಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "ಸಾರಜನಕ (N) - ಕೆಜಿ/ಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "ರಂಜಕ (ಪಿ) - ಕೆಜಿ / ಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "ಪೊಟ್ಯಾಸಿಯಮ್ (ಕೆ) - ಕೆಜಿ / ಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "ಮಣ್ಣಿನ pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "ತಾಪಮಾನ (°C)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "ಆರ್ದ್ರತೆ (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "ಮಳೆ (ಮಿಮೀ)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "ಬೆಳೆ ಶಿಫಾರಸು ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "ಅತ್ಯುತ್ತಮ ಬೆಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "ಆತ್ಮವಿಶ್ವಾಸ",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "ಸಲಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "ಪತ್ತೆಯಾದ ಮಣ್ಣಿನ ಪ್ರಕಾರ",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "ಮಣ್ಣಿನ ಸಲಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "ಫಲಿತಾಂಶವನ್ನು ಗಟ್ಟಿಯಾಗಿ ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "ಇತರೆ ಆಯ್ಕೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "ಅಗ್ರ 8 ಬೆಳೆಗಳಾದ್ಯಂತ ವಿಶ್ವಾಸ",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "ನಿಮ್ಮ ಇನ್‌ಪುಟ್ ಸಾರಾಂಶ",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "ಪ್ಯಾರಾಮೀಟರ್",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "ಮೌಲ್ಯ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "ಬೆಳೆ ರೋಗ, ಕೀಟ ಮತ್ತು ದೃಷ್ಟಿ AI",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "ತ್ವರಿತ AI ರೋಗನಿರ್ಣಯಕ್ಕಾಗಿ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ · ಅಥವಾ ಕೆಳಗಿನ ಬೆಳೆ + ರೋಗಲಕ್ಷಣ/ಕೀಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "ವಿಧಾನ 1 - ಫೋಟೋ ರೋಗನಿರ್ಣಯ (ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "ವಿಧಾನ 2 - ರೋಗಲಕ್ಷಣ ಪರೀಕ್ಷಕ",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "ರೋಗನಿರ್ಣಯಕ್ಕಾಗಿ ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "ನಿಮ್ಮ ರಾಜ್ಯ",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "ಎಲೆ / ಕಾಂಡ / ಹಣ್ಣಿನ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "ಫೋಟೋದಿಂದ ರೋಗನಿರ್ಣಯ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "ಪಿಕ್ಸೆಲ್ ಮಾದರಿಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "AI ವಿಶ್ವಾಸ",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "ಚಿಕಿತ್ಸೆ",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "ತಡೆಗಟ್ಟುವಿಕೆ",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "ಪತ್ತೆ ಮಾಡಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "WhatsApp ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "ಕಡಿಮೆ ಆತ್ಮವಿಶ್ವಾಸ - ಬಾಧಿತ ಎಲೆಯ ಸ್ಪಷ್ಟವಾದ, ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಕ್ಲೋಸ್-ಅಪ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "ಸ್ಥಳ ಸೂಚನೆ",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "ಹಗಲು",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "ಪೀಡಿತ ಪ್ರದೇಶದ ಕ್ಲೋಸ್-ಅಪ್",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "ತೀಕ್ಷ್ಣವಾದ, ಮಸುಕು ಇಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "ಬೆಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "ರೋಗಲಕ್ಷಣವನ್ನು ಗಮನಿಸಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "ರೋಗಲಕ್ಷಣ / ಕೀಟಗಳ ಮೂಲಕ ರೋಗನಿರ್ಣಯ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "ರೋಗಲಕ್ಷಣದ ಮೂಲಕ ರೋಗನಿರ್ಣಯ",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "ಲೈವ್ ಮಂಡಿ ಬೆಲೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "Agmarknet ನಿಂದ ನೈಜ-ಸಮಯದ ಬೆಲೆಗಳು. ಪ್ರವಾದಿಯಿಂದ ನಡೆಸಲ್ಪಡುವ ರಾಜ್ಯ-ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿದ 30-ದಿನಗಳ ಮುನ್ಸೂಚನೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "ಸೂಚನೆಗಳನ್ನು ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "ಮುನ್ಸೂಚನೆ ಹಾರಿಜಾನ್ (ದಿನಗಳು)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "ಲೈವ್ ಬೆಲೆ + ಮುನ್ಸೂಚನೆ ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "ಅತ್ಯುತ್ತಮ ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "ಕಡಿಮೆ ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "ಸರಾಸರಿ / 30D",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "ಮಾರಾಟ ಮಾಡಲು ನಿರೀಕ್ಷಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "ಈಗ ಮಾರಾಟ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "ಮಾರುಕಟ್ಟೆ ಸಲಹೆಯನ್ನು ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "ಬೆಲೆ ಮುನ್ಸೂಚನೆ ಚಾರ್ಟ್",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "ಪೂರ್ಣ ಮುನ್ಸೂಚನೆ ಕೋಷ್ಟಕ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "ಮುನ್ಸೂಚನೆಯ ನಿಖರತೆ",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "ಸ್ಮಾರ್ಟ್ ನೀರಾವರಿ ಮತ್ತು ರಸಗೊಬ್ಬರ ಸಲಹೆಗಾರ",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "ನಿಮ್ಮ ಬೆಳೆ ಮತ್ತು ಹವಾಮಾನದ ಆಧಾರದ ಮೇಲೆ ನಿಖರವಾದ ನೀರು ಮತ್ತು ರಸಗೊಬ್ಬರ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "ಲೈವ್ ಹವಾಮಾನ (ಆಟೋ-ಫಿಲ್)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "ನಿಮ್ಮ ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "ತಾಪ",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "ಗಾಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "ಮಳೆ 1ಗಂ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "ಬೆಳೆ ವಿವರಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "ಬೆಳವಣಿಗೆಯ ಹಂತ",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "ಕ್ಷೇತ್ರ ಪ್ರದೇಶ (ಎಕರೆ)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "ಕಳೆದ 3 ದಿನಗಳಲ್ಲಿ ಮಳೆ (ಮಿಮೀ)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "ಇಂದು ಹವಾಮಾನ",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "ನೀರಾವರಿ ಸಲಹೆ ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "ನೀರಿನ ಅವಶ್ಯಕತೆ",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "ನಿವ್ವಳ ನೀರಾವರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "ಒಟ್ಟು ನೀರು",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "ಫಾರ್",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "ಎಕರೆ(ಗಳು)",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "ಇಂದು ನೀರಾವರಿ ಅಗತ್ಯವಿಲ್ಲ!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "ಇತ್ತೀಚಿನ ಮಳೆ ಸಾಕಾಗುತ್ತದೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "ಲಘು ನೀರಾವರಿ ಶಿಫಾರಸು",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "ಅನ್ವಯಿಸು",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "ತುರ್ತಾಗಿ ನೀರಾವರಿ ಅಗತ್ಯವಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "ರಸಗೊಬ್ಬರ ಶಿಫಾರಸು",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "ಅಕೌಸ್ಟಿಕ್ ಪೆಸ್ಟ್ ಡಿಟೆಕ್ಟರ್",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "ನೀವು ಯಾವ ಬೆಳೆಯನ್ನು ದಾಖಲಿಸಿದ್ದೀರಿ?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "ಫೀಲ್ಡ್ ಆಡಿಯೊ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "ಕೀಟಗಳಿಗೆ ವಿಶ್ಲೇಷಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "ಪತ್ತೆ ವಿಶ್ವಾಸ",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "ಡಾಮಿನೆಂಟ್ ಫ್ರೀಕ್ವೆನ್ಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "ಸಿಗ್ನಲ್ ಎನರ್ಜಿ",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "ಸ್ಪೆಕ್ಟ್ರಲ್ ಪ್ಯಾಟರ್ನ್",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "ಅಪಾಯದ ಮಟ್ಟ",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "ಶಿಫಾರಸು ಮಾಡಲಾದ ಕ್ರಮ",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "WhatsApp ನಲ್ಲಿ ಕೀಟಗಳ ಎಚ್ಚರಿಕೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "ಫೀಲ್ಡ್ ವಾಚ್ - ಉಪಗ್ರಹ ಗುಪ್ತಚರ",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "ಲೈವ್ ಉಪಗ್ರಹ ಹವಾಮಾನ, ಕಾಡ್ಗಿಚ್ಚು ಎಚ್ಚರಿಕೆಗಳು, ಪ್ರವಾಹ ಎಚ್ಚರಿಕೆಗಳು, ಮಿಡತೆ ಸಮೂಹ ಡೇಟಾ ಮತ್ತು ಗಾಳಿಯ ಗುಣಮಟ್ಟ - ಎಲ್ಲವೂ ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ. ನೀವು ಈ ಟ್ಯಾಬ್ ಅನ್ನು ತೆರೆದಾಗಲೆಲ್ಲಾ ನವೀಕರಣಗಳು.",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "ನಿಮ್ಮ ನಗರ / ಹತ್ತಿರದ ಪಟ್ಟಣ",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "ತಿಳಿಸಲು WhatsApp ಸಂಖ್ಯೆಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು, 91 ರೊಂದಿಗೆ)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "ರೈತ ಹೆಸರು",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "ನಿಮ್ಮ ಬೆಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "ಈಗ ನನ್ನ ಕ್ಷೇತ್ರವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "ಒಟ್ಟಾರೆ ಫೀಲ್ಡ್ ರಿಸ್ಕ್",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "ಪ್ರಸ್ತುತ ಹವಾಮಾನ",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "ಪ್ರವಾಹದ ಅಪಾಯ (ಮುಂದಿನ 48 ಗಂಟೆಗಳು)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "ಕಾಡ್ಗಿಚ್ಚು / ಫೀಲ್ಡ್ ಫೈರ್ ಎಚ್ಚರಿಕೆ",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "ಮರುಭೂಮಿ ಮಿಡತೆ ಎಚ್ಚರಿಕೆ",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "ವಾಯು ಗುಣಮಟ್ಟ",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "ಫೀಲ್ಡ್ ಅಲರ್ಟ್ ಸಾರಾಂಶವನ್ನು ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "ಸಂಪರ್ಕಗಳಿಗೆ ಫೀಲ್ಡ್ ಎಚ್ಚರಿಕೆಯನ್ನು ಕಳುಹಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "ತುರ್ತು ಸಹಾಯವಾಣಿಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "ಫೈಲ್",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "ಆಯಾಮಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "ಸ್ಪಷ್ಟ ಹಗಲು ಫೋಟೋ, ಪೀಡಿತ ಪ್ರದೇಶದ ಕ್ಲೋಸ್-ಅಪ್.",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಕಾಗುಣಿತವನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಹತ್ತಿರದ ನಗರವನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "ಆಡಿಯೋ ಲಭ್ಯವಿಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "ಟ್ಯಾಬ್ ಮಾಹಿತಿಯನ್ನು ಓದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "ಬೆಳೆ ಸಲಹೆಗಾರ",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "ಎಲೆ ವೈದ್ಯ",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "ನೀರಾವರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "ಹೊಲ ಕೇಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "ಮಣ್ಣು",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "ಹವಾಮಾನ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನ ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "ನಮ್ಮ ಶಿಫಾರಸು",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "ಇವೂ ಉತ್ತಮ",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "ಎಲ್ಲ ಬೆಳೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "ಮರುಹೊಂದಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 ಬೆಳೆ ಸೂಚಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ…",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "ನೈಟ್ರೋಜನ್",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "ರಂಜಕ",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "ಪೊಟ್ಯಾಸಿಯಂ",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "ತಾಪಮಾನ",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "ತೇವಾಂಶ",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "ಮಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "ಬೆಳೆ ಸಲಹೆಗಾರ",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "ನಿಮ್ಮ ಮಣ್ಣು ಏನು",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "ಬೆಳೆಯಲು ಬಯಸುತ್ತದೆ.",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "ಎಲೆ ವೈದ್ಯ",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "ಒಂದು",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "ಎರಡನೇ ದೃಷ್ಟಿ",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "ರೋಗಗ್ರಸ್ತ ಎಲೆಗಳಿಗೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "ಮಾರುಕಟ್ಟೆ",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "ಮಾರುಕಟ್ಟೆ",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "ನೀರು",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "ಆಲಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "ಆಲಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "ಹೊಲ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "ಫೋಟೋ ಕಳುಹಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "ನಾವು ನೋಡಿದ್ದು",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "ರೆಕಾರ್ಡಿಂಗ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "ನಾವು ಕೇಳಿದ್ದು",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಹಾಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "ಸಲಹೆ ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 ಈಗ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "ತುರ್ತು ಸಹಾಯವಾಣಿ",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "ಪರಾಗಕಾರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "ಕೀಟ",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "ಪರಿಸರ",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "ಆರಂಭಿಕ",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "ಅಭಿವೃದ್ಧಿ",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "ಮಧ್ಯ-ಋತು",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "ಕೊನೆ-ಋತು",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "ಉತ್ತಮ ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "ಕಡಿಮೆ ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "ಸರಾಸರಿ ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "ನಮ್ಮ ಸಲಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "ದಿನಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "ದಿನಾಂಕ",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "ಬೆಲೆ",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "ಕನಿಷ್ಠ",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "ಗರಿಷ್ಠ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "ವಿಶ್ವಾಸ",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "ಅವಧಿ",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "ಮಾದರಿ ದರ",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "ಶಕ್ತಿ",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "ತೀವ್ರತೆ",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "ಪಾತ್ರ",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "ಹೆಸರು",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "ಚಿಹ್ನೆ",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "ಆವೃತ್ತಿ ವ್ಯಾಪ್ತಿ",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "ತೆರವು",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "ರೈತ · 2019 ರಿಂದ",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "ಇಂದಿನ ಶಾಂತ ಹೊಲ ನಾಳಿನ ಉತ್ತಮ ಬೆಳೆ.",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "ಅಗ್ರ ಫಲಿತಾಂಶಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "ಮೂಲಕ",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "ಈಗ",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "ಚಿಕಿತ್ಸೆ",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "ತಡೆ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "ಮುನ್ಸೂಚನಾ ಅವಧಿ",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 ಮುನ್ಸೂಚನೆ ಪಡೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "ಮಂಡಿಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "ರಾಜ್ಯ ಅಂಶ",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "ರಂದು",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 ನೇರ",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 ಅಂದಾಜು",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "ಅಪಾಯ",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "ತರಹ ಅನಿಸುತ್ತದೆ",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "ಮೇಲ್ಮೈ ಗಾಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "ಕಳೆದ ಗಂಟೆ",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "ಪ್ರವಾಹ ಅಪಾಯ",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "48 ಗಂಟೆ ಮಳೆ:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "ಬೆಂಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "ಸಮೀಪದ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "ಮೂಲ:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "ಮಿಡತೆ",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "ಸಮೀಪದ ಗುಂಪುಗಳು:",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "WhatsApp ಗೆ ಕಳುಹಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 ನಕಲು",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 WhatsApp ತೆರೆಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "ನನ್ನ ಸಂಖ್ಯೆಗೆ ಕಳುಹಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "ಕಿಸಾನ್ ಕಾಲ್ ಸೆಂಟರ್",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "ಉಚಿತ · 24/7 · ಎಲ್ಲಾ ಭಾರತೀಯ ಭಾಷೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM ಕಿಸಾನ್ ಹೆಲ್ಪ್‌ಲೈನ್",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM ಕಿಸಾನ್ ಯೋಜನೆ ಮಾಹಿತಿ",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF ತುರ್ತು",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "ಪ್ರವಾಹ, ಭೂಕಂಪ, ವಿಕೋಪ",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "ಆಂಬುಲೆನ್ಸ್",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "ವೈದ್ಯಕೀಯ ತುರ್ತು",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "ಪೊಲೀಸ್",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "ಭದ್ರತೆ / ಕಳ್ಳತನ",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "ರಾಜ್ಯ ಕೃಷಿ ಇಲಾಖೆ",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "ರೋಗ ಪ್ರಾದುರ್ಭಾವ ವರದಿ",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "ಬೇಕಾದ ನೀರು",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "ನಿವ್ವಳ ನೀರಾವರಿ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "ಬೆಳೆ Kc ಅಂಶ",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "ತುರ್ತು",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "ಗೊಬ್ಬರ",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "ನೈಟ್ರೋಜನ್:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "ಹವಾಮಾನ ಸಲಹೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "ಹೊಲದ ವಿಸ್ತೀರ್ಣ",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "ಎಕರೆ",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "ಇತ್ತೀಚಿನ ಮಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "ಮಿಮೀ",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "ಗಾಳಿ ವೇಗ",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "ಕಿಮೀ/ಗಂ",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "ಮಣ್ಣು",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "ಹೊಲ ಸ್ಕ್ಯಾನ್ ಆಗುತ್ತಿದೆ…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "ದೋಷ",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API ಕೀ ಸಮಸ್ಯೆ — config.js ಪರಿಶೀಲಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API ಕೀ ಸಮಸ್ಯೆ — ಕಾನ್ಫಿಗರೇಶನ್ ಪರಿಶೀಲಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API ಕೀ ತಪ್ಪು — web/config.js ಪರಿಶೀಲಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "ವಿಶ್ಲೇಷಣೆ ವಿಫಲವಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "ವಿಶ್ಲೇಷಣೆ ವಿಫಲವಾಗಿದೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "ಎಲೆಯನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಹಾಕುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "ಈ ಆಡಿಯೋ ಫಾರ್ಮ್ಯಾಟ್ ತೋರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ — ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude ಸಲಹೆ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "ಫೋಟೋ ವಿಶ್ಲೇಷಿಸಲಾಗಲಿಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "ಮಣ್ಣು ವಿಶ್ಲೇಷಿಸಲಾಗಲಿಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "ಲೆಕ್ಕ ಹಾಕಲಾಗಲಿಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "ಅಂದಾಜು ತೆಗೆದುಕೊಳ್ಳಲಾಗಲಿಲ್ಲ",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "ಬೆಳೆ ವಿಧ (ಐಚ್ಛಿಕ)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "ಹೊಲದ ಆಡಿಯೋವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "ಇಲ್ಲಿ ಎಲೆ ಫೋಟೋ ಹಾಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "ಪ್ರಾರಂಭಿಸಲು ಎಡಭಾಗದಲ್ಲಿ ರೆಕಾರ್ಡಿಂಗ್ ಹಾಕಿ. 🐛",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "ಮಾರುಕಟ್ಟೆ ಡೇಟಾ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದು (ಗರಿಷ್ಠ 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "ಪೂರ್ಣ ಅಂದಾಜು ಕೋಷ್ಟಕ",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "ಬೆಳವಣಿಗೆ ಹಂತ",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "ಕೀಟಗಳ ಶಬ್ದ ಆಲಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "ಕೆಲವು ಸೆಕೆಂಡ್ ಗಿಡದ ಬಳಿ ಫೋನ್ ಹಿಡಿಯಿರಿ. ಕೀಟ ಶಬ್ದಗಳನ್ನು ಕೇಳಿ ಒಂದು ವಾರ ಮೊದಲೇ ಎಚ್ಚರಿಸುತ್ತೇವೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "ಅಮಾನ್ಯ ಅಥವಾ ಇಲ್ಲದ API ಕೀ.",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "ಸಾಕಷ್ಟು ನೀರು,",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · ಸಿದ್ಧವಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "ನಿಮ್ಮ ಹೊಲ ಆಲಿಸುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "ಲೈವ್ ಮಂಡಿ ಡೇಟಾ ಇಲ್ಲ — ಮಾದರಿ ಅಂದಾಜು ಮಾತ್ರ.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ — ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ — ದಯವಿಟ್ಟು ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "ಸಂಪರ್ಕ ಇಲ್ಲ — ನೆಟ್‌ವರ್ಕ್ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "ಚಾರ್ಟ್‌ಗೆ ಸಾಕಷ್ಟು ಡೇಟಾ ಇಲ್ಲ.",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "ಬೆಲೆ ಅಂದಾಜು",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "ಉಲ್ಲೇಖ ಗ್ರಂಥಾಲಯ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "ಫೋಟೋ ಕಳುಹಿಸಿ ನಾವು ನೋಡುತ್ತೇವೆ. 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "ಸೈನ್ ಔಟ್",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "ಅನಾರೋಗ್ಯಕರ ಎಲೆ ಫೋಟೋ ತೆಗೆಯಿರಿ. ಜಾಗ್ರತೆಯಿಂದ ನೋಡಿ ಏನು ನಡೆಯುತ್ತಿದೆ ಎಂದು ಹೇಳುತ್ತೇವೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "ಏನೋ ತಪ್ಪಾಗಿದೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "ನಿಮ್ಮ ಹೊಲದ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ಹೇಳಿ. 26 ಬೆಳೆಗಳಲ್ಲಿ ನಿಮ್ಮ ಭೂಮಿಗೆ ಸರಿಯಾದದ್ದನ್ನು ಸೂಚಿಸುತ್ತೇವೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "ಅನಿರೀಕ್ಷಿತ ದೋಷ.",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "ಅಜ್ಞಾತ ದೋಷ",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "FAO ನೀರಿನ ಲೆಕ್ಕ ಮಾಡಿ ಸರಳವಾಗಿ ಹೇಳುತ್ತೇವೆ: ಇಂದು ಎಷ್ಟು ಲೀಟರ್, ಮುಂದೆ ಯಾವಾಗ.",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "ಮಂಡಿ ಬೆಲೆಗಳನ್ನು ನೋಡಿ ಈಗ ಮಾರಬೇಕೋ ಕಾಯಬೇಕೋ ಎಂದು ಹೇಳುತ್ತೇವೆ.",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "ಹವಾಮಾನ, ಬೆಂಕಿ, ಮಿಡತೆ, ಮಣ್ಣು — ಎಲ್ಲ ಒಂದೇ ನೋಟದಲ್ಲಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "ನಿಮ್ಮ ಹೊಲ",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "ಒಂದು ಶಾಂತ ನಿರ್ಧಾರ.",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "ಸ್ವಲ್ಪ ಕಡಿಮೆ",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "ಸ್ವಲ್ಪ ಕ್ಷಾರೀಯ",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "ಆಮ್ಲೀಯ",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "ಬ್ಯಾಂಡ್ ಶಕ್ತಿ",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "ಕಾಣಿಸುವ ಮೊದಲೇ.",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "ನ್ಯಾಯ ಬೆಲೆ,",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "ಲೈವ್ ಡೇಟಾ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "ನಿಮ್ಮ ಭೂಮಿಗೆ.",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "ಸರಿಯಾದ ಸಮಯಕ್ಕೆ.",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "ಸರಿಯಾದ ಪ್ರಮಾಣ",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "ತಿಳಿದಿರುವ ಕೀಟಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "ಭಾಷೆ",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "ಲೈವ್ ಮಂಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "ಬೆಳೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "ಲ್ಲಿ",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "ಫೋನ್",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "ಸಾಕಷ್ಟು",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "ಮುಖ್ಯ ಬೆಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "ಗುಣಮಟ್ಟ ಟಿಪ್ಪಣಿಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "ಶಾಂತ ದೈನಂದಿನ ಪರಿಶೀಲನೆ",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "ಆದರ್ಶ ಮಟ್ಟ",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "ಸೂಚನೆ: ಕಾಂಡದಿಂದ 15–30 ಸೆಮೀ · ನಿಧಾನವಾಗಿ ಉಸಿರಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "ಇಂದು ಹೊಲದಲ್ಲಿ",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "ಅಗ್ರ ಪತ್ತೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "ಗ್ರಾಮ",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಅನುಭವ",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "ನಿಮ್ಮ ಹೆಸರು",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 ಸೆಕೆಂಡ್",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ ರೆಕಾರ್ಡಿಂಗ್ ತುಂಬಾ ಕಡಿಮೆ — ಕನಿಷ್ಠ 3 ಸೆಕೆಂಡ್ ಬೇಕು",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ ಕೀಟನಾಶಕ ಸಿಂಪಡಿಸಲು ಒಳ್ಳೆಯ ದಿನ",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ ಜಾನುವಾರುಗಳನ್ನು ಆಶ್ರಯಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳಿ",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ ದೀರ್ಘ ರೆಕಾರ್ಡಿಂಗ್ — ಮೊದಲ 20 ಸೆಕೆಂಡ್ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ ಇಂದು ನೀರಾವರಿ ಕಡಿಮೆ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 ಹೊಲಗಳ ಸುತ್ತ ಬದುಗಳನ್ನು ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ ನಾಟಿ ಮಾಡಲು ಒಳ್ಳೆಯ ದಿನ",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 ಖರೀಫ್ ಋತು",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ ಗಾಳಿ ಸಂಚಾರ ಸುಧಾರಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 ಇಂದು ಗೊಬ್ಬರ ಹಾಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 ಗೊಬ್ಬರ ಹಾಕಬೇಡಿ — ತೊಳೆದುಹೋಗುತ್ತದೆ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 ಮಂಜು ಕಡಿಮೆಯಾಗುವವರೆಗೆ ಕತ್ತರಿಸಬೇಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 ನಾಟಿ ಮಾಡಲು ಸೂಕ್ತ ಸಮಯ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 ಸೂಕ್ಷ್ಮ ಬೆಳೆಗಳನ್ನು ಬಟ್ಟೆಯಿಂದ ಮುಚ್ಚಿ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 ಬಾಡುವ ಸಂದರ್ಭಕ್ಕೆ ಬೆಳೆ ಗಮನಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 ಶಿಲೀಂಧ್ರ ರೋಗಕ್ಕೆ ನಿಗಾ ಇರಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 ಆಲಿಸುತ್ತಿದ್ದೇವೆ…",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 ತಡೆಗಟ್ಟುವ ಶಿಲೀಂಧ್ರನಾಶಕ ಹಾಕಿ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 ಮಣ್ಣಿನ ತೇವಾಂಶ ಮಟ್ಟ ಪರಿಶೀಲಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 ನೀರು ಹರಿಯುವ ಕಾಲುವೆಗಳನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 ಮೊಳಕೆ ಒಡೆಯಲು ಒಳ್ಳೆಯದು",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 ನೀರಾವರಿ ಹೆಚ್ಚಿಸಿ — ಶಾಖ ಒತ್ತಡ ಸಂಭವಿಸಬಹುದು",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 ಮಧ್ಯಮ ನೀರಾವರಿ ಅಗತ್ಯ",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 ಸ್ಯಾಂಪಲ್ ದರ 16 kHz ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 ಕಡಿಮೆ ಸ್ಯಾಂಪಲ್ ದರ ನಿಖರತೆ ಕಡಿಮೆ ಮಾಡಬಹುದು",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 ಪ್ರವಾಹವಾದರೆ ಕೃಷಿ ಕಚೇರಿ ಸಂಪರ್ಕಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 ತುಂಬಾ ಶಾಂತ — ಮೈಕ್ ಅನ್ನು ಕಾಂಡ ಹತ್ತಿರ ಹಿಡಿಯಿರಿ",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 ವಿಶ್ಲೇಷಿಸು",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 ಮಂಜಿನ ಮೊದಲು ಹಗುರ ನೀರಾವರಿ ಬೇರುಗಳನ್ನು ರಕ್ಷಿಸುತ್ತದೆ",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 ಹೊರಗಿನ ಕೆಲಸ ಕಡಿಮೆ ಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 ಕೊಯ್ಲಿಗೆ ಸೂಕ್ತ",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 ತಕ್ಷಣ ಎಲ್ಲಾ ಹೊಲದ ಕೆಲಸ ನಿಲ್ಲಿಸಿ",
+    "context": "",
+    "role": ""
+  }
+}

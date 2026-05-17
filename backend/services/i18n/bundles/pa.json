@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "ਕਾਂਟ-ਛਾਂਟ ਕਰਨ ਦਾ ਸਿਫ਼ਾਰਿਸ਼ਕਰਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "ਰੋਗ+ਦ੍ਰਿਸ਼ਟੀ",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "ਮੰਡੀ ਭਾਅ",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "ਸਿੰਚਾਈ",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "ਧੁਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "ਖੇਤ ਨਿਗਰਾਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "ਆਪਣੇ ਖੇਤ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਫਸਲ ਲੱਭੋ",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "ਹੇਠਾਂ ਆਪਣੀ ਮਿੱਟੀ ਅਤੇ ਜਲਵਾਯੂ ਦੇ ਵੇਰਵੇ ਦਰਜ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "ਹਦਾਇਤਾਂ ਨੂੰ ਉੱਚੀ ਆਵਾਜ਼ ਵਿੱਚ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "ਸਥਾਨ ਤੋਂ ਆਟੋ-ਫਿਲ ਮਾਹੌਲ",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "ਤਾਪਮਾਨ, ਨਮੀ ਅਤੇ ਬਾਰਸ਼ ਨੂੰ ਆਟੋ-ਫਿਲ ਕਰਨ ਲਈ ਆਪਣੇ ਸ਼ਹਿਰ ਵਿੱਚ ਦਾਖਲ ਹੋਵੋ",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "ਮੌਸਮ ਪ੍ਰਾਪਤ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "ਮਿੱਟੀ ਦੇ ਪੌਸ਼ਟਿਕ ਤੱਤ",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "ਜਲਵਾਯੂ ਹਾਲਾਤ",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "ਨਾਈਟ੍ਰੋਜਨ (N) - ਕਿਲੋਗ੍ਰਾਮ/ਹੈਕਟੇਅਰ",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "ਫਾਸਫੋਰਸ (ਪੀ) - ਕਿਲੋਗ੍ਰਾਮ/ਹੈਕਟੇਅਰ",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "ਪੋਟਾਸ਼ੀਅਮ (ਕੇ) - ਕਿਲੋ / ਹੈਕਟੇਅਰ",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "ਮਿੱਟੀ pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "ਤਾਪਮਾਨ (°C)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "ਨਮੀ (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "ਮੀਂਹ (ਮਿਲੀਮੀਟਰ)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "ਫਸਲ ਦੀ ਸਿਫਾਰਸ਼ ਪ੍ਰਾਪਤ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "ਵਧੀਆ ਫਸਲ",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "ਭਰੋਸਾ",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "ਟਿਪ",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "ਖੋਜੀ ਮਿੱਟੀ ਦੀ ਕਿਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "ਮਿੱਟੀ ਦੀ ਸਲਾਹ",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "ਨਤੀਜਾ ਉੱਚੀ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "ਹੋਰ ਵਿਕਲਪ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "ਸਿਖਰ ਦੀਆਂ 8 ਫਸਲਾਂ ਵਿੱਚ ਵਿਸ਼ਵਾਸ",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "ਤੁਹਾਡਾ ਇਨਪੁਟ ਸੰਖੇਪ",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "ਪੈਰਾਮੀਟਰ",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "ਮੁੱਲ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "ਫਸਲਾਂ ਦੇ ਰੋਗ, ਕੀੜੇ ਅਤੇ ਵਿਜ਼ਨ ਏ.ਆਈ",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "ਤਤਕਾਲ AI ਨਿਦਾਨ ਲਈ ਇੱਕ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ · ਜਾਂ ਹੇਠਾਂ ਫਸਲ + ਲੱਛਣ/ਕੀੜੇ ਚੁਣੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "ਵਿਧੀ 1 - ਫੋਟੋ ਨਿਦਾਨ (ਸਿਫਾਰਸ਼ੀ)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "ਢੰਗ 2 - ਲੱਛਣ ਜਾਂਚਕਰਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "ਨਿਦਾਨ ਲਈ ਫਸਲ ਚੁਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "ਤੁਹਾਡਾ ਰਾਜ",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "ਪੱਤਾ/ਸਟਮ/ਫਲ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "ਫੋਟੋ ਤੋਂ ਨਿਦਾਨ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "ਪਿਕਸਲ ਪੈਟਰਨਾਂ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "AI ਵਿਸ਼ਵਾਸ",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "ਇਲਾਜ",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "ਰੋਕਥਾਮ",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "ਖੋਜਿਆ ਗਿਆ",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "WhatsApp 'ਤੇ ਸ਼ੇਅਰ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "ਘੱਟ ਆਤਮ-ਵਿਸ਼ਵਾਸ - ਪ੍ਰਭਾਵਿਤ ਪੱਤੇ ਦੇ ਇੱਕ ਸਾਫ਼, ਚੰਗੀ ਤਰ੍ਹਾਂ ਪ੍ਰਕਾਸ਼ਤ ਕਲੋਜ਼-ਅੱਪ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "ਟਿਕਾਣਾ ਨੋਟ",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "ਦਿਨ ਦੀ ਰੋਸ਼ਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "ਪ੍ਰਭਾਵਿਤ ਖੇਤਰ 'ਤੇ ਕਲੋਜ਼-ਅੱਪ",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "ਤਿੱਖਾ, ਕੋਈ ਧੁੰਦਲਾ ਨਹੀਂ",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "ਫਸਲ",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "ਲੱਛਣ ਦੇਖਿਆ ਗਿਆ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "ਲੱਛਣ/ਕੀੜੇ ਦੁਆਰਾ ਨਿਦਾਨ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "ਲੱਛਣਾਂ ਦੁਆਰਾ ਨਿਦਾਨ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "ਲਾਈਵ ਮੰਡੀ ਦੀਆਂ ਕੀਮਤਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "Agmarknet ਤੋਂ ਅਸਲ-ਸਮੇਂ ਦੀਆਂ ਕੀਮਤਾਂ। ਰਾਜ-ਕੈਲੀਬਰੇਟਡ 30-ਦਿਨ ਦੀ ਭਵਿੱਖਬਾਣੀ ਪੈਗੰਬਰ ਦੁਆਰਾ ਸੰਚਾਲਿਤ।",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "ਹਦਾਇਤਾਂ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "ਪੂਰਵ ਅਨੁਮਾਨ (ਦਿਨ)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "ਲਾਈਵ ਕੀਮਤ + ਪੂਰਵ ਅਨੁਮਾਨ ਪ੍ਰਾਪਤ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "ਵਧੀਆ ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "ਸਭ ਤੋਂ ਘੱਟ ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "ਔਸਤ / 30D",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "ਵੇਚਣ ਲਈ ਉਡੀਕ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "ਹੁਣ ਵੇਚੋ",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "ਮਾਰਕੀਟ ਸਲਾਹ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "ਕੀਮਤ ਪੂਰਵ ਅਨੁਮਾਨ ਚਾਰਟ",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "ਪੂਰੀ ਪੂਰਵ ਅਨੁਮਾਨ ਸਾਰਣੀ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "ਪੂਰਵ ਅਨੁਮਾਨ ਦੀ ਸ਼ੁੱਧਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "ਸਮਾਰਟ ਸਿੰਚਾਈ ਅਤੇ ਖਾਦ ਸਲਾਹਕਾਰ",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "ਆਪਣੀ ਫ਼ਸਲ ਅਤੇ ਮੌਸਮ ਦੇ ਆਧਾਰ 'ਤੇ ਸਹੀ ਪਾਣੀ ਅਤੇ ਖਾਦ ਦੀਆਂ ਸਿਫ਼ਾਰਸ਼ਾਂ ਪ੍ਰਾਪਤ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "ਲਾਈਵ ਮੌਸਮ (ਆਟੋ-ਫਿਲ)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "ਆਪਣੇ ਸ਼ਹਿਰ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "ਟੈਂਪ",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "ਹਵਾ",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "ਮੀਂਹ 1 ਘੰਟੇ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "ਫਸਲ ਦੇ ਵੇਰਵੇ",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "ਵਿਕਾਸ ਪੜਾਅ",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "ਖੇਤ ਖੇਤਰ (ਏਕੜ)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "ਪਿਛਲੇ 3 ਦਿਨਾਂ ਵਿੱਚ ਮੀਂਹ (ਮਿਲੀਮੀਟਰ)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "ਅੱਜ ਦਾ ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "ਸਿੰਚਾਈ ਸਲਾਹ ਪ੍ਰਾਪਤ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "ਪਾਣੀ ਦੀ ਲੋੜ",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "ਸ਼ੁੱਧ ਸਿੰਚਾਈ",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "ਕੁੱਲ ਪਾਣੀ",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "ਲਈ",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "ਏਕੜ",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "ਅੱਜ ਕੋਈ ਸਿੰਚਾਈ ਦੀ ਲੋੜ ਨਹੀਂ!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "ਹਾਲੀਆ ਵਰਖਾ ਕਾਫੀ ਹੈ।",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "ਹਲਕੀ ਸਿੰਚਾਈ ਦੀ ਸਿਫਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "ਲਾਗੂ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "ਸਿੰਚਾਈ ਦੀ ਤੁਰੰਤ ਲੋੜ ਹੈ",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "ਖਾਦ ਦੀ ਸਿਫਾਰਸ਼",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "ਐਕੋਸਟਿਕ ਪੈਸਟ ਡਿਟੈਕਟਰ",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "ਤੁਸੀਂ ਕਿਹੜੀ ਫਸਲ ਰਿਕਾਰਡ ਕੀਤੀ?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "ਫੀਲਡ ਆਡੀਓ ਰਿਕਾਰਡਿੰਗ ਅੱਪਲੋਡ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "ਕੀੜਿਆਂ ਲਈ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "ਖੋਜ ਵਿਸ਼ਵਾਸ",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "ਪ੍ਰਭਾਵੀ ਬਾਰੰਬਾਰਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "ਸਿਗਨਲ ਊਰਜਾ",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "ਸਪੈਕਟ੍ਰਲ ਪੈਟਰਨ",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "ਜੋਖਮ ਪੱਧਰ",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "ਸਿਫਾਰਸ਼ੀ ਕਾਰਵਾਈ",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "ਵਟਸਐਪ 'ਤੇ ਪੈਸਟ ਅਲਰਟ ਸਾਂਝਾ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "ਫੀਲਡ ਵਾਚ - ਸੈਟੇਲਾਈਟ ਇੰਟੈਲੀਜੈਂਸ",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "ਲਾਈਵ ਸੈਟੇਲਾਈਟ ਮੌਸਮ, ਜੰਗਲੀ ਅੱਗ ਦੀਆਂ ਚਿਤਾਵਨੀਆਂ, ਹੜ੍ਹਾਂ ਦੀਆਂ ਚੇਤਾਵਨੀਆਂ, ਟਿੱਡੀਆਂ ਦੇ ਝੁੰਡ ਦਾ ਡਾਟਾ, ਅਤੇ ਹਵਾ ਦੀ ਗੁਣਵੱਤਾ — ਸਭ ਇੱਕ ਥਾਂ 'ਤੇ। ਹਰ ਵਾਰ ਜਦੋਂ ਤੁਸੀਂ ਇਸ ਟੈਬ ਨੂੰ ਖੋਲ੍ਹਦੇ ਹੋ ਅੱਪਡੇਟ।",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "ਤੁਹਾਡਾ ਸ਼ਹਿਰ / ਨਜ਼ਦੀਕੀ ਸ਼ਹਿਰ",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "ਸੂਚਿਤ ਕਰਨ ਲਈ ਵਟਸਐਪ ਨੰਬਰ (ਇੱਕ ਪ੍ਰਤੀ ਲਾਈਨ, 91 ਦੇ ਨਾਲ)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "ਕਿਸਾਨ ਦਾ ਨਾਮ",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "ਤੁਹਾਡੀ ਫਸਲ",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "ਹੁਣੇ ਮੇਰੇ ਖੇਤਰ ਨੂੰ ਸਕੈਨ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "ਕੁੱਲ ਫੀਲਡ ਜੋਖਮ",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "ਮੌਜੂਦਾ ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "ਹੜ੍ਹ ਦਾ ਖਤਰਾ (ਅਗਲੇ 48 ਘੰਟੇ)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "ਜੰਗਲੀ ਅੱਗ / ਫੀਲਡ ਫਾਇਰ ਚੇਤਾਵਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "ਮਾਰੂਥਲ ਟਿੱਡੀ ਚੇਤਾਵਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "ਹਵਾ ਦੀ ਗੁਣਵੱਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "ਫੀਲਡ ਚੇਤਾਵਨੀ ਸੰਖੇਪ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "ਸੰਪਰਕਾਂ ਨੂੰ ਫੀਲਡ ਅਲਰਟ ਭੇਜੋ",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "ਐਮਰਜੈਂਸੀ ਹੈਲਪਲਾਈਨਜ਼",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "ਫੋਟੋ ਅੱਪਲੋਡ ਕੀਤੀ",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "ਫਾਈਲ",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "ਮਾਪ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "ਕਲੀਅਰ ਡੇਲਾਈਟ ਫੋਟੋ, ਪ੍ਰਭਾਵਿਤ ਖੇਤਰ ਦਾ ਕਲੋਜ਼-ਅੱਪ।",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "ਸ਼ਹਿਰ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਸਪੈਲਿੰਗ ਦੀ ਜਾਂਚ ਕਰੋ ਜਾਂ ਨੇੜਲੇ ਸ਼ਹਿਰ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਸ਼ਹਿਰ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "ਆਡੀਓ ਉਪਲਬਧ ਨਹੀਂ ਹੈ",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "ਟੈਬ ਜਾਣਕਾਰੀ ਪੜ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "ਫ਼ਸਲ ਸਲਾਹਕਾਰ",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "ਪੱਤਾ ਡਾਕਟਰ",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "ਸਿੰਚਾਈ",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "ਖੇਤ ਸੁਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "ਮਿੱਟੀ",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "ਮਿੱਟੀ ਅਤੇ ਜਲਵਾਯੂ ਵਿਸ਼ਲੇਸ਼ਣ…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "ਸਾਡੀ ਸਿਫ਼ਾਰਸ਼",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "ਇਹ ਵੀ ਵਧੀਆ",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "ਸਾਰੀਆਂ ਫ਼ਸਲਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "ਰੀਸੈੱਟ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 ਫ਼ਸਲ ਸੁਝਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 ਵਿਸ਼ਲੇਸ਼ਣ…",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "ਨਾਈਟ੍ਰੋਜਨ",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "ਫਾਸਫੋਰਸ",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "ਪੋਟਾਸ਼ੀਅਮ",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "ਤਾਪਮਾਨ",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "ਨਮੀ",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "ਬਾਰਸ਼",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "ਫ਼ਸਲ ਸਲਾਹਕਾਰ",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "ਜਾਣੋ ਤੁਹਾਡੀ ਮਿੱਟੀ ਕੀ",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "ਉਗਾਉਣਾ ਚਾਹੁੰਦੀ ਹੈ।",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "ਪੱਤਾ ਡਾਕਟਰ",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "ਇੱਕ",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "ਦੂਜੀ ਨਜ਼ਰ",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "ਬਿਮਾਰ ਪੱਤਿਆਂ ਲਈ।",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "ਮੰਡੀ",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "ਮੰਡੀ",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "ਪਾਣੀ",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "ਸੁਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "ਸੁਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "ਖੇਤ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "ਫੋਟੋ ਭੇਜੋ",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "ਅਸੀਂ ਕੀ ਦੇਖਿਆ",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "ਰਿਕਾਰਡਿੰਗ ਅਪਲੋਡ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "ਅਸੀਂ ਕੀ ਸੁਣਿਆ",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "ਸਿੰਚਾਈ ਦੀ ਗਣਨਾ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "ਸਲਾਹ ਲਓ",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 ਹੁਣ ਸਕੈਨ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "ਐਮਰਜੈਂਸੀ ਹੈਲਪਲਾਈਨ",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "ਪਰਾਗਣ ਕਰਨ ਵਾਲਾ",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "ਕੀੜਾ",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "ਵਾਤਾਵਰਨ",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "ਸ਼ੁਰੂਆਤੀ",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "ਵਿਕਾਸ",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "ਮੱਧ-ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "ਅਖੀਰੀ ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "ਸਭ ਤੋਂ ਵਧੀਆ ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "ਸਭ ਤੋਂ ਘੱਟ ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "ਔਸਤ ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "ਸਾਡੀ ਸਲਾਹ",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "ਦਿਨ",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "ਤਾਰੀਖ਼",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "ਕੀਮਤ",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "ਘੱਟੋ-ਘੱਟ",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "ਵੱਧ ਤੋਂ ਵੱਧ",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "ਭਰੋਸਾ",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "ਮਿਆਦ",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "ਸੈਂਪਲ ਦਰ",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "ਊਰਜਾ",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "ਗੰਭੀਰਤਾ",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "ਭੂਮਿਕਾ",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "ਨਾਮ",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "ਆਈਕਨ",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "ਬਾਰੰਬਾਰਤਾ ਸੀਮਾ",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "ਸਾਫ਼ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "ਕਿਸਾਨ · 2019 ਤੋਂ",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "ਅੱਜ ਦਾ ਸ਼ਾਂਤ ਖੇਤ ਕੱਲ੍ਹ ਦੀ ਚੰਗੀ ਫ਼ਸਲ ਹੈ।",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "ਸਿਖਰਲੇ ਨਤੀਜੇ",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "ਰਾਹੀਂ",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "ਹੁਣੇ",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "ਇਲਾਜ",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "ਰੋਕਥਾਮ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "ਭਵਿੱਖਬਾਣੀ ਸਮਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 ਭਵਿੱਖਬਾਣੀ ਲਓ",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "ਮੰਡੀਆਂ",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "ਰਾਜ ਕਾਰਕ",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "ਨੂੰ",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 ਸਿੱਧਾ",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 ਅਨੁਮਾਨਿਤ",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "ਖ਼ਤਰਾ",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "ਵਰਗਾ ਮਹਿਸੂਸ ਹੁੰਦਾ",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "ਸਤਹ ਹਵਾ",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "ਪਿਛਲਾ ਘੰਟਾ",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "ਹੜ੍ਹ ਦਾ ਖ਼ਤਰਾ",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "48 ਘੰਟੇ ਦੀ ਬਾਰਸ਼:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "ਅੱਗ",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "ਨੇੜੇ ਦੇ ਹੌਟਸਪੌਟ:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "ਸਰੋਤ:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "ਟਿੱਡੀ",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "ਨੇੜੇ ਦੇ ਟੋਲੇ:",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "WhatsApp 'ਤੇ ਭੇਜੋ",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 ਕਾਪੀ",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 WhatsApp ਖੋਲ੍ਹੋ",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "ਮੇਰੇ ਨੰਬਰ 'ਤੇ ਭੇਜੋ",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "ਕਿਸਾਨ ਕਾਲ ਸੈਂਟਰ",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "ਮੁਫ਼ਤ · 24/7 · ਸਾਰੀਆਂ ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM ਕਿਸਾਨ ਹੈਲਪਲਾਈਨ",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM ਕਿਸਾਨ ਯੋਜਨਾ ਜਾਣਕਾਰੀ",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF ਐਮਰਜੈਂਸੀ",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "ਹੜ੍ਹ, ਭੂਚਾਲ, ਆਫ਼ਤ",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "ਐਂਬੂਲੈਂਸ",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "ਡਾਕਟਰੀ ਐਮਰਜੈਂਸੀ",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "ਪੁਲਿਸ",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "ਸੁਰੱਖਿਆ / ਚੋਰੀ",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "ਰਾਜ ਖੇਤੀਬਾੜੀ ਵਿਭਾਗ",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "ਬਿਮਾਰੀ ਫੈਲਾਅ ਰਿਪੋਰਟ",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "ਲੋੜੀਂਦਾ ਪਾਣੀ",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "ਸ਼ੁੱਧ ਸਿੰਚਾਈ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "ਫ਼ਸਲ Kc ਕਾਰਕ",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "ਜ਼ਰੂਰੀਅਤ",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "ਖਾਦ",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "ਨਾਈਟ੍ਰੋਜਨ:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "ਮੌਸਮ ਸੁਝਾਅ",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "ਖੇਤ ਦਾ ਖੇਤਰ",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "ਏਕੜ",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "ਹਾਲੀਆ ਬਾਰਸ਼",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "ਮਿਮੀ",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "ਹਵਾ ਦੀ ਗਤੀ",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "ਕਿਮੀ/ਘੰਟਾ",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "ਮਿੱਟੀ",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "ਖੇਤ ਸਕੈਨ ਹੋ ਰਿਹਾ ਹੈ…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "ਪਹੁੰਚ ਨਾਮਨਜ਼ੂਰ",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "ਨੈੱਟਵਰਕ ਗੜਬੜ",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "ਗੜਬੜ",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API ਕੀ ਸਮੱਸਿਆ — config.js ਜਾਂਚੋ।",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API ਕੀ ਸਮੱਸਿਆ — ਕੌਨਫਿਗਰੇਸ਼ਨ ਜਾਂਚੋ।",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API ਕੀ ਗਲਤ — web/config.js ਜਾਂਚੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "ਵਿਸ਼ਲੇਸ਼ਣ ਅਸਫਲ",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "ਵਿਸ਼ਲੇਸ਼ਣ ਅਸਫਲ।",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "ਪੱਤੇ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "ਸਿੰਚਾਈ ਦੀ ਗਣਨਾ ਕਰ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "ਇਹ ਆਡੀਓ ਫਾਰਮੈਟ ਦਿਖਾਇਆ ਨਹੀਂ ਜਾ ਸਕਦਾ — ਫਿਰ ਵੀ ਅਪਲੋਡ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude ਸਲਾਹ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "ਫੋਟੋ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਨਹੀਂ ਹੋਇਆ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "ਮਿੱਟੀ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਨਹੀਂ ਹੋਇਆ",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "ਗਣਨਾ ਨਹੀਂ ਹੋਈ",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "ਅਨੁਮਾਨ ਨਹੀਂ ਮਿਲਿਆ",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "ਫ਼ਸਲ ਦੀ ਕਿਸਮ (ਵਿਕਲਪਿਕ)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "ਖੇਤ ਦਾ ਆਡੀਓ ਇੱਥੇ ਖਿੱਚੋ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "ਇੱਥੇ ਪੱਤੇ ਦੀ ਫੋਟੋ ਪਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਖੱਬੇ ਪਾਸੇ ਰਿਕਾਰਡਿੰਗ ਪਾਓ। 🐛",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "ਬਾਜ਼ਾਰ ਡੇਟਾ ਲੈ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "ਫਾਇਲ ਬਹੁਤ ਵੱਡੀ ਹੈ (ਵੱਧ ਤੋਂ ਵੱਧ 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "ਪੂਰੀ ਅਨੁਮਾਨ ਸਾਰਣੀ",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "ਵਿਕਾਸ ਪੜਾਅ",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "ਕੀੜਿਆਂ ਦੀ ਆਵਾਜ਼ ਸੁਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "ਕੁਝ ਸਕਿੰਟ ਬੂਟੇ ਕੋਲ ਫੋਨ ਫੜੋ। ਕੀੜਿਆਂ ਦੀ ਆਵਾਜ਼ ਸੁਣ ਕੇ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ ਚੇਤਾਵਨੀ ਦੇਵਾਂਗੇ।",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "ਅਵੈਧ ਜਾਂ ਗੁੰਮ API ਕੀ।",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "ਲੋੜੀਂਦਾ ਪਾਣੀ,",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · ਤਿਆਰ",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "ਤੁਹਾਡਾ ਖੇਤ ਸੁਣ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "ਲਾਈਵ ਮੰਡੀ ਡੇਟਾ ਨਹੀਂ — ਸਿਰਫ਼ ਮਾਡਲ ਅਨੁਮਾਨ।",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "ਨੈੱਟਵਰਕ ਗੜਬੜ — ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "ਨੈੱਟਵਰਕ ਗੜਬੜ — ਕਿਰਪਾ ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ।",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "ਕਨੈਕਸ਼ਨ ਨਹੀਂ — ਨੈੱਟਵਰਕ ਜਾਂਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "ਚਾਰਟ ਲਈ ਕਾਫ਼ੀ ਡੇਟਾ ਨਹੀਂ।",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "ਕੀਮਤ ਅਨੁਮਾਨ",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "ਸੰਦਰਭ ਲਾਇਬ੍ਰੇਰੀ",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "ਫੋਟੋ ਭੇਜੋ ਅਸੀਂ ਦੇਖਾਂਗੇ। 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "ਸਾਈਨ ਆਊਟ",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "ਚਿੰਤਾਵਾਲੇ ਪੱਤੇ ਦੀ ਫੋਟੋ ਲਓ। ਧਿਆਨ ਨਾਲ ਦੇਖ ਕੇ ਕੀ ਹੋ ਰਿਹਾ ਹੈ ਦੱਸਾਂਗੇ।",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "ਕੁਝ ਗਲਤ ਹੋਇਆ।",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "ਆਪਣੇ ਖੇਤ ਬਾਰੇ ਦੱਸੋ। 26 ਫ਼ਸਲਾਂ ਵਿੱਚੋਂ ਸਭ ਤੋਂ ਢੁਕਵੀਂ ਸੁਝਾਵਾਂਗੇ।",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "ਅਚਾਨਕ ਗੜਬੜ।",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "ਅਣਜਾਣ ਗੜਬੜ",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "FAO ਪਾਣੀ ਗਣਨਾ ਕਰ ਕੇ ਸਰਲ ਭਾਸ਼ਾ ਵਿੱਚ ਦੱਸਾਂਗੇ: ਅੱਜ ਕਿੰਨੇ ਲਿਟਰ, ਅਗਲੀ ਸਿੰਚਾਈ ਕਦੋਂ।",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "ਮੰਡੀ ਦੇ ਭਾਅ ਦੇਖ ਕੇ ਹੁਣ ਵੇਚਣਾ ਹੈ ਜਾਂ ਉਡੀਕ ਕਰਨੀ ਹੈ ਦੱਸਾਂਗੇ।",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "ਮੌਸਮ, ਅੱਗ, ਟਿੱਡੀ, ਮਿੱਟੀ — ਸਭ ਇੱਕ ਸ਼ਾਂਤ ਦ੍ਰਿਸ਼ ਵਿੱਚ।",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "ਤੁਹਾਡਾ ਖੇਤ",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "ਇੱਕ ਸ਼ਾਂਤ ਫ਼ੈਸਲਾ।",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "ਥੋੜਾ ਘੱਟ",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "ਥੋੜਾ ਖਾਰਾ",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "ਤੇਜ਼ਾਬੀ",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "ਬੈਂਡ ਊਰਜਾ",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "ਦਿਖਣ ਤੋਂ ਪਹਿਲਾਂ।",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "ਵਾਜਬ ਕੀਮਤ,",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "ਲਾਈਵ ਡੇਟਾ ਲੈ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਲਈ।",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "ਸਹੀ ਸਮੇਂ ਤੇ।",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "ਸਹੀ ਮਾਤਰਾ",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "ਜਾਣੇ-ਪਛਾਣੇ ਕੀੜੇ",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "ਭਾਸ਼ਾ",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "ਲਾਈਵ ਮੰਡੀ",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "ਫ਼ਸਲਾਂ ਲੋਡ ਹੋ ਰਹੀਆਂ ਹਨ…",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "ਜਾਂ ਕਲਿੱਕ ਕਰੋ · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "ਜਾਂ ਕਲਿੱਕ ਕਰੋ · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "ਵਿੱਚ",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "ਫ਼ੋਨ",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "ਕਾਫ਼ੀ",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "ਮੁੱਖ ਫ਼ਸਲ",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "ਗੁਣਵੱਤਾ ਨੋਟਸ",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "ਸ਼ਾਂਤ ਰੋਜ਼ਾਨਾ ਜਾਂਚ",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "ਆਦਰਸ਼ ਪੱਧਰ",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "ਸੁਝਾਅ: ਤਣੇ ਤੋਂ 15–30 ਸੈ.ਮੀ. · ਹੌਲੀ ਸਾਹ ਲਓ",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "ਅੱਜ ਖੇਤ ਵਿੱਚ",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "ਸਿਖਰਲੀਆਂ ਖੋਜਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "ਪਿੰਡ",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "ਤੁਹਾਡਾ ਸਥਾਨਕ ਅਨੁਭਵ",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "ਤੁਹਾਡਾ ਨਾਮ",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 ਸਕਿੰਟ",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ ਰਿਕਾਰਡਿੰਗ ਬਹੁਤ ਛੋਟੀ — ਘੱਟੋ-ਘੱਟ 3 ਸਕਿੰਟ ਚਾਹੀਦੇ",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ ਕੀਟਨਾਸ਼ਕ ਛਿੜਕਣ ਦਾ ਚੰਗਾ ਦਿਨ",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ ਪਸ਼ੂਆਂ ਨੂੰ ਆਸਰੇ ਵਿੱਚ ਲੈ ਜਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ ਲੰਬੀ ਰਿਕਾਰਡਿੰਗ — ਪਹਿਲੇ 20 ਸਕਿੰਟ ਵਿਸ਼ਲੇਸ਼ਿਤ",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ ਅੱਜ ਸਿੰਚਾਈ ਘਟਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 ਖੇਤਾਂ ਦੁਆਲੇ ਵੱਟਾਂ ਬਣਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ ਪੌਦੇ ਲਗਾਉਣ ਦਾ ਚੰਗਾ ਦਿਨ",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 ਖਰੀਫ਼ ਮੌਸਮ",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ ਹਵਾ ਦਾ ਵਹਾਅ ਬਿਹਤਰ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 ਅੱਜ ਖਾਦ ਪਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 ਖਾਦ ਨਾ ਪਾਓ — ਵਹਿ ਜਾਵੇਗੀ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 ਪਾਲਾ ਲੰਘਣ ਤੱਕ ਕੱਟਾਈ ਨਾ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 ਪੌਦੇ ਲਗਾਉਣ ਦਾ ਢੁਕਵਾਂ ਸਮਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 ਨਾਜ਼ੁਕ ਫ਼ਸਲਾਂ ਨੂੰ ਕੱਪੜੇ ਨਾਲ ਢੱਕੋ",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 ਫ਼ਸਲਾਂ ਮੁਰਝਾ ਰਹੀਆਂ ਹਨ ਕਿ ਨਹੀਂ ਦੇਖੋ",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 ਫੰਗਲ ਰੋਗ ਵੱਲ ਧਿਆਨ ਰੱਖੋ",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 ਸੁਣ ਰਹੇ ਹਾਂ…",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 ਰੋਕਥਾਮੀ ਉੱਲੀਨਾਸ਼ਕ ਲਗਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 ਮਿੱਟੀ ਦੀ ਨਮੀ ਜਾਂਚੋ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 ਨਿਕਾਸੀ ਨਾਲੇ ਸਾਫ਼ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 ਉਗਣ ਲਈ ਚੰਗਾ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 ਸਿੰਚਾਈ ਵਧਾਓ — ਗਰਮੀ ਦਾ ਤਣਾਅ ਹੋ ਸਕਦਾ",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 ਦਰਮਿਆਨੀ ਸਿੰਚਾਈ ਲੋੜੀਂਦੀ",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 ਸੈਂਪਲ ਦਰ 16 kHz ਕੀਤੀ",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 ਘੱਟ ਸੈਂਪਲ ਦਰ ਸ਼ੁੱਧਤਾ ਘਟਾ ਸਕਦੀ",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 ਹੜ੍ਹ ਆਵੇ ਤਾਂ ਖੇਤੀਬਾੜੀ ਦਫ਼ਤਰ ਸੰਪਰਕ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 ਬਹੁਤ ਸ਼ਾਂਤ — ਮਾਈਕ ਤਣੇ ਦੇ ਨੇੜੇ ਰੱਖੋ",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 ਵਿਸ਼ਲੇਸ਼ਣ",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 ਪਾਲੇ ਤੋਂ ਪਹਿਲਾਂ ਹਲਕੀ ਸਿੰਚਾਈ ਜੜ੍ਹਾਂ ਬਚਾਉਂਦੀ ਹੈ",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 ਬਾਹਰੀ ਕੰਮ ਘਟਾਓ",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 ਵਾਢੀ ਲਈ ਢੁਕਵਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 ਤੁਰੰਤ ਸਾਰਾ ਖੇਤ ਕੰਮ ਬੰਦ ਕਰੋ",
+    "context": "",
+    "role": ""
+  }
+}

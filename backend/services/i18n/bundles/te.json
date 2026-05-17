@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "పంట సిఫార్సుదారు",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "వ్యాధి + దృష్టి",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "మార్కెట్ ధరలు",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "నీటిపారుదల",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "అకౌస్టిక్",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "పొలం నిఘా",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "మీ పొలానికి ఉత్తమమైన పంటను కనుగొనండి",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "మీ నేల మరియు వాతావరణ వివరాలను దిగువన నమోదు చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "సూచనలను బిగ్గరగా చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "స్థానం నుండి వాతావరణాన్ని స్వయంచాలకంగా పూరించండి",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "ఉష్ణోగ్రత, తేమ & వర్షపాతం స్వయంచాలకంగా పూరించడానికి మీ నగరాన్ని నమోదు చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "వాతావరణాన్ని పొందండి",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "నేల పోషకాలు",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "వాతావరణ పరిస్థితులు",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "నైట్రోజన్ (N) - కిలో/హె",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "భాస్వరం (P) - kg/ha",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "పొటాషియం (కె) - కిలో/హె",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "నేల pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "ఉష్ణోగ్రత (°C)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "తేమ (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "వర్షపాతం (మి.మీ)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "పంట సిఫార్సు పొందండి",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "ఉత్తమ పంట",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "విశ్వాసం",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "చిట్కా",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "గుర్తించబడిన నేల రకం",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "నేల సలహా",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "ఫలితాన్ని బిగ్గరగా చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "ఇతర ఎంపికలు",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "అగ్ర 8 పంటలపై విశ్వాసం",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "మీ ఇన్‌పుట్ సారాంశం",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "పరామితి",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "విలువ",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "క్రాప్ డిసీజ్, పెస్ట్ & విజన్ AI",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "తక్షణ AI నిర్ధారణ కోసం ఫోటోను అప్‌లోడ్ చేయండి · లేదా దిగువన పంట + లక్షణం/చీడలను ఎంచుకోండి.",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "విధానం 1 — ఫోటో నిర్ధారణ (సిఫార్సు చేయబడింది)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "విధానం 2 - లక్షణ తనిఖీ",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "రోగ నిర్ధారణ కోసం పంటను ఎంచుకోండి",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "మీ రాష్ట్రం",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "ఆకు / కాండం / పండు ఫోటోను అప్‌లోడ్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "ఫోటో నుండి నిర్ధారణ",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "పిక్సెల్ నమూనాలను విశ్లేషిస్తోంది...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "AI విశ్వాసం",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "చికిత్స",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "నివారణ",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "గుర్తించబడింది",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "WhatsAppలో భాగస్వామ్యం చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "తక్కువ విశ్వాసం - ప్రభావితమైన ఆకు యొక్క స్పష్టమైన, బాగా వెలిగించే క్లోజప్‌ని ప్రయత్నించండి.",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "స్థాన గమనిక",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "పగలు",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "ప్రభావిత ప్రాంతంపై క్లోజప్",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "షార్ప్, బ్లర్ లేదు",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "పంట",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "లక్షణం గమనించబడింది",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "లక్షణం / తెగులు ద్వారా నిర్ధారణ",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "లక్షణం ద్వారా నిర్ధారణ",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "ప్రత్యక్ష మండీ ధరలు",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "Agmarknet నుండి నిజ-సమయ ధరలు. ప్రవక్త ద్వారా అందించబడిన రాష్ట్ర-క్యాలిబ్రేట్ 30-రోజుల సూచన.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "సూచనలను చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "సూచన హోరిజోన్ (రోజులు)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "ప్రత్యక్ష ధర + సూచన పొందండి",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "ఉత్తమ ధర",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "అత్యల్ప ధర",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "సగటు / 30D",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "విక్రయించడానికి వేచి ఉండండి",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "ఇప్పుడే అమ్ము",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "మార్కెట్ సలహాను చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "ధర సూచన చార్ట్",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "పూర్తి సూచన పట్టిక",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "సూచన ఖచ్చితత్వం",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "స్మార్ట్ ఇరిగేషన్ & ఎరువుల సలహాదారు",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "మీ పంట మరియు వాతావరణం ఆధారంగా ఖచ్చితమైన నీరు మరియు ఎరువుల సిఫార్సులను పొందండి.",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "ప్రత్యక్ష వాతావరణం (ఆటో-ఫిల్)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "మీ నగరం పేరును నమోదు చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "టెంప్",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "గాలి",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "వర్షం 1గం",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "పంట వివరాలు",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "వృద్ధి దశ",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "క్షేత్ర విస్తీర్ణం (ఎకరాలు)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "గత 3 రోజుల్లో వర్షపాతం (మి.మీ)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "నేడు వాతావరణం",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "నీటిపారుదల సలహా పొందండి",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "నీటి అవసరం",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "నికర నీటిపారుదల",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "మొత్తం నీరు",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "కోసం",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "ఎకరం(లు)",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "నేడు నీటిపారుదల అవసరం లేదు!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "ఇటీవలి వర్షపాతం సరిపోతుంది.",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "తేలికపాటి నీటిపారుదల సిఫార్సు చేయబడింది",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "దరఖాస్తు చేసుకోండి",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "నీటిపారుదల అత్యవసరం",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "ఎరువుల సిఫార్సు",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "ఎకౌస్టిక్ పెస్ట్ డిటెక్టర్",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "మీరు ఏ పంటను నమోదు చేసారు?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "ఫీల్డ్ ఆడియో రికార్డింగ్‌ని అప్‌లోడ్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "తెగుళ్ళ కోసం విశ్లేషించండి",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "డిటెక్షన్ కాన్ఫిడెన్స్",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "డామినెంట్ ఫ్రీక్వెన్సీ",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "సిగ్నల్ శక్తి",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "వర్ణపట నమూనా",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "ప్రమాద స్థాయి",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "సిఫార్సు చేసిన చర్య",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "వాట్సాప్‌లో పెస్ట్ అలర్ట్‌ని షేర్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "ఫీల్డ్ వాచ్ — శాటిలైట్ ఇంటెలిజెన్స్",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "ప్రత్యక్ష ఉపగ్రహ వాతావరణం, అడవి మంటల హెచ్చరికలు, వరద హెచ్చరికలు, మిడతల సమూహం డేటా మరియు గాలి నాణ్యత — అన్నీ ఒకే చోట. మీరు ఈ ట్యాబ్‌ని తెరిచిన ప్రతిసారీ నవీకరణలు.",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "మీ నగరం / సమీప పట్టణం",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "తెలియజేయడానికి WhatsApp నంబర్‌లు (ఒక లైన్‌కు ఒకటి, 91తో)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "రైతు పేరు",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "మీ పంట",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "నా ఫీల్డ్‌ని ఇప్పుడు స్కాన్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "మొత్తం ఫీల్డ్ రిస్క్",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "ప్రస్తుత వాతావరణం",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "వరద ప్రమాదం (తదుపరి 48 గంటలు)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "అడవి మంటలు / ఫీల్డ్ ఫైర్ అలర్ట్",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "ఎడారి లోకస్ట్ హెచ్చరిక",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "గాలి నాణ్యత",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "ఫీల్డ్ అలర్ట్ సారాంశాన్ని చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "పరిచయాలకు ఫీల్డ్ హెచ్చరికను పంపండి",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "అత్యవసర హెల్ప్‌లైన్‌లు",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "అప్‌లోడ్ చేసిన ఫోటో",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "ఫైల్",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "కొలతలు",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "విశ్లేషిస్తోంది...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "క్లియర్ డేలైట్ ఫోటో, ప్రభావిత ప్రాంతం యొక్క క్లోజప్.",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "నగరం కనుగొనబడలేదు. దయచేసి అక్షరక్రమాన్ని తనిఖీ చేయండి లేదా సమీపంలోని నగరాన్ని ప్రయత్నించండి.",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "దయచేసి మీ నగరం పేరును నమోదు చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "ఆడియో అందుబాటులో లేదు",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "ట్యాబ్ సమాచారాన్ని చదవండి",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "పంట సలహాదారు",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "ఆకు వైద్యుడు",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "నీరు పెట్టడం",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "పొలం వినండి",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "నేల",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "వాతావరణం",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "నేల మరియు వాతావరణం విశ్లేషిస్తున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "మా సిఫారసు",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "ఇవి కూడా మంచివి",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "అన్ని పంటలు",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "రీసెట్",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 పంట సూచించు",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 విశ్లేషిస్తున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "నైట్రోజన్",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "ఫాస్ఫరస్",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "పొటాషియమ్",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "ఉష్ణోగ్రత",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "తేమ",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "వర్షపాతం",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "పంట సలహాదారు",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "మీ నేల ఏమి",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "పెంచాలనుకుంటుందో తెలుసుకోండి.",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "ఆకు డాక్టర్",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "ఒక",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "రెండవ దృష్టి",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "అనారోగ్యకరమైన ఆకులకు.",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "మార్కెట్",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "మార్కెట్",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "నీరు",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "వినండి",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "వినండి",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "పొలం",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "ఫోటో పంపండి",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "మనం చూసింది",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "రికార్డింగ్ అప్‌లోడ్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "మనం విన్నది",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "నీటిపారుదల లెక్కించండి",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "సలాహ తీసుకోండి",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 ఇప్పుడు స్కాన్ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "అత్యవసర హెల్ప్‌లైన్లు",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "పరాగ సంపర్కి",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "తెగులు",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "పరిసర",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "ప్రారంభ",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "అభివృద్ధి",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "మధ్య సీజన్",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "చివరి సీజన్",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "అత్యుత్తమ ధర",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "అతి తక్కువ ధర",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "సగటు ధర",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "మా సలాహ",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "రోజులు",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "తేదీ",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "ధర",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "కనిష్ట",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "గరిష్ట",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "విశ్వాసం",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "వ్యవధి",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "నమూనా రేటు",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "శక్తి",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "తీవ్రత",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "పాత్ర",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "పేరు",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "చిహ్నం",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "పౌన పరిధి",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "తొలగించు",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "రైతు · 2019 నుండి",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "నేటి ప్రశాంత పొలం రేపటి మంచి పంట.",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "అగ్ర ఫలితాలు",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "ద్వారా",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "ఇప్పుడు",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "చికిత్స",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "నివారణ",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "అంచనా వ్యవధి",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 అంచనా పొందండి",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "మండులు",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "రాష్ట్ర కారకం",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "న",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 లైవ్",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 అంచనా",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "ప్రమాదం",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "అనిపిస్తుంది",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "ఉపరితల గాలి",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "చివరి గంట",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "వరద ప్రమాదం",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "48 గంటల వర్షం:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "అగ్ని",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "సమీప హాట్‌స్పాట్లు:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "మూలం:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "మిడత",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "సమీప గుంపులు:",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "WhatsApp కు పంపు",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 కాపీ",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 WhatsApp తెరవు",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "నా నంబర్‌కు పంపు",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "కిసాన్ కాల్ సెంటర్",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "ఉచితం · 24/7 · అన్ని భారతీయ భాషలు",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM కిసాన్ హెల్ప్‌లైన్",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM కిసాన్ పథకం సమాచారం",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF అత్యవసరం",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "వరద, భూకంపం, విపత్తు",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "అంబులెన్స్",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "వైద్య అత్యవసర స్థితి",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "పోలీసు",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "భద్రత / దొంగతనం",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "రాష్ట్ర వ్యవసాయ శాఖ",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "వ్యాధి వ్యాప్తి నివేదన",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "నీరు అవసరం",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "నికర నీటిపారుదల",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "పంట Kc కారకం",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "అత్యవసరత",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "ఎరువు",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "నైట్రోజన్:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "వాతావరణ చిట్కాలు",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "పొలం విస్తీర్ణం",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "ఎకరాలు",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "ఇటీవలి వర్షం",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "మిమీ",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "గాలి వేగం",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "కిమీ/గంట",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "నేల",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "పొలం స్కాన్ అవుతోంది…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "ప్రవేశం నిరాకరించబడింది",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "నెట్‌వర్క్ లోపం",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "లోపం",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API కీ సమస్య — config.js తనిఖీ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API కీ సమస్య — కాన్ఫిగరేషన్ తనిఖీ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API కీ తప్పు — web/config.js తనిఖీ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "విశ్లేషణ విఫలమైంది",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "విశ్లేషణ విఫలమైంది.",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "ఆకును విశ్లేషిస్తున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "నీటిపారుదల లెక్కిస్తున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "ఈ ఆడియో ఫార్మాట్ చూపలేం — అయినా అప్‌లోడ్ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude సలాహ",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "ఫోటో విశ్లేషించలేకపోయాం",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "నేలను విశ్లేషించలేకపోయాం",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "లెక్కించలేకపోయాం",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "అంచనా తీసుకోలేకపోయాం",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "పంట రకం (ఐచ్ఛికం)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "పొలం ఆడియోను ఇక్కడ లాగి వదలండి",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "ఇక్కడ ఆకు ఫోటో వేయండి",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "ప్రారంభించడానికి ఎడమవైపు రికార్డింగ్ వేయండి. 🐛",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "మార్కెట్ డేటా తీసుకుంటున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "ఫైల్ చాలా పెద్దది (గరిష్టం 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "పూర్తి అంచనా పట్టిక",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "వృద్ధి దశ",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "కీటకాల శబ్దం వినండి",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "మొక్క దగ్గర ఫోన్ పట్టుకోండి. మేము కీట శబ్దాలు విని ముందే హెచ్చరిస్తాం.",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "చెల్లని లేదా లేని API కీ.",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "సరిపోయే నీరు,",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · సిద్ధంగా ఉంది",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "మీ పొలాన్ని వింటున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "లైవ్ మండి డేటా లేదు — మోడల్ అంచనా మాత్రమే.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "నెట్‌వర్క్ లోపం — కనెక్షన్ తనిఖీ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "నెట్‌వర్క్ లోపం — దయచేసి కనెక్షన్ తనిఖీ చేయండి.",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "కనెక్షన్ లేదు — నెట్‌వర్క్ తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "చార్ట్‌కు సరిపడా డేటా లేదు.",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "ధర అంచనా",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "సందర్భ గ్రంథాలయం",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "ఫోటో పంపండి మేము చూస్తాం. 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "సైన్ అవుట్",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "ఆందోళనకరమైన ఆకు ఫోటో తీయండి. మేము జాగ్రత్తగా చూసి ఏమి జరుగుతుందో చెప్తాం.",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "ఏదో తప్పు జరిగింది.",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "మీ పొలం గురించి చెప్పండి. 26 పంటలలో వెతికి మీ భూమికి సరైనది సూచిస్తాం.",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "అనూహ్య లోపం.",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "తెలియని లోపం",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "FAO నీటి లెక్కలు చేసి సులభంగా చెప్తాం: ఈరోజు ఎంత లీటర్లు, తదుపరి నీళ్ళు ఎప్పుడు.",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "మండి ధరలు చూసి అమ్మాలా వేచి ఉండాలా అని చెప్తాం.",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "వాతావరణం, అగ్ని, మిడతలు, నేల — అన్నీ ఒక ప్రశాంత దృష్టిలో.",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "మీ పొలం",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "ఒక ప్రశాంత నిర్ణయం.",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "కొంచెం తక్కువ",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "కొంచెం క్షారంగా",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "ఆమ్లంగా",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "బ్యాండ్ శక్తి",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "కనిపించే ముందే.",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "న్యాయమైన ధర,",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "లైవ్ డేటా తీసుకుంటున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "మీ భూమికి.",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "సరిగ్గా సమయానికి.",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "సరైన మొత్తం",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "తెలిసిన కీటకాలు",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "భాష",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "లైవ్ మండి",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "పంటలు లోడ్ అవుతున్నాయి…",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "లేదా క్లిక్ చేయండి · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "లేదా క్లిక్ చేయండి · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "లో",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "ఫోన్",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "పుష్కలం",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "ప్రధాన పంట",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "నాణ్యత గమనికలు",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "ప్రశాంత రోజువారీ తనిఖీ",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "ఆదర్శ స్థాయి",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "సూచన: కాండానికి 15–30 సెమీ దూరంలో · నెమ్మదిగా శ్వాసించండి",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "ఈరోజు పొలంలో",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "అగ్ర గుర్తింపులు",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "గ్రామం",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "మీ స్థానిక అనుభవం",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "మీ పేరు",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 సెకన్లు",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ రికార్డింగ్ చాలా తక్కువ — కనీసం 3 సెకన్లు కావాలి",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ కీటకనాశినులు పిచికారీ చేయడానికి మంచి రోజు",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ పశువులను ఆశ్రయానికి తీసుకెళ్ళండి",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ పొడవైన రికార్డింగ్ — మొదటి 20 సెకన్లు విశ్లేషించాం",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ ఈరోజు నీటిపారుదల తగ్గించండి",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 పొలాల చుట్టూ గట్లు కట్టండి",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ నాటడానికి మంచి రోజు",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 ఖరీఫ్ సీజన్",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ గాలి ప్రసరణ మెరుగుపరచండి",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 ఈరోజు ఎరువులు వేయండి",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 ఎరువు వేయవద్దు — కొట్టుకుపోతుంది",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 మంచు తగ్గే వరకు కత్తిరించవద్దు",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 నాటడానికి అనువైన సమయం",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 సున్నితమైన పంటలను గుడ్డతో కప్పండి",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 వాడిపోవడం కోసం పంటలు గమనించండి",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 శిలీంధ్ర వ్యాధి కోసం చూడండి",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 వింటున్నాం…",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 నివారణ శిలీంధ్రనాశని వేయండి",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 నేల తేమ స్థాయులు తనిఖీ చేయండి",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 నీటి పారుదల కాలువలు శుభ్రపరచండి",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 మొలకలు రావడానికి మంచిది",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 నీటిపారుదల పెంచండి — వేడి ఒత్తిడి సంభవించవచ్చు",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 మధ్యస్థ నీటిపారుదల అవసరం",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 సాంపిల్ రేటు 16 kHz కు మార్చబడింది",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 తక్కువ సాంపిల్ రేటు ఖచ్చితత్వాన్ని తగ్గించవచ్చు",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 వరదలైతే వ్యవసాయ కార్యాలయాన్ని సంప్రదించండి",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 చాలా నిశ్శబ్దంగా ఉంది — మైక్‌ని కాండం దగ్గర పట్టుకోండి",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 విశ్లేషించు",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 మంచు ముందు తేలికపాటి నీటిపారుదల వేర్లను రక్షిస్తుంది",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 బయటి పని తగ్గించండి",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 కోత కోసం అనువైనది",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 వెంటనే అన్ని పొలం పనులు ఆపండి",
+    "context": "",
+    "role": ""
+  }
+}

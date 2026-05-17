@@ -1,0 +1,1817 @@
+{
+  "Crop Recommender": {
+    "text": "Crop Recommender",
+    "context": "",
+    "role": ""
+  },
+  "Disease + Vision": {
+    "text": "Disease + Vision",
+    "context": "",
+    "role": ""
+  },
+  "Market Prices": {
+    "text": "Market Prices",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation": {
+    "text": "Irrigation",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic": {
+    "text": "Acoustic",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch": {
+    "text": "Field Watch",
+    "context": "",
+    "role": ""
+  },
+  "Find the best crop for your field": {
+    "text": "Find the best crop for your field",
+    "context": "",
+    "role": ""
+  },
+  "Enter your soil and climate details below.": {
+    "text": "Enter your soil and climate details below.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions Aloud": {
+    "text": "Read Instructions Aloud",
+    "context": "",
+    "role": ""
+  },
+  "Auto-fill Climate from Location": {
+    "text": "Auto-fill Climate from Location",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city to auto-fill temperature, humidity & rainfall": {
+    "text": "Enter your city to auto-fill temperature, humidity & rainfall",
+    "context": "",
+    "role": ""
+  },
+  "Get Weather": {
+    "text": "Get Weather",
+    "context": "",
+    "role": ""
+  },
+  "Soil Nutrients": {
+    "text": "Soil Nutrients",
+    "context": "",
+    "role": ""
+  },
+  "Climate Conditions": {
+    "text": "Climate Conditions",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen (N) — kg/ha": {
+    "text": "Nitrogen (N) — kg/ha",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus (P) — kg/ha": {
+    "text": "Phosphorus (P) — kg/ha",
+    "context": "",
+    "role": ""
+  },
+  "Potassium (K) — kg/ha": {
+    "text": "Potassium (K) — kg/ha",
+    "context": "",
+    "role": ""
+  },
+  "Soil pH": {
+    "text": "Soil pH",
+    "context": "",
+    "role": ""
+  },
+  "Temperature (°C)": {
+    "text": "Temperature (°C)",
+    "context": "",
+    "role": ""
+  },
+  "Humidity (%)": {
+    "text": "Humidity (%)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall (mm)": {
+    "text": "Rainfall (mm)",
+    "context": "",
+    "role": ""
+  },
+  "Get Crop Recommendation": {
+    "text": "Get Crop Recommendation",
+    "context": "",
+    "role": ""
+  },
+  "Best Crop": {
+    "text": "Best Crop",
+    "context": "",
+    "role": ""
+  },
+  "confidence": {
+    "text": "confidence",
+    "context": "",
+    "role": ""
+  },
+  "Tip": {
+    "text": "Tip",
+    "context": "",
+    "role": ""
+  },
+  "Detected Soil Type": {
+    "text": "Detected Soil Type",
+    "context": "",
+    "role": ""
+  },
+  "Soil Advice": {
+    "text": "Soil Advice",
+    "context": "",
+    "role": ""
+  },
+  "Read Result Aloud": {
+    "text": "Read Result Aloud",
+    "context": "",
+    "role": ""
+  },
+  "Other Options": {
+    "text": "Other Options",
+    "context": "",
+    "role": ""
+  },
+  "Confidence Across Top 8 Crops": {
+    "text": "Confidence Across Top 8 Crops",
+    "context": "",
+    "role": ""
+  },
+  "Your Input Summary": {
+    "text": "Your Input Summary",
+    "context": "",
+    "role": ""
+  },
+  "Parameter": {
+    "text": "Parameter",
+    "context": "",
+    "role": ""
+  },
+  "Value": {
+    "text": "Value",
+    "context": "",
+    "role": ""
+  },
+  "Crop Disease, Pest & Vision AI": {
+    "text": "Crop Disease, Pest & Vision AI",
+    "context": "",
+    "role": ""
+  },
+  "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
+    "text": "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.",
+    "context": "",
+    "role": ""
+  },
+  "Method 1 — Photo Diagnosis (Recommended)": {
+    "text": "Method 1 — Photo Diagnosis (Recommended)",
+    "context": "",
+    "role": ""
+  },
+  "Method 2 — Symptom Checker": {
+    "text": "Method 2 — Symptom Checker",
+    "context": "",
+    "role": ""
+  },
+  "Select Crop for Diagnosis": {
+    "text": "Select Crop for Diagnosis",
+    "context": "",
+    "role": ""
+  },
+  "Your State": {
+    "text": "Your State",
+    "context": "",
+    "role": ""
+  },
+  "Upload leaf / stem / fruit photo": {
+    "text": "Upload leaf / stem / fruit photo",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose from Photo": {
+    "text": "Diagnose from Photo",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing pixel patterns...": {
+    "text": "Analyzing pixel patterns...",
+    "context": "",
+    "role": ""
+  },
+  "AI Confidence": {
+    "text": "AI Confidence",
+    "context": "",
+    "role": ""
+  },
+  "Treatment": {
+    "text": "Treatment",
+    "context": "",
+    "role": ""
+  },
+  "Prevention": {
+    "text": "Prevention",
+    "context": "",
+    "role": ""
+  },
+  "Detected": {
+    "text": "Detected",
+    "context": "",
+    "role": ""
+  },
+  "Share on WhatsApp": {
+    "text": "Share on WhatsApp",
+    "context": "",
+    "role": ""
+  },
+  "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
+    "text": "Low confidence — try a clearer, well-lit close-up of the affected leaf.",
+    "context": "",
+    "role": ""
+  },
+  "Location Note": {
+    "text": "Location Note",
+    "context": "",
+    "role": ""
+  },
+  "Daylight": {
+    "text": "Daylight",
+    "context": "",
+    "role": ""
+  },
+  "Close-up on affected area": {
+    "text": "Close-up on affected area",
+    "context": "",
+    "role": ""
+  },
+  "Sharp, no blur": {
+    "text": "Sharp, no blur",
+    "context": "",
+    "role": ""
+  },
+  "Crop": {
+    "text": "Crop",
+    "context": "",
+    "role": ""
+  },
+  "Symptom observed": {
+    "text": "Symptom observed",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom / Pest": {
+    "text": "Diagnose by Symptom / Pest",
+    "context": "",
+    "role": ""
+  },
+  "Diagnose by Symptom": {
+    "text": "Diagnose by Symptom",
+    "context": "",
+    "role": ""
+  },
+  "Live Mandi Prices": {
+    "text": "Live Mandi Prices",
+    "context": "",
+    "role": ""
+  },
+  "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
+    "text": "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.",
+    "context": "",
+    "role": ""
+  },
+  "Read Instructions": {
+    "text": "Read Instructions",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon (days)": {
+    "text": "Forecast horizon (days)",
+    "context": "",
+    "role": ""
+  },
+  "Get Live Price + Forecast": {
+    "text": "Get Live Price + Forecast",
+    "context": "",
+    "role": ""
+  },
+  "Best Price": {
+    "text": "Best Price",
+    "context": "",
+    "role": ""
+  },
+  "Lowest Price": {
+    "text": "Lowest Price",
+    "context": "",
+    "role": ""
+  },
+  "Avg / 30D": {
+    "text": "Avg / 30D",
+    "context": "",
+    "role": ""
+  },
+  "Wait to sell": {
+    "text": "Wait to sell",
+    "context": "",
+    "role": ""
+  },
+  "Sell now": {
+    "text": "Sell now",
+    "context": "",
+    "role": ""
+  },
+  "Read Market Advice": {
+    "text": "Read Market Advice",
+    "context": "",
+    "role": ""
+  },
+  "Price Forecast Chart": {
+    "text": "Price Forecast Chart",
+    "context": "",
+    "role": ""
+  },
+  "Full Forecast Table": {
+    "text": "Full Forecast Table",
+    "context": "",
+    "role": ""
+  },
+  "Forecast accuracy": {
+    "text": "Forecast accuracy",
+    "context": "",
+    "role": ""
+  },
+  "Smart Irrigation & Fertilizer Advisor": {
+    "text": "Smart Irrigation & Fertilizer Advisor",
+    "context": "",
+    "role": ""
+  },
+  "Get precise water and fertilizer recommendations based on your crop and weather.": {
+    "text": "Get precise water and fertilizer recommendations based on your crop and weather.",
+    "context": "",
+    "role": ""
+  },
+  "Live Weather (Auto-fill)": {
+    "text": "Live Weather (Auto-fill)",
+    "context": "",
+    "role": ""
+  },
+  "Enter your city name": {
+    "text": "Enter your city name",
+    "context": "",
+    "role": ""
+  },
+  "Temp": {
+    "text": "Temp",
+    "context": "",
+    "role": ""
+  },
+  "Wind": {
+    "text": "Wind",
+    "context": "",
+    "role": ""
+  },
+  "Rain 1h": {
+    "text": "Rain 1h",
+    "context": "",
+    "role": ""
+  },
+  "Crop Details": {
+    "text": "Crop Details",
+    "context": "",
+    "role": ""
+  },
+  "Growth Stage": {
+    "text": "Growth Stage",
+    "context": "",
+    "role": ""
+  },
+  "Field Area (acres)": {
+    "text": "Field Area (acres)",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall in last 3 days (mm)": {
+    "text": "Rainfall in last 3 days (mm)",
+    "context": "",
+    "role": ""
+  },
+  "Today Weather": {
+    "text": "Today Weather",
+    "context": "",
+    "role": ""
+  },
+  "Get Irrigation Advice": {
+    "text": "Get Irrigation Advice",
+    "context": "",
+    "role": ""
+  },
+  "Water Need": {
+    "text": "Water Need",
+    "context": "",
+    "role": ""
+  },
+  "Net Irrigation": {
+    "text": "Net Irrigation",
+    "context": "",
+    "role": ""
+  },
+  "Total Water": {
+    "text": "Total Water",
+    "context": "",
+    "role": ""
+  },
+  "for": {
+    "text": "for",
+    "context": "",
+    "role": ""
+  },
+  "acre(s)": {
+    "text": "acre(s)",
+    "context": "",
+    "role": ""
+  },
+  "No irrigation needed today!": {
+    "text": "No irrigation needed today!",
+    "context": "",
+    "role": ""
+  },
+  "Recent rainfall is sufficient.": {
+    "text": "Recent rainfall is sufficient.",
+    "context": "",
+    "role": ""
+  },
+  "Light irrigation recommended": {
+    "text": "Light irrigation recommended",
+    "context": "",
+    "role": ""
+  },
+  "Apply": {
+    "text": "Apply",
+    "context": "",
+    "role": ""
+  },
+  "Irrigation urgently needed": {
+    "text": "Irrigation urgently needed",
+    "context": "",
+    "role": ""
+  },
+  "Fertilizer Recommendation": {
+    "text": "Fertilizer Recommendation",
+    "context": "",
+    "role": ""
+  },
+  "Acoustic Pest Detector": {
+    "text": "Acoustic Pest Detector",
+    "context": "",
+    "role": ""
+  },
+  "Which crop did you record?": {
+    "text": "Which crop did you record?",
+    "context": "",
+    "role": ""
+  },
+  "Upload field audio recording": {
+    "text": "Upload field audio recording",
+    "context": "",
+    "role": ""
+  },
+  "Analyze for Pests": {
+    "text": "Analyze for Pests",
+    "context": "",
+    "role": ""
+  },
+  "Detection Confidence": {
+    "text": "Detection Confidence",
+    "context": "",
+    "role": ""
+  },
+  "Dominant Frequency": {
+    "text": "Dominant Frequency",
+    "context": "",
+    "role": ""
+  },
+  "Signal Energy": {
+    "text": "Signal Energy",
+    "context": "",
+    "role": ""
+  },
+  "Spectral Pattern": {
+    "text": "Spectral Pattern",
+    "context": "",
+    "role": ""
+  },
+  "Risk Level": {
+    "text": "Risk Level",
+    "context": "",
+    "role": ""
+  },
+  "Recommended Action": {
+    "text": "Recommended Action",
+    "context": "",
+    "role": ""
+  },
+  "Share Pest Alert on WhatsApp": {
+    "text": "Share Pest Alert on WhatsApp",
+    "context": "",
+    "role": ""
+  },
+  "Field Watch — Satellite Intelligence": {
+    "text": "Field Watch — Satellite Intelligence",
+    "context": "",
+    "role": ""
+  },
+  "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
+    "text": "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.",
+    "context": "",
+    "role": ""
+  },
+  "Your City / Nearest Town": {
+    "text": "Your City / Nearest Town",
+    "context": "",
+    "role": ""
+  },
+  "WhatsApp numbers to notify (one per line, with 91)": {
+    "text": "WhatsApp numbers to notify (one per line, with 91)",
+    "context": "",
+    "role": ""
+  },
+  "Farmer Name": {
+    "text": "Farmer Name",
+    "context": "",
+    "role": ""
+  },
+  "Your Crop": {
+    "text": "Your Crop",
+    "context": "",
+    "role": ""
+  },
+  "Scan My Field Now": {
+    "text": "Scan My Field Now",
+    "context": "",
+    "role": ""
+  },
+  "Overall Field Risk": {
+    "text": "Overall Field Risk",
+    "context": "",
+    "role": ""
+  },
+  "Current Weather": {
+    "text": "Current Weather",
+    "context": "",
+    "role": ""
+  },
+  "Flood Risk (Next 48 hours)": {
+    "text": "Flood Risk (Next 48 hours)",
+    "context": "",
+    "role": ""
+  },
+  "Wildfire / Field Fire Alert": {
+    "text": "Wildfire / Field Fire Alert",
+    "context": "",
+    "role": ""
+  },
+  "Desert Locust Alert": {
+    "text": "Desert Locust Alert",
+    "context": "",
+    "role": ""
+  },
+  "Air Quality": {
+    "text": "Air Quality",
+    "context": "",
+    "role": ""
+  },
+  "Read Field Alert Summary": {
+    "text": "Read Field Alert Summary",
+    "context": "",
+    "role": ""
+  },
+  "Send Field Alert to Contacts": {
+    "text": "Send Field Alert to Contacts",
+    "context": "",
+    "role": ""
+  },
+  "Emergency Helplines": {
+    "text": "Emergency Helplines",
+    "context": "",
+    "role": ""
+  },
+  "Uploaded photo": {
+    "text": "Uploaded photo",
+    "context": "",
+    "role": ""
+  },
+  "File": {
+    "text": "File",
+    "context": "",
+    "role": ""
+  },
+  "Dimensions": {
+    "text": "Dimensions",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing...": {
+    "text": "Analyzing...",
+    "context": "",
+    "role": ""
+  },
+  "Clear daylight photo, close-up of affected area.": {
+    "text": "Clear daylight photo, close-up of affected area.",
+    "context": "",
+    "role": ""
+  },
+  "City not found. Please check spelling or try a nearby city.": {
+    "text": "City not found. Please check spelling or try a nearby city.",
+    "context": "",
+    "role": ""
+  },
+  "Please enter your city name.": {
+    "text": "Please enter your city name.",
+    "context": "",
+    "role": ""
+  },
+  "Audio unavailable": {
+    "text": "Audio unavailable",
+    "context": "",
+    "role": ""
+  },
+  "Read Tab Info": {
+    "text": "Read Tab Info",
+    "context": "",
+    "role": ""
+  },
+  "Crop Advisor": {
+    "text": "Crop Advisor",
+    "context": "",
+    "role": ""
+  },
+  "Leaf Doctor": {
+    "text": "Leaf Doctor",
+    "context": "",
+    "role": ""
+  },
+  "Watering": {
+    "text": "Watering",
+    "context": "",
+    "role": ""
+  },
+  "Listen to Field": {
+    "text": "Listen to Field",
+    "context": "",
+    "role": ""
+  },
+  "Soil": {
+    "text": "Soil",
+    "context": "",
+    "role": ""
+  },
+  "Weather": {
+    "text": "Weather",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing soil and climate…": {
+    "text": "Analyzing soil and climate…",
+    "context": "",
+    "role": ""
+  },
+  "our recommendation": {
+    "text": "our recommendation",
+    "context": "",
+    "role": ""
+  },
+  "also great": {
+    "text": "also great",
+    "context": "",
+    "role": ""
+  },
+  "all crops": {
+    "text": "all crops",
+    "context": "",
+    "role": ""
+  },
+  "Reset": {
+    "text": "Reset",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Suggest a crop": {
+    "text": "🌱 Suggest a crop",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Analyzing…": {
+    "text": "🌿 Analyzing…",
+    "context": "",
+    "role": ""
+  },
+  "crop advisor": {
+    "text": "crop advisor",
+    "context": "",
+    "role": ""
+  },
+  "Find what your soil": {
+    "text": "Find what your soil",
+    "context": "",
+    "role": ""
+  },
+  "wants to grow.": {
+    "text": "wants to grow.",
+    "context": "",
+    "role": ""
+  },
+  "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
+    "text": "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.",
+    "context": "",
+    "role": ""
+  },
+  "🌦 kharif season": {
+    "text": "🌦 kharif season",
+    "context": "",
+    "role": ""
+  },
+  "fetching live…": {
+    "text": "fetching live…",
+    "context": "",
+    "role": ""
+  },
+  "your local feel": {
+    "text": "your local feel",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen": {
+    "text": "Nitrogen",
+    "context": "",
+    "role": ""
+  },
+  "Phosphorus": {
+    "text": "Phosphorus",
+    "context": "",
+    "role": ""
+  },
+  "Potassium": {
+    "text": "Potassium",
+    "context": "",
+    "role": ""
+  },
+  "a little hungry": {
+    "text": "a little hungry",
+    "context": "",
+    "role": ""
+  },
+  "just right": {
+    "text": "just right",
+    "context": "",
+    "role": ""
+  },
+  "plenty": {
+    "text": "plenty",
+    "context": "",
+    "role": ""
+  },
+  "acidic": {
+    "text": "acidic",
+    "context": "",
+    "role": ""
+  },
+  "sweet spot": {
+    "text": "sweet spot",
+    "context": "",
+    "role": ""
+  },
+  "a touch alkaline": {
+    "text": "a touch alkaline",
+    "context": "",
+    "role": ""
+  },
+  "Rainfall": {
+    "text": "Rainfall",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze soil": {
+    "text": "Could not analyze soil",
+    "context": "",
+    "role": ""
+  },
+  "API key misconfigured. Open web/config.js and verify the dev key.": {
+    "text": "API key misconfigured. Open web/config.js and verify the dev key.",
+    "context": "",
+    "role": ""
+  },
+  "soil": {
+    "text": "soil",
+    "context": "",
+    "role": ""
+  },
+  "top matches": {
+    "text": "top matches",
+    "context": "",
+    "role": ""
+  },
+  "via": {
+    "text": "via",
+    "context": "",
+    "role": ""
+  },
+  "right now": {
+    "text": "right now",
+    "context": "",
+    "role": ""
+  },
+  "treatment": {
+    "text": "treatment",
+    "context": "",
+    "role": ""
+  },
+  "prevention": {
+    "text": "prevention",
+    "context": "",
+    "role": ""
+  },
+  "Something went wrong.": {
+    "text": "Something went wrong.",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your config.js setup.": {
+    "text": "API key issue — check your config.js setup.",
+    "context": "",
+    "role": ""
+  },
+  "No connection — check your network and try again.": {
+    "text": "No connection — check your network and try again.",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed.": {
+    "text": "Analysis failed.",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo": {
+    "text": "Send a photo",
+    "context": "",
+    "role": ""
+  },
+  "loading crops…": {
+    "text": "loading crops…",
+    "context": "",
+    "role": ""
+  },
+  "Drop a leaf photo here": {
+    "text": "Drop a leaf photo here",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · jpg, png, webp": {
+    "text": "or click to choose · jpg, png, webp",
+    "context": "",
+    "role": ""
+  },
+  "What we see": {
+    "text": "What we see",
+    "context": "",
+    "role": ""
+  },
+  "Send a photo and we'll have a look. 🌿": {
+    "text": "Send a photo and we'll have a look. 🌿",
+    "context": "",
+    "role": ""
+  },
+  "Analyzing leaf…": {
+    "text": "Analyzing leaf…",
+    "context": "",
+    "role": ""
+  },
+  "Could not analyze photo": {
+    "text": "Could not analyze photo",
+    "context": "",
+    "role": ""
+  },
+  "leaf doctor": {
+    "text": "leaf doctor",
+    "context": "",
+    "role": ""
+  },
+  "A": {
+    "text": "A",
+    "context": "",
+    "role": ""
+  },
+  "second pair of eyes": {
+    "text": "second pair of eyes",
+    "context": "",
+    "role": ""
+  },
+  "for sick leaves.": {
+    "text": "for sick leaves.",
+    "context": "",
+    "role": ""
+  },
+  "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
+    "text": "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.",
+    "context": "",
+    "role": ""
+  },
+  "Not enough data to chart.": {
+    "text": "Not enough data to chart.",
+    "context": "",
+    "role": ""
+  },
+  "Date": {
+    "text": "Date",
+    "context": "",
+    "role": ""
+  },
+  "Price": {
+    "text": "Price",
+    "context": "",
+    "role": ""
+  },
+  "Min": {
+    "text": "Min",
+    "context": "",
+    "role": ""
+  },
+  "Max": {
+    "text": "Max",
+    "context": "",
+    "role": ""
+  },
+  "Market": {
+    "text": "Market",
+    "context": "",
+    "role": ""
+  },
+  "market": {
+    "text": "market",
+    "context": "",
+    "role": ""
+  },
+  "fair price,": {
+    "text": "fair price,",
+    "context": "",
+    "role": ""
+  },
+  "a calm decision.": {
+    "text": "a calm decision.",
+    "context": "",
+    "role": ""
+  },
+  "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
+    "text": "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.",
+    "context": "",
+    "role": ""
+  },
+  "Forecast horizon": {
+    "text": "Forecast horizon",
+    "context": "",
+    "role": ""
+  },
+  "days": {
+    "text": "days",
+    "context": "",
+    "role": ""
+  },
+  "📊 Get forecast": {
+    "text": "📊 Get forecast",
+    "context": "",
+    "role": ""
+  },
+  "Fetching market data…": {
+    "text": "Fetching market data…",
+    "context": "",
+    "role": ""
+  },
+  "Could not fetch forecast": {
+    "text": "Could not fetch forecast",
+    "context": "",
+    "role": ""
+  },
+  "API key issue — check your configuration.": {
+    "text": "API key issue — check your configuration.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — please check your connection.": {
+    "text": "Network error — please check your connection.",
+    "context": "",
+    "role": ""
+  },
+  "Unexpected error.": {
+    "text": "Unexpected error.",
+    "context": "",
+    "role": ""
+  },
+  "live mandi": {
+    "text": "live mandi",
+    "context": "",
+    "role": ""
+  },
+  "mandis": {
+    "text": "mandis",
+    "context": "",
+    "role": ""
+  },
+  "state factor": {
+    "text": "state factor",
+    "context": "",
+    "role": ""
+  },
+  "🟢 LIVE": {
+    "text": "🟢 LIVE",
+    "context": "",
+    "role": ""
+  },
+  "🟡 ESTIMATED": {
+    "text": "🟡 ESTIMATED",
+    "context": "",
+    "role": ""
+  },
+  "Live mandi data not available — showing model forecast only.": {
+    "text": "Live mandi data not available — showing model forecast only.",
+    "context": "",
+    "role": ""
+  },
+  "best price": {
+    "text": "best price",
+    "context": "",
+    "role": ""
+  },
+  "worst price": {
+    "text": "worst price",
+    "context": "",
+    "role": ""
+  },
+  "average price": {
+    "text": "average price",
+    "context": "",
+    "role": ""
+  },
+  "on": {
+    "text": "on",
+    "context": "",
+    "role": ""
+  },
+  "over": {
+    "text": "over",
+    "context": "",
+    "role": ""
+  },
+  "our advice": {
+    "text": "our advice",
+    "context": "",
+    "role": ""
+  },
+  "Price forecast": {
+    "text": "Price forecast",
+    "context": "",
+    "role": ""
+  },
+  "Full forecast table": {
+    "text": "Full forecast table",
+    "context": "",
+    "role": ""
+  },
+  "top detections": {
+    "text": "top detections",
+    "context": "",
+    "role": ""
+  },
+  "band energy": {
+    "text": "band energy",
+    "context": "",
+    "role": ""
+  },
+  "Confidence": {
+    "text": "Confidence",
+    "context": "",
+    "role": ""
+  },
+  "Duration": {
+    "text": "Duration",
+    "context": "",
+    "role": ""
+  },
+  "Sample rate": {
+    "text": "Sample rate",
+    "context": "",
+    "role": ""
+  },
+  "Energy": {
+    "text": "Energy",
+    "context": "",
+    "role": ""
+  },
+  "Claude advice": {
+    "text": "Claude advice",
+    "context": "",
+    "role": ""
+  },
+  "quality notes": {
+    "text": "quality notes",
+    "context": "",
+    "role": ""
+  },
+  "Reference library": {
+    "text": "Reference library",
+    "context": "",
+    "role": ""
+  },
+  "known insects": {
+    "text": "known insects",
+    "context": "",
+    "role": ""
+  },
+  "Icon": {
+    "text": "Icon",
+    "context": "",
+    "role": ""
+  },
+  "Name": {
+    "text": "Name",
+    "context": "",
+    "role": ""
+  },
+  "Role": {
+    "text": "Role",
+    "context": "",
+    "role": ""
+  },
+  "Severity": {
+    "text": "Severity",
+    "context": "",
+    "role": ""
+  },
+  "Freq range": {
+    "text": "Freq range",
+    "context": "",
+    "role": ""
+  },
+  "File too large (max 20 MB)": {
+    "text": "File too large (max 20 MB)",
+    "context": "",
+    "role": ""
+  },
+  "Cannot preview this audio format — upload anyway to let the server analyze it.": {
+    "text": "Cannot preview this audio format — upload anyway to let the server analyze it.",
+    "context": "",
+    "role": ""
+  },
+  "Unknown error": {
+    "text": "Unknown error",
+    "context": "",
+    "role": ""
+  },
+  "Invalid or missing API key.": {
+    "text": "Invalid or missing API key.",
+    "context": "",
+    "role": ""
+  },
+  "Network error — check your connection.": {
+    "text": "Network error — check your connection.",
+    "context": "",
+    "role": ""
+  },
+  "Listen": {
+    "text": "Listen",
+    "context": "",
+    "role": ""
+  },
+  "listen": {
+    "text": "listen",
+    "context": "",
+    "role": ""
+  },
+  "Hear the bugs": {
+    "text": "Hear the bugs",
+    "context": "",
+    "role": ""
+  },
+  "before they show.": {
+    "text": "before they show.",
+    "context": "",
+    "role": ""
+  },
+  "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
+    "text": "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.",
+    "context": "",
+    "role": ""
+  },
+  "Upload a recording": {
+    "text": "Upload a recording",
+    "context": "",
+    "role": ""
+  },
+  "~6 seconds": {
+    "text": "~6 seconds",
+    "context": "",
+    "role": ""
+  },
+  "Crop type (optional)": {
+    "text": "Crop type (optional)",
+    "context": "",
+    "role": ""
+  },
+  "Drag & drop your field audio here": {
+    "text": "Drag & drop your field audio here",
+    "context": "",
+    "role": ""
+  },
+  "or click to choose · wav · mp3 · m4a · ogg · webm": {
+    "text": "or click to choose · wav · mp3 · m4a · ogg · webm",
+    "context": "",
+    "role": ""
+  },
+  "KB · ready": {
+    "text": "KB · ready",
+    "context": "",
+    "role": ""
+  },
+  "tip: 15–30 cm from the stem · breathe slowly": {
+    "text": "tip: 15–30 cm from the stem · breathe slowly",
+    "context": "",
+    "role": ""
+  },
+  "clear": {
+    "text": "clear",
+    "context": "",
+    "role": ""
+  },
+  "🎧 listening…": {
+    "text": "🎧 listening…",
+    "context": "",
+    "role": ""
+  },
+  "🔊 analyze": {
+    "text": "🔊 analyze",
+    "context": "",
+    "role": ""
+  },
+  "What we heard": {
+    "text": "What we heard",
+    "context": "",
+    "role": ""
+  },
+  "Listening to your field…": {
+    "text": "Listening to your field…",
+    "context": "",
+    "role": ""
+  },
+  "Analysis failed": {
+    "text": "Analysis failed",
+    "context": "",
+    "role": ""
+  },
+  "Drop a recording on the left to begin. 🐛": {
+    "text": "Drop a recording on the left to begin. 🐛",
+    "context": "",
+    "role": ""
+  },
+  "water": {
+    "text": "water",
+    "context": "",
+    "role": ""
+  },
+  "Just enough water,": {
+    "text": "Just enough water,",
+    "context": "",
+    "role": ""
+  },
+  "just in time.": {
+    "text": "just in time.",
+    "context": "",
+    "role": ""
+  },
+  "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
+    "text": "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.",
+    "context": "",
+    "role": ""
+  },
+  "Your field": {
+    "text": "Your field",
+    "context": "",
+    "role": ""
+  },
+  "Growth stage": {
+    "text": "Growth stage",
+    "context": "",
+    "role": ""
+  },
+  "Get advice": {
+    "text": "Get advice",
+    "context": "",
+    "role": ""
+  },
+  "Calculate irrigation": {
+    "text": "Calculate irrigation",
+    "context": "",
+    "role": ""
+  },
+  "Calculating irrigation…": {
+    "text": "Calculating irrigation…",
+    "context": "",
+    "role": ""
+  },
+  "Could not calculate": {
+    "text": "Could not calculate",
+    "context": "",
+    "role": ""
+  },
+  "Field area": {
+    "text": "Field area",
+    "context": "",
+    "role": ""
+  },
+  "ac": {
+    "text": "ac",
+    "context": "",
+    "role": ""
+  },
+  "Recent rain": {
+    "text": "Recent rain",
+    "context": "",
+    "role": ""
+  },
+  "mm": {
+    "text": "mm",
+    "context": "",
+    "role": ""
+  },
+  "Temperature": {
+    "text": "Temperature",
+    "context": "",
+    "role": ""
+  },
+  "Humidity": {
+    "text": "Humidity",
+    "context": "",
+    "role": ""
+  },
+  "Wind speed": {
+    "text": "Wind speed",
+    "context": "",
+    "role": ""
+  },
+  "km/h": {
+    "text": "km/h",
+    "context": "",
+    "role": ""
+  },
+  "Water needed": {
+    "text": "Water needed",
+    "context": "",
+    "role": ""
+  },
+  "Net irrigation": {
+    "text": "Net irrigation",
+    "context": "",
+    "role": ""
+  },
+  "Crop Kc factor": {
+    "text": "Crop Kc factor",
+    "context": "",
+    "role": ""
+  },
+  "urgency": {
+    "text": "urgency",
+    "context": "",
+    "role": ""
+  },
+  "fertilizer": {
+    "text": "fertilizer",
+    "context": "",
+    "role": ""
+  },
+  "Nitrogen:": {
+    "text": "Nitrogen:",
+    "context": "",
+    "role": ""
+  },
+  "weather tips": {
+    "text": "weather tips",
+    "context": "",
+    "role": ""
+  },
+  "Initial": {
+    "text": "Initial",
+    "context": "",
+    "role": ""
+  },
+  "Development": {
+    "text": "Development",
+    "context": "",
+    "role": ""
+  },
+  "Mid-season": {
+    "text": "Mid-season",
+    "context": "",
+    "role": ""
+  },
+  "Late season": {
+    "text": "Late season",
+    "context": "",
+    "role": ""
+  },
+  "field": {
+    "text": "field",
+    "context": "",
+    "role": ""
+  },
+  "quiet daily check-in": {
+    "text": "quiet daily check-in",
+    "context": "",
+    "role": ""
+  },
+  "for your land.": {
+    "text": "for your land.",
+    "context": "",
+    "role": ""
+  },
+  "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
+    "text": "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.",
+    "context": "",
+    "role": ""
+  },
+  "🛰 Scan now": {
+    "text": "🛰 Scan now",
+    "context": "",
+    "role": ""
+  },
+  "Scanning field…": {
+    "text": "Scanning field…",
+    "context": "",
+    "role": ""
+  },
+  "Access denied": {
+    "text": "Access denied",
+    "context": "",
+    "role": ""
+  },
+  "Network error": {
+    "text": "Network error",
+    "context": "",
+    "role": ""
+  },
+  "Error": {
+    "text": "Error",
+    "context": "",
+    "role": ""
+  },
+  "RISK": {
+    "text": "RISK",
+    "context": "",
+    "role": ""
+  },
+  "feels like": {
+    "text": "feels like",
+    "context": "",
+    "role": ""
+  },
+  "surface wind": {
+    "text": "surface wind",
+    "context": "",
+    "role": ""
+  },
+  "last hour": {
+    "text": "last hour",
+    "context": "",
+    "role": ""
+  },
+  "Flood risk": {
+    "text": "Flood risk",
+    "context": "",
+    "role": ""
+  },
+  "Rain 48h:": {
+    "text": "Rain 48h:",
+    "context": "",
+    "role": ""
+  },
+  "Fire": {
+    "text": "Fire",
+    "context": "",
+    "role": ""
+  },
+  "Hotspots nearby:": {
+    "text": "Hotspots nearby:",
+    "context": "",
+    "role": ""
+  },
+  "source:": {
+    "text": "source:",
+    "context": "",
+    "role": ""
+  },
+  "Locust": {
+    "text": "Locust",
+    "context": "",
+    "role": ""
+  },
+  "Swarms nearby:": {
+    "text": "Swarms nearby:",
+    "context": "",
+    "role": ""
+  },
+  "Emergency helplines": {
+    "text": "Emergency helplines",
+    "context": "",
+    "role": ""
+  },
+  "Send to WhatsApp": {
+    "text": "Send to WhatsApp",
+    "context": "",
+    "role": ""
+  },
+  "📋 Copy": {
+    "text": "📋 Copy",
+    "context": "",
+    "role": ""
+  },
+  "📲 Open WhatsApp": {
+    "text": "📲 Open WhatsApp",
+    "context": "",
+    "role": ""
+  },
+  "Send to my number": {
+    "text": "Send to my number",
+    "context": "",
+    "role": ""
+  },
+  "Kisan Call Centre": {
+    "text": "Kisan Call Centre",
+    "context": "",
+    "role": ""
+  },
+  "Free · 24/7 · All Indian languages": {
+    "text": "Free · 24/7 · All Indian languages",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan Helpline": {
+    "text": "PM Kisan Helpline",
+    "context": "",
+    "role": ""
+  },
+  "PM Kisan scheme queries": {
+    "text": "PM Kisan scheme queries",
+    "context": "",
+    "role": ""
+  },
+  "NDRF Emergency": {
+    "text": "NDRF Emergency",
+    "context": "",
+    "role": ""
+  },
+  "Flood, earthquake, disaster": {
+    "text": "Flood, earthquake, disaster",
+    "context": "",
+    "role": ""
+  },
+  "Ambulance": {
+    "text": "Ambulance",
+    "context": "",
+    "role": ""
+  },
+  "Medical emergency": {
+    "text": "Medical emergency",
+    "context": "",
+    "role": ""
+  },
+  "Police": {
+    "text": "Police",
+    "context": "",
+    "role": ""
+  },
+  "Security / theft": {
+    "text": "Security / theft",
+    "context": "",
+    "role": ""
+  },
+  "State Agriculture Dept": {
+    "text": "State Agriculture Dept",
+    "context": "",
+    "role": ""
+  },
+  "Disease outbreak reporting": {
+    "text": "Disease outbreak reporting",
+    "context": "",
+    "role": ""
+  },
+  "⚡ Move livestock to shelter": {
+    "text": "⚡ Move livestock to shelter",
+    "context": "",
+    "role": ""
+  },
+  "🚫 Stop all field work immediately": {
+    "text": "🚫 Stop all field work immediately",
+    "context": "",
+    "role": ""
+  },
+  "💧 Clear drainage channels": {
+    "text": "💧 Clear drainage channels",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid fertilizer — will wash away": {
+    "text": "🌱 Avoid fertilizer — will wash away",
+    "context": "",
+    "role": ""
+  },
+  "🌊 Create bunds around fields": {
+    "text": "🌊 Create bunds around fields",
+    "context": "",
+    "role": ""
+  },
+  "📞 Contact agriculture office if flooding": {
+    "text": "📞 Contact agriculture office if flooding",
+    "context": "",
+    "role": ""
+  },
+  "💧 Good for germination": {
+    "text": "💧 Good for germination",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Ideal time for transplanting": {
+    "text": "🌱 Ideal time for transplanting",
+    "context": "",
+    "role": ""
+  },
+  "✅ Reduce irrigation today": {
+    "text": "✅ Reduce irrigation today",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Cover sensitive crops with cloth": {
+    "text": "🌿 Cover sensitive crops with cloth",
+    "context": "",
+    "role": ""
+  },
+  "🔥 Light irrigation before frost protects roots": {
+    "text": "🔥 Light irrigation before frost protects roots",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Avoid pruning until frost passes": {
+    "text": "🌱 Avoid pruning until frost passes",
+    "context": "",
+    "role": ""
+  },
+  "🍄 Watch for fungal disease": {
+    "text": "🍄 Watch for fungal disease",
+    "context": "",
+    "role": ""
+  },
+  "💊 Apply preventive fungicide": {
+    "text": "💊 Apply preventive fungicide",
+    "context": "",
+    "role": ""
+  },
+  "🌬️ Improve air circulation": {
+    "text": "🌬️ Improve air circulation",
+    "context": "",
+    "role": ""
+  },
+  "😷 Reduce outdoor work": {
+    "text": "😷 Reduce outdoor work",
+    "context": "",
+    "role": ""
+  },
+  "💧 Increase irrigation — heat stress likely": {
+    "text": "💧 Increase irrigation — heat stress likely",
+    "context": "",
+    "role": ""
+  },
+  "🌿 Monitor crops for wilting": {
+    "text": "🌿 Monitor crops for wilting",
+    "context": "",
+    "role": ""
+  },
+  "☀️ Good day for spraying pesticides": {
+    "text": "☀️ Good day for spraying pesticides",
+    "context": "",
+    "role": ""
+  },
+  "🚜 Ideal for harvesting": {
+    "text": "🚜 Ideal for harvesting",
+    "context": "",
+    "role": ""
+  },
+  "💧 Check soil moisture levels": {
+    "text": "💧 Check soil moisture levels",
+    "context": "",
+    "role": ""
+  },
+  "🌤️ Good day for transplanting": {
+    "text": "🌤️ Good day for transplanting",
+    "context": "",
+    "role": ""
+  },
+  "💧 Moderate irrigation needed": {
+    "text": "💧 Moderate irrigation needed",
+    "context": "",
+    "role": ""
+  },
+  "🌱 Apply fertilizers today": {
+    "text": "🌱 Apply fertilizers today",
+    "context": "",
+    "role": ""
+  },
+  "farmer · since 2019": {
+    "text": "farmer · since 2019",
+    "context": "",
+    "role": ""
+  },
+  "a calm field today is a good harvest tomorrow.": {
+    "text": "a calm field today is a good harvest tomorrow.",
+    "context": "",
+    "role": ""
+  },
+  "⏱ Recording too short — need at least 3 seconds": {
+    "text": "⏱ Recording too short — need at least 3 seconds",
+    "context": "",
+    "role": ""
+  },
+  "🔇 Too quiet — hold mic closer to the plant stem": {
+    "text": "🔇 Too quiet — hold mic closer to the plant stem",
+    "context": "",
+    "role": ""
+  },
+  "✂️ Long recording — analyzed first 20 seconds": {
+    "text": "✂️ Long recording — analyzed first 20 seconds",
+    "context": "",
+    "role": ""
+  },
+  "📉 Low sample rate may reduce accuracy": {
+    "text": "📉 Low sample rate may reduce accuracy",
+    "context": "",
+    "role": ""
+  },
+  "📈 Sample rate resampled to 16 kHz": {
+    "text": "📈 Sample rate resampled to 16 kHz",
+    "context": "",
+    "role": ""
+  },
+  "Pollinator": {
+    "text": "Pollinator",
+    "context": "",
+    "role": ""
+  },
+  "Pest": {
+    "text": "Pest",
+    "context": "",
+    "role": ""
+  },
+  "Ambient": {
+    "text": "Ambient",
+    "context": "",
+    "role": ""
+  },
+  "your name": {
+    "text": "your name",
+    "context": "",
+    "role": ""
+  },
+  "village": {
+    "text": "village",
+    "context": "",
+    "role": ""
+  },
+  "phone": {
+    "text": "phone",
+    "context": "",
+    "role": ""
+  },
+  "primary crop": {
+    "text": "primary crop",
+    "context": "",
+    "role": ""
+  },
+  "language": {
+    "text": "language",
+    "context": "",
+    "role": ""
+  },
+  "today on the farm": {
+    "text": "today on the farm",
+    "context": "",
+    "role": ""
+  },
+  "Sign out": {
+    "text": "Sign out",
+    "context": "",
+    "role": ""
+  }
+}
