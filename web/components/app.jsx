@@ -8,8 +8,7 @@ const VIEW_MAP = {
   irrigation: ViewIrrigation,
   acoustic:   ViewAcoustic,
   field:      ViewField,
-  soil:       ViewSoil,
-  dosage:     ViewDosage,
+  alerts:     ViewAlerts,
 };
 
 const CRUMB_MAP = {
@@ -19,8 +18,7 @@ const CRUMB_MAP = {
   irrigation: 'Watering',
   acoustic:   'Listen to Field',
   field:      'Field Watch',
-  soil:       'Soil Health',
-  dosage:     'Dosage Advisor',
+  alerts:     'Alerts',
 };
 
 function App() {
@@ -50,6 +48,8 @@ function App() {
     phone:   '',
     crop:    'Cotton',
   });
+
+  const [areaAcres, setAreaAcres] = useState(1.0);
 
   // Shared live field-watch data, prefetched on village change so every tab
   // (irrigation, crop, field) can read weather/flood/fire without re-fetching.
@@ -151,7 +151,7 @@ function App() {
           <TabBar active={active} setActive={switchTab} t={t} />
           <div className="tab-content-wrap" ref={wrapRef}>
             <div className={`tab-content ${phase !== 'idle' ? phase : ''}`}>
-              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} t={t} fieldData={fieldData} fieldLoading={fieldLoading} />
+              <ViewComponent profile={profile} setProfile={setProfile} lang={lang} t={t} fieldData={fieldData} fieldLoading={fieldLoading} areaAcres={areaAcres} setAreaAcres={setAreaAcres} />
             </div>
           </div>
         </main>

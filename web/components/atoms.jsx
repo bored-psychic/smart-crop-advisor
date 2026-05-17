@@ -344,8 +344,7 @@ function TabBar({ active, setActive, t }){
     { k:'irrigation', label: t('Watering') },
     { k:'acoustic',   label: t('Listen to Field') },
     { k:'field',      label: t('Field Watch') },
-    { k:'soil',       label: t('Soil Health') },
-    { k:'dosage',     label: t('Dosage Advisor') },
+    { k:'alerts',     label: t('Alerts') },
   ];
   return (
     <div className="tabbar-wrap">
@@ -431,5 +430,5 @@ Object.assign(window, {
   GOVT_HELPLINES,
   LocationBar, VineBackdrop, LANGS,
   Sidebar, TabBar, Topbar,
-  Loading, ErrorCard, useToast, ToastContainer
+  Loading, ErrorCard, useToast, ToastContainer,
 });
