@@ -21,8 +21,20 @@ const CRUMB_MAP = {
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
-  const [lang, setLang] = useState('en');
-  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  const [lang, setLang] = useState(() => {
+    try {
+      const saved = localStorage.getItem('kisanos.lang');
+      return (saved && window.isSupportedLang && window.isSupportedLang(saved)) ? saved : 'en';
+    } catch { return 'en'; }
+  });
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    window.__lang = lang;
+  }, [lang]);
+
+  useEffect(() => {
+    try { localStorage.setItem('kisanos.lang', lang); } catch {}
+  }, [lang]);
   const [i18nReady, setI18nReady] = useState(!!window.I18N.bundles);
   useEffect(() => {
     if (!i18nReady) window.I18N._ready.then(() => setI18nReady(true));

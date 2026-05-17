@@ -11,6 +11,7 @@ class ApiError extends Error {
 
 async function _req(path, opts = {}) {
   const headers = { 'X-API-Key': window.API_KEY };
+  if (window.__lang) headers['Accept-Language'] = window.__lang;
 
   let body;
   if (opts.formData) {
