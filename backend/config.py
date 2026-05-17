@@ -60,8 +60,7 @@ class Settings(BaseSettings):
     RETRY_BACKOFF_BASE: float = 0.5    # seconds
 
     # Alert System
-    MSG91_API_KEY: str = ""
-    MSG91_SENDER_ID: str = "KISANOS"
+    FAST2SMS_API_KEY: str = ""
     VAPID_PRIVATE_KEY: str = ""
     VAPID_PUBLIC_KEY: str = ""
     VAPID_EMAIL: str = "mailto:admin@kisanos.app"
