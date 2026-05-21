@@ -1864,7 +1864,20 @@
       "text": "mm/day",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "Alert Subscriptions",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.",
+    "Subscribe": "Subscribe",
+    "Enable Push": "Enable Push",
+    "Frost Warning": "Frost Warning",
+    "Heavy Rain": "Heavy Rain",
+    "Pest Risk": "Pest Risk",
+    "Temp drops below 4°C": "Temp drops below 4°C",
+    "Rain > 50mm in 48h": "Rain > 50mm in 48h",
+    "Seasonal peak for your crops": "Seasonal peak for your crops",
+    "Pick at least one alert type.": "Pick at least one alert type.",
+    "Subscribed! Alerts will be sent to ": "Subscribed! Alerts will be sent to ",
+    "🔔 Push On": "🔔 Push On"
   },
   "hi": {
     "Crop Recommender": {
@@ -2668,7 +2681,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -2678,7 +2691,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -3731,7 +3744,20 @@
       "text": "mm/दिन",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "अलर्ट सदस्यता",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "पाला, भारी बारिश और कीट जोखिम के SMS अलर्ट पाएं — आपके खेत और फसल के आधार पर।",
+    "Subscribe": "सदस्य बनें",
+    "Enable Push": "पुश चालू करें",
+    "Frost Warning": "पाले की चेतावनी",
+    "Heavy Rain": "भारी बारिश",
+    "Pest Risk": "कीट जोखिम",
+    "Temp drops below 4°C": "तापमान 4°C से नीचे",
+    "Rain > 50mm in 48h": "48 घंटे में 50mm से अधिक बारिश",
+    "Seasonal peak for your crops": "आपकी फसल का कीट खतरा काल",
+    "Pick at least one alert type.": "कम से कम एक अलर्ट चुनें।",
+    "Subscribed! Alerts will be sent to ": "सदस्यता हो गई! अलर्ट भेजे जाएंगे: ",
+    "🔔 Push On": "🔔 पुश चालू"
   },
   "te": {
     "Crop Recommender": {
@@ -4500,7 +4526,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -4510,7 +4536,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -5598,7 +5624,20 @@
       "text": "mm/day",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "అలర్ట్ సభ్యత్వాలు",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "మీ పొలం మరియు పంటకు అనుగుణంగా మంచు, భారీ వర్షం, కీట హెచ్చరికలు SMS ద్వారా పొందండి.",
+    "Subscribe": "సభ్యత్వం",
+    "Enable Push": "పుష్ ఆన్",
+    "Frost Warning": "మంచు హెచ్చరిక",
+    "Heavy Rain": "భారీ వర్షం",
+    "Pest Risk": "కీట ప్రమాదం",
+    "Temp drops below 4°C": "ఉష్ణోగ్రత 4°C కంటే తక్కువ",
+    "Rain > 50mm in 48h": "48 గంటల్లో 50mm కంటే ఎక్కువ వర్షం",
+    "Seasonal peak for your crops": "పంటకు కీట హెచ్చరిక కాలం",
+    "Pick at least one alert type.": "కనీసం ఒక హెచ్చరిక ఎంచుకోండి.",
+    "Subscribed! Alerts will be sent to ": "సభ్యత్వం పొందారు! అలర్ట్‌లు పంపబడతాయి: ",
+    "🔔 Push On": "🔔 పుష్ ఆన్"
   },
   "ta": {
     "Crop Recommender": {
@@ -6367,7 +6406,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -6377,7 +6416,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -7465,7 +7504,20 @@
       "text": "mm/day",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "எச்சரிக்கை சந்தாக்கள்",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "உங்கள் வயல் மற்றும் பயிருக்கு ஏற்ப பனி, கனமழை, பூச்சி எச்சரிக்கைகளை SMS மூலம் பெறுங்கள்.",
+    "Subscribe": "சந்தா",
+    "Enable Push": "புஷ் இயக்கு",
+    "Frost Warning": "பனி எச்சரிக்கை",
+    "Heavy Rain": "கனமழை",
+    "Pest Risk": "பூச்சி ஆபத்து",
+    "Temp drops below 4°C": "வெப்பநிலை 4°C கீழே",
+    "Rain > 50mm in 48h": "48 மணியில் 50mm மேல் மழை",
+    "Seasonal peak for your crops": "பயிருக்கான பூச்சி அபாய காலம்",
+    "Pick at least one alert type.": "குறைந்தது ஒரு எச்சரிக்கை தேர்ந்தெடுங்கள்.",
+    "Subscribed! Alerts will be sent to ": "சந்தா எடுத்தீர்கள்! எச்சரிக்கைகள் அனுப்பப்படும்: ",
+    "🔔 Push On": "🔔 புஷ் இயக்கம்"
   },
   "kn": {
     "Crop Recommender": {
@@ -8234,7 +8286,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -8244,7 +8296,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -9332,7 +9384,20 @@
       "text": "mm/day",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "ಎಚ್ಚರಿಕೆ ಚಂದಾದಾರಿಕೆಗಳು",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "ನಿಮ್ಮ ಹೊಲ ಮತ್ತು ಬೆಳೆಗೆ ಅನುಗುಣವಾಗಿ ಮಂಜು, ಭಾರಿ ಮಳೆ, ಕೀಟ ಎಚ್ಚರಿಕೆಗಳನ್ನು SMS ಮೂಲಕ ಪಡೆಯಿರಿ.",
+    "Subscribe": "ಚಂದಾದಾರಿಕೆ",
+    "Enable Push": "ಪುಶ್ ಆನ್",
+    "Frost Warning": "ಮಂಜು ಎಚ್ಚರಿಕೆ",
+    "Heavy Rain": "ಭಾರಿ ಮಳೆ",
+    "Pest Risk": "ಕೀಟ ಅಪಾಯ",
+    "Temp drops below 4°C": "ತಾಪಮಾನ 4°C ಗಿಂತ ಕಡಿಮೆ",
+    "Rain > 50mm in 48h": "48 ಗಂಟೆಗಳಲ್ಲಿ 50mm ಮೀರಿದ ಮಳೆ",
+    "Seasonal peak for your crops": "ಬೆಳೆಗೆ ಕೀಟ ಅಪಾಯ ಕಾಲ",
+    "Pick at least one alert type.": "ಕನಿಷ್ಠ ಒಂದು ಎಚ್ಚರಿಕೆ ಆಯ್ಕೆ ಮಾಡಿ.",
+    "Subscribed! Alerts will be sent to ": "ಚಂದಾದಾರಿಕೆ ಆಯಿತು! ಎಚ್ಚರಿಕೆಗಳನ್ನು ಕಳುಹಿಸಲಾಗುವುದು: ",
+    "🔔 Push On": "🔔 ಪುಶ್ ಆನ್"
   },
   "mr": {
     "Crop Recommender": {
@@ -10101,7 +10166,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -10111,7 +10176,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -11154,7 +11219,20 @@
       "text": "शेतकऱ्यांचा सहायक",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "अलर्ट सदस्यता",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "तुमच्या शेत आणि पिकानुसार दंव, जड पाऊस, कीड धोक्याचे SMS अलर्ट मिळवा.",
+    "Subscribe": "सदस्य व्हा",
+    "Enable Push": "पुश सुरू करा",
+    "Frost Warning": "दंव इशारा",
+    "Heavy Rain": "जड पाऊस",
+    "Pest Risk": "कीड धोका",
+    "Temp drops below 4°C": "तापमान 4°C खाली",
+    "Rain > 50mm in 48h": "48 तासांत 50mm पेक्षा जास्त पाऊस",
+    "Seasonal peak for your crops": "पिकासाठी कीड धोका काळ",
+    "Pick at least one alert type.": "किमान एक अलर्ट निवडा.",
+    "Subscribed! Alerts will be sent to ": "सदस्यता झाली! अलर्ट पाठवले जातील: ",
+    "🔔 Push On": "🔔 पुश चालू"
   },
   "bn": {
     "Crop Recommender": {
@@ -11923,7 +12001,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -11933,7 +12011,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -12976,7 +13054,20 @@
       "text": "কৃষকদের সহায়ক",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "সতর্কতা সদস্যতা",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "আপনার জমি ও ফসল অনুযায়ী কুয়াশা, ভারী বৃষ্টি, কীট সতর্কতা SMS-এ পান।",
+    "Subscribe": "সদস্য হন",
+    "Enable Push": "পুশ চালু করুন",
+    "Frost Warning": "কুয়াশার সতর্কতা",
+    "Heavy Rain": "ভারী বৃষ্টি",
+    "Pest Risk": "কীট ঝুঁকি",
+    "Temp drops below 4°C": "তাপমাত্রা 4°C-এর নিচে",
+    "Rain > 50mm in 48h": "48 ঘণ্টায় 50mm-এর বেশি বৃষ্টি",
+    "Seasonal peak for your crops": "আপনার ফসলের কীট ঝুঁকির মৌসুম",
+    "Pick at least one alert type.": "অন্তত একটি সতর্কতা বেছে নিন।",
+    "Subscribed! Alerts will be sent to ": "সদস্যতা হয়েছে! সতর্কতা পাঠানো হবে: ",
+    "🔔 Push On": "🔔 পুশ চালু"
   },
   "gu": {
     "Crop Recommender": {
@@ -13745,7 +13836,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -13755,7 +13846,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -14798,7 +14889,20 @@
       "text": "ખેડૂતોનો સહાયક",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "ચેતવણી સભ્યપદ",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "તમારા ખેતર અને પાક અનુસાર હિમ, ભારે વરસાદ, જીવાત ચેતવણી SMS થી મેળવો.",
+    "Subscribe": "સભ્ય બનો",
+    "Enable Push": "પુશ ચાલુ કરો",
+    "Frost Warning": "હિમ ચેતવણી",
+    "Heavy Rain": "ભારે વરસાદ",
+    "Pest Risk": "જીવાત જોખમ",
+    "Temp drops below 4°C": "તાપમાન 4°C થી ઓછું",
+    "Rain > 50mm in 48h": "48 કલાકમાં 50mm કરતાં વધુ વરસાદ",
+    "Seasonal peak for your crops": "પાક માટે જીવાત જોખમ સમય",
+    "Pick at least one alert type.": "ઓછામાં ઓછી એક ચેતવણી પસંદ કરો.",
+    "Subscribed! Alerts will be sent to ": "સભ્ય બન્યા! ચેતવણી મોકલાશે: ",
+    "🔔 Push On": "🔔 પુશ ઓન"
   },
   "pa": {
     "Crop Recommender": {
@@ -15567,7 +15671,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -15577,7 +15681,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -16620,7 +16724,20 @@
       "text": "ਕਿਸਾਨਾਂ ਦਾ ਸਹਾਇਕ",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "ਅਲਰਟ ਮੈਂਬਰਸ਼ਿਪ",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "ਆਪਣੇ ਖੇਤ ਅਤੇ ਫ਼ਸਲ ਅਨੁਸਾਰ ਪਾਲਾ, ਭਾਰੀ ਮੀਂਹ, ਕੀੜੇ ਦੀ ਚੇਤਾਵਨੀ SMS 'ਤੇ ਪਾਓ।",
+    "Subscribe": "ਮੈਂਬਰ ਬਣੋ",
+    "Enable Push": "ਪੁਸ਼ ਚਾਲੂ ਕਰੋ",
+    "Frost Warning": "ਪਾਲੇ ਦੀ ਚੇਤਾਵਨੀ",
+    "Heavy Rain": "ਭਾਰੀ ਮੀਂਹ",
+    "Pest Risk": "ਕੀੜੇ ਦਾ ਖ਼ਤਰਾ",
+    "Temp drops below 4°C": "ਤਾਪਮਾਨ 4°C ਤੋਂ ਘੱਟ",
+    "Rain > 50mm in 48h": "48 ਘੰਟਿਆਂ ਵਿੱਚ 50mm ਤੋਂ ਵੱਧ ਮੀਂਹ",
+    "Seasonal peak for your crops": "ਫ਼ਸਲ ਲਈ ਕੀੜੇ ਖ਼ਤਰੇ ਦਾ ਸਮਾਂ",
+    "Pick at least one alert type.": "ਘੱਟੋ-ਘੱਟ ਇੱਕ ਅਲਰਟ ਚੁਣੋ।",
+    "Subscribed! Alerts will be sent to ": "ਮੈਂਬਰ ਬਣ ਗਏ! ਅਲਰਟ ਭੇਜੇ ਜਾਣਗੇ: ",
+    "🔔 Push On": "🔔 ਪੁਸ਼ ਚਾਲੂ"
   },
   "ml": {
     "Crop Recommender": {
@@ -17389,7 +17506,7 @@
       "role": ""
     },
     "A": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -17399,7 +17516,7 @@
       "role": ""
     },
     "for sick leaves.": {
-      "text": "",
+      "text": "​",
       "context": "",
       "role": ""
     },
@@ -18442,6 +18559,19 @@
       "text": "കർഷകരുടെ സഹായി",
       "context": "",
       "role": ""
-    }
+    },
+    "Alert Subscriptions": "അലർട്ട് സബ്സ്ക്രിപ്ഷനുകൾ",
+    "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": "നിങ്ങളുടെ വയലും വിളയും അടിസ്ഥാനമാക്കി മഞ്ഞ്, കനമഴ, കീട അലർട്ടുകൾ SMS ആയി ലഭിക്കൂ.",
+    "Subscribe": "സബ്സ്ക്രൈബ്",
+    "Enable Push": "പുഷ് ഓണാക്കൂ",
+    "Frost Warning": "മഞ്ഞ് മുന്നറിയിപ്പ്",
+    "Heavy Rain": "കനമഴ",
+    "Pest Risk": "കീട അപകടം",
+    "Temp drops below 4°C": "താപനില 4°C-ൽ താഴേ",
+    "Rain > 50mm in 48h": "48 മണിക്കൂറിൽ 50mm-ൽ കൂടുതൽ മഴ",
+    "Seasonal peak for your crops": "വിളകൾക്ക് കീട അപകട കാലം",
+    "Pick at least one alert type.": "ഒരു അലർട്ടെങ്കിലും തിരഞ്ഞെടുക്കൂ.",
+    "Subscribed! Alerts will be sent to ": "സബ്സ്ക്രൈബ് ചെയ്തു! അലർട്ടുകൾ അയക്കും: ",
+    "🔔 Push On": "🔔 പുഷ് ഓൺ"
   }
 }
