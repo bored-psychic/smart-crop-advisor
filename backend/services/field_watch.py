@@ -15,8 +15,9 @@ def fetch_field_watch(city, lat=None, lon=None):
     Returns a structured dict of all alerts.
     """
     import datetime
-    from core.config import settings
-    OWM_KEY = settings.WEATHER_API_KEY
+    from backend.config import get_settings
+    settings = get_settings()
+    OWM_KEY = settings.OWM_API_KEY
     alerts = {'weather': None, 'fire': None, 'locust': None, 'aqi': None,
               'flood': None, 'forecast': None, 'city': city}
 

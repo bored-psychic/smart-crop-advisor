@@ -13,7 +13,7 @@ from anthropic import AsyncAnthropic
 
 from backend.config import get_settings
 from backend.schemas.dosage import DosageAdvice
-from backend.services import market
+from backend.services.market_service import get_market_service
 
 logger = logging.getLogger(__name__)
 
@@ -243,10 +243,9 @@ async def _get_roi(
         return None
 
     try:
-        # Run the blocking sync HTTP call in a thread pool to avoid blocking the event loop.
-        market_data = await asyncio.to_thread(
-            market.get_live_mandi_price, crop.capitalize(), state
-        )
+        # Fetch live market price via async market_service
+        market_service = get_market_service()
+        market_data = await market_service.get_live_price(crop.capitalize(), state)
         if market_data is None:
             return None
         # Agmarknet price is per quintal (100 kg = 0.1 t) → multiply by 10 for per-tonne
