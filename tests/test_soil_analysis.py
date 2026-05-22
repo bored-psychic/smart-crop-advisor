@@ -1,12 +1,23 @@
 """Test soil analysis endpoint."""
 
 import pytest
+import httpx
+from httpx import AsyncClient
 from backend.schemas.soil import SoilAnalysisRequest, NutrientDeficiency
 from backend.services.soil_analyzer import (
     detect_deficiencies,
     get_amendments,
     get_compatible_crops,
 )
+
+
+@pytest.fixture
+async def client():
+    """Async HTTPX test client wrapping the full FastAPI application."""
+    from backend.main import app
+    transport = httpx.ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
 
 
 def test_detect_deficiencies_all_deficient():
@@ -124,7 +135,7 @@ def test_get_compatible_crops_acidic_soil():
 
 
 @pytest.mark.asyncio
-async def test_soil_analysis_endpoint(client):
+async def test_soil_analysis_endpoint(client, auth_headers):
     """Integration test for soil analysis endpoint."""
     response = await client.post(
         "/api/soil/analyze",
@@ -137,6 +148,7 @@ async def test_soil_analysis_endpoint(client):
             "target_crop": "rice",
             "area_acres": 2.5,
         },
+        headers=auth_headers,
     )
 
     assert response.status_code == 200

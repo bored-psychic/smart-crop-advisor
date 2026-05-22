@@ -1863,5 +1863,70 @@
     "text": "mm/day",
     "context": "",
     "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "எச்சரிக்கை சந்தாக்கள்",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "உங்கள் வயல் மற்றும் பயிருக்கு ஏற்ப பனி, கனமழை, பூச்சி எச்சரிக்கைகளை SMS மூலம் பெறுங்கள்.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "சந்தா",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "புஷ் இயக்கு",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "பனி எச்சரிக்கை",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "கனமழை",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "பூச்சி ஆபத்து",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "வெப்பநிலை 4°C கீழே",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 மணியில் 50mm மேல் மழை",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "பயிருக்கான பூச்சி அபாய காலம்",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "குறைந்தது ஒரு எச்சரிக்கை தேர்ந்தெடுங்கள்.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "சந்தா எடுத்தீர்கள்! எச்சரிக்கைகள் அனுப்பப்படும்: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 புஷ் இயக்கம்",
+    "context": "",
+    "role": ""
   }
 }

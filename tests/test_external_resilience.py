@@ -99,7 +99,7 @@ def test_weather_service_logs_warning_on_owm_502(caplog):
     svc._settings.MAX_RETRIES = 1  # Single attempt so the test is fast.
 
     with caplog.at_level(logging.WARNING, logger="backend.services.weather_service"):
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             svc.get_current("Mumbai")
         )
 
@@ -135,7 +135,7 @@ def test_market_service_returns_none_on_timeout(caplog):
     svc = MarketService()
 
     with caplog.at_level(logging.WARNING, logger="backend.services.market_service"):
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             svc.get_live_price("Rice", "Karnataka")
         )
 
@@ -172,7 +172,7 @@ def test_market_service_returns_none_on_502(caplog):
     svc = MarketService()
 
     with caplog.at_level(logging.WARNING, logger="backend.services.market_service"):
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             svc.get_live_price("Wheat", "Punjab")
         )
 
@@ -211,7 +211,7 @@ def test_weather_service_logs_warning_on_502(caplog):
     svc._settings.MAX_RETRIES = 1
 
     with caplog.at_level(logging.WARNING, logger="backend.services.weather_service"):
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             svc.get_current("Chennai")
         )
 

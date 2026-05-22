@@ -1813,5 +1813,75 @@
     "text": "🚫 অবিলম্বে সমস্ত মাঠের কাজ বন্ধ করুন",
     "context": "",
     "role": ""
+  },
+  "a quiet companion": {
+    "text": "কৃষকদের সহায়ক",
+    "context": "",
+    "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "সতর্কতা সদস্যতা",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "আপনার জমি ও ফসল অনুযায়ী কুয়াশা, ভারী বৃষ্টি, কীট সতর্কতা SMS-এ পান।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "সদস্য হন",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "পুশ চালু করুন",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "কুয়াশার সতর্কতা",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "ভারী বৃষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "কীট ঝুঁকি",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "তাপমাত্রা 4°C-এর নিচে",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 ঘণ্টায় 50mm-এর বেশি বৃষ্টি",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "আপনার ফসলের কীট ঝুঁকির মৌসুম",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "অন্তত একটি সতর্কতা বেছে নিন।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "সদস্যতা হয়েছে! সতর্কতা পাঠানো হবে: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 পুশ চালু",
+    "context": "",
+    "role": ""
   }
 }

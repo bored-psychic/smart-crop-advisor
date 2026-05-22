@@ -1813,5 +1813,75 @@
     "text": "🚫 तात्काळ सर्व शेतकाम थांबवा",
     "context": "",
     "role": ""
+  },
+  "a quiet companion": {
+    "text": "शेतकऱ्यांचा सहायक",
+    "context": "",
+    "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "अलर्ट सदस्यता",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "तुमच्या शेत आणि पिकानुसार दंव, जड पाऊस, कीड धोक्याचे SMS अलर्ट मिळवा.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "सदस्य व्हा",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "पुश सुरू करा",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "दंव इशारा",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "जड पाऊस",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "कीड धोका",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "तापमान 4°C खाली",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 तासांत 50mm पेक्षा जास्त पाऊस",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "पिकासाठी कीड धोका काळ",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "किमान एक अलर्ट निवडा.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "सदस्यता झाली! अलर्ट पाठवले जातील: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 पुश चालू",
+    "context": "",
+    "role": ""
   }
 }

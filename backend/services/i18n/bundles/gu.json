@@ -1813,5 +1813,75 @@
     "text": "🚫 તાત્કાલિક બધી ખેત ગતિવિધિ બંધ કરો",
     "context": "",
     "role": ""
+  },
+  "a quiet companion": {
+    "text": "ખેડૂતોનો સહાયક",
+    "context": "",
+    "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "ચેતવણી સભ્યપદ",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "તમારા ખેતર અને પાક અનુસાર હિમ, ભારે વરસાદ, જીવાત ચેતવણી SMS થી મેળવો.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "સભ્ય બનો",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "પુશ ચાલુ કરો",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "હિમ ચેતવણી",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "ભારે વરસાદ",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "જીવાત જોખમ",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "તાપમાન 4°C થી ઓછું",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 કલાકમાં 50mm કરતાં વધુ વરસાદ",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "પાક માટે જીવાત જોખમ સમય",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "ઓછામાં ઓછી એક ચેતવણી પસંદ કરો.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "સભ્ય બન્યા! ચેતવણી મોકલાશે: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 પુશ ઓન",
+    "context": "",
+    "role": ""
   }
 }

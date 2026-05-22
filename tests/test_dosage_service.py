@@ -76,7 +76,7 @@ def _make_mock_anthropic(text: str):
 def test_lookup_armyworm_maize_returns_db():
     # Patch market to avoid HTTP calls and Haiku to avoid API calls
     mock_client = _make_mock_anthropic("Spray the pesticide early morning. Apply before sunrise for best results.")
-    with patch("backend.services.dosage_service.market.get_live_mandi_price", return_value=None):
+    with patch("backend.services.market_service.MarketService.get_live_price", return_value=None):
         with patch("backend.services.dosage_service.AsyncAnthropic", return_value=mock_client):
             with patch("backend.services.dosage_service.get_settings") as mock_settings:
                 mock_settings.return_value.ANTHROPIC_API_KEY = "test-key"
@@ -92,7 +92,7 @@ def test_lookup_armyworm_maize_returns_db():
 
 def test_lookup_area_scaling():
     mock_client = _make_mock_anthropic("Apply pesticide per the recommended dosage. Follow instructions carefully.")
-    with patch("backend.services.dosage_service.market.get_live_mandi_price", return_value=None):
+    with patch("backend.services.market_service.MarketService.get_live_price", return_value=None):
         with patch("backend.services.dosage_service.AsyncAnthropic", return_value=mock_client):
             with patch("backend.services.dosage_service.get_settings") as mock_settings:
                 mock_settings.return_value.ANTHROPIC_API_KEY = "test-key"
@@ -137,7 +137,7 @@ def test_lookup_unknown_pest_returns_llm_fallback():
     mock_client = MagicMock()
     mock_client.messages = mock_messages
 
-    with patch("backend.services.dosage_service.market.get_live_mandi_price", return_value=None):
+    with patch("backend.services.market_service.MarketService.get_live_price", return_value=None):
         with patch("backend.services.dosage_service.AsyncAnthropic", return_value=mock_client):
             with patch("backend.services.dosage_service.get_settings") as mock_settings:
                 mock_settings.return_value.ANTHROPIC_API_KEY = "test-key"
@@ -153,7 +153,7 @@ def test_lookup_unknown_pest_returns_llm_fallback():
 
 def test_lookup_normalization():
     mock_client = _make_mock_anthropic("Apply pesticide correctly. Follow timing instructions.")
-    with patch("backend.services.dosage_service.market.get_live_mandi_price", return_value=None):
+    with patch("backend.services.market_service.MarketService.get_live_price", return_value=None):
         with patch("backend.services.dosage_service.AsyncAnthropic", return_value=mock_client):
             with patch("backend.services.dosage_service.get_settings") as mock_settings:
                 mock_settings.return_value.ANTHROPIC_API_KEY = "test-key"

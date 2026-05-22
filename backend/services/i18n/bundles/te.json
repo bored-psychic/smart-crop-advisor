@@ -1863,5 +1863,70 @@
     "text": "mm/day",
     "context": "",
     "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "అలర్ట్ సభ్యత్వాలు",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "మీ పొలం మరియు పంటకు అనుగుణంగా మంచు, భారీ వర్షం, కీట హెచ్చరికలు SMS ద్వారా పొందండి.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "సభ్యత్వం",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "పుష్ ఆన్",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "మంచు హెచ్చరిక",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "భారీ వర్షం",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "కీట ప్రమాదం",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "ఉష్ణోగ్రత 4°C కంటే తక్కువ",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 గంటల్లో 50mm కంటే ఎక్కువ వర్షం",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "పంటకు కీట హెచ్చరిక కాలం",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "కనీసం ఒక హెచ్చరిక ఎంచుకోండి.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "సభ్యత్వం పొందారు! అలర్ట్‌లు పంపబడతాయి: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 పుష్ ఆన్",
+    "context": "",
+    "role": ""
   }
 }

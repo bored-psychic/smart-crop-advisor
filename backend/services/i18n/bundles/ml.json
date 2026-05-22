@@ -1813,5 +1813,75 @@
     "text": "🚫 ഉടനടി എല്ലാ വയൽ ജോലിയും നിർത്തൂ",
     "context": "",
     "role": ""
+  },
+  "a quiet companion": {
+    "text": "കർഷകരുടെ സഹായി",
+    "context": "",
+    "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "അലർട്ട് സബ്സ്ക്രിപ്ഷനുകൾ",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "നിങ്ങളുടെ വയലും വിളയും അടിസ്ഥാനമാക്കി മഞ്ഞ്, കനമഴ, കീട അലർട്ടുകൾ SMS ആയി ലഭിക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "സബ്സ്ക്രൈബ്",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "പുഷ് ഓണാക്കൂ",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "മഞ്ഞ് മുന്നറിയിപ്പ്",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "കനമഴ",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "കീട അപകടം",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "താപനില 4°C-ൽ താഴേ",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 മണിക്കൂറിൽ 50mm-ൽ കൂടുതൽ മഴ",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "വിളകൾക്ക് കീട അപകട കാലം",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "ഒരു അലർട്ടെങ്കിലും തിരഞ്ഞെടുക്കൂ.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "സബ്സ്ക്രൈബ് ചെയ്തു! അലർട്ടുകൾ അയക്കും: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 പുഷ് ഓൺ",
+    "context": "",
+    "role": ""
   }
 }

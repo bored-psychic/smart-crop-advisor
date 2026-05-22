@@ -1813,5 +1813,75 @@
     "text": "🚫 ਤੁਰੰਤ ਸਾਰਾ ਖੇਤ ਕੰਮ ਬੰਦ ਕਰੋ",
     "context": "",
     "role": ""
+  },
+  "a quiet companion": {
+    "text": "ਕਿਸਾਨਾਂ ਦਾ ਸਹਾਇਕ",
+    "context": "",
+    "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "ਅਲਰਟ ਮੈਂਬਰਸ਼ਿਪ",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "ਆਪਣੇ ਖੇਤ ਅਤੇ ਫ਼ਸਲ ਅਨੁਸਾਰ ਪਾਲਾ, ਭਾਰੀ ਮੀਂਹ, ਕੀੜੇ ਦੀ ਚੇਤਾਵਨੀ SMS 'ਤੇ ਪਾਓ।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "ਮੈਂਬਰ ਬਣੋ",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "ਪੁਸ਼ ਚਾਲੂ ਕਰੋ",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "ਪਾਲੇ ਦੀ ਚੇਤਾਵਨੀ",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "ਭਾਰੀ ਮੀਂਹ",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "ਕੀੜੇ ਦਾ ਖ਼ਤਰਾ",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "ਤਾਪਮਾਨ 4°C ਤੋਂ ਘੱਟ",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 ਘੰਟਿਆਂ ਵਿੱਚ 50mm ਤੋਂ ਵੱਧ ਮੀਂਹ",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "ਫ਼ਸਲ ਲਈ ਕੀੜੇ ਖ਼ਤਰੇ ਦਾ ਸਮਾਂ",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "ਘੱਟੋ-ਘੱਟ ਇੱਕ ਅਲਰਟ ਚੁਣੋ।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "ਮੈਂਬਰ ਬਣ ਗਏ! ਅਲਰਟ ਭੇਜੇ ਜਾਣਗੇ: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 ਪੁਸ਼ ਚਾਲੂ",
+    "context": "",
+    "role": ""
   }
 }
