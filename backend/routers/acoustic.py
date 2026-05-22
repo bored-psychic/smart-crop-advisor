@@ -122,6 +122,15 @@ async def submit_feedback(body: _FeedbackBody, _: str = Depends(require_api_key)
     if not label or label.lower() == "skip":
         return {"status": "skipped"}
 
+    # Path traversal prevention: only allow labels from the authoritative
+    # PEST_META allowlist. A supplied label like "../../etc/passwd" would
+    # otherwise escape AUDIO_SAMPLES_DIR when used as a path component.
+    if label not in VALID_LABELS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown label: {label!r}. Must be one of: {sorted(VALID_LABELS)}",
+        )
+
     clip_src = FEEDBACK_CLIPS_DIR / f"{body.clip_id}.wav"
     if not clip_src.exists():
         raise HTTPException(status_code=404, detail="clip_id not found")
@@ -139,7 +148,7 @@ async def submit_feedback(body: _FeedbackBody, _: str = Depends(require_api_key)
     except InvalidToken:
         # Legacy unencrypted clip from before P1 Task 3 — accept as-is.
         decrypted = clip_src.read_bytes()
-    dest_dir = AUDIO_SAMPLES_DIR / label.replace("/", "_").replace(" ", "_")
+    dest_dir = AUDIO_SAMPLES_DIR / label
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / f"feedback_{body.clip_id}.wav"
     dest.write_bytes(decrypted)
@@ -930,6 +939,12 @@ async def _gemini_classify_direct(
         "attempts": attempts,
     }
 
+
+# Authoritative label allowlist for feedback endpoint path-component validation.
+# Derived from PEST_META — the same set the model can emit — plus the
+# open-vocabulary names the Claude/Gemini API pipeline may return.
+# Any corrected_label that is not in this set is rejected to prevent path traversal.
+VALID_LABELS: frozenset[str] = frozenset(PEST_META.keys())
 
 _VALID_PESTS = list(PEST_META.keys())
 _VALID_PESTS_LOWER = {name.lower(): name for name in _VALID_PESTS}
