@@ -38,6 +38,7 @@ python-dotenv
 python-multipart
 PyJWT>=2.8
 slowapi==0.1.9
+cachetools>=5.3
 
 # ── Alert System ─────────────────────────────────
 aiosqlite>=0.20.0

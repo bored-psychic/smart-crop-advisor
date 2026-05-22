@@ -4,9 +4,12 @@ import time
 import logging
 from typing import Any, Optional, Callable
 from backend.config import get_settings
+import cachetools
 
 # ── Redis Fallback Logic ───────────────────────────────────────────────────
-_IN_MEMORY_CACHE = {}
+# Bounded LRU cache with 10,000 item limit to prevent unbounded memory growth.
+# Entries are stored with explicit expiry timestamps to support variable TTLs.
+_IN_MEMORY_CACHE = cachetools.LRUCache(maxsize=10_000)
 
 _pool = None
 REDIS_AVAILABLE = False
@@ -41,11 +44,14 @@ class CacheManager:
                     return json.loads(data) if data else None
             except Exception:
                 pass
-        
-        # In-memory fallback
+
+        # In-memory fallback: check expiry timestamp
         item = _IN_MEMORY_CACHE.get(key)
         if item and item['expiry'] > time.time():
             return item['value']
+        # Expired entry; clean it up
+        if item:
+            _IN_MEMORY_CACHE.pop(key, None)
         return None
 
     @staticmethod
@@ -57,8 +63,9 @@ class CacheManager:
                     return
             except Exception:
                 pass
-        
-        # In-memory fallback
+
+        # In-memory fallback: store with explicit expiry timestamp
+        # LRUCache bounded at 10,000 items
         _IN_MEMORY_CACHE[key] = {
             'value': value,
             'expiry': time.time() + ttl
