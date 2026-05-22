@@ -1,12 +1,12 @@
 import json
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from backend.schemas.subscriptions import (
     SubscribeRequest, SubscribeResponse,
     PushSubscribeRequest, VapidKeyResponse,
 )
-from backend.auth import require_api_key
+from backend.auth import require_api_key, require_user
 from backend.config import get_settings
 from backend.services.db import get_db
 from backend.services.alerts import check_and_send_alerts
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/alerts", tags=["alerts"])
 @router.post("/subscribe", response_model=SubscribeResponse)
 async def subscribe(
     req: SubscribeRequest,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     async with db.execute(
@@ -38,7 +38,7 @@ async def subscribe(
 @router.delete("/unsubscribe/{sub_id}")
 async def unsubscribe(
     sub_id: int,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     await db.execute(
@@ -51,9 +51,11 @@ async def unsubscribe(
 @router.get("/history")
 async def history(
     phone: str,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
+    # NOTE: Task 6 will replace the `phone` query param with the JWT
+    # subject. For T3 we only swap the auth dependency.
     async with db.execute(
         """SELECT ah.id, ah.alert_type, ah.severity, ah.message, ah.sent_at
            FROM alert_history ah
@@ -69,7 +71,7 @@ async def history(
 @router.post("/push-subscribe")
 async def push_subscribe(
     req: PushSubscribeRequest,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     await db.execute(
@@ -92,6 +94,10 @@ async def vapid_key():
 
 @router.post("/trigger-check")
 async def trigger_check(_=Depends(require_api_key)):
-    """Manual trigger for testing — runs the full alert pipeline immediately."""
+    """Manual trigger for testing — runs the full alert pipeline immediately.
+
+    Stays on the service-to-service ``require_api_key`` guard: this route
+    is for cron/admin use, not the browser.
+    """
     await check_and_send_alerts()
     return {"message": "Alert check complete"}

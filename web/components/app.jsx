@@ -40,12 +40,19 @@ function App() {
     if (!i18nReady) window.I18N._ready.then(() => setI18nReady(true));
   }, []);
   const t = useMemo(() => window.makeT(lang), [lang, i18nReady]);
-  const [authed, setAuthed] = useState(() => {
-    try { return localStorage.getItem('kisan.auth') === '1'; } catch { return false; }
-  });
+  // Auth: a JWT in localStorage (key `kisanos.token`) whose `exp` claim
+  // is still in the future. Garbage / forged / expired tokens fail the
+  // decode-and-check and route the user to Login.
+  const [authed, setAuthed] = useState(() => window.auth?.isTokenValid(window.auth?.getToken()) || false);
   useEffect(() => {
     document.body.dataset.auth = authed ? 'app' : 'login';
   }, [authed]);
+  // If api.js drops the token on a 401, mirror that into local state.
+  useEffect(() => {
+    const handler = () => setAuthed(false);
+    window.addEventListener('kisanos:auth-expired', handler);
+    return () => window.removeEventListener('kisanos:auth-expired', handler);
+  }, []);
   const [active, setActive] = useState('crop');
   useEffect(() => {
     if (authed) document.body.dataset.tab = active;
@@ -112,17 +119,16 @@ function App() {
   const ViewComponent = VIEW_MAP[displayTab] || ViewCrop;
 
   function handleSignIn(creds) {
-    if (creds.remember) {
-      try { localStorage.setItem('kisan.auth', '1'); } catch {}
-    }
-    if (creds.identifier) {
-      setProfile(p => ({ ...p, phone: creds.mode === 'mobile' ? creds.identifier : p.phone }));
+    // Login.jsx has already stored the JWT via window.auth.setToken on
+    // successful OTP verification. Here we just sync derived state.
+    if (creds && creds.phone) {
+      setProfile(p => ({ ...p, phone: creds.phone }));
     }
     setAuthed(true);
   }
 
   function handleLogout() {
-    try { localStorage.removeItem('kisan.auth'); } catch {}
+    window.auth?.clearToken();
     setAuthed(false);
     setActive('crop');
   }

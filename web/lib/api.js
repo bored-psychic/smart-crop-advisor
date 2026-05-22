@@ -1,5 +1,46 @@
-// Centralized API client for KisanOS SPA
-// All requests inject X-API-Key from window.API_KEY and are prefixed with window.API_BASE
+// Centralized API client for KisanOS SPA.
+//
+// All requests are prefixed with window.API_BASE and carry the per-user
+// JWT (issued by /auth/verify-otp) as `Authorization: Bearer <token>`.
+// The pre-T3 `X-API-Key` header is gone — the browser no longer holds a
+// shared secret.
+
+const TOKEN_KEY = 'kisanos.token';
+
+function getToken() {
+  try { return localStorage.getItem(TOKEN_KEY) || ''; }
+  catch { return ''; }
+}
+
+function setToken(token) {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {}
+}
+
+// Minimal base64url-JWT payload decoder. Does NOT verify the signature
+// (the backend does that); used only to check `exp` client-side and to
+// pull `phone` for UI display. Returns null on malformed input.
+function decodeJwtPayload(token) {
+  if (!token) return null;
+  const parts = String(token).split('.');
+  if (parts.length !== 3) return null;
+  try {
+    let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const json = atob(b64);
+    return JSON.parse(decodeURIComponent(escape(json)));
+  } catch {
+    return null;
+  }
+}
+
+function isTokenValid(token) {
+  const payload = decodeJwtPayload(token);
+  if (!payload || typeof payload.exp !== 'number') return false;
+  return payload.exp * 1000 > Date.now();
+}
 
 class ApiError extends Error {
   constructor(status, detail) {
@@ -10,7 +51,9 @@ class ApiError extends Error {
 }
 
 async function _req(path, opts = {}) {
-  const headers = { 'X-API-Key': window.API_KEY };
+  const headers = {};
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   if (window.__lang) headers['Accept-Language'] = window.__lang;
 
   let body;
@@ -38,6 +81,13 @@ async function _req(path, opts = {}) {
     throw err;
   }
 
+  // 401 anywhere means the token is gone/expired — drop it so the SPA
+  // re-routes to Login on next render.
+  if (r.status === 401) {
+    setToken('');
+    window.dispatchEvent(new CustomEvent('kisanos:auth-expired'));
+  }
+
   if (!r.ok) {
     let detail;
     try {
@@ -53,6 +103,12 @@ async function _req(path, opts = {}) {
 }
 
 window.api = {
+  // ── Auth ─────────────────────────────────────────────────────────
+  authRequestOtp: (phone) => _req('/auth/request-otp', { method: 'POST', body: { phone } }),
+  authVerifyOtp:  (phone, otp) => _req('/auth/verify-otp',  { method: 'POST', body: { phone, otp } }),
+  authMe:         () => _req('/auth/me'),
+
+  // ── Domain endpoints ─────────────────────────────────────────────
   cropRecommend: (body) => _req('/crop/recommend', { method: 'POST', body }),
 
   diseaseTreatmentPrice: (body) => _req('/disease/treatment-price', { method: 'POST', body }),
@@ -95,7 +151,15 @@ window.api = {
   alertsHistory:       (phone)=> _req(`/alerts/history?phone=${encodeURIComponent(phone)}`),
   alertsPushSubscribe: (body) => _req('/alerts/push-subscribe',   { method: 'POST', body }),
   alertsVapidKey:      ()     => _req('/alerts/vapid-public-key'),
-  alertsTrigger:       ()     => _req('/alerts/trigger-check',    { method: 'POST' }),
 };
 
 window.ApiError = ApiError;
+
+// Exposed helpers for components — token CRUD and JWT decode in one place.
+window.auth = {
+  getToken,
+  setToken,
+  clearToken: () => setToken(''),
+  decodeJwtPayload,
+  isTokenValid,
+};

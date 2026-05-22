@@ -16,6 +16,7 @@ from backend.middleware.locale import LocaleMiddleware
 from backend.services.db import init_db
 from backend.services.alerts import check_and_send_alerts
 from backend.routers import subscriptions as subscriptions_router
+from backend.routers import auth as auth_router
 
 logger = logging.getLogger("kisanos")
 
@@ -28,12 +29,12 @@ async def lifespan(app: FastAPI):
         settings = get_settings()
     except ValidationError as e:
         logger.error(
-            "❌ API_KEY env var is required. "
-            "Set API_KEY environment variable and restart."
+            "❌ Required env vars missing (API_KEY, JWT_SECRET). "
+            "Set them in .env and restart."
         )
         raise RuntimeError(
-            "API_KEY env var is required. "
-            "Set API_KEY environment variable and restart."
+            "Required env vars missing (API_KEY, JWT_SECRET). "
+            "Set them in .env and restart."
         ) from e
 
     logger.info("🌾 KisanOS API starting — loading ML models...")
@@ -154,6 +155,7 @@ def create_app() -> FastAPI:
     app.include_router(soil.router)
     app.include_router(dosage.router)
     app.include_router(subscriptions_router.router)
+    app.include_router(auth_router.router)
 
     # ── Health check ─────────────────────────────────────────────────
     @app.get("/health", tags=["System"])
