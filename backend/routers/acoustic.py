@@ -526,6 +526,9 @@ async def _claude_acoustic(
             attempts.append({"model": model_name, "stage": "api_call", "detail": detail})
             continue
 
+        if not resp.content:
+            raise HTTPException(status_code=503, detail="AI provider returned empty response")
+
         try:
             text = resp.content[0].text.strip()
             text = _strip_markdown_fences(text)
@@ -753,6 +756,9 @@ async def _claude_from_description(
             attempts.append({"model": model_name, "stage": "api_call",
                              "detail": detail})
             continue
+
+        if not resp.content:
+            raise HTTPException(status_code=503, detail="AI provider returned empty response")
 
         try:
             text = resp.content[0].text.strip()

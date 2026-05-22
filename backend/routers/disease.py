@@ -228,6 +228,8 @@ async def estimate_treatment_price(
                 {"role": "assistant", "content": "{"},
             ],
         )
+        if not resp.content:
+            raise HTTPException(status_code=503, detail="AI provider returned empty response")
         raw = "{" + resp.content[0].text
         # strip markdown fences if present
         raw = raw.strip()

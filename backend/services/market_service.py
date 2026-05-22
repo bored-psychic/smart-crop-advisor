@@ -3,10 +3,14 @@ Market Service — Live Agmarknet prices.
 Defensive Titanium: handles API failures, corrupt responses, and timeouts.
 """
 
+import json
+import logging
 import time
 import httpx
 from backend.config import get_settings
 from backend.data.state_prices import STATE_PRICE_FACTORS
+
+logger = logging.getLogger(__name__)
 
 
 class MarketService:
@@ -43,6 +47,7 @@ class MarketService:
             )
             async with httpx.AsyncClient(timeout=6.0) as client:
                 r = await client.get(url)
+                r.raise_for_status()
                 data = r.json()
 
             records = data.get('records', [])
@@ -90,8 +95,11 @@ class MarketService:
                     }
                     self._cache[cache_key] = (time.time(), result)
                     return result
-        except Exception:
-            pass
+        except (httpx.HTTPError, json.JSONDecodeError) as exc:
+            logger.exception(
+                "market_service: Agmarknet fetch failed for crop=%r state=%r: %s",
+                crop, state, exc,
+            )
 
         return None
 

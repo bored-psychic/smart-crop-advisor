@@ -3,9 +3,13 @@ Weather Service — Defensive Titanium implementation.
 OpenWeatherMap client with background caching, exponential backoff, and timeout handling.
 """
 
+import json
+import logging
 import time
 import httpx
 from backend.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class WeatherService:
@@ -32,10 +36,11 @@ class WeatherService:
             try:
                 async with httpx.AsyncClient(timeout=5.0) as client:
                     r = await client.get(url)
-                    if r.status_code == 200:
-                        return r.json()
-            except (httpx.TimeoutException, httpx.ConnectError):
-                pass
+                    r.raise_for_status()
+                    return r.json()
+            except (httpx.HTTPError, json.JSONDecodeError) as exc:
+                logger.warning("weather_service: fetch attempt %d failed for url=%r: %s",
+                               attempt + 1, url, exc)
             # Exponential backoff
             await _async_sleep(self._settings.RETRY_BACKOFF_BASE * (2 ** attempt))
         return None
@@ -141,13 +146,14 @@ async def resolve_city_state(city: str) -> str | None:
         )
         async with httpx.AsyncClient(timeout=5.0) as client:
             r = await client.get(url)
+            r.raise_for_status()
             results = r.json()
         if results and isinstance(results, list):
             state = results[0].get('state')
             _geocode_cache[key] = (time.time(), state)
             return state
-    except Exception:
-        pass
+    except (httpx.HTTPError, json.JSONDecodeError) as exc:
+        logger.exception("weather_service: geocode failed for city=%r: %s", city, exc)
 
     _geocode_cache[key] = (time.time(), None)
     return None
