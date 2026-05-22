@@ -127,14 +127,15 @@ def create_app() -> FastAPI:
     )
 
     # ── CORS ─────────────────────────────────────────────────────────
-    # Header-based auth (X-API-Key) doesn't require allow_credentials.
-    # For production, restrict allow_origins to specific frontend domains.
+    # Token-based auth (Authorization: Bearer) doesn't require allow_credentials.
+    # allow_origins is controlled via CORS_ORIGINS env var (dev default: localhost:5173, localhost:3000).
+    # allow_methods and allow_headers restricted to what the frontend actually uses.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
         allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST"],
+        allow_headers=["Authorization", "Content-Type"],
     )
 
     # ── LocaleMiddleware ─────────────────────────────────────────────
