@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from backend.schemas.dosage import DosageRequest, DosageAdvice
 from backend.services import dosage_service
-from backend.auth import require_api_key
+from backend.auth import require_user
 
 router = APIRouter(prefix="/api/dosage", tags=["dosage"])
 
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api/dosage", tags=["dosage"])
 @router.post("/recommend", response_model=DosageAdvice)
 async def recommend_dosage(
     req: DosageRequest,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user),
 ):
     return await dosage_service.lookup(
         pest_id=req.pest_id,

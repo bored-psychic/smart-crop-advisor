@@ -246,7 +246,7 @@ async def estimate_treatment_price(
 @router.get("/crops")
 async def list_crops(
     detailed: bool = Query(False),
-    _: str = Depends(require_api_key),
+    _user=Depends(require_user),
 ):
     """List all crops with available symptoms. Use ?detailed=true for full symptom metadata."""
     if not detailed:

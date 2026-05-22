@@ -20,7 +20,7 @@ from backend.services.i18n.dynamic import (
     tr_fallback_narrative, lang_name,
 )
 from backend.core.cache import CacheManager
-from backend.auth import require_api_key
+from backend.auth import require_user
 from backend.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -152,7 +152,7 @@ def _localize_amendments(amendments: list[Amendment], lang: str) -> list[Amendme
 async def analyze_soil(
     req: SoilAnalysisRequest,
     request: Request,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user),
 ):
     """Analyze soil and return deficiencies + amendment recommendations."""
 

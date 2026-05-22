@@ -6,7 +6,7 @@ from backend.services.market_service import get_market_service
 from backend.services.weather_service import resolve_city_state
 from backend.ml import price_model
 from backend.data.state_prices import STATE_PRICE_FACTORS
-from backend.auth import require_api_key
+from backend.auth import require_user_or_api_key
 
 router = APIRouter(prefix="/api/market", tags=["Market Prices"])
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/market", tags=["Market Prices"])
 async def get_forecast(
     req: MarketForecastRequest,
     request: Request,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """Get live mandi price + Prophet forecast. State is derived from city via geocoding."""
     state = await resolve_city_state(req.city)

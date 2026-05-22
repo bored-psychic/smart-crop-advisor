@@ -9,7 +9,7 @@ from backend.schemas.field_watch import (
 from backend.services.weather_service import get_weather_service
 from backend.services.firms_service import get_firms_service
 from backend.services.locust_service import get_locust_service
-from backend.auth import require_api_key
+from backend.auth import require_user_or_api_key
 
 router = APIRouter(prefix="/api/field-watch", tags=["Field Watch"])
 
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/field-watch", tags=["Field Watch"])
 @router.post("/scan", response_model=FieldWatchResponse)
 async def scan_field(
     req: FieldWatchRequest,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """
     Aggregate satellite intelligence:

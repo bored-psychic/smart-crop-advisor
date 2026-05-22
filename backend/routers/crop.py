@@ -7,7 +7,7 @@ from backend.services.i18n.dynamic import (
     tr_crop, tr_crop_tip, tr_soil_type, tr_soil_advice,
 )
 from backend.core.constants import CROP_EMOJI, CROP_TIPS
-from backend.auth import require_api_key
+from backend.auth import require_user_or_api_key
 
 router = APIRouter(prefix="/api/crop", tags=["Crop Recommender"])
 
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/crop", tags=["Crop Recommender"])
 async def recommend_crop(
     req: CropRecommendRequest,
     request: Request,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """Run Random Forest crop prediction and soil analysis."""
     crop_bundle = request.app.state.crop_model

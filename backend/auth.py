@@ -138,3 +138,45 @@ async def require_user(
     claims = decode_token(creds.credentials)
     request.state.user = claims
     return claims
+
+
+# ─── Dual-mode auth (JWT for SPA, API key for Streamlit/service callers) ──
+async def require_user_or_api_key(
+    request: Request,
+    creds: HTTPAuthorizationCredentials | None = Security(_bearer_scheme),
+    api_key: str | None = Security(_api_key_header),
+) -> dict[str, Any]:
+    """
+    Accept either a per-user JWT or the service-to-service API key.
+
+    Used for routes that are called from BOTH the SPA (JWT) and the
+    Streamlit dashboard / cron workers (API key). Prefers the JWT when
+    present so user context is preserved; falls back to API-key
+    validation otherwise.
+
+    Returns the JWT claims dict when authed via JWT, or a sentinel
+    ``{"sub": "service", "auth": "api_key"}`` when authed via API key,
+    so handlers can branch on ``claims.get("auth") == "api_key"`` if
+    they need to (most won't).
+    """
+    # Prefer JWT if a bearer credential is present.
+    if creds is not None and creds.credentials:
+        claims = decode_token(creds.credentials)
+        request.state.user = claims
+        return claims
+
+    # Fall through to API key.
+    if api_key is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing Authorization: Bearer token or X-API-Key header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if api_key != get_settings().API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid API key",
+        )
+    service_claims = {"sub": "service", "auth": "api_key"}
+    request.state.user = service_claims
+    return service_claims

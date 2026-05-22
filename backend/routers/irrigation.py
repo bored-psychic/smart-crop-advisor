@@ -4,7 +4,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, Depends
 from backend.schemas.irrigation import IrrigationRequest, IrrigationResponse, FertilizerAdvice
 from backend.core.constants import CROP_KC, FERTILIZER_SCHEDULE
-from backend.auth import require_api_key
+from backend.auth import require_user_or_api_key
 
 router = APIRouter(prefix="/api/irrigation", tags=["Irrigation Advisor"])
 
@@ -22,7 +22,7 @@ def calculate_ET0(temp: float, humidity: float, wind_speed_kmh: float) -> float:
 @router.post("/advise", response_model=IrrigationResponse)
 async def irrigation_advice(
     req: IrrigationRequest,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """Calculate water + fertilizer needs using FAO-56."""
     if req.crop not in CROP_KC:
