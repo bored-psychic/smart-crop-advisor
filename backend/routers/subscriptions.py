@@ -8,6 +8,7 @@ from backend.schemas.subscriptions import (
 )
 from backend.auth import require_api_key, require_user
 from backend.config import get_settings
+from backend.middleware.rate_limit import limiter
 from backend.services.db import get_db
 from backend.services.alerts import check_and_send_alerts
 
@@ -15,7 +16,9 @@ router = APIRouter(prefix="/api/alerts", tags=["alerts"])
 
 
 @router.post("/subscribe", response_model=SubscribeResponse)
+@limiter.limit("5/hour")
 async def subscribe(
+    request: Request,
     req: SubscribeRequest,
     user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),

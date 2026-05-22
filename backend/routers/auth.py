@@ -18,10 +18,11 @@ from __future__ import annotations
 import re
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from backend.auth import issue_token, require_user
+from backend.middleware.rate_limit import limiter, _otp_rate_limit_key
 from backend.services.auth_otp import (
     generate_otp,
     store_otp,
@@ -82,11 +83,16 @@ class MeResponse(BaseModel):
 
 
 @router.post("/request-otp", response_model=RequestOtpResponse)
+@limiter.limit("3/hour", key_func=_otp_rate_limit_key)
 async def request_otp(
+    request: Request,
     body: RequestOtpBody,
     db: aiosqlite.Connection = Depends(get_db),
 ):
     phone = _normalise_phone(body.phone)
+    # Store the normalised phone on request.state so _otp_rate_limit_key
+    # can use it for user-granular bucketing on subsequent slowapi checks.
+    request.state.otp_phone = phone
     otp = generate_otp()
     await store_otp(db, phone, otp)
     # Fast2SMS via existing helper. send_sms logs a stub if the key

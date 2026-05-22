@@ -20,8 +20,9 @@ from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
 from backend.schemas.acoustic import AcousticResponse
 from backend.ml.acoustic_model import _features_from_pcm, _normalize_crop_type
-from backend.auth import require_api_key
+from backend.auth import require_api_key, require_user
 from backend.config import get_settings
+from backend.middleware.rate_limit import limiter
 from backend.core.constants import PEST_META
 from backend.services import dosage_service
 
@@ -1113,11 +1114,12 @@ def _rejected(reason: str, warnings: list[str], duration: float, sr: int,
 
 
 @router.post("/analyze", response_model=AcousticResponse)
+@limiter.limit("20/hour")
 async def analyze_audio(
     request: Request,
     file: UploadFile = File(..., description="Field audio recording (WAV/MP3/OGG)"),
     crop_type: str = Form("Unknown"),
-    _: str = Depends(require_api_key),
+    _user=Depends(require_user),
 ):
     """Analyze audio for pest signatures — Claude bioacoustics first, RF fallback."""
     normalized_crop = _normalize_crop_type(crop_type)

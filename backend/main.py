@@ -6,13 +6,17 @@ CORS-enabled, authenticated, with lifespan model loading.
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pydantic import ValidationError
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from backend.config import get_settings
 from backend.middleware.locale import LocaleMiddleware
+from backend.middleware.rate_limit import limiter
 from backend.services.db import init_db
 from backend.services.alerts import check_and_send_alerts
 from backend.routers import subscriptions as subscriptions_router
@@ -126,6 +130,36 @@ def create_app() -> FastAPI:
         ),
         lifespan=lifespan,
     )
+
+    # ── Rate limiting (slowapi) ───────────────────────────────────────
+    # limiter is keyed on JWT sub (user) or phone (OTP route) or remote IP.
+    app.state.limiter = limiter
+
+    async def _rate_limited_json(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+        """Return a structured 429 with retry_after in seconds."""
+        # slowapi stores the limit detail on the exception; extract retry delay
+        # from the Retry-After header that slowapi would normally set.
+        retry_after: int = 3600  # conservative default (1 hour)
+        try:
+            # exc.detail is e.g. "5 per 1 hour" — parse the window
+            parts = str(exc.detail).split()
+            # typical: "5 per 1 hour"
+            if len(parts) >= 4 and parts[1] == "per":
+                count = int(parts[2])
+                unit = parts[3].rstrip("s")  # "hour" / "minute"
+                if unit == "hour":
+                    retry_after = 3600
+                elif unit == "minute":
+                    retry_after = 60
+        except Exception:
+            pass
+        return JSONResponse(
+            status_code=429,
+            content={"error": "rate_limited", "retry_after": retry_after},
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    app.add_exception_handler(RateLimitExceeded, _rate_limited_json)
 
     # ── CORS ─────────────────────────────────────────────────────────
     # Token-based auth (Authorization: Bearer) doesn't require allow_credentials.

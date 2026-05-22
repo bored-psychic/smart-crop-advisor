@@ -167,6 +167,13 @@ def client(settings_singleton_clear, tmp_path, monkeypatch):
     # Re-import main fresh so the lifespan picks up the new SQLITE_PATH.
     import importlib, backend.main
     importlib.reload(backend.main)
+    # Reset the rate-limit in-memory counters so tests that call
+    # /auth/request-otp multiple times don't bleed across each other.
+    from backend.middleware.rate_limit import limiter
+    try:
+        limiter.reset()
+    except Exception:
+        pass
     from fastapi.testclient import TestClient
     with TestClient(backend.main.app) as c:
         yield c
