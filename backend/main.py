@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pydantic import ValidationError
 from backend.config import get_settings
 from backend.middleware.locale import LocaleMiddleware
 from backend.services.db import init_db
@@ -23,24 +24,17 @@ logger = logging.getLogger("kisanos")
 async def lifespan(app: FastAPI):
     """Load all ML models once at startup — zero cold-start on first request."""
     _scheduler = None
-    settings = get_settings()
-
-    # Validate API key in production
-    if settings.ENVIRONMENT == "production":
-        if settings.API_KEY == "kisanos-dev-key-change-in-production":
-            logger.error(
-                "❌ SECURITY: Default API key detected in production! "
-                "Set API_KEY environment variable before deploying."
-            )
-            raise RuntimeError(
-                "Production deployment requires a custom API_KEY. "
-                "Set the API_KEY environment variable and restart."
-            )
-    elif settings.API_KEY == "kisanos-dev-key-change-in-production":
-        logger.warning(
-            "⚠️ Using default API key (development only). "
-            "For production, set API_KEY environment variable."
+    try:
+        settings = get_settings()
+    except ValidationError as e:
+        logger.error(
+            "❌ API_KEY env var is required. "
+            "Set API_KEY environment variable and restart."
         )
+        raise RuntimeError(
+            "API_KEY env var is required. "
+            "Set API_KEY environment variable and restart."
+        ) from e
 
     logger.info("🌾 KisanOS API starting — loading ML models...")
 

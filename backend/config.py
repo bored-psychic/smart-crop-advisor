@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"  # "development" or "production"
 
     # ── Authentication ───────────────────────────────────────────────────
-    API_KEY: str = "kisanos-dev-key-change-in-production"
+    API_KEY: str
 
     # ── CORS ─────────────────────────────────────────────────────────────
     CORS_ORIGINS: list[str] = ["*"]
