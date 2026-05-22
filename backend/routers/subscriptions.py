@@ -50,12 +50,20 @@ async def unsubscribe(
 
 @router.get("/history")
 async def history(
-    phone: str,
+    request: Request,
     user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
-    # NOTE: Task 6 will replace the `phone` query param with the JWT
-    # subject. For T3 we only swap the auth dependency.
+    # Task 6: phone is derived from the verified JWT — never from the query
+    # string.  A caller who presents a token for phone A cannot read history
+    # belonging to phone B.
+    #
+    # 403-vs-empty-result: we return an empty list rather than 403 when a
+    # phone simply has no history.  Returning 403 would distinguish "phone
+    # exists in our system" from "phone unknown", creating an enumeration
+    # oracle.  An empty list is indistinguishable from "no alerts sent yet"
+    # and leaks nothing about whether other phones are subscribed.
+    phone: str = request.state.user["phone"]
     async with db.execute(
         """SELECT ah.id, ah.alert_type, ah.severity, ah.message, ah.sent_at
            FROM alert_history ah

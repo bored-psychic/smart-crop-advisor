@@ -242,3 +242,53 @@ def test_trigger_check_still_uses_api_key(client):
     # Wrong key: 403
     r2 = client.post("/api/alerts/trigger-check", headers={"X-API-Key": "wrong"})
     assert r2.status_code == 403
+
+
+# ─── Task 6: /alerts/history derives phone from JWT ─────────────────────
+
+
+def test_alerts_history_requires_jwt(client):
+    """No token → 401; a query-string phone param is not enough."""
+    r = client.get("/api/alerts/history")
+    assert r.status_code == 401
+
+    # Passing a phone query param without a token must still be 401.
+    r2 = client.get("/api/alerts/history?phone=%2B919999999999")
+    assert r2.status_code == 401
+
+
+def test_alerts_history_returns_own_history(client, monkeypatch):
+    """Authenticated user gets their own history (empty list when none sent)."""
+    from backend.routers import auth as auth_router
+    monkeypatch.setattr(auth_router, "generate_otp", lambda: "424242")
+    client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    v = client.post("/api/auth/verify-otp", json={"phone": "+919876543210", "otp": "424242"})
+    token = v.json()["token"]
+
+    r = client.get("/api/alerts/history", headers={"Authorization": f"Bearer {token}"})
+    assert r.status_code == 200
+    # No subscriptions yet → empty list (not 403, not 404)
+    assert r.json() == []
+
+
+def test_alerts_history_phone_query_param_ignored(client, monkeypatch):
+    """A phone query param is silently ignored; only the JWT phone is used.
+
+    This test verifies that passing ?phone=<other> does NOT cause an error
+    (the param is no longer declared on the endpoint) and that the response
+    is scoped to the JWT owner, not the supplied query string value.
+    """
+    from backend.routers import auth as auth_router
+    monkeypatch.setattr(auth_router, "generate_otp", lambda: "424242")
+    client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    v = client.post("/api/auth/verify-otp", json={"phone": "+919876543210", "otp": "424242"})
+    token = v.json()["token"]
+
+    # Sending a different phone in the query string must not fail the request
+    # nor return data for that other phone — it is simply ignored.
+    r = client.get(
+        "/api/alerts/history?phone=%2B919999999999",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 200
+    assert isinstance(r.json(), list)

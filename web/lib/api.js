@@ -148,7 +148,7 @@ window.api = {
 
   alertsSubscribe:     (body) => _req('/alerts/subscribe',        { method: 'POST', body }),
   alertsUnsubscribe:   (id)   => _req(`/alerts/unsubscribe/${id}`, { method: 'DELETE' }),
-  alertsHistory:       (phone)=> _req(`/alerts/history?phone=${encodeURIComponent(phone)}`),
+  alertsHistory:       ()     => _req('/alerts/history'),
   alertsPushSubscribe: (body) => _req('/alerts/push-subscribe',   { method: 'POST', body }),
   alertsVapidKey:      ()     => _req('/alerts/vapid-public-key'),
 };
