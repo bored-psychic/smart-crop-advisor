@@ -1,13 +1,14 @@
 import json
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from backend.schemas.subscriptions import (
     SubscribeRequest, SubscribeResponse,
     PushSubscribeRequest, VapidKeyResponse,
 )
-from backend.auth import require_api_key
+from backend.auth import require_api_key, require_user
 from backend.config import get_settings
+from backend.middleware.rate_limit import limiter
 from backend.services.db import get_db
 from backend.services.alerts import check_and_send_alerts
 
@@ -15,9 +16,11 @@ router = APIRouter(prefix="/api/alerts", tags=["alerts"])
 
 
 @router.post("/subscribe", response_model=SubscribeResponse)
+@limiter.limit("5/hour")
 async def subscribe(
+    request: Request,
     req: SubscribeRequest,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     async with db.execute(
@@ -38,7 +41,7 @@ async def subscribe(
 @router.delete("/unsubscribe/{sub_id}")
 async def unsubscribe(
     sub_id: int,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     await db.execute(
@@ -50,10 +53,20 @@ async def unsubscribe(
 
 @router.get("/history")
 async def history(
-    phone: str,
-    _=Depends(require_api_key),
+    request: Request,
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
+    # Task 6: phone is derived from the verified JWT — never from the query
+    # string.  A caller who presents a token for phone A cannot read history
+    # belonging to phone B.
+    #
+    # 403-vs-empty-result: we return an empty list rather than 403 when a
+    # phone simply has no history.  Returning 403 would distinguish "phone
+    # exists in our system" from "phone unknown", creating an enumeration
+    # oracle.  An empty list is indistinguishable from "no alerts sent yet"
+    # and leaks nothing about whether other phones are subscribed.
+    phone: str = request.state.user["phone"]
     async with db.execute(
         """SELECT ah.id, ah.alert_type, ah.severity, ah.message, ah.sent_at
            FROM alert_history ah
@@ -69,7 +82,7 @@ async def history(
 @router.post("/push-subscribe")
 async def push_subscribe(
     req: PushSubscribeRequest,
-    _=Depends(require_api_key),
+    user=Depends(require_user),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     await db.execute(
@@ -92,6 +105,10 @@ async def vapid_key():
 
 @router.post("/trigger-check")
 async def trigger_check(_=Depends(require_api_key)):
-    """Manual trigger for testing — runs the full alert pipeline immediately."""
+    """Manual trigger for testing — runs the full alert pipeline immediately.
+
+    Stays on the service-to-service ``require_api_key`` guard: this route
+    is for cron/admin use, not the browser.
+    """
     await check_and_send_alerts()
     return {"message": "Alert check complete"}

@@ -19,10 +19,18 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"  # "development" or "production"
 
     # ── Authentication ───────────────────────────────────────────────────
-    API_KEY: str = "kisanos-dev-key-change-in-production"
+    # API_KEY: shared secret for service-to-service routes (kept after
+    # T3 user-auth rollout — see backend/auth.py).
+    API_KEY: str
+    # JWT_SECRET: HS256 signing key for per-user tokens issued by /auth/*.
+    # No default — boot must fail if missing (same pattern as API_KEY).
+    JWT_SECRET: str
+    JWT_TTL_HOURS: int = 24
+    OTP_TTL_SECONDS: int = 300
+    OTP_MAX_ATTEMPTS: int = 5
 
     # ── CORS ─────────────────────────────────────────────────────────────
-    CORS_ORIGINS: list[str] = ["*"]
+    CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 
     # ── External API Keys ────────────────────────────────────────────────
     OWM_API_KEY: str = ""

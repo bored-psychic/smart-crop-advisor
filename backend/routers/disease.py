@@ -12,8 +12,9 @@ from PIL import Image, UnidentifiedImageError
 
 from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse, TreatmentPriceRequest, TreatmentPriceResponse
 from core.disease_db import DISEASE_DB
-from backend.auth import require_api_key
+from backend.auth import require_api_key, require_user
 from backend.config import get_settings
+from backend.middleware.rate_limit import limiter
 from backend.services import dosage_service
 
 logger = logging.getLogger(__name__)
@@ -90,11 +91,12 @@ async def _claude_diagnose(image_bytes: bytes, crop_type: str, media_type: str) 
 
 
 @router.post("/analyze-image", response_model=DiseaseResult)
+@limiter.limit("20/hour")
 async def analyze_image(
     request: Request,
     file: UploadFile = File(..., description="Leaf/stem/fruit photo (JPG/PNG/WebP/GIF)"),
     crop_type: str = Form("Unknown"),
-    _: str = Depends(require_api_key),
+    _user=Depends(require_user),
 ):
     """Analyze uploaded crop image for disease detection."""
     settings = get_settings()
