@@ -1863,5 +1863,70 @@
     "text": "mm/दिन",
     "context": "",
     "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "अलर्ट सदस्यता",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "पाला, भारी बारिश और कीट जोखिम के SMS अलर्ट पाएं — आपके खेत और फसल के आधार पर।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "सदस्य बनें",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "पुश चालू करें",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "पाले की चेतावनी",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "भारी बारिश",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "कीट जोखिम",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "तापमान 4°C से नीचे",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 घंटे में 50mm से अधिक बारिश",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "आपकी फसल का कीट खतरा काल",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "कम से कम एक अलर्ट चुनें।",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "सदस्यता हो गई! अलर्ट भेजे जाएंगे: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 पुश चालू",
+    "context": "",
+    "role": ""
   }
 }

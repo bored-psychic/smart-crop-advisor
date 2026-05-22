@@ -66,7 +66,8 @@ class VisionService:
         try:
             import base64, json
             from anthropic import AsyncAnthropic
-            from core.config import settings
+            from backend.config import get_settings
+            settings = get_settings()
             if not settings.ANTHROPIC_API_KEY:
                 return None
             client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)

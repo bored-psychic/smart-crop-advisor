@@ -17,6 +17,11 @@ from backend.config import get_settings
 from backend.middleware.rate_limit import limiter
 from backend.services import dosage_service
 
+# Authoritative crop allowlist for the analyze-image endpoint (same source of
+# truth as the symptom database). "Unknown" is always accepted as the
+# no-selection sentinel.
+_VALID_CROP_TYPES: frozenset[str] = frozenset(DISEASE_DB.keys())
+
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/disease", tags=["Disease Detection"])
 
@@ -99,6 +104,15 @@ async def analyze_image(
     _user=Depends(require_user),
 ):
     """Analyze uploaded crop image for disease detection."""
+    # Validate crop_type against the known allowlist to prevent injection of
+    # arbitrary strings into AI prompts and downstream processing.
+    if crop_type != "Unknown" and crop_type not in _VALID_CROP_TYPES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unsupported crop_type: {crop_type!r}. "
+                   f"Valid values: {sorted(_VALID_CROP_TYPES)} or 'Unknown'.",
+        )
+
     settings = get_settings()
     contents = await file.read()
 
@@ -228,6 +242,8 @@ async def estimate_treatment_price(
                 {"role": "assistant", "content": "{"},
             ],
         )
+        if not resp.content:
+            raise HTTPException(status_code=503, detail="AI provider returned empty response")
         raw = "{" + resp.content[0].text
         # strip markdown fences if present
         raw = raw.strip()

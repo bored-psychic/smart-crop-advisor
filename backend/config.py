@@ -29,6 +29,20 @@ class Settings(BaseSettings):
     OTP_TTL_SECONDS: int = 300
     OTP_MAX_ATTEMPTS: int = 5
 
+    # ── PII Encryption (P1 Task 3) ──────────────────────────────────────
+    # APP_PEPPER: secret string mixed into the SHA-256 of phone numbers
+    # before they're stored in alert_subscriptions / webpush_subscriptions
+    # as `phone_hash`. The pepper is what makes the hash non-trivially
+    # reversible from a stolen DB — without it, every phone number in
+    # the world could be precomputed in minutes.
+    # FERNET_KEY: base64url-encoded Fernet symmetric key used to encrypt
+    # the phone number itself (phone_ciphertext column) and feedback
+    # audio clips on disk. Decrypt-on-read so the API can still surface
+    # the user's own phone back to them.
+    # Both are REQUIRED — boot must fail if missing.
+    APP_PEPPER: str
+    FERNET_KEY: str
+
     # ── CORS ─────────────────────────────────────────────────────────────
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 

@@ -1863,5 +1863,70 @@
     "text": "mm/day",
     "context": "",
     "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "Alert Subscriptions",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "Subscribe",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "Enable Push",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "Frost Warning",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "Heavy Rain",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "Pest Risk",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "Temp drops below 4°C",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "Rain > 50mm in 48h",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "Seasonal peak for your crops",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "Pick at least one alert type.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "Subscribed! Alerts will be sent to ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 Push On",
+    "context": "",
+    "role": ""
   }
 }

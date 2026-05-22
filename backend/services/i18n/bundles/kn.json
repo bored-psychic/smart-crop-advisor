@@ -1863,5 +1863,70 @@
     "text": "mm/day",
     "context": "",
     "role": ""
+  },
+  "Alert Subscriptions": {
+    "text": "ಎಚ್ಚರಿಕೆ ಚಂದಾದಾರಿಕೆಗಳು",
+    "context": "",
+    "role": ""
+  },
+  "Get frost, heavy rain, and pest risk alerts by SMS — based on your field location and crop.": {
+    "text": "ನಿಮ್ಮ ಹೊಲ ಮತ್ತು ಬೆಳೆಗೆ ಅನುಗುಣವಾಗಿ ಮಂಜು, ಭಾರಿ ಮಳೆ, ಕೀಟ ಎಚ್ಚರಿಕೆಗಳನ್ನು SMS ಮೂಲಕ ಪಡೆಯಿರಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribe": {
+    "text": "ಚಂದಾದಾರಿಕೆ",
+    "context": "",
+    "role": ""
+  },
+  "Enable Push": {
+    "text": "ಪುಶ್ ಆನ್",
+    "context": "",
+    "role": ""
+  },
+  "Frost Warning": {
+    "text": "ಮಂಜು ಎಚ್ಚರಿಕೆ",
+    "context": "",
+    "role": ""
+  },
+  "Heavy Rain": {
+    "text": "ಭಾರಿ ಮಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "Pest Risk": {
+    "text": "ಕೀಟ ಅಪಾಯ",
+    "context": "",
+    "role": ""
+  },
+  "Temp drops below 4°C": {
+    "text": "ತಾಪಮಾನ 4°C ಗಿಂತ ಕಡಿಮೆ",
+    "context": "",
+    "role": ""
+  },
+  "Rain > 50mm in 48h": {
+    "text": "48 ಗಂಟೆಗಳಲ್ಲಿ 50mm ಮೀರಿದ ಮಳೆ",
+    "context": "",
+    "role": ""
+  },
+  "Seasonal peak for your crops": {
+    "text": "ಬೆಳೆಗೆ ಕೀಟ ಅಪಾಯ ಕಾಲ",
+    "context": "",
+    "role": ""
+  },
+  "Pick at least one alert type.": {
+    "text": "ಕನಿಷ್ಠ ಒಂದು ಎಚ್ಚರಿಕೆ ಆಯ್ಕೆ ಮಾಡಿ.",
+    "context": "",
+    "role": ""
+  },
+  "Subscribed! Alerts will be sent to ": {
+    "text": "ಚಂದಾದಾರಿಕೆ ಆಯಿತು! ಎಚ್ಚರಿಕೆಗಳನ್ನು ಕಳುಹಿಸಲಾಗುವುದು: ",
+    "context": "",
+    "role": ""
+  },
+  "🔔 Push On": {
+    "text": "🔔 ಪುಶ್ ಆನ್",
+    "context": "",
+    "role": ""
   }
 }
