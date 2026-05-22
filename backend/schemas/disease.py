@@ -32,3 +32,17 @@ class SymptomResponse(BaseModel):
     crop: str
     symptom: str
     dosage_advice: Optional[DosageAdvice] = None
+
+
+class TreatmentPriceRequest(BaseModel):
+    disease: str
+    treatment: str
+    crop_type: str
+    area_acres: float = 1.0
+
+
+class TreatmentPriceResponse(BaseModel):
+    cost_range: str
+    per_acre_inr: int
+    total_inr: int
+    notes: str

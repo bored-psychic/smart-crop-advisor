@@ -33,7 +33,7 @@ function Top3Bars({ top3, t }) {
   );
 }
 
-function PhotoResult({ result, t }) {
+function PhotoResult({ result, t, price, priceLoading, areaAcres }) {
   const sevColor = result.severity === 'High' ? 'var(--berry)'
                  : result.severity === 'Medium' ? '#A06B1F'
                  : 'var(--leaf)';
@@ -58,6 +58,22 @@ function PhotoResult({ result, t }) {
         <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
           <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>{t('treatment')}</div>
           <div style={{ marginTop: 4 }}>{result.treatment}</div>
+          {(priceLoading || price) && (
+            <div style={{ marginTop: 10, padding: '10px 12px', background: 'rgba(127,217,140,0.10)', border: '1px solid rgba(127,217,140,0.28)', borderRadius: 10 }}>
+              <div className="page-eyebrow" style={{ color: 'var(--leaf)', marginBottom: 4 }}>
+                {t('estimated cost')} · {areaAcres} {t('acres')}
+              </div>
+              {priceLoading && (
+                <div className="muted small" style={{ fontStyle: 'italic' }}>{t('Estimating cost…')}</div>
+              )}
+              {price && !priceLoading && (
+                <>
+                  <div style={{ fontFamily: 'var(--display)', fontSize: 22, color: 'var(--ink)' }}>{price.cost_range}</div>
+                  <div className="muted small" style={{ marginTop: 3 }}>₹{price.per_acre_inr.toLocaleString()}/acre · {price.notes}</div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
       {result.prevention && (
@@ -71,7 +87,7 @@ function PhotoResult({ result, t }) {
   );
 }
 
-function PhotoPanel({ t }) {
+function PhotoPanel({ t, areaAcres }) {
   const [cropList, setCropList] = useState(null);
   const [cropsLoading, setCropsLoading] = useState(true);
   const [cropType, setCropType] = useState('Tomato');
@@ -79,6 +95,8 @@ function PhotoPanel({ t }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [price, setPrice] = useState(null);
+  const [priceLoading, setPriceLoading] = useState(false);
   // Fix #5: store chosen file in state so retry doesn't use stale fileRef.current.files
   const [file, setFile] = useState(null);
   const fileRef = useRef();
@@ -101,10 +119,21 @@ function PhotoPanel({ t }) {
     setLoading(true);
     setResult(null);
     setError(null);
+    setPrice(null);
+    setPriceLoading(false);
     window.api.diseasePhoto(f, cropType)
       .then(r => {
         setResult(r);
         setLoading(false);
+        if (r.treatment) {
+          setPriceLoading(true);
+          window.api.diseaseTreatmentPrice({
+            disease: r.disease,
+            treatment: r.treatment,
+            crop_type: cropType,
+            area_acres: areaAcres,
+          }).then(p => setPrice(p)).catch(() => {}).finally(() => setPriceLoading(false));
+        }
       })
       .catch(e => {
         setError({
@@ -114,7 +143,7 @@ function PhotoPanel({ t }) {
         });
         setLoading(false);
       });
-  }, [cropType]);
+  }, [cropType, areaAcres]);
 
   // Fix #6: wrap in useCallback
   const handleFileChange = useCallback((e) => {
@@ -193,20 +222,23 @@ function PhotoPanel({ t }) {
         {loading && <Loading label={t('Analyzing leaf…')} />}
         {!loading && error && (
           <ErrorCard
+            t={t}
             title={t('Could not analyze photo')}
             detail={errorMsg(error, t)}
             // Fix #5: retry uses the file stored in state, not stale fileRef.current.files
             onRetry={() => { if (file) analyzeFile(file); }}
           />
         )}
-        {!loading && result && <PhotoResult result={result} t={t} />}
+        {!loading && result && (
+          <PhotoResult result={result} t={t} price={price} priceLoading={priceLoading} areaAcres={areaAcres} />
+        )}
       </div>
     </div>
   );
 }
 
 
-function ViewDisease({ profile, t }) {
+function ViewDisease({ profile, t, areaAcres = 1.0 }) {
   return (
     <div className="view-fade">
       <Topbar crumb={t('Leaf Doctor')} />
@@ -218,7 +250,7 @@ function ViewDisease({ profile, t }) {
         </div>
       </div>
 
-      <PhotoPanel t={t} />
+      <PhotoPanel t={t} areaAcres={areaAcres} />
     </div>
   );
 }

@@ -5,7 +5,7 @@
     "role": ""
   },
   "Disease + Vision": {
-    "text": "रोग+दृष्टि",
+    "text": "रोग + दृष्टि",
     "context": "",
     "role": ""
   },
@@ -20,7 +20,7 @@
     "role": ""
   },
   "Acoustic": {
-    "text": "ध्वनिक",
+    "text": "ध्वनि",
     "context": "",
     "role": ""
   },
@@ -30,32 +30,32 @@
     "role": ""
   },
   "Find the best crop for your field": {
-    "text": "अपने खेत के लिए सर्वोत्तम फसल ढूंढें",
+    "text": "अपने खेत के लिए सबसे अच्छी फसल चुनें",
     "context": "",
     "role": ""
   },
   "Enter your soil and climate details below.": {
-    "text": "नीचे अपनी मिट्टी और जलवायु का विवरण दर्ज करें।",
+    "text": "नीचे अपनी मिट्टी और मौसम की जानकारी भरें।",
     "context": "",
     "role": ""
   },
   "Read Instructions Aloud": {
-    "text": "निर्देश ज़ोर से पढ़ें",
+    "text": "निर्देश सुनाएँ",
     "context": "",
     "role": ""
   },
   "Auto-fill Climate from Location": {
-    "text": "स्थान से स्वत: भरण जलवायु",
+    "text": "स्थान से मौसम की जानकारी अपने आप भरें",
     "context": "",
     "role": ""
   },
   "Enter your city to auto-fill temperature, humidity & rainfall": {
-    "text": "तापमान, आर्द्रता और वर्षा को स्वतः भरने के लिए अपने शहर में प्रवेश करें",
+    "text": "अपना शहर लिखें, तापमान, नमी और बारिश अपने आप भर जाएँगे",
     "context": "",
     "role": ""
   },
   "Get Weather": {
-    "text": "मौसम प्राप्त करें",
+    "text": "मौसम जानें",
     "context": "",
     "role": ""
   },
@@ -65,32 +65,32 @@
     "role": ""
   },
   "Climate Conditions": {
-    "text": "जलवायु स्थितियाँ",
+    "text": "मौसम की स्थिति",
     "context": "",
     "role": ""
   },
   "Nitrogen (N) — kg/ha": {
-    "text": "नाइट्रोजन (एन) - किग्रा/हेक्टेयर",
+    "text": "नाइट्रोजन (N) — kg/ha",
     "context": "",
     "role": ""
   },
   "Phosphorus (P) — kg/ha": {
-    "text": "फॉस्फोरस (पी) - किग्रा/हेक्टेयर",
+    "text": "फॉस्फोरस (P) — kg/ha",
     "context": "",
     "role": ""
   },
   "Potassium (K) — kg/ha": {
-    "text": "पोटेशियम (के) - किग्रा/हेक्टेयर",
+    "text": "पोटैशियम (K) — kg/ha",
     "context": "",
     "role": ""
   },
   "Soil pH": {
-    "text": "मिट्टी का पी.एच",
+    "text": "मिट्टी का pH",
     "context": "",
     "role": ""
   },
   "Temperature (°C)": {
-    "text": "तापमान (डिग्री सेल्सियस)",
+    "text": "तापमान (°C)",
     "context": "",
     "role": ""
   },
@@ -100,92 +100,92 @@
     "role": ""
   },
   "Rainfall (mm)": {
-    "text": "वर्षा (मिमी)",
+    "text": "बारिश (mm)",
     "context": "",
     "role": ""
   },
   "Get Crop Recommendation": {
-    "text": "फसल अनुशंसा प्राप्त करें",
+    "text": "फसल की सिफ़ारिश पाएँ",
     "context": "",
     "role": ""
   },
   "Best Crop": {
-    "text": "सर्वोत्तम फसल",
+    "text": "सबसे अच्छी फसल",
     "context": "",
     "role": ""
   },
   "confidence": {
-    "text": "आत्मविश्वास",
+    "text": "भरोसा",
     "context": "",
     "role": ""
   },
   "Tip": {
-    "text": "बख्शीश",
+    "text": "सुझाव",
     "context": "",
     "role": ""
   },
   "Detected Soil Type": {
-    "text": "पता लगाया गया मिट्टी का प्रकार",
+    "text": "पहचानी गई मिट्टी का प्रकार",
     "context": "",
     "role": ""
   },
   "Soil Advice": {
-    "text": "मिट्टी संबंधी सलाह",
+    "text": "मिट्टी सलाह",
     "context": "",
     "role": ""
   },
   "Read Result Aloud": {
-    "text": "परिणाम को जोर से पढ़ें",
+    "text": "परिणाम सुनाएँ",
     "context": "",
     "role": ""
   },
   "Other Options": {
-    "text": "अन्य विकल्प",
+    "text": "और विकल्प",
     "context": "",
     "role": ""
   },
   "Confidence Across Top 8 Crops": {
-    "text": "शीर्ष 8 फसलों पर विश्वास",
+    "text": "टॉप 8 फसलों पर भरोसा",
     "context": "",
     "role": ""
   },
   "Your Input Summary": {
-    "text": "आपका इनपुट सारांश",
+    "text": "आपकी जानकारी का सारांश",
     "context": "",
     "role": ""
   },
   "Parameter": {
-    "text": "पैरामीटर",
+    "text": "मानदंड",
     "context": "",
     "role": ""
   },
   "Value": {
-    "text": "कीमत",
+    "text": "मान",
     "context": "",
     "role": ""
   },
   "Crop Disease, Pest & Vision AI": {
-    "text": "फसल रोग, कीट और दृष्टि एआई",
+    "text": "फसल रोग, कीट और दृष्टि AI",
     "context": "",
     "role": ""
   },
   "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
-    "text": "तत्काल एआई निदान के लिए एक फोटो अपलोड करें · या नीचे फसल + लक्षण/कीट चुनें।",
+    "text": "तुरंत AI जाँच के लिए फ़ोटो अपलोड करें · या नीचे फसल + लक्षण/कीट चुनें।",
     "context": "",
     "role": ""
   },
   "Method 1 — Photo Diagnosis (Recommended)": {
-    "text": "विधि 1 - फोटो डायग्नोसिस (अनुशंसित)",
+    "text": "तरीका 1 — फ़ोटो से जाँच (सुझाया गया)",
     "context": "",
     "role": ""
   },
   "Method 2 — Symptom Checker": {
-    "text": "विधि 2 - लक्षण जाँचकर्ता",
+    "text": "तरीका 2 — लक्षण जाँच",
     "context": "",
     "role": ""
   },
   "Select Crop for Diagnosis": {
-    "text": "निदान के लिए फसल का चयन करें",
+    "text": "जाँच के लिए फसल चुनें",
     "context": "",
     "role": ""
   },
@@ -195,27 +195,27 @@
     "role": ""
   },
   "Upload leaf / stem / fruit photo": {
-    "text": "पत्ती/तना/फल का फोटो अपलोड करें",
+    "text": "पत्ती / तना / फल की फ़ोटो अपलोड करें",
     "context": "",
     "role": ""
   },
   "Diagnose from Photo": {
-    "text": "फोटो से करें निदान",
+    "text": "फ़ोटो से जाँच करें",
     "context": "",
     "role": ""
   },
   "Analyzing pixel patterns...": {
-    "text": "पिक्सेल पैटर्न का विश्लेषण किया जा रहा है...",
+    "text": "तस्वीर की बारीकियाँ जाँची जा रही हैं...",
     "context": "",
     "role": ""
   },
   "AI Confidence": {
-    "text": "एआई आत्मविश्वास",
+    "text": "AI भरोसा",
     "context": "",
     "role": ""
   },
   "Treatment": {
-    "text": "इलाज",
+    "text": "उपचार",
     "context": "",
     "role": ""
   },
@@ -225,67 +225,67 @@
     "role": ""
   },
   "Detected": {
-    "text": "का पता चला",
+    "text": "पहचान हुई",
     "context": "",
     "role": ""
   },
   "Share on WhatsApp": {
-    "text": "व्हाट्सएप पर शेयर करें",
+    "text": "WhatsApp पर साझा करें",
     "context": "",
     "role": ""
   },
   "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
-    "text": "कम आत्मविश्वास - प्रभावित पत्ती का स्पष्ट, अच्छी रोशनी वाला क्लोज़-अप आज़माएँ।",
+    "text": "भरोसा कम है — प्रभावित पत्ती की साफ़, अच्छी रोशनी वाली नज़दीकी फ़ोटो लें।",
     "context": "",
     "role": ""
   },
   "Location Note": {
-    "text": "स्थान नोट",
+    "text": "स्थान की जानकारी",
     "context": "",
     "role": ""
   },
   "Daylight": {
-    "text": "दिन का प्रकाश",
+    "text": "दिन की रोशनी",
     "context": "",
     "role": ""
   },
   "Close-up on affected area": {
-    "text": "प्रभावित क्षेत्र का क्लोज़-अप",
+    "text": "प्रभावित हिस्से की नज़दीकी फ़ोटो",
     "context": "",
     "role": ""
   },
   "Sharp, no blur": {
-    "text": "तीव्र, कोई धुंधलापन नहीं",
+    "text": "साफ़, धुंधलापन न हो",
     "context": "",
     "role": ""
   },
   "Crop": {
-    "text": "काटना",
+    "text": "फसल",
     "context": "",
     "role": ""
   },
   "Symptom observed": {
-    "text": "लक्षण देखा गया",
+    "text": "दिखा हुआ लक्षण",
     "context": "",
     "role": ""
   },
   "Diagnose by Symptom / Pest": {
-    "text": "लक्षण/कीट द्वारा निदान करें",
+    "text": "लक्षण / कीट से जाँच करें",
     "context": "",
     "role": ""
   },
   "Diagnose by Symptom": {
-    "text": "लक्षण द्वारा निदान करें",
+    "text": "लक्षण से जाँच करें",
     "context": "",
     "role": ""
   },
   "Live Mandi Prices": {
-    "text": "लाइव मंडी कीमतें",
+    "text": "लाइव मंडी भाव",
     "context": "",
     "role": ""
   },
   "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
-    "text": "एगमार्कनेट से वास्तविक समय की कीमतें। पैगंबर द्वारा संचालित राज्य-कैलिब्रेटेड 30-दिवसीय पूर्वानुमान।",
+    "text": "Agmarknet से तुरंत भाव। Prophet द्वारा राज्य के अनुसार 30 दिन का अनुमान।",
     "context": "",
     "role": ""
   },
@@ -295,82 +295,82 @@
     "role": ""
   },
   "Forecast horizon (days)": {
-    "text": "पूर्वानुमान क्षितिज (दिन)",
+    "text": "अनुमान की अवधि (दिन)",
     "context": "",
     "role": ""
   },
   "Get Live Price + Forecast": {
-    "text": "लाइव मूल्य + पूर्वानुमान प्राप्त करें",
+    "text": "लाइव भाव + पूर्वानुमान देखें",
     "context": "",
     "role": ""
   },
   "Best Price": {
-    "text": "सबसे अच्छी कीमत",
+    "text": "सबसे अच्छा भाव",
     "context": "",
     "role": ""
   },
   "Lowest Price": {
-    "text": "सबसे कम कीमत",
+    "text": "सबसे कम भाव",
     "context": "",
     "role": ""
   },
   "Avg / 30D": {
-    "text": "औसत/30डी",
+    "text": "औसत / 30 दिन",
     "context": "",
     "role": ""
   },
   "Wait to sell": {
-    "text": "बेचने के लिए प्रतीक्षा करें",
+    "text": "बेचने के लिए रुकें",
     "context": "",
     "role": ""
   },
   "Sell now": {
-    "text": "अभी बेचें",
+    "text": "अभी बेच दें",
     "context": "",
     "role": ""
   },
   "Read Market Advice": {
-    "text": "बाज़ार सलाह पढ़ें",
+    "text": "मंडी सलाह पढ़ें",
     "context": "",
     "role": ""
   },
   "Price Forecast Chart": {
-    "text": "मूल्य पूर्वानुमान चार्ट",
+    "text": "भाव पूर्वानुमान चार्ट",
     "context": "",
     "role": ""
   },
   "Full Forecast Table": {
-    "text": "पूर्ण पूर्वानुमान तालिका",
+    "text": "पूरा पूर्वानुमान तालिका",
     "context": "",
     "role": ""
   },
   "Forecast accuracy": {
-    "text": "पूर्वानुमान सटीकता",
+    "text": "पूर्वानुमान की सटीकता",
     "context": "",
     "role": ""
   },
   "Smart Irrigation & Fertilizer Advisor": {
-    "text": "स्मार्ट सिंचाई एवं उर्वरक सलाहकार",
+    "text": "स्मार्ट सिंचाई और खाद सलाहकार",
     "context": "",
     "role": ""
   },
   "Get precise water and fertilizer recommendations based on your crop and weather.": {
-    "text": "अपनी फसल और मौसम के आधार पर सटीक पानी और उर्वरक सिफारिशें प्राप्त करें।",
+    "text": "अपनी फसल और मौसम के हिसाब से सही पानी और खाद की सलाह पाएं।",
     "context": "",
     "role": ""
   },
   "Live Weather (Auto-fill)": {
-    "text": "लाइव मौसम (स्वतः-भरण)",
+    "text": "लाइव मौसम (खुद भर जाएगा)",
     "context": "",
     "role": ""
   },
   "Enter your city name": {
-    "text": "अपने शहर का नाम दर्ज करें",
+    "text": "अपने शहर का नाम डालें",
     "context": "",
     "role": ""
   },
   "Temp": {
-    "text": "अस्थायी",
+    "text": "तापमान",
     "context": "",
     "role": ""
   },
@@ -380,27 +380,27 @@
     "role": ""
   },
   "Rain 1h": {
-    "text": "बारिश 1 घंटा",
+    "text": "1 घंटे की बारिश",
     "context": "",
     "role": ""
   },
   "Crop Details": {
-    "text": "फसल विवरण",
+    "text": "फसल की जानकारी",
     "context": "",
     "role": ""
   },
   "Growth Stage": {
-    "text": "वृद्धि चरण",
+    "text": "फसल की अवस्था",
     "context": "",
     "role": ""
   },
   "Field Area (acres)": {
-    "text": "फ़ील्ड क्षेत्रफल (एकड़)",
+    "text": "खेत का रकबा (एकड़)",
     "context": "",
     "role": ""
   },
   "Rainfall in last 3 days (mm)": {
-    "text": "पिछले 3 दिनों में वर्षा (मिमी)",
+    "text": "पिछले 3 दिनों की बारिश (mm)",
     "context": "",
     "role": ""
   },
@@ -410,12 +410,12 @@
     "role": ""
   },
   "Get Irrigation Advice": {
-    "text": "सिंचाई सलाह प्राप्त करें",
+    "text": "सिंचाई की सलाह लें",
     "context": "",
     "role": ""
   },
   "Water Need": {
-    "text": "पानी की आवश्यकता",
+    "text": "पानी की ज़रूरत",
     "context": "",
     "role": ""
   },
@@ -440,62 +440,62 @@
     "role": ""
   },
   "No irrigation needed today!": {
-    "text": "आज सिंचाई की जरूरत नहीं!",
+    "text": "आज सिंचाई की ज़रूरत नहीं है!",
     "context": "",
     "role": ""
   },
   "Recent rainfall is sufficient.": {
-    "text": "हाल की वर्षा पर्याप्त है.",
+    "text": "हाल की बारिश काफ़ी है।",
     "context": "",
     "role": ""
   },
   "Light irrigation recommended": {
-    "text": "हल्की सिंचाई की सलाह दी जाती है",
+    "text": "हल्की सिंचाई करने की सलाह",
     "context": "",
     "role": ""
   },
   "Apply": {
-    "text": "आवेदन करना",
+    "text": "लागू करें",
     "context": "",
     "role": ""
   },
   "Irrigation urgently needed": {
-    "text": "सिंचाई की तत्काल आवश्यकता है",
+    "text": "तुरंत सिंचाई की ज़रूरत है",
     "context": "",
     "role": ""
   },
   "Fertilizer Recommendation": {
-    "text": "उर्वरक सिफ़ारिश",
+    "text": "खाद की सिफ़ारिश",
     "context": "",
     "role": ""
   },
   "Acoustic Pest Detector": {
-    "text": "ध्वनिक कीट डिटेक्टर",
+    "text": "ध्वनि से कीट पहचान",
     "context": "",
     "role": ""
   },
   "Which crop did you record?": {
-    "text": "आपने कौन सी फसल रिकॉर्ड की?",
+    "text": "आपने किस फसल की रिकॉर्डिंग की?",
     "context": "",
     "role": ""
   },
   "Upload field audio recording": {
-    "text": "फ़ील्ड ऑडियो रिकॉर्डिंग अपलोड करें",
+    "text": "खेत की आवाज़ की रिकॉर्डिंग अपलोड करें",
     "context": "",
     "role": ""
   },
   "Analyze for Pests": {
-    "text": "कीटों का विश्लेषण करें",
+    "text": "कीटों के लिए विश्लेषण करें",
     "context": "",
     "role": ""
   },
   "Detection Confidence": {
-    "text": "पता लगाने का आत्मविश्वास",
+    "text": "पहचान का भरोसा",
     "context": "",
     "role": ""
   },
   "Dominant Frequency": {
-    "text": "प्रमुख आवृत्ति",
+    "text": "मुख्य आवृत्ति",
     "context": "",
     "role": ""
   },
@@ -505,7 +505,7 @@
     "role": ""
   },
   "Spectral Pattern": {
-    "text": "वर्णक्रमीय पैटर्न",
+    "text": "स्पेक्ट्रल पैटर्न",
     "context": "",
     "role": ""
   },
@@ -515,32 +515,32 @@
     "role": ""
   },
   "Recommended Action": {
-    "text": "अनुशंसित कार्रवाई",
+    "text": "सुझाई गई कार्रवाई",
     "context": "",
     "role": ""
   },
   "Share Pest Alert on WhatsApp": {
-    "text": "व्हाट्सएप पर कीट चेतावनी साझा करें",
+    "text": "व्हाट्सऐप पर कीट चेतावनी साझा करें",
     "context": "",
     "role": ""
   },
   "Field Watch — Satellite Intelligence": {
-    "text": "फील्ड वॉच - सैटेलाइट इंटेलिजेंस",
+    "text": "खेत निगरानी — सैटेलाइट जानकारी",
     "context": "",
     "role": ""
   },
   "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
-    "text": "लाइव उपग्रह मौसम, जंगल की आग की चेतावनी, बाढ़ की चेतावनी, टिड्डी झुंड डेटा और वायु गुणवत्ता - सभी एक ही स्थान पर। हर बार जब आप इस टैब को खोलते हैं तो अपडेट होता है।",
+    "text": "लाइव सैटेलाइट मौसम, आग की चेतावनी, बाढ़ की सूचना, टिड्डी दल की जानकारी और हवा की गुणवत्ता — सब एक ही जगह। हर बार इस टैब को खोलने पर अपडेट होता है।",
     "context": "",
     "role": ""
   },
   "Your City / Nearest Town": {
-    "text": "आपका शहर/निकटतम शहर",
+    "text": "आपका शहर / नज़दीकी कस्बा",
     "context": "",
     "role": ""
   },
   "WhatsApp numbers to notify (one per line, with 91)": {
-    "text": "सूचित करने के लिए व्हाट्सएप नंबर (प्रति पंक्ति एक, 91 के साथ)",
+    "text": "सूचना भेजने के लिए व्हाट्सऐप नंबर (हर लाइन में एक, 91 के साथ)",
     "context": "",
     "role": ""
   },
@@ -555,17 +555,17 @@
     "role": ""
   },
   "Scan My Field Now": {
-    "text": "अभी मेरा फ़ील्ड स्कैन करें",
+    "text": "मेरा खेत अभी स्कैन करें",
     "context": "",
     "role": ""
   },
   "Overall Field Risk": {
-    "text": "समग्र क्षेत्र जोखिम",
+    "text": "कुल खेत का जोखिम",
     "context": "",
     "role": ""
   },
   "Current Weather": {
-    "text": "वर्तमान मौसम",
+    "text": "अभी का मौसम",
     "context": "",
     "role": ""
   },
@@ -575,27 +575,27 @@
     "role": ""
   },
   "Wildfire / Field Fire Alert": {
-    "text": "जंगल की आग/क्षेत्र में आग की चेतावनी",
+    "text": "जंगल / खेत में आग की चेतावनी",
     "context": "",
     "role": ""
   },
   "Desert Locust Alert": {
-    "text": "रेगिस्तानी टिड्डी चेतावनी",
+    "text": "रेगिस्तानी टिड्डी की चेतावनी",
     "context": "",
     "role": ""
   },
   "Air Quality": {
-    "text": "वायु गुणवत्ता",
+    "text": "हवा की गुणवत्ता",
     "context": "",
     "role": ""
   },
   "Read Field Alert Summary": {
-    "text": "फ़ील्ड अलर्ट सारांश पढ़ें",
+    "text": "खेत चेतावनी का सार पढ़ें",
     "context": "",
     "role": ""
   },
   "Send Field Alert to Contacts": {
-    "text": "संपर्कों को फ़ील्ड अलर्ट भेजें",
+    "text": "संपर्कों को खेत की चेतावनी भेजें",
     "context": "",
     "role": ""
   },
@@ -605,7 +605,7 @@
     "role": ""
   },
   "Uploaded photo": {
-    "text": "फोटो अपलोड किया",
+    "text": "अपलोड की गई फ़ोटो",
     "context": "",
     "role": ""
   },
@@ -615,42 +615,42 @@
     "role": ""
   },
   "Dimensions": {
-    "text": "DIMENSIONS",
+    "text": "आकार",
     "context": "",
     "role": ""
   },
   "Analyzing...": {
-    "text": "विश्लेषण कर रहा हूँ...",
+    "text": "जाँच हो रही है...",
     "context": "",
     "role": ""
   },
   "Clear daylight photo, close-up of affected area.": {
-    "text": "दिन के उजाले की साफ़ फ़ोटो, प्रभावित क्षेत्र का क्लोज़-अप।",
+    "text": "दिन की रोशनी में साफ़ फ़ोटो लें, प्रभावित हिस्से की पास से।",
     "context": "",
     "role": ""
   },
   "City not found. Please check spelling or try a nearby city.": {
-    "text": "शहर नहीं मिला. कृपया वर्तनी जांचें या नजदीकी शहर आज़माएं।",
+    "text": "शहर नहीं मिला। कृपया वर्तनी जाँचें या पास का कोई शहर आज़माएँ।",
     "context": "",
     "role": ""
   },
   "Please enter your city name.": {
-    "text": "कृपया अपने शहर का नाम दर्ज करें.",
+    "text": "कृपया अपने शहर का नाम डालें।",
     "context": "",
     "role": ""
   },
   "Audio unavailable": {
-    "text": "ऑडियो अनुपलब्ध",
+    "text": "ऑडियो उपलब्ध नहीं है",
     "context": "",
     "role": ""
   },
   "Read Tab Info": {
-    "text": "टैब जानकारी पढ़ें",
+    "text": "टैब की जानकारी पढ़ें",
     "context": "",
     "role": ""
   },
   "Crop Advisor": {
-    "text": "फ़सल सलाहकार",
+    "text": "फसल सलाहकार",
     "context": "",
     "role": ""
   },
@@ -660,12 +660,12 @@
     "role": ""
   },
   "Watering": {
-    "text": "सिंचाई",
+    "text": "पानी देना",
     "context": "",
     "role": ""
   },
   "Listen to Field": {
-    "text": "खेत सुनें",
+    "text": "खेत की आवाज़ सुनें",
     "context": "",
     "role": ""
   },
@@ -680,7 +680,7 @@
     "role": ""
   },
   "Analyzing soil and climate…": {
-    "text": "मिट्टी और जलवायु का विश्लेषण हो रहा है…",
+    "text": "मिट्टी और मौसम की जाँच हो रही है…",
     "context": "",
     "role": ""
   },
@@ -690,12 +690,12 @@
     "role": ""
   },
   "also great": {
-    "text": "ये भी अच्छे हैं",
+    "text": "ये भी बढ़िया",
     "context": "",
     "role": ""
   },
   "all crops": {
-    "text": "सभी फ़सलें",
+    "text": "सभी फसलें",
     "context": "",
     "role": ""
   },
@@ -705,22 +705,22 @@
     "role": ""
   },
   "🌱 Suggest a crop": {
-    "text": "🌱 फ़सल सुझाएं",
+    "text": "🌱 फसल सुझाएँ",
     "context": "",
     "role": ""
   },
   "🌿 Analyzing…": {
-    "text": "🌿 विश्लेषण…",
+    "text": "🌿 जाँच हो रही है…",
     "context": "",
     "role": ""
   },
   "top matches": {
-    "text": "शीर्ष परिणाम",
+    "text": "सबसे अच्छे मेल",
     "context": "",
     "role": ""
   },
   "via": {
-    "text": "के द्वारा",
+    "text": "द्वारा",
     "context": "",
     "role": ""
   },
@@ -735,27 +735,27 @@
     "role": ""
   },
   "prevention": {
-    "text": "बचाव",
+    "text": "रोकथाम",
     "context": "",
     "role": ""
   },
   "Something went wrong.": {
-    "text": "कुछ गलत हुआ।",
+    "text": "कुछ गड़बड़ हो गई।",
     "context": "",
     "role": ""
   },
   "API key issue — check your config.js setup.": {
-    "text": "API कुंजी समस्या — config.js जाँचें।",
+    "text": "API key में दिक्कत है — अपनी config.js सेटिंग जाँचें।",
     "context": "",
     "role": ""
   },
   "Analysis failed.": {
-    "text": "विश्लेषण विफल।",
+    "text": "विश्लेषण नहीं हो पाया।",
     "context": "",
     "role": ""
   },
   "Send a photo": {
-    "text": "फोटो भेजें",
+    "text": "एक फ़ोटो भेजें",
     "context": "",
     "role": ""
   },
@@ -765,32 +765,32 @@
     "role": ""
   },
   "Drop a leaf photo here": {
-    "text": "यहाँ पत्ती की फोटो छोड़ें",
+    "text": "पत्ती की फ़ोटो यहाँ डालें",
     "context": "",
     "role": ""
   },
   "or click to choose · jpg, png, webp": {
-    "text": "या क्लिक करें · jpg, png, webp",
+    "text": "या क्लिक करके चुनें · jpg, png, webp",
     "context": "",
     "role": ""
   },
   "What we see": {
-    "text": "हमें क्या दिखा",
+    "text": "हमें क्या दिख रहा है",
     "context": "",
     "role": ""
   },
   "Send a photo and we'll have a look. 🌿": {
-    "text": "फोटो भेजें और हम देखेंगे। 🌿",
+    "text": "एक फ़ोटो भेजिए, हम देख लेंगे। 🌿",
     "context": "",
     "role": ""
   },
   "Analyzing leaf…": {
-    "text": "पत्ती का विश्लेषण हो रहा है…",
+    "text": "पत्ती की जाँच हो रही है…",
     "context": "",
     "role": ""
   },
   "Could not analyze photo": {
-    "text": "फोटो का विश्लेषण नहीं हो सका",
+    "text": "फ़ोटो की जाँच नहीं हो पाई",
     "context": "",
     "role": ""
   },
@@ -815,22 +815,22 @@
     "role": ""
   },
   "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
-    "text": "एक चिंतित पत्ती की फोटो लें। हम धीरे से देखेंगे और बताएंगे क्या हो रहा है।",
+    "text": "परेशान पत्ती की एक फ़ोटो खींचिए। हम ध्यान से देखेंगे और बताएंगे कि क्या हो सकता है, साथ ही सबसे आसान उपाय भी।",
     "context": "",
     "role": ""
   },
   "Not enough data to chart.": {
-    "text": "चार्ट के लिए पर्याप्त डेटा नहीं।",
+    "text": "चार्ट बनाने के लिए पर्याप्त डेटा नहीं है।",
     "context": "",
     "role": ""
   },
   "Date": {
-    "text": "तारीख",
+    "text": "तारीख़",
     "context": "",
     "role": ""
   },
   "Price": {
-    "text": "कीमत",
+    "text": "भाव",
     "context": "",
     "role": ""
   },
@@ -845,27 +845,27 @@
     "role": ""
   },
   "Market": {
-    "text": "बाज़ार",
+    "text": "मंडी",
     "context": "",
     "role": ""
   },
   "market": {
-    "text": "बाज़ार",
+    "text": "मंडी",
     "context": "",
     "role": ""
   },
   "fair price,": {
-    "text": "उचित कीमत,",
+    "text": "सही भाव,",
     "context": "",
     "role": ""
   },
   "a calm decision.": {
-    "text": "एक शांत निर्णय।",
+    "text": "सोच-समझकर फ़ैसला।",
     "context": "",
     "role": ""
   },
   "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
-    "text": "हम मंडी के भाव देखते हैं और बताते हैं अभी बेचें या कुछ हफ्ते रुकें।",
+    "text": "हम मंडी के भाव पर नज़र रखते हैं और आपको बताते हैं कि अभी बेचें या एक-दो हफ़्ते रुकें। कोई उलझाने वाले चार्ट नहीं।",
     "context": "",
     "role": ""
   },
@@ -880,32 +880,32 @@
     "role": ""
   },
   "📊 Get forecast": {
-    "text": "📊 पूर्वानुमान लें",
+    "text": "📊 पूर्वानुमान देखें",
     "context": "",
     "role": ""
   },
   "Fetching market data…": {
-    "text": "बाज़ार डेटा लाया जा रहा है…",
+    "text": "मंडी का डेटा लाया जा रहा है…",
     "context": "",
     "role": ""
   },
   "Could not fetch forecast": {
-    "text": "पूर्वानुमान नहीं मिला",
+    "text": "पूर्वानुमान नहीं मिल सका",
     "context": "",
     "role": ""
   },
   "API key issue — check your configuration.": {
-    "text": "API कुंजी समस्या — कॉन्फ़िगरेशन जाँचें।",
+    "text": "API key में दिक़्क़त — अपनी सेटिंग्स जाँचें।",
     "context": "",
     "role": ""
   },
   "Network error — please check your connection.": {
-    "text": "नेटवर्क त्रुटि — कनेक्शन जाँचें।",
+    "text": "नेटवर्क की दिक़्क़त — कृपया अपना कनेक्शन जाँचें।",
     "context": "",
     "role": ""
   },
   "Unexpected error.": {
-    "text": "अप्रत्याशित त्रुटि।",
+    "text": "अनपेक्षित गड़बड़ी।",
     "context": "",
     "role": ""
   },
@@ -925,7 +925,7 @@
     "role": ""
   },
   "on": {
-    "text": "पर",
+    "text": "को",
     "context": "",
     "role": ""
   },
@@ -940,27 +940,27 @@
     "role": ""
   },
   "Live mandi data not available — showing model forecast only.": {
-    "text": "लाइव मंडी डेटा उपलब्ध नहीं — केवल मॉडल पूर्वानुमान दिखाया जा रहा है।",
+    "text": "लाइव मंडी डेटा उपलब्ध नहीं है — केवल मॉडल का पूर्वानुमान दिखाया जा रहा है।",
     "context": "",
     "role": ""
   },
   "best price": {
-    "text": "सर्वोत्तम कीमत",
+    "text": "सबसे अच्छा भाव",
     "context": "",
     "role": ""
   },
   "worst price": {
-    "text": "न्यूनतम कीमत",
+    "text": "सबसे कम भाव",
     "context": "",
     "role": ""
   },
   "average price": {
-    "text": "औसत कीमत",
+    "text": "औसत भाव",
     "context": "",
     "role": ""
   },
   "over": {
-    "text": "में",
+    "text": "पिछले",
     "context": "",
     "role": ""
   },
@@ -970,17 +970,17 @@
     "role": ""
   },
   "Price forecast": {
-    "text": "कीमत पूर्वानुमान",
+    "text": "भाव का अनुमान",
     "context": "",
     "role": ""
   },
   "Full forecast table": {
-    "text": "पूर्ण पूर्वानुमान तालिका",
+    "text": "पूरा अनुमान तालिका",
     "context": "",
     "role": ""
   },
   "top detections": {
-    "text": "शीर्ष पहचान",
+    "text": "मुख्य पहचान",
     "context": "",
     "role": ""
   },
@@ -990,7 +990,7 @@
     "role": ""
   },
   "Confidence": {
-    "text": "विश्वास",
+    "text": "विश्वास स्तर",
     "context": "",
     "role": ""
   },
@@ -1010,12 +1010,12 @@
     "role": ""
   },
   "Claude advice": {
-    "text": "Claude सलाह",
+    "text": "Claude की सलाह",
     "context": "",
     "role": ""
   },
   "quality notes": {
-    "text": "गुणवत्ता टिप्पणी",
+    "text": "गुणवत्ता टिप्पणियाँ",
     "context": "",
     "role": ""
   },
@@ -1025,7 +1025,7 @@
     "role": ""
   },
   "known insects": {
-    "text": "ज्ञात कीड़े",
+    "text": "ज्ञात कीट",
     "context": "",
     "role": ""
   },
@@ -1050,7 +1050,7 @@
     "role": ""
   },
   "Freq range": {
-    "text": "आवृत्ति श्रेणी",
+    "text": "आवृत्ति सीमा",
     "context": "",
     "role": ""
   },
@@ -1060,7 +1060,7 @@
     "role": ""
   },
   "Cannot preview this audio format — upload anyway to let the server analyze it.": {
-    "text": "इस ऑडियो प्रारूप का पूर्वावलोकन संभव नहीं — फिर भी अपलोड करें।",
+    "text": "इस ऑडियो फ़ॉर्मेट का पूर्वावलोकन नहीं हो सकता — फिर भी अपलोड करें ताकि सर्वर विश्लेषण कर सके।",
     "context": "",
     "role": ""
   },
@@ -1070,12 +1070,12 @@
     "role": ""
   },
   "Invalid or missing API key.": {
-    "text": "अमान्य या अनुपस्थित API कुंजी।",
+    "text": "API कुंजी ग़लत है या मौजूद नहीं है।",
     "context": "",
     "role": ""
   },
   "Network error — check your connection.": {
-    "text": "नेटवर्क त्रुटि — कनेक्शन जाँचें।",
+    "text": "नेटवर्क त्रुटि — अपना कनेक्शन जाँचें।",
     "context": "",
     "role": ""
   },
@@ -1095,12 +1095,12 @@
     "role": ""
   },
   "before they show.": {
-    "text": "दिखने से पहले।",
+    "text": "इससे पहले कि वे दिखें।",
     "context": "",
     "role": ""
   },
   "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
-    "text": "अपना फोन कुछ सेकंड के लिए पौधे के पास रखें। हम कीट की आवाज़ सुनेंगे और एक हफ्ते पहले चेतावनी देंगे।",
+    "text": "अपना फ़ोन पौधे के पास कुछ सेकंड के लिए रखें। हम कीटों की हल्की आवाज़ें सुनकर आपको एक हफ़्ता पहले ही चेतावनी दे देंगे।",
     "context": "",
     "role": ""
   },
@@ -1110,7 +1110,7 @@
     "role": ""
   },
   "~6 seconds": {
-    "text": "~6 सेकंड",
+    "text": "लगभग 6 सेकंड",
     "context": "",
     "role": ""
   },
@@ -1120,12 +1120,12 @@
     "role": ""
   },
   "Drag & drop your field audio here": {
-    "text": "यहाँ अपनी खेत की ऑडियो खींचें",
+    "text": "अपने खेत की ऑडियो यहाँ खींचकर डालें",
     "context": "",
     "role": ""
   },
   "or click to choose · wav · mp3 · m4a · ogg · webm": {
-    "text": "या क्लिक करें · wav · mp3 · m4a · ogg · webm",
+    "text": "या चुनने के लिए क्लिक करें · wav · mp3 · m4a · ogg · webm",
     "context": "",
     "role": ""
   },
@@ -1135,7 +1135,7 @@
     "role": ""
   },
   "tip: 15–30 cm from the stem · breathe slowly": {
-    "text": "सुझाव: तने से 15–30 सेमी दूर · धीरे साँस लें",
+    "text": "सुझाव: तने से 15–30 cm दूर · धीरे साँस लें",
     "context": "",
     "role": ""
   },
@@ -1160,12 +1160,12 @@
     "role": ""
   },
   "Listening to your field…": {
-    "text": "आपके खेत को सुन रहे हैं…",
+    "text": "आपके खेत की आवाज़ सुन रहे हैं…",
     "context": "",
     "role": ""
   },
   "Analysis failed": {
-    "text": "विश्लेषण विफल",
+    "text": "विश्लेषण विफल हुआ",
     "context": "",
     "role": ""
   },
@@ -1180,17 +1180,17 @@
     "role": ""
   },
   "quiet daily check-in": {
-    "text": "शांत दैनिक जाँच",
+    "text": "रोज़ की शांत जाँच",
     "context": "",
     "role": ""
   },
   "for your land.": {
-    "text": "आपकी भूमि के लिए।",
+    "text": "आपकी ज़मीन के लिए।",
     "context": "",
     "role": ""
   },
   "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
-    "text": "मौसम, आग, टिड्डे, मिट्टी — सब एक शांत दृश्य में। बस वही जो आज जानना ज़रूरी है।",
+    "text": "मौसम, आग, टिड्डी, मिट्टी — सब कुछ एक ही शांत नज़र में। बस वही बातें जो आज आपको जाननी चाहिए।",
     "context": "",
     "role": ""
   },
@@ -1205,17 +1205,17 @@
     "role": ""
   },
   "Access denied": {
-    "text": "पहुँच अस्वीकृत",
+    "text": "पहुँच नहीं मिली",
     "context": "",
     "role": ""
   },
   "Network error": {
-    "text": "नेटवर्क त्रुटि",
+    "text": "नेटवर्क में दिक्कत",
     "context": "",
     "role": ""
   },
   "Error": {
-    "text": "त्रुटि",
+    "text": "गड़बड़ी",
     "context": "",
     "role": ""
   },
@@ -1225,12 +1225,12 @@
     "role": ""
   },
   "feels like": {
-    "text": "जैसा महसूस होता है",
+    "text": "महसूस होता है",
     "context": "",
     "role": ""
   },
   "surface wind": {
-    "text": "सतह की हवा",
+    "text": "सतही हवा",
     "context": "",
     "role": ""
   },
@@ -1245,7 +1245,7 @@
     "role": ""
   },
   "Rain 48h:": {
-    "text": "48 घंटे की बारिश:",
+    "text": "बारिश 48h:",
     "context": "",
     "role": ""
   },
@@ -1255,7 +1255,7 @@
     "role": ""
   },
   "Hotspots nearby:": {
-    "text": "नज़दीकी हॉटस्पॉट:",
+    "text": "आसपास के हॉटस्पॉट:",
     "context": "",
     "role": ""
   },
@@ -1265,12 +1265,12 @@
     "role": ""
   },
   "Locust": {
-    "text": "टिड्डे",
+    "text": "टिड्डी",
     "context": "",
     "role": ""
   },
   "Swarms nearby:": {
-    "text": "नज़दीकी झुंड:",
+    "text": "आसपास टिड्डी दल:",
     "context": "",
     "role": ""
   },
@@ -1305,17 +1305,17 @@
     "role": ""
   },
   "Free · 24/7 · All Indian languages": {
-    "text": "निःशुल्क · 24/7 · सभी भारतीय भाषाएँ",
+    "text": "मुफ़्त · 24/7 · सभी भारतीय भाषाएँ",
     "context": "",
     "role": ""
   },
   "PM Kisan Helpline": {
-    "text": "PM किसान हेल्पलाइन",
+    "text": "पीएम किसान हेल्पलाइन",
     "context": "",
     "role": ""
   },
   "PM Kisan scheme queries": {
-    "text": "PM किसान योजना की जानकारी",
+    "text": "पीएम किसान योजना से जुड़े सवाल",
     "context": "",
     "role": ""
   },
@@ -1355,27 +1355,27 @@
     "role": ""
   },
   "Disease outbreak reporting": {
-    "text": "रोग प्रकोप रिपोर्टिंग",
+    "text": "रोग फैलने की सूचना देना",
     "context": "",
     "role": ""
   },
   "⚡ Move livestock to shelter": {
-    "text": "⚡ पशुओं को आश्रय में ले जाएँ",
+    "text": "⚡ पशुओं को सुरक्षित जगह ले जाएँ",
     "context": "",
     "role": ""
   },
   "🚫 Stop all field work immediately": {
-    "text": "🚫 तुरंत सभी खेत का काम रोकें",
+    "text": "🚫 खेत का सारा काम तुरंत बंद करें",
     "context": "",
     "role": ""
   },
   "💧 Clear drainage channels": {
-    "text": "💧 जल निकासी नालियाँ साफ़ करें",
+    "text": "💧 पानी निकासी की नालियाँ साफ़ करें",
     "context": "",
     "role": ""
   },
   "🌱 Avoid fertilizer — will wash away": {
-    "text": "🌱 उर्वरक न डालें — धुल जाएगा",
+    "text": "🌱 खाद न डालें — बह जाएगी",
     "context": "",
     "role": ""
   },
@@ -1385,17 +1385,17 @@
     "role": ""
   },
   "📞 Contact agriculture office if flooding": {
-    "text": "📞 बाढ़ की स्थिति में कृषि कार्यालय से संपर्क करें",
+    "text": "📞 बाढ़ आने पर कृषि कार्यालय से संपर्क करें",
     "context": "",
     "role": ""
   },
   "💧 Good for germination": {
-    "text": "💧 अंकुरण के लिए अच्छा",
+    "text": "💧 बीज अंकुरण के लिए अच्छा",
     "context": "",
     "role": ""
   },
   "🌱 Ideal time for transplanting": {
-    "text": "🌱 रोपाई का उचित समय",
+    "text": "🌱 रोपाई के लिए सही समय",
     "context": "",
     "role": ""
   },
@@ -1405,47 +1405,47 @@
     "role": ""
   },
   "🌿 Cover sensitive crops with cloth": {
-    "text": "🌿 संवेदनशील फसलों को कपड़े से ढकें",
+    "text": "🌿 नाज़ुक फसलों को कपड़े से ढक दें",
     "context": "",
     "role": ""
   },
   "🔥 Light irrigation before frost protects roots": {
-    "text": "🔥 पाले से पहले हल्की सिंचाई जड़ों की रक्षा करती है",
+    "text": "🔥 पाले से पहले हल्की सिंचाई जड़ों को बचाती है",
     "context": "",
     "role": ""
   },
   "🌱 Avoid pruning until frost passes": {
-    "text": "🌱 पाला गुज़रने तक छँटाई न करें",
+    "text": "🌱 पाला हटने तक छंटाई न करें",
     "context": "",
     "role": ""
   },
   "🍄 Watch for fungal disease": {
-    "text": "🍄 फंगल रोग पर नज़र रखें",
+    "text": "🍄 फफूंदी रोग पर नज़र रखें",
     "context": "",
     "role": ""
   },
   "💊 Apply preventive fungicide": {
-    "text": "💊 निवारक फफूंदनाशक लगाएँ",
+    "text": "💊 बचाव के लिए फफूंदनाशक का छिड़काव करें",
     "context": "",
     "role": ""
   },
   "🌬️ Improve air circulation": {
-    "text": "🌬️ वायु संचार बेहतर करें",
+    "text": "🌬️ हवा की आवाजाही बेहतर करें",
     "context": "",
     "role": ""
   },
   "😷 Reduce outdoor work": {
-    "text": "😷 बाहरी काम कम करें",
+    "text": "😷 बाहर का काम कम करें",
     "context": "",
     "role": ""
   },
   "💧 Increase irrigation — heat stress likely": {
-    "text": "💧 सिंचाई बढ़ाएँ — गर्मी का तनाव संभव",
+    "text": "💧 सिंचाई बढ़ाएँ — गर्मी से फसल को नुकसान हो सकता है",
     "context": "",
     "role": ""
   },
   "🌿 Monitor crops for wilting": {
-    "text": "🌿 मुरझाने के लिए फसल पर नज़र रखें",
+    "text": "🌿 फसल के मुरझाने पर नज़र रखें",
     "context": "",
     "role": ""
   },
@@ -1455,7 +1455,7 @@
     "role": ""
   },
   "🚜 Ideal for harvesting": {
-    "text": "🚜 कटाई के लिए आदर्श",
+    "text": "🚜 कटाई के लिए बढ़िया दिन",
     "context": "",
     "role": ""
   },
@@ -1470,42 +1470,42 @@
     "role": ""
   },
   "💧 Moderate irrigation needed": {
-    "text": "💧 मध्यम सिंचाई आवश्यक",
+    "text": "💧 सामान्य सिंचाई की ज़रूरत है",
     "context": "",
     "role": ""
   },
   "🌱 Apply fertilizers today": {
-    "text": "🌱 आज उर्वरक डालें",
+    "text": "🌱 आज खाद डालें",
     "context": "",
     "role": ""
   },
   "⏱ Recording too short — need at least 3 seconds": {
-    "text": "⏱ रिकॉर्डिंग बहुत छोटी — कम से कम 3 सेकंड चाहिए",
+    "text": "⏱ रिकॉर्डिंग बहुत छोटी है — कम से कम 3 सेकंड चाहिए",
     "context": "",
     "role": ""
   },
   "🔇 Too quiet — hold mic closer to the plant stem": {
-    "text": "🔇 बहुत शांत — माइक को तने के पास लाएँ",
+    "text": "🔇 आवाज़ बहुत कम है — माइक को पौधे के तने के पास रखें",
     "context": "",
     "role": ""
   },
   "✂️ Long recording — analyzed first 20 seconds": {
-    "text": "✂️ लंबी रिकॉर्डिंग — पहले 20 सेकंड का विश्लेषण",
+    "text": "✂️ लंबी रिकॉर्डिंग — पहले 20 सेकंड का विश्लेषण किया गया",
     "context": "",
     "role": ""
   },
   "📉 Low sample rate may reduce accuracy": {
-    "text": "📉 कम सैंपल दर सटीकता कम कर सकती है",
+    "text": "📉 कम सैंपल रेट से सटीकता कम हो सकती है",
     "context": "",
     "role": ""
   },
   "📈 Sample rate resampled to 16 kHz": {
-    "text": "📈 सैंपल दर 16 kHz पर रूपांतरित",
+    "text": "📈 सैंपल रेट 16 kHz पर बदला गया",
     "context": "",
     "role": ""
   },
   "Pollinator": {
-    "text": "परागणकर्ता",
+    "text": "परागकण करने वाले कीट",
     "context": "",
     "role": ""
   },
@@ -1515,7 +1515,7 @@
     "role": ""
   },
   "Ambient": {
-    "text": "परिवेश",
+    "text": "आसपास की आवाज़",
     "context": "",
     "role": ""
   },
@@ -1525,7 +1525,7 @@
     "role": ""
   },
   "a calm field today is a good harvest tomorrow.": {
-    "text": "आज का शांत खेत कल की अच्छी फसल है।",
+    "text": "आज का शांत खेत, कल की अच्छी फसल।",
     "context": "",
     "role": ""
   },
@@ -1535,17 +1535,17 @@
     "role": ""
   },
   "Just enough water,": {
-    "text": "बस उतना पानी,",
+    "text": "उतना ही पानी जितना ज़रूरी,",
     "context": "",
     "role": ""
   },
   "just in time.": {
-    "text": "ठीक समय पर।",
+    "text": "और सही समय पर।",
     "context": "",
     "role": ""
   },
   "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
-    "text": "हम FAO जल गणित करते हैं और बताते हैं: आज कितने लीटर और अगली सिंचाई कब।",
+    "text": "हम पर्दे के पीछे FAO का पानी हिसाब लगाते हैं और आपको सीधे बताते हैं: आज कितने लीटर पानी देना है, और अगली बार कब।",
     "context": "",
     "role": ""
   },
@@ -1555,12 +1555,12 @@
     "role": ""
   },
   "Growth stage": {
-    "text": "विकास चरण",
+    "text": "फसल की अवस्था",
     "context": "",
     "role": ""
   },
   "Get advice": {
-    "text": "सलाह लें",
+    "text": "सलाह पाएँ",
     "context": "",
     "role": ""
   },
@@ -1580,7 +1580,7 @@
     "role": ""
   },
   "Field area": {
-    "text": "खेत का क्षेत्र",
+    "text": "खेत का क्षेत्रफल",
     "context": "",
     "role": ""
   },
@@ -1590,12 +1590,12 @@
     "role": ""
   },
   "Recent rain": {
-    "text": "हालिया बारिश",
+    "text": "हाल की बारिश",
     "context": "",
     "role": ""
   },
   "mm": {
-    "text": "मिमी",
+    "text": "mm",
     "context": "",
     "role": ""
   },
@@ -1605,22 +1605,22 @@
     "role": ""
   },
   "km/h": {
-    "text": "किमी/घंटा",
+    "text": "km/h",
     "context": "",
     "role": ""
   },
   "Water needed": {
-    "text": "पानी की ज़रूरत",
+    "text": "ज़रूरी पानी",
     "context": "",
     "role": ""
   },
   "Net irrigation": {
-    "text": "शुद्ध सिंचाई",
+    "text": "कुल सिंचाई",
     "context": "",
     "role": ""
   },
   "Crop Kc factor": {
-    "text": "फसल Kc कारक",
+    "text": "फसल Kc गुणांक",
     "context": "",
     "role": ""
   },
@@ -1630,7 +1630,7 @@
     "role": ""
   },
   "fertilizer": {
-    "text": "उर्वरक",
+    "text": "खाद",
     "context": "",
     "role": ""
   },
@@ -1645,7 +1645,7 @@
     "role": ""
   },
   "Initial": {
-    "text": "प्रारंभिक",
+    "text": "शुरुआती",
     "context": "",
     "role": ""
   },
@@ -1655,12 +1655,12 @@
     "role": ""
   },
   "Mid-season": {
-    "text": "मध्य सीज़न",
+    "text": "मध्य-मौसम",
     "context": "",
     "role": ""
   },
   "Late season": {
-    "text": "अंत सीज़न",
+    "text": "अंतिम मौसम",
     "context": "",
     "role": ""
   },
@@ -1670,22 +1670,22 @@
     "role": ""
   },
   "Find what your soil": {
-    "text": "जानें आपकी मिट्टी क्या",
+    "text": "जानिए आपकी मिट्टी",
     "context": "",
     "role": ""
   },
   "wants to grow.": {
-    "text": "उगाना चाहती है।",
+    "text": "क्या उगाना चाहती है।",
     "context": "",
     "role": ""
   },
   "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
-    "text": "अपने खेत के बारे में थोड़ा बताएँ। हम 26 फसलों में से वह सुझाएंगे जो आपकी भूमि को सबसे अच्छी लगे।",
+    "text": "अपने खेत के बारे में थोड़ा बताइए। हम 26 फसलों में से वो चुनेंगे जो आपकी ज़मीन को सबसे ज़्यादा रास आएगी।",
     "context": "",
     "role": ""
   },
   "🌦 kharif season": {
-    "text": "🌦 खरीफ सीज़न",
+    "text": "🌦 खरीफ़ का मौसम",
     "context": "",
     "role": ""
   },
@@ -1695,42 +1695,42 @@
     "role": ""
   },
   "Phosphorus": {
-    "text": "फास्फोरस",
+    "text": "फॉस्फोरस",
     "context": "",
     "role": ""
   },
   "Potassium": {
-    "text": "पोटेशियम",
+    "text": "पोटाश",
     "context": "",
     "role": ""
   },
   "a little hungry": {
-    "text": "थोड़ा कम",
+    "text": "थोड़ी कमी है",
     "context": "",
     "role": ""
   },
   "just right": {
-    "text": "सही मात्रा",
+    "text": "बिल्कुल सही",
     "context": "",
     "role": ""
   },
   "plenty": {
-    "text": "पर्याप्त",
+    "text": "भरपूर",
     "context": "",
     "role": ""
   },
   "acidic": {
-    "text": "अम्लीय",
+    "text": "खट्टी (अम्लीय)",
     "context": "",
     "role": ""
   },
   "sweet spot": {
-    "text": "आदर्श",
+    "text": "एकदम सही",
     "context": "",
     "role": ""
   },
   "a touch alkaline": {
-    "text": "थोड़ा क्षारीय",
+    "text": "थोड़ी क्षारीय",
     "context": "",
     "role": ""
   },
@@ -1740,37 +1740,37 @@
     "role": ""
   },
   "Humidity": {
-    "text": "आर्द्रता",
+    "text": "नमी",
     "context": "",
     "role": ""
   },
   "Rainfall": {
-    "text": "वर्षा",
+    "text": "बारिश",
     "context": "",
     "role": ""
   },
   "fetching live…": {
-    "text": "लाइव डेटा ला रहे हैं…",
+    "text": "लाइव जानकारी ली जा रही है…",
     "context": "",
     "role": ""
   },
   "your local feel": {
-    "text": "आपका स्थानीय अनुभव",
+    "text": "आपके इलाके का हाल",
     "context": "",
     "role": ""
   },
   "Could not analyze soil": {
-    "text": "मिट्टी का विश्लेषण नहीं हो सका",
+    "text": "मिट्टी की जाँच नहीं हो पाई",
     "context": "",
     "role": ""
   },
   "API key misconfigured. Open web/config.js and verify the dev key.": {
-    "text": "API कुंजी गलत — web/config.js जाँचें।",
+    "text": "API key सही से सेट नहीं है। web/config.js खोलकर dev key जाँचें।",
     "context": "",
     "role": ""
   },
   "No connection — check your network and try again.": {
-    "text": "कोई कनेक्शन नहीं — नेटवर्क जाँचें।",
+    "text": "कनेक्शन नहीं है — अपना नेटवर्क देखकर दोबारा कोशिश करें।",
     "context": "",
     "role": ""
   },
@@ -1790,7 +1790,7 @@
     "role": ""
   },
   "phone": {
-    "text": "फोन",
+    "text": "फ़ोन",
     "context": "",
     "role": ""
   },
@@ -1810,7 +1810,57 @@
     "role": ""
   },
   "Sign out": {
-    "text": "साइन आउट",
+    "text": "साइन आउट करें",
+    "context": "",
+    "role": ""
+  },
+  "Your village or town": {
+    "text": "आपका गाँव या शहर",
+    "context": "",
+    "role": ""
+  },
+  "Toggle sidebar": {
+    "text": "साइडबार दिखाएँ/छिपाएँ",
+    "context": "",
+    "role": ""
+  },
+  "Kisan": {
+    "text": "किसान",
+    "context": "",
+    "role": ""
+  },
+  "OS": {
+    "text": "OS",
+    "context": "",
+    "role": ""
+  },
+  "a quiet companion": {
+    "text": "एक शांत साथी",
+    "context": "",
+    "role": ""
+  },
+  "↺ Try again": {
+    "text": "↺ फिर से कोशिश करें",
+    "context": "",
+    "role": ""
+  },
+  "Sign in method": {
+    "text": "साइन इन का तरीका",
+    "context": "",
+    "role": ""
+  },
+  "npk · ph": {
+    "text": "npk · ph",
+    "context": "",
+    "role": ""
+  },
+  "scanning…": {
+    "text": "स्कैन हो रहा है…",
+    "context": "",
+    "role": ""
+  },
+  "mm/day": {
+    "text": "mm/दिन",
     "context": "",
     "role": ""
   }

@@ -10,7 +10,7 @@
     "role": ""
   },
   "Market Prices": {
-    "text": "ಮಾರ್ಕೆಟ್ ಬೆಲೆಗಳು",
+    "text": "ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು",
     "context": "",
     "role": ""
   },
@@ -20,17 +20,17 @@
     "role": ""
   },
   "Acoustic": {
-    "text": "ಅಕೌಸ್ಟಿಕ್",
+    "text": "ಶಬ್ದ",
     "context": "",
     "role": ""
   },
   "Field Watch": {
-    "text": "ಹೊಲ ಕಾವಲು",
+    "text": "ಹೊಲ ನಿಗಾ",
     "context": "",
     "role": ""
   },
   "Find the best crop for your field": {
-    "text": "ನಿಮ್ಮ ಹೊಲಕ್ಕೆ ಉತ್ತಮ ಬೆಳೆಯನ್ನು ಹುಡುಕಿ",
+    "text": "ನಿಮ್ಮ ಹೊಲಕ್ಕೆ ಸೂಕ್ತವಾದ ಬೆಳೆಯನ್ನು ಹುಡುಕಿ",
     "context": "",
     "role": ""
   },
@@ -45,12 +45,12 @@
     "role": ""
   },
   "Auto-fill Climate from Location": {
-    "text": "ಸ್ಥಳದಿಂದ ಸ್ವಯಂ ತುಂಬುವ ಹವಾಮಾನ",
+    "text": "ಸ್ಥಳದಿಂದ ಹವಾಮಾನವನ್ನು ಸ್ವಯಂ-ತುಂಬಿಸಿ",
     "context": "",
     "role": ""
   },
   "Enter your city to auto-fill temperature, humidity & rainfall": {
-    "text": "ತಾಪಮಾನ, ಆರ್ದ್ರತೆ ಮತ್ತು ಮಳೆಯನ್ನು ಸ್ವಯಂ ತುಂಬಲು ನಿಮ್ಮ ನಗರವನ್ನು ನಮೂದಿಸಿ",
+    "text": "ತಾಪಮಾನ, ಆರ್ದ್ರತೆ ಮತ್ತು ಮಳೆಯನ್ನು ಸ್ವಯಂ ತುಂಬಲು ನಿಮ್ಮ ಊರಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -65,22 +65,22 @@
     "role": ""
   },
   "Climate Conditions": {
-    "text": "ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಗಳು",
+    "text": "ಹವಾಮಾನ ಸ್ಥಿತಿ",
     "context": "",
     "role": ""
   },
   "Nitrogen (N) — kg/ha": {
-    "text": "ಸಾರಜನಕ (N) - ಕೆಜಿ/ಹೆ",
+    "text": "ಸಾರಜನಕ (N) — kg/ha",
     "context": "",
     "role": ""
   },
   "Phosphorus (P) — kg/ha": {
-    "text": "ರಂಜಕ (ಪಿ) - ಕೆಜಿ / ಹೆ",
+    "text": "ರಂಜಕ (P) — kg/ha",
     "context": "",
     "role": ""
   },
   "Potassium (K) — kg/ha": {
-    "text": "ಪೊಟ್ಯಾಸಿಯಮ್ (ಕೆ) - ಕೆಜಿ / ಹೆ",
+    "text": "ಪೊಟ್ಯಾಶ್ (K) — kg/ha",
     "context": "",
     "role": ""
   },
@@ -100,7 +100,7 @@
     "role": ""
   },
   "Rainfall (mm)": {
-    "text": "ಮಳೆ (ಮಿಮೀ)",
+    "text": "ಮಳೆ (mm)",
     "context": "",
     "role": ""
   },
@@ -115,7 +115,7 @@
     "role": ""
   },
   "confidence": {
-    "text": "ಆತ್ಮವಿಶ್ವಾಸ",
+    "text": "ವಿಶ್ವಾಸ",
     "context": "",
     "role": ""
   },
@@ -140,17 +140,17 @@
     "role": ""
   },
   "Other Options": {
-    "text": "ಇತರೆ ಆಯ್ಕೆಗಳು",
+    "text": "ಇತರ ಆಯ್ಕೆಗಳು",
     "context": "",
     "role": ""
   },
   "Confidence Across Top 8 Crops": {
-    "text": "ಅಗ್ರ 8 ಬೆಳೆಗಳಾದ್ಯಂತ ವಿಶ್ವಾಸ",
+    "text": "ಪ್ರಮುಖ 8 ಬೆಳೆಗಳಲ್ಲಿನ ವಿಶ್ವಾಸ ಮಟ್ಟ",
     "context": "",
     "role": ""
   },
   "Your Input Summary": {
-    "text": "ನಿಮ್ಮ ಇನ್‌ಪುಟ್ ಸಾರಾಂಶ",
+    "text": "ನಿಮ್ಮ ಮಾಹಿತಿಯ ಸಾರಾಂಶ",
     "context": "",
     "role": ""
   },
@@ -170,22 +170,22 @@
     "role": ""
   },
   "Upload a photo for instant AI diagnosis · OR select crop + symptom/pest below.": {
-    "text": "ತ್ವರಿತ AI ರೋಗನಿರ್ಣಯಕ್ಕಾಗಿ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ · ಅಥವಾ ಕೆಳಗಿನ ಬೆಳೆ + ರೋಗಲಕ್ಷಣ/ಕೀಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+    "text": "ತಕ್ಷಣದ AI ರೋಗ ಪತ್ತೆಗಾಗಿ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ · ಅಥವಾ ಕೆಳಗೆ ಬೆಳೆ + ಲಕ್ಷಣ/ಕೀಟ ಆಯ್ಕೆಮಾಡಿ.",
     "context": "",
     "role": ""
   },
   "Method 1 — Photo Diagnosis (Recommended)": {
-    "text": "ವಿಧಾನ 1 - ಫೋಟೋ ರೋಗನಿರ್ಣಯ (ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ)",
+    "text": "ವಿಧಾನ 1 — ಫೋಟೋ ಮೂಲಕ ರೋಗ ಪತ್ತೆ (ಶಿಫಾರಸು)",
     "context": "",
     "role": ""
   },
   "Method 2 — Symptom Checker": {
-    "text": "ವಿಧಾನ 2 - ರೋಗಲಕ್ಷಣ ಪರೀಕ್ಷಕ",
+    "text": "ವಿಧಾನ 2 — ಲಕ್ಷಣ ಪರೀಕ್ಷಕ",
     "context": "",
     "role": ""
   },
   "Select Crop for Diagnosis": {
-    "text": "ರೋಗನಿರ್ಣಯಕ್ಕಾಗಿ ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ",
+    "text": "ರೋಗ ಪತ್ತೆಗಾಗಿ ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ",
     "context": "",
     "role": ""
   },
@@ -195,12 +195,12 @@
     "role": ""
   },
   "Upload leaf / stem / fruit photo": {
-    "text": "ಎಲೆ / ಕಾಂಡ / ಹಣ್ಣಿನ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "text": "ಎಲೆ / ಕಾಂಡ / ಹಣ್ಣಿನ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "Diagnose from Photo": {
-    "text": "ಫೋಟೋದಿಂದ ರೋಗನಿರ್ಣಯ ಮಾಡಿ",
+    "text": "ಫೋಟೋದಿಂದ ರೋಗ ಪತ್ತೆ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
@@ -210,7 +210,7 @@
     "role": ""
   },
   "AI Confidence": {
-    "text": "AI ವಿಶ್ವಾಸ",
+    "text": "AI ವಿಶ್ವಾಸಾರ್ಹತೆ",
     "context": "",
     "role": ""
   },
@@ -225,7 +225,7 @@
     "role": ""
   },
   "Detected": {
-    "text": "ಪತ್ತೆ ಮಾಡಲಾಗಿದೆ",
+    "text": "ಪತ್ತೆಯಾಗಿದೆ",
     "context": "",
     "role": ""
   },
@@ -235,27 +235,27 @@
     "role": ""
   },
   "Low confidence — try a clearer, well-lit close-up of the affected leaf.": {
-    "text": "ಕಡಿಮೆ ಆತ್ಮವಿಶ್ವಾಸ - ಬಾಧಿತ ಎಲೆಯ ಸ್ಪಷ್ಟವಾದ, ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಕ್ಲೋಸ್-ಅಪ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+    "text": "ವಿಶ್ವಾಸಾರ್ಹತೆ ಕಡಿಮೆ — ಪೀಡಿತ ಎಲೆಯ ಸ್ಪಷ್ಟವಾದ, ಚೆನ್ನಾಗಿ ಬೆಳಕಿರುವ ಹತ್ತಿರದ ಫೋಟೋ ತೆಗೆಯಿರಿ.",
     "context": "",
     "role": ""
   },
   "Location Note": {
-    "text": "ಸ್ಥಳ ಸೂಚನೆ",
+    "text": "ಸ್ಥಳದ ಸೂಚನೆ",
     "context": "",
     "role": ""
   },
   "Daylight": {
-    "text": "ಹಗಲು",
+    "text": "ಹಗಲು ಬೆಳಕು",
     "context": "",
     "role": ""
   },
   "Close-up on affected area": {
-    "text": "ಪೀಡಿತ ಪ್ರದೇಶದ ಕ್ಲೋಸ್-ಅಪ್",
+    "text": "ಪೀಡಿತ ಭಾಗದ ಹತ್ತಿರದ ಫೋಟೋ",
     "context": "",
     "role": ""
   },
   "Sharp, no blur": {
-    "text": "ತೀಕ್ಷ್ಣವಾದ, ಮಸುಕು ಇಲ್ಲ",
+    "text": "ಸ್ಪಷ್ಟವಾಗಿರಲಿ, ಮಸುಕಾಗಿರಬಾರದು",
     "context": "",
     "role": ""
   },
@@ -265,17 +265,17 @@
     "role": ""
   },
   "Symptom observed": {
-    "text": "ರೋಗಲಕ್ಷಣವನ್ನು ಗಮನಿಸಲಾಗಿದೆ",
+    "text": "ಕಂಡುಬಂದ ಲಕ್ಷಣ",
     "context": "",
     "role": ""
   },
   "Diagnose by Symptom / Pest": {
-    "text": "ರೋಗಲಕ್ಷಣ / ಕೀಟಗಳ ಮೂಲಕ ರೋಗನಿರ್ಣಯ",
+    "text": "ಲಕ್ಷಣ / ಕೀಟದ ಮೂಲಕ ಪತ್ತೆ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "Diagnose by Symptom": {
-    "text": "ರೋಗಲಕ್ಷಣದ ಮೂಲಕ ರೋಗನಿರ್ಣಯ",
+    "text": "ಲಕ್ಷಣದ ಮೂಲಕ ಪತ್ತೆ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
@@ -285,7 +285,7 @@
     "role": ""
   },
   "Real-time prices from Agmarknet. State-calibrated 30-day forecast powered by Prophet.": {
-    "text": "Agmarknet ನಿಂದ ನೈಜ-ಸಮಯದ ಬೆಲೆಗಳು. ಪ್ರವಾದಿಯಿಂದ ನಡೆಸಲ್ಪಡುವ ರಾಜ್ಯ-ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿದ 30-ದಿನಗಳ ಮುನ್ಸೂಚನೆ.",
+    "text": "Agmarknet ನಿಂದ ತಕ್ಷಣದ ಬೆಲೆಗಳು. Prophet ಚಾಲಿತ ರಾಜ್ಯವಾರು 30 ದಿನಗಳ ಮುನ್ಸೂಚನೆ.",
     "context": "",
     "role": ""
   },
@@ -295,7 +295,7 @@
     "role": ""
   },
   "Forecast horizon (days)": {
-    "text": "ಮುನ್ಸೂಚನೆ ಹಾರಿಜಾನ್ (ದಿನಗಳು)",
+    "text": "ಮುನ್ಸೂಚನೆ ಅವಧಿ (ದಿನಗಳು)",
     "context": "",
     "role": ""
   },
@@ -310,27 +310,27 @@
     "role": ""
   },
   "Lowest Price": {
-    "text": "ಕಡಿಮೆ ಬೆಲೆ",
+    "text": "ಕನಿಷ್ಠ ಬೆಲೆ",
     "context": "",
     "role": ""
   },
   "Avg / 30D": {
-    "text": "ಸರಾಸರಿ / 30D",
+    "text": "ಸರಾಸರಿ / 30 ದಿನ",
     "context": "",
     "role": ""
   },
   "Wait to sell": {
-    "text": "ಮಾರಾಟ ಮಾಡಲು ನಿರೀಕ್ಷಿಸಿ",
+    "text": "ಮಾರಲು ಕಾಯಿರಿ",
     "context": "",
     "role": ""
   },
   "Sell now": {
-    "text": "ಈಗ ಮಾರಾಟ ಮಾಡಿ",
+    "text": "ಈಗಲೇ ಮಾರಿ",
     "context": "",
     "role": ""
   },
   "Read Market Advice": {
-    "text": "ಮಾರುಕಟ್ಟೆ ಸಲಹೆಯನ್ನು ಓದಿ",
+    "text": "ಮಾರುಕಟ್ಟೆ ಸಲಹೆ ಓದಿ",
     "context": "",
     "role": ""
   },
@@ -345,32 +345,32 @@
     "role": ""
   },
   "Forecast accuracy": {
-    "text": "ಮುನ್ಸೂಚನೆಯ ನಿಖರತೆ",
+    "text": "ಮುನ್ಸೂಚನೆ ನಿಖರತೆ",
     "context": "",
     "role": ""
   },
   "Smart Irrigation & Fertilizer Advisor": {
-    "text": "ಸ್ಮಾರ್ಟ್ ನೀರಾವರಿ ಮತ್ತು ರಸಗೊಬ್ಬರ ಸಲಹೆಗಾರ",
+    "text": "ಸ್ಮಾರ್ಟ್ ನೀರಾವರಿ ಮತ್ತು ಗೊಬ್ಬರ ಸಲಹೆಗಾರ",
     "context": "",
     "role": ""
   },
   "Get precise water and fertilizer recommendations based on your crop and weather.": {
-    "text": "ನಿಮ್ಮ ಬೆಳೆ ಮತ್ತು ಹವಾಮಾನದ ಆಧಾರದ ಮೇಲೆ ನಿಖರವಾದ ನೀರು ಮತ್ತು ರಸಗೊಬ್ಬರ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ.",
+    "text": "ನಿಮ್ಮ ಬೆಳೆ ಮತ್ತು ಹವಾಮಾನದ ಆಧಾರದ ಮೇಲೆ ನಿಖರವಾದ ನೀರು ಹಾಗೂ ಗೊಬ್ಬರದ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ.",
     "context": "",
     "role": ""
   },
   "Live Weather (Auto-fill)": {
-    "text": "ಲೈವ್ ಹವಾಮಾನ (ಆಟೋ-ಫಿಲ್)",
+    "text": "ಲೈವ್ ಹವಾಮಾನ (ಸ್ವಯಂ-ಭರ್ತಿ)",
     "context": "",
     "role": ""
   },
   "Enter your city name": {
-    "text": "ನಿಮ್ಮ ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+    "text": "ನಿಮ್ಮ ಊರಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
     "context": "",
     "role": ""
   },
   "Temp": {
-    "text": "ತಾಪ",
+    "text": "ತಾಪಮಾನ",
     "context": "",
     "role": ""
   },
@@ -380,12 +380,12 @@
     "role": ""
   },
   "Rain 1h": {
-    "text": "ಮಳೆ 1ಗಂ",
+    "text": "1 ಗಂಟೆ ಮಳೆ",
     "context": "",
     "role": ""
   },
   "Crop Details": {
-    "text": "ಬೆಳೆ ವಿವರಗಳು",
+    "text": "ಬೆಳೆಯ ವಿವರಗಳು",
     "context": "",
     "role": ""
   },
@@ -395,17 +395,17 @@
     "role": ""
   },
   "Field Area (acres)": {
-    "text": "ಕ್ಷೇತ್ರ ಪ್ರದೇಶ (ಎಕರೆ)",
+    "text": "ಹೊಲದ ವಿಸ್ತೀರ್ಣ (ಎಕರೆ)",
     "context": "",
     "role": ""
   },
   "Rainfall in last 3 days (mm)": {
-    "text": "ಕಳೆದ 3 ದಿನಗಳಲ್ಲಿ ಮಳೆ (ಮಿಮೀ)",
+    "text": "ಕಳೆದ 3 ದಿನಗಳಲ್ಲಿ ಬಿದ್ದ ಮಳೆ (mm)",
     "context": "",
     "role": ""
   },
   "Today Weather": {
-    "text": "ಇಂದು ಹವಾಮಾನ",
+    "text": "ಇಂದಿನ ಹವಾಮಾನ",
     "context": "",
     "role": ""
   },
@@ -415,7 +415,7 @@
     "role": ""
   },
   "Water Need": {
-    "text": "ನೀರಿನ ಅವಶ್ಯಕತೆ",
+    "text": "ನೀರಿನ ಅಗತ್ಯ",
     "context": "",
     "role": ""
   },
@@ -430,82 +430,82 @@
     "role": ""
   },
   "for": {
-    "text": "ಫಾರ್",
+    "text": "ಗೆ",
     "context": "",
     "role": ""
   },
   "acre(s)": {
-    "text": "ಎಕರೆ(ಗಳು)",
+    "text": "ಎಕರೆ",
     "context": "",
     "role": ""
   },
   "No irrigation needed today!": {
-    "text": "ಇಂದು ನೀರಾವರಿ ಅಗತ್ಯವಿಲ್ಲ!",
+    "text": "ಇಂದು ನೀರಾವರಿ ಬೇಕಿಲ್ಲ!",
     "context": "",
     "role": ""
   },
   "Recent rainfall is sufficient.": {
-    "text": "ಇತ್ತೀಚಿನ ಮಳೆ ಸಾಕಾಗುತ್ತದೆ.",
+    "text": "ಇತ್ತೀಚಿನ ಮಳೆ ಸಾಕಷ್ಟಿದೆ.",
     "context": "",
     "role": ""
   },
   "Light irrigation recommended": {
-    "text": "ಲಘು ನೀರಾವರಿ ಶಿಫಾರಸು",
+    "text": "ಲಘು ನೀರಾವರಿ ಮಾಡುವುದು ಸೂಕ್ತ",
     "context": "",
     "role": ""
   },
   "Apply": {
-    "text": "ಅನ್ವಯಿಸು",
+    "text": "ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
     "context": "",
     "role": ""
   },
   "Irrigation urgently needed": {
-    "text": "ತುರ್ತಾಗಿ ನೀರಾವರಿ ಅಗತ್ಯವಿದೆ",
+    "text": "ತುರ್ತಾಗಿ ನೀರಾವರಿ ಬೇಕು",
     "context": "",
     "role": ""
   },
   "Fertilizer Recommendation": {
-    "text": "ರಸಗೊಬ್ಬರ ಶಿಫಾರಸು",
+    "text": "ಗೊಬ್ಬರ ಶಿಫಾರಸು",
     "context": "",
     "role": ""
   },
   "Acoustic Pest Detector": {
-    "text": "ಅಕೌಸ್ಟಿಕ್ ಪೆಸ್ಟ್ ಡಿಟೆಕ್ಟರ್",
+    "text": "ಶಬ್ದ ಆಧಾರಿತ ಕೀಟ ಪತ್ತೆದಾರ",
     "context": "",
     "role": ""
   },
   "Which crop did you record?": {
-    "text": "ನೀವು ಯಾವ ಬೆಳೆಯನ್ನು ದಾಖಲಿಸಿದ್ದೀರಿ?",
+    "text": "ಯಾವ ಬೆಳೆಯ ಶಬ್ದ ರೆಕಾರ್ಡ್ ಮಾಡಿದ್ದೀರಿ?",
     "context": "",
     "role": ""
   },
   "Upload field audio recording": {
-    "text": "ಫೀಲ್ಡ್ ಆಡಿಯೊ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "text": "ಹೊಲದ ಆಡಿಯೋ ರೆಕಾರ್ಡಿಂಗ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "Analyze for Pests": {
-    "text": "ಕೀಟಗಳಿಗೆ ವಿಶ್ಲೇಷಿಸಿ",
+    "text": "ಕೀಟಗಳಿಗಾಗಿ ವಿಶ್ಲೇಷಿಸಿ",
     "context": "",
     "role": ""
   },
   "Detection Confidence": {
-    "text": "ಪತ್ತೆ ವಿಶ್ವಾಸ",
+    "text": "ಪತ್ತೆಯ ವಿಶ್ವಾಸಾರ್ಹತೆ",
     "context": "",
     "role": ""
   },
   "Dominant Frequency": {
-    "text": "ಡಾಮಿನೆಂಟ್ ಫ್ರೀಕ್ವೆನ್ಸಿ",
+    "text": "ಪ್ರಮುಖ ಆವರ್ತನ",
     "context": "",
     "role": ""
   },
   "Signal Energy": {
-    "text": "ಸಿಗ್ನಲ್ ಎನರ್ಜಿ",
+    "text": "ಸಿಗ್ನಲ್ ಶಕ್ತಿ",
     "context": "",
     "role": ""
   },
   "Spectral Pattern": {
-    "text": "ಸ್ಪೆಕ್ಟ್ರಲ್ ಪ್ಯಾಟರ್ನ್",
+    "text": "ಸ್ಪೆಕ್ಟ್ರಲ್ ಮಾದರಿ",
     "context": "",
     "role": ""
   },
@@ -515,37 +515,37 @@
     "role": ""
   },
   "Recommended Action": {
-    "text": "ಶಿಫಾರಸು ಮಾಡಲಾದ ಕ್ರಮ",
+    "text": "ಶಿಫಾರಸು ಮಾಡಿದ ಕ್ರಮ",
     "context": "",
     "role": ""
   },
   "Share Pest Alert on WhatsApp": {
-    "text": "WhatsApp ನಲ್ಲಿ ಕೀಟಗಳ ಎಚ್ಚರಿಕೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
+    "text": "ಕೀಟ ಎಚ್ಚರಿಕೆಯನ್ನು WhatsApp ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ",
     "context": "",
     "role": ""
   },
   "Field Watch — Satellite Intelligence": {
-    "text": "ಫೀಲ್ಡ್ ವಾಚ್ - ಉಪಗ್ರಹ ಗುಪ್ತಚರ",
+    "text": "ಹೊಲ ನಿಗಾ — ಉಪಗ್ರಹ ಮಾಹಿತಿ",
     "context": "",
     "role": ""
   },
   "Live satellite weather, wildfire alerts, flood warnings, locust swarm data, and air quality — all in one place. Updates every time you open this tab.": {
-    "text": "ಲೈವ್ ಉಪಗ್ರಹ ಹವಾಮಾನ, ಕಾಡ್ಗಿಚ್ಚು ಎಚ್ಚರಿಕೆಗಳು, ಪ್ರವಾಹ ಎಚ್ಚರಿಕೆಗಳು, ಮಿಡತೆ ಸಮೂಹ ಡೇಟಾ ಮತ್ತು ಗಾಳಿಯ ಗುಣಮಟ್ಟ - ಎಲ್ಲವೂ ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ. ನೀವು ಈ ಟ್ಯಾಬ್ ಅನ್ನು ತೆರೆದಾಗಲೆಲ್ಲಾ ನವೀಕರಣಗಳು.",
+    "text": "ನೇರ ಉಪಗ್ರಹ ಹವಾಮಾನ, ಕಾಡ್ಗಿಚ್ಚು ಎಚ್ಚರಿಕೆ, ಪ್ರವಾಹದ ಎಚ್ಚರಿಕೆ, ಮಿಡತೆಗಳ ಹಿಂಡಿನ ಮಾಹಿತಿ ಮತ್ತು ಗಾಳಿಯ ಗುಣಮಟ್ಟ — ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ. ನೀವು ಈ ಟ್ಯಾಬ್ ತೆರೆದಾಗಲೆಲ್ಲಾ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ.",
     "context": "",
     "role": ""
   },
   "Your City / Nearest Town": {
-    "text": "ನಿಮ್ಮ ನಗರ / ಹತ್ತಿರದ ಪಟ್ಟಣ",
+    "text": "ನಿಮ್ಮ ಊರು / ಹತ್ತಿರದ ಪಟ್ಟಣ",
     "context": "",
     "role": ""
   },
   "WhatsApp numbers to notify (one per line, with 91)": {
-    "text": "ತಿಳಿಸಲು WhatsApp ಸಂಖ್ಯೆಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು, 91 ರೊಂದಿಗೆ)",
+    "text": "ಸೂಚನೆ ಕಳುಹಿಸಲು WhatsApp ನಂಬರ್‌ಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು, 91 ಜೊತೆಗೆ)",
     "context": "",
     "role": ""
   },
   "Farmer Name": {
-    "text": "ರೈತ ಹೆಸರು",
+    "text": "ರೈತನ ಹೆಸರು",
     "context": "",
     "role": ""
   },
@@ -555,12 +555,12 @@
     "role": ""
   },
   "Scan My Field Now": {
-    "text": "ಈಗ ನನ್ನ ಕ್ಷೇತ್ರವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+    "text": "ನನ್ನ ಹೊಲವನ್ನು ಈಗಲೇ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "Overall Field Risk": {
-    "text": "ಒಟ್ಟಾರೆ ಫೀಲ್ಡ್ ರಿಸ್ಕ್",
+    "text": "ಒಟ್ಟಾರೆ ಹೊಲದ ಅಪಾಯ",
     "context": "",
     "role": ""
   },
@@ -575,7 +575,7 @@
     "role": ""
   },
   "Wildfire / Field Fire Alert": {
-    "text": "ಕಾಡ್ಗಿಚ್ಚು / ಫೀಲ್ಡ್ ಫೈರ್ ಎಚ್ಚರಿಕೆ",
+    "text": "ಕಾಡ್ಗಿಚ್ಚು / ಹೊಲದ ಬೆಂಕಿ ಎಚ್ಚರಿಕೆ",
     "context": "",
     "role": ""
   },
@@ -585,17 +585,17 @@
     "role": ""
   },
   "Air Quality": {
-    "text": "ವಾಯು ಗುಣಮಟ್ಟ",
+    "text": "ಗಾಳಿಯ ಗುಣಮಟ್ಟ",
     "context": "",
     "role": ""
   },
   "Read Field Alert Summary": {
-    "text": "ಫೀಲ್ಡ್ ಅಲರ್ಟ್ ಸಾರಾಂಶವನ್ನು ಓದಿ",
+    "text": "ಹೊಲದ ಎಚ್ಚರಿಕೆ ಸಾರಾಂಶ ಓದಿ",
     "context": "",
     "role": ""
   },
   "Send Field Alert to Contacts": {
-    "text": "ಸಂಪರ್ಕಗಳಿಗೆ ಫೀಲ್ಡ್ ಎಚ್ಚರಿಕೆಯನ್ನು ಕಳುಹಿಸಿ",
+    "text": "ಸಂಪರ್ಕಗಳಿಗೆ ಹೊಲದ ಎಚ್ಚರಿಕೆ ಕಳುಹಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -605,7 +605,7 @@
     "role": ""
   },
   "Uploaded photo": {
-    "text": "ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ",
+    "text": "ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೋಟೋ",
     "context": "",
     "role": ""
   },
@@ -615,27 +615,27 @@
     "role": ""
   },
   "Dimensions": {
-    "text": "ಆಯಾಮಗಳು",
+    "text": "ಅಳತೆಗಳು",
     "context": "",
     "role": ""
   },
   "Analyzing...": {
-    "text": "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+    "text": "ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ...",
     "context": "",
     "role": ""
   },
   "Clear daylight photo, close-up of affected area.": {
-    "text": "ಸ್ಪಷ್ಟ ಹಗಲು ಫೋಟೋ, ಪೀಡಿತ ಪ್ರದೇಶದ ಕ್ಲೋಸ್-ಅಪ್.",
+    "text": "ಹಗಲಿನ ಬೆಳಕಿನಲ್ಲಿ ಸ್ಪಷ್ಟ ಫೋಟೋ ತೆಗೆಯಿರಿ, ಬಾಧಿತ ಭಾಗದ ಹತ್ತಿರದ ಚಿತ್ರ ಇರಲಿ.",
     "context": "",
     "role": ""
   },
   "City not found. Please check spelling or try a nearby city.": {
-    "text": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಕಾಗುಣಿತವನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಹತ್ತಿರದ ನಗರವನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+    "text": "ನಗರ ಸಿಗಲಿಲ್ಲ. ಸ್ಪೆಲ್ಲಿಂಗ್ ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಹತ್ತಿರದ ನಗರವನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
     "context": "",
     "role": ""
   },
   "Please enter your city name.": {
-    "text": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.",
+    "text": "ನಿಮ್ಮ ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.",
     "context": "",
     "role": ""
   },
@@ -645,7 +645,7 @@
     "role": ""
   },
   "Read Tab Info": {
-    "text": "ಟ್ಯಾಬ್ ಮಾಹಿತಿಯನ್ನು ಓದಿ",
+    "text": "ಟ್ಯಾಬ್ ಮಾಹಿತಿ ಓದಿ",
     "context": "",
     "role": ""
   },
@@ -660,12 +660,12 @@
     "role": ""
   },
   "Watering": {
-    "text": "ನೀರಾವರಿ",
+    "text": "ನೀರು ಹಾಯಿಸುವಿಕೆ",
     "context": "",
     "role": ""
   },
   "Listen to Field": {
-    "text": "ಹೊಲ ಕೇಳಿ",
+    "text": "ಹೊಲದ ಶಬ್ದ ಕೇಳಿ",
     "context": "",
     "role": ""
   },
@@ -680,7 +680,7 @@
     "role": ""
   },
   "Analyzing soil and climate…": {
-    "text": "ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನ ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ…",
+    "text": "ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನವನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
@@ -690,12 +690,12 @@
     "role": ""
   },
   "also great": {
-    "text": "ಇವೂ ಉತ್ತಮ",
+    "text": "ಇವೂ ಸಹ ಉತ್ತಮ",
     "context": "",
     "role": ""
   },
   "all crops": {
-    "text": "ಎಲ್ಲ ಬೆಳೆಗಳು",
+    "text": "ಎಲ್ಲಾ ಬೆಳೆಗಳು",
     "context": "",
     "role": ""
   },
@@ -705,17 +705,17 @@
     "role": ""
   },
   "🌱 Suggest a crop": {
-    "text": "🌱 ಬೆಳೆ ಸೂಚಿಸಿ",
+    "text": "🌱 ಒಂದು ಬೆಳೆ ಸೂಚಿಸಿ",
     "context": "",
     "role": ""
   },
   "🌿 Analyzing…": {
-    "text": "🌿 ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ…",
+    "text": "🌿 ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
   "Nitrogen": {
-    "text": "ನೈಟ್ರೋಜನ್",
+    "text": "ಸಾರಜನಕ",
     "context": "",
     "role": ""
   },
@@ -725,7 +725,7 @@
     "role": ""
   },
   "Potassium": {
-    "text": "ಪೊಟ್ಯಾಸಿಯಂ",
+    "text": "ಪೊಟ್ಯಾಶಿಯಂ",
     "context": "",
     "role": ""
   },
@@ -735,7 +735,7 @@
     "role": ""
   },
   "Humidity": {
-    "text": "ತೇವಾಂಶ",
+    "text": "ಆರ್ದ್ರತೆ",
     "context": "",
     "role": ""
   },
@@ -750,12 +750,12 @@
     "role": ""
   },
   "Find what your soil": {
-    "text": "ನಿಮ್ಮ ಮಣ್ಣು ಏನು",
+    "text": "ನಿಮ್ಮ ಮಣ್ಣಿಗೆ ಯಾವುದು ಸರಿ",
     "context": "",
     "role": ""
   },
   "wants to grow.": {
-    "text": "ಬೆಳೆಯಲು ಬಯಸುತ್ತದೆ.",
+    "text": "ಎಂದು ತಿಳಿಯಿರಿ.",
     "context": "",
     "role": ""
   },
@@ -770,12 +770,12 @@
     "role": ""
   },
   "second pair of eyes": {
-    "text": "ಎರಡನೇ ದೃಷ್ಟಿ",
+    "text": "ಎರಡನೇ ಜೋಡಿ ಕಣ್ಣುಗಳು",
     "context": "",
     "role": ""
   },
   "for sick leaves.": {
-    "text": "ರೋಗಗ್ರಸ್ತ ಎಲೆಗಳಿಗೆ.",
+    "text": "ರೋಗದ ಎಲೆಗಳಿಗಾಗಿ.",
     "context": "",
     "role": ""
   },
@@ -795,12 +795,12 @@
     "role": ""
   },
   "Listen": {
-    "text": "ಆಲಿಸಿ",
+    "text": "ಕೇಳಿ",
     "context": "",
     "role": ""
   },
   "listen": {
-    "text": "ಆಲಿಸಿ",
+    "text": "ಕೇಳಿ",
     "context": "",
     "role": ""
   },
@@ -810,27 +810,27 @@
     "role": ""
   },
   "Send a photo": {
-    "text": "ಫೋಟೋ ಕಳುಹಿಸಿ",
+    "text": "ಒಂದು ಫೋಟೋ ಕಳುಹಿಸಿ",
     "context": "",
     "role": ""
   },
   "What we see": {
-    "text": "ನಾವು ನೋಡಿದ್ದು",
+    "text": "ನಮಗೆ ಕಾಣಿಸಿದ್ದು",
     "context": "",
     "role": ""
   },
   "Upload a recording": {
-    "text": "ರೆಕಾರ್ಡಿಂಗ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+    "text": "ಧ್ವನಿಮುದ್ರಿಕೆಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "What we heard": {
-    "text": "ನಾವು ಕೇಳಿದ್ದು",
+    "text": "ನಾವು ಏನು ಕೇಳಿಸಿಕೊಂಡೆವು",
     "context": "",
     "role": ""
   },
   "Calculate irrigation": {
-    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಹಾಕಿ",
+    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
@@ -845,12 +845,12 @@
     "role": ""
   },
   "Emergency helplines": {
-    "text": "ತುರ್ತು ಸಹಾಯವಾಣಿ",
+    "text": "ತುರ್ತು ಸಹಾಯವಾಣಿಗಳು",
     "context": "",
     "role": ""
   },
   "Pollinator": {
-    "text": "ಪರಾಗಕಾರಿ",
+    "text": "ಪರಾಗಸ್ಪರ್ಶಕ",
     "context": "",
     "role": ""
   },
@@ -860,7 +860,7 @@
     "role": ""
   },
   "Ambient": {
-    "text": "ಪರಿಸರ",
+    "text": "ಸುತ್ತಮುತ್ತಲಿನ ಶಬ್ದ",
     "context": "",
     "role": ""
   },
@@ -870,27 +870,27 @@
     "role": ""
   },
   "Development": {
-    "text": "ಅಭಿವೃದ್ಧಿ",
+    "text": "ಬೆಳವಣಿಗೆ",
     "context": "",
     "role": ""
   },
   "Mid-season": {
-    "text": "ಮಧ್ಯ-ಋತು",
+    "text": "ಮಧ್ಯ ಋತು",
     "context": "",
     "role": ""
   },
   "Late season": {
-    "text": "ಕೊನೆ-ಋತು",
+    "text": "ಕೊನೆಯ ಋತು",
     "context": "",
     "role": ""
   },
   "best price": {
-    "text": "ಉತ್ತಮ ಬೆಲೆ",
+    "text": "ಅತ್ಯುತ್ತಮ ಬೆಲೆ",
     "context": "",
     "role": ""
   },
   "worst price": {
-    "text": "ಕಡಿಮೆ ಬೆಲೆ",
+    "text": "ಕನಿಷ್ಠ ಬೆಲೆ",
     "context": "",
     "role": ""
   },
@@ -940,7 +940,7 @@
     "role": ""
   },
   "Sample rate": {
-    "text": "ಮಾದರಿ ದರ",
+    "text": "ಸ್ಯಾಂಪಲ್ ದರ",
     "context": "",
     "role": ""
   },
@@ -970,12 +970,12 @@
     "role": ""
   },
   "Freq range": {
-    "text": "ಆವೃತ್ತಿ ವ್ಯಾಪ್ತಿ",
+    "text": "ಆವರ್ತನ ಶ್ರೇಣಿ",
     "context": "",
     "role": ""
   },
   "clear": {
-    "text": "ತೆರವು",
+    "text": "ಅಳಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -985,12 +985,12 @@
     "role": ""
   },
   "a calm field today is a good harvest tomorrow.": {
-    "text": "ಇಂದಿನ ಶಾಂತ ಹೊಲ ನಾಳಿನ ಉತ್ತಮ ಬೆಳೆ.",
+    "text": "ಇಂದು ಶಾಂತವಾದ ಹೊಲವೇ ನಾಳೆಯ ಒಳ್ಳೆಯ ಫಸಲು.",
     "context": "",
     "role": ""
   },
   "top matches": {
-    "text": "ಅಗ್ರ ಫಲಿತಾಂಶಗಳು",
+    "text": "ಉತ್ತಮ ಹೊಂದಾಣಿಕೆಗಳು",
     "context": "",
     "role": ""
   },
@@ -1010,12 +1010,12 @@
     "role": ""
   },
   "prevention": {
-    "text": "ತಡೆ",
+    "text": "ತಡೆಗಟ್ಟುವಿಕೆ",
     "context": "",
     "role": ""
   },
   "Forecast horizon": {
-    "text": "ಮುನ್ಸೂಚನಾ ಅವಧಿ",
+    "text": "ಮುನ್ಸೂಚನೆಯ ಅವಧಿ",
     "context": "",
     "role": ""
   },
@@ -1035,7 +1035,7 @@
     "role": ""
   },
   "on": {
-    "text": "ರಂದು",
+    "text": "ಗೆ",
     "context": "",
     "role": ""
   },
@@ -1055,7 +1055,7 @@
     "role": ""
   },
   "feels like": {
-    "text": "ತರಹ ಅನಿಸುತ್ತದೆ",
+    "text": "ಅನುಭವಕ್ಕೆ",
     "context": "",
     "role": ""
   },
@@ -1070,12 +1070,12 @@
     "role": ""
   },
   "Flood risk": {
-    "text": "ಪ್ರವಾಹ ಅಪಾಯ",
+    "text": "ಪ್ರವಾಹದ ಅಪಾಯ",
     "context": "",
     "role": ""
   },
   "Rain 48h:": {
-    "text": "48 ಗಂಟೆ ಮಳೆ:",
+    "text": "48 ಗಂಟೆಯ ಮಳೆ:",
     "context": "",
     "role": ""
   },
@@ -1085,7 +1085,7 @@
     "role": ""
   },
   "Hotspots nearby:": {
-    "text": "ಸಮೀಪದ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು:",
+    "text": "ಹತ್ತಿರದ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು:",
     "context": "",
     "role": ""
   },
@@ -1100,7 +1100,7 @@
     "role": ""
   },
   "Swarms nearby:": {
-    "text": "ಸಮೀಪದ ಗುಂಪುಗಳು:",
+    "text": "ಹತ್ತಿರದ ಗುಂಪುಗಳು:",
     "context": "",
     "role": ""
   },
@@ -1110,7 +1110,7 @@
     "role": ""
   },
   "📋 Copy": {
-    "text": "📋 ನಕಲು",
+    "text": "📋 ನಕಲಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -1120,7 +1120,7 @@
     "role": ""
   },
   "Send to my number": {
-    "text": "ನನ್ನ ಸಂಖ್ಯೆಗೆ ಕಳುಹಿಸಿ",
+    "text": "ನನ್ನ ನಂಬರಿಗೆ ಕಳುಹಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -1130,32 +1130,32 @@
     "role": ""
   },
   "Free · 24/7 · All Indian languages": {
-    "text": "ಉಚಿತ · 24/7 · ಎಲ್ಲಾ ಭಾರತೀಯ ಭಾಷೆಗಳು",
+    "text": "ಉಚಿತ · 24/7 · ಎಲ್ಲಾ ಭಾರತೀಯ ಭಾಷೆಗಳಲ್ಲಿ",
     "context": "",
     "role": ""
   },
   "PM Kisan Helpline": {
-    "text": "PM ಕಿಸಾನ್ ಹೆಲ್ಪ್‌ಲೈನ್",
+    "text": "PM ಕಿಸಾನ್ ಸಹಾಯವಾಣಿ",
     "context": "",
     "role": ""
   },
   "PM Kisan scheme queries": {
-    "text": "PM ಕಿಸಾನ್ ಯೋಜನೆ ಮಾಹಿತಿ",
+    "text": "PM ಕಿಸಾನ್ ಯೋಜನೆಯ ಪ್ರಶ್ನೆಗಳಿಗೆ",
     "context": "",
     "role": ""
   },
   "NDRF Emergency": {
-    "text": "NDRF ತುರ್ತು",
+    "text": "NDRF ತುರ್ತು ಸಹಾಯ",
     "context": "",
     "role": ""
   },
   "Flood, earthquake, disaster": {
-    "text": "ಪ್ರವಾಹ, ಭೂಕಂಪ, ವಿಕೋಪ",
+    "text": "ಪ್ರವಾಹ, ಭೂಕಂಪ, ವಿಪತ್ತು",
     "context": "",
     "role": ""
   },
   "Ambulance": {
-    "text": "ಆಂಬುಲೆನ್ಸ್",
+    "text": "ಆ್ಯಂಬ್ಯುಲೆನ್ಸ್",
     "context": "",
     "role": ""
   },
@@ -1180,7 +1180,7 @@
     "role": ""
   },
   "Disease outbreak reporting": {
-    "text": "ರೋಗ ಪ್ರಾದುರ್ಭಾವ ವರದಿ",
+    "text": "ರೋಗ ಹರಡುವಿಕೆಯ ವರದಿ",
     "context": "",
     "role": ""
   },
@@ -1195,7 +1195,7 @@
     "role": ""
   },
   "Crop Kc factor": {
-    "text": "ಬೆಳೆ Kc ಅಂಶ",
+    "text": "ಬೆಳೆಯ Kc ಅಂಶ",
     "context": "",
     "role": ""
   },
@@ -1210,7 +1210,7 @@
     "role": ""
   },
   "Nitrogen:": {
-    "text": "ನೈಟ್ರೋಜನ್:",
+    "text": "ಸಾರಜನಕ:",
     "context": "",
     "role": ""
   },
@@ -1235,17 +1235,17 @@
     "role": ""
   },
   "mm": {
-    "text": "ಮಿಮೀ",
+    "text": "mm",
     "context": "",
     "role": ""
   },
   "Wind speed": {
-    "text": "ಗಾಳಿ ವೇಗ",
+    "text": "ಗಾಳಿಯ ವೇಗ",
     "context": "",
     "role": ""
   },
   "km/h": {
-    "text": "ಕಿಮೀ/ಗಂ",
+    "text": "km/h",
     "context": "",
     "role": ""
   },
@@ -1255,7 +1255,7 @@
     "role": ""
   },
   "Scanning field…": {
-    "text": "ಹೊಲ ಸ್ಕ್ಯಾನ್ ಆಗುತ್ತಿದೆ…",
+    "text": "ಹೊಲವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
@@ -1275,22 +1275,22 @@
     "role": ""
   },
   "API key issue — check your config.js setup.": {
-    "text": "API ಕೀ ಸಮಸ್ಯೆ — config.js ಪರಿಶೀಲಿಸಿ.",
+    "text": "API ಕೀ ಸಮಸ್ಯೆ — ನಿಮ್ಮ config.js ಹೊಂದಾಣಿಕೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
     "context": "",
     "role": ""
   },
   "API key issue — check your configuration.": {
-    "text": "API ಕೀ ಸಮಸ್ಯೆ — ಕಾನ್ಫಿಗರೇಶನ್ ಪರಿಶೀಲಿಸಿ.",
+    "text": "API ಕೀ ಸಮಸ್ಯೆ — ನಿಮ್ಮ ಸಂರಚನೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
     "context": "",
     "role": ""
   },
   "API key misconfigured. Open web/config.js and verify the dev key.": {
-    "text": "API ಕೀ ತಪ್ಪು — web/config.js ಪರಿಶೀಲಿಸಿ.",
+    "text": "API ಕೀ ಸರಿಯಾಗಿ ಹೊಂದಿಸಿಲ್ಲ. web/config.js ತೆರೆದು ಡೆವ್ ಕೀಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
     "context": "",
     "role": ""
   },
   "Analysis failed": {
-    "text": "ವಿಶ್ಲೇಷಣೆ ವಿಫಲವಾಗಿದೆ",
+    "text": "ವಿಶ್ಲೇಷಣೆ ವಿಫಲವಾಯಿತು",
     "context": "",
     "role": ""
   },
@@ -1305,12 +1305,12 @@
     "role": ""
   },
   "Calculating irrigation…": {
-    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಹಾಕುತ್ತಿದ್ದೇವೆ…",
+    "text": "ನೀರಾವರಿ ಲೆಕ್ಕ ಮಾಡುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
   "Cannot preview this audio format — upload anyway to let the server analyze it.": {
-    "text": "ಈ ಆಡಿಯೋ ಫಾರ್ಮ್ಯಾಟ್ ತೋರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ — ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
+    "text": "ಈ ಆಡಿಯೋ ಫಾರ್ಮ್ಯಾಟ್ ಅನ್ನು ಮುನ್ನೋಟ ತೋರಿಸಲು ಆಗುತ್ತಿಲ್ಲ — ಸರ್ವರ್ ವಿಶ್ಲೇಷಿಸಲು ಹೇಗಾದರೂ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
     "context": "",
     "role": ""
   },
@@ -1320,47 +1320,47 @@
     "role": ""
   },
   "Could not analyze photo": {
-    "text": "ಫೋಟೋ ವಿಶ್ಲೇಷಿಸಲಾಗಲಿಲ್ಲ",
+    "text": "ಫೋಟೋವನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಆಗಲಿಲ್ಲ",
     "context": "",
     "role": ""
   },
   "Could not analyze soil": {
-    "text": "ಮಣ್ಣು ವಿಶ್ಲೇಷಿಸಲಾಗಲಿಲ್ಲ",
+    "text": "ಮಣ್ಣು ವಿಶ್ಲೇಷಿಸಲು ಆಗಲಿಲ್ಲ",
     "context": "",
     "role": ""
   },
   "Could not calculate": {
-    "text": "ಲೆಕ್ಕ ಹಾಕಲಾಗಲಿಲ್ಲ",
+    "text": "ಲೆಕ್ಕ ಮಾಡಲು ಆಗಲಿಲ್ಲ",
     "context": "",
     "role": ""
   },
   "Could not fetch forecast": {
-    "text": "ಅಂದಾಜು ತೆಗೆದುಕೊಳ್ಳಲಾಗಲಿಲ್ಲ",
+    "text": "ಮುನ್ಸೂಚನೆ ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
     "context": "",
     "role": ""
   },
   "Crop type (optional)": {
-    "text": "ಬೆಳೆ ವಿಧ (ಐಚ್ಛಿಕ)",
+    "text": "ಬೆಳೆಯ ಬಗೆ (ಐಚ್ಛಿಕ)",
     "context": "",
     "role": ""
   },
   "Drag & drop your field audio here": {
-    "text": "ಹೊಲದ ಆಡಿಯೋವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ",
+    "text": "ನಿಮ್ಮ ಹೊಲದ ಧ್ವನಿಯನ್ನು ಇಲ್ಲಿಗೆ ಎಳೆದು ಬಿಡಿ",
     "context": "",
     "role": ""
   },
   "Drop a leaf photo here": {
-    "text": "ಇಲ್ಲಿ ಎಲೆ ಫೋಟೋ ಹಾಕಿ",
+    "text": "ಎಲೆಯ ಫೋಟೋವನ್ನು ಇಲ್ಲಿ ಹಾಕಿ",
     "context": "",
     "role": ""
   },
   "Drop a recording on the left to begin. 🐛": {
-    "text": "ಪ್ರಾರಂಭಿಸಲು ಎಡಭಾಗದಲ್ಲಿ ರೆಕಾರ್ಡಿಂಗ್ ಹಾಕಿ. 🐛",
+    "text": "ಆರಂಭಿಸಲು ಎಡಭಾಗದಲ್ಲಿ ಧ್ವನಿಮುದ್ರಿಕೆಯನ್ನು ಬಿಡಿ. 🐛",
     "context": "",
     "role": ""
   },
   "Fetching market data…": {
-    "text": "ಮಾರುಕಟ್ಟೆ ಡೇಟಾ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ…",
+    "text": "ಮಾರುಕಟ್ಟೆ ಮಾಹಿತಿ ತರಲಾಗುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
@@ -1370,72 +1370,72 @@
     "role": ""
   },
   "Full forecast table": {
-    "text": "ಪೂರ್ಣ ಅಂದಾಜು ಕೋಷ್ಟಕ",
+    "text": "ಪೂರ್ಣ ಮುನ್ಸೂಚನೆ ಪಟ್ಟಿ",
     "context": "",
     "role": ""
   },
   "Growth stage": {
-    "text": "ಬೆಳವಣಿಗೆ ಹಂತ",
+    "text": "ಬೆಳವಣಿಗೆಯ ಹಂತ",
     "context": "",
     "role": ""
   },
   "Hear the bugs": {
-    "text": "ಕೀಟಗಳ ಶಬ್ದ ಆಲಿಸಿ",
+    "text": "ಕೀಟಗಳ ಶಬ್ದ ಕೇಳಿ",
     "context": "",
     "role": ""
   },
   "Hold your phone near a plant for a few seconds. We'll listen for the tiny sounds pests make and warn you a week early.": {
-    "text": "ಕೆಲವು ಸೆಕೆಂಡ್ ಗಿಡದ ಬಳಿ ಫೋನ್ ಹಿಡಿಯಿರಿ. ಕೀಟ ಶಬ್ದಗಳನ್ನು ಕೇಳಿ ಒಂದು ವಾರ ಮೊದಲೇ ಎಚ್ಚರಿಸುತ್ತೇವೆ.",
+    "text": "ನಿಮ್ಮ ಫೋನನ್ನು ಗಿಡದ ಬಳಿ ಕೆಲ ಸೆಕೆಂಡುಗಳ ಕಾಲ ಹಿಡಿಯಿರಿ. ಕೀಟಗಳು ಮಾಡುವ ಸಣ್ಣ ಶಬ್ದಗಳನ್ನು ನಾವು ಕೇಳಿ, ಒಂದು ವಾರ ಮೊದಲೇ ನಿಮಗೆ ಎಚ್ಚರಿಕೆ ಕೊಡುತ್ತೇವೆ.",
     "context": "",
     "role": ""
   },
   "Invalid or missing API key.": {
-    "text": "ಅಮಾನ್ಯ ಅಥವಾ ಇಲ್ಲದ API ಕೀ.",
+    "text": "API ಕೀ ತಪ್ಪಾಗಿದೆ ಅಥವಾ ಇಲ್ಲ.",
     "context": "",
     "role": ""
   },
   "Just enough water,": {
-    "text": "ಸಾಕಷ್ಟು ನೀರು,",
+    "text": "ಬೇಕಾದಷ್ಟೇ ನೀರು,",
     "context": "",
     "role": ""
   },
   "KB · ready": {
-    "text": "KB · ಸಿದ್ಧವಾಗಿದೆ",
+    "text": "KB · ಸಿದ್ಧ",
     "context": "",
     "role": ""
   },
   "Listening to your field…": {
-    "text": "ನಿಮ್ಮ ಹೊಲ ಆಲಿಸುತ್ತಿದ್ದೇವೆ…",
+    "text": "ನಿಮ್ಮ ಹೊಲವನ್ನು ಕೇಳುತ್ತಿದ್ದೇವೆ…",
     "context": "",
     "role": ""
   },
   "Live mandi data not available — showing model forecast only.": {
-    "text": "ಲೈವ್ ಮಂಡಿ ಡೇಟಾ ಇಲ್ಲ — ಮಾದರಿ ಅಂದಾಜು ಮಾತ್ರ.",
+    "text": "ನೇರ ಮಂಡಿ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ — ಕೇವಲ ಮಾದರಿ ಮುನ್ಸೂಚನೆಯನ್ನು ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
     "context": "",
     "role": ""
   },
   "Network error — check your connection.": {
-    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ — ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ — ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ.",
     "context": "",
     "role": ""
   },
   "Network error — please check your connection.": {
-    "text": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ — ದಯವಿಟ್ಟು ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.",
+    "text": "ನೆಟ್‌ವರ್ಕ್ ತೊಂದರೆ — ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ.",
     "context": "",
     "role": ""
   },
   "No connection — check your network and try again.": {
-    "text": "ಸಂಪರ್ಕ ಇಲ್ಲ — ನೆಟ್‌ವರ್ಕ್ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "text": "ಸಂಪರ್ಕ ಇಲ್ಲ — ನಿಮ್ಮ ನೆಟ್‌ವರ್ಕ್ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
     "context": "",
     "role": ""
   },
   "Not enough data to chart.": {
-    "text": "ಚಾರ್ಟ್‌ಗೆ ಸಾಕಷ್ಟು ಡೇಟಾ ಇಲ್ಲ.",
+    "text": "ಚಾರ್ಟ್ ಮಾಡಲು ಸಾಕಷ್ಟು ಮಾಹಿತಿ ಇಲ್ಲ.",
     "context": "",
     "role": ""
   },
   "Price forecast": {
-    "text": "ಬೆಲೆ ಅಂದಾಜು",
+    "text": "ಬೆಲೆ ಮುನ್ಸೂಚನೆ",
     "context": "",
     "role": ""
   },
@@ -1445,17 +1445,17 @@
     "role": ""
   },
   "Send a photo and we'll have a look. 🌿": {
-    "text": "ಫೋಟೋ ಕಳುಹಿಸಿ ನಾವು ನೋಡುತ್ತೇವೆ. 🌿",
+    "text": "ಫೋಟೋ ಕಳುಹಿಸಿ, ನಾವು ನೋಡುತ್ತೇವೆ. 🌿",
     "context": "",
     "role": ""
   },
   "Sign out": {
-    "text": "ಸೈನ್ ಔಟ್",
+    "text": "ಸೈನ್ ಔಟ್ ಮಾಡಿ",
     "context": "",
     "role": ""
   },
   "Snap a photo of a worried leaf. We'll gently look it over and tell you what's likely going on, with the kindest fix.": {
-    "text": "ಅನಾರೋಗ್ಯಕರ ಎಲೆ ಫೋಟೋ ತೆಗೆಯಿರಿ. ಜಾಗ್ರತೆಯಿಂದ ನೋಡಿ ಏನು ನಡೆಯುತ್ತಿದೆ ಎಂದು ಹೇಳುತ್ತೇವೆ.",
+    "text": "ರೋಗ ಬಂದಿರುವ ಎಲೆಯ ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ. ನಾವು ಅದನ್ನು ಚೆನ್ನಾಗಿ ನೋಡಿ, ಏನಾಗಿರಬಹುದು ಎಂಬುದನ್ನು ಸುಲಭವಾದ ಪರಿಹಾರದೊಂದಿಗೆ ತಿಳಿಸುತ್ತೇವೆ.",
     "context": "",
     "role": ""
   },
@@ -1465,32 +1465,32 @@
     "role": ""
   },
   "Tell us a little about your field. We'll quietly look through 26 crops and suggest the one your land will love most.": {
-    "text": "ನಿಮ್ಮ ಹೊಲದ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ಹೇಳಿ. 26 ಬೆಳೆಗಳಲ್ಲಿ ನಿಮ್ಮ ಭೂಮಿಗೆ ಸರಿಯಾದದ್ದನ್ನು ಸೂಚಿಸುತ್ತೇವೆ.",
+    "text": "ನಿಮ್ಮ ಹೊಲದ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ಹೇಳಿ. ನಾವು 26 ಬೆಳೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ನಿಮ್ಮ ಭೂಮಿಗೆ ಹೆಚ್ಚು ಒಪ್ಪುವ ಬೆಳೆಯನ್ನು ಸೂಚಿಸುತ್ತೇವೆ.",
     "context": "",
     "role": ""
   },
   "Unexpected error.": {
-    "text": "ಅನಿರೀಕ್ಷಿತ ದೋಷ.",
+    "text": "ಅನಿರೀಕ್ಷಿತ ತೊಂದರೆ.",
     "context": "",
     "role": ""
   },
   "Unknown error": {
-    "text": "ಅಜ್ಞಾತ ದೋಷ",
+    "text": "ಗೊತ್ತಿಲ್ಲದ ದೋಷ",
     "context": "",
     "role": ""
   },
   "We do the FAO water math behind the scenes and tell you simply: how many liters today, and when to water next.": {
-    "text": "FAO ನೀರಿನ ಲೆಕ್ಕ ಮಾಡಿ ಸರಳವಾಗಿ ಹೇಳುತ್ತೇವೆ: ಇಂದು ಎಷ್ಟು ಲೀಟರ್, ಮುಂದೆ ಯಾವಾಗ.",
+    "text": "FAO ನೀರಿನ ಲೆಕ್ಕಾಚಾರವನ್ನು ನಾವು ಹಿಂದೆ ಮಾಡಿ, ನಿಮಗೆ ಸರಳವಾಗಿ ಹೇಳುತ್ತೇವೆ: ಇಂದು ಎಷ್ಟು ಲೀಟರ್ ನೀರು ಬೇಕು, ಮುಂದಿನ ನೀರಾವರಿ ಯಾವಾಗ.",
     "context": "",
     "role": ""
   },
   "We watch the mandi prices and gently tell you whether to sell now or wait a couple of weeks. No charts to wrestle with.": {
-    "text": "ಮಂಡಿ ಬೆಲೆಗಳನ್ನು ನೋಡಿ ಈಗ ಮಾರಬೇಕೋ ಕಾಯಬೇಕೋ ಎಂದು ಹೇಳುತ್ತೇವೆ.",
+    "text": "ನಾವು ಮಂಡಿ ಬೆಲೆಗಳನ್ನು ಗಮನಿಸಿ, ಈಗ ಮಾರಬೇಕೋ ಅಥವಾ ಒಂದೆರಡು ವಾರ ಕಾಯಬೇಕೋ ಎಂಬುದನ್ನು ಸರಳವಾಗಿ ಹೇಳುತ್ತೇವೆ. ಕಷ್ಟದ ಚಾರ್ಟ್‌ಗಳ ತಲೆನೋವು ಇಲ್ಲ.",
     "context": "",
     "role": ""
   },
   "Weather, fires, locusts, soil — all gathered in one calm view. Just the things you need to know today.": {
-    "text": "ಹವಾಮಾನ, ಬೆಂಕಿ, ಮಿಡತೆ, ಮಣ್ಣು — ಎಲ್ಲ ಒಂದೇ ನೋಟದಲ್ಲಿ.",
+    "text": "ಹವಾಮಾನ, ಬೆಂಕಿ, ಮಿಡತೆ, ಮಣ್ಣು — ಎಲ್ಲವೂ ಒಂದೇ ಶಾಂತ ನೋಟದಲ್ಲಿ. ಇಂದು ನಿಮಗೆ ತಿಳಿಯಬೇಕಾದ ವಿಷಯಗಳಷ್ಟೆ.",
     "context": "",
     "role": ""
   },
@@ -1500,12 +1500,12 @@
     "role": ""
   },
   "a calm decision.": {
-    "text": "ಒಂದು ಶಾಂತ ನಿರ್ಧಾರ.",
+    "text": "ಶಾಂತವಾದ ನಿರ್ಧಾರ.",
     "context": "",
     "role": ""
   },
   "a little hungry": {
-    "text": "ಸ್ವಲ್ಪ ಕಡಿಮೆ",
+    "text": "ಸ್ವಲ್ಪ ಕೊರತೆ",
     "context": "",
     "role": ""
   },
@@ -1525,22 +1525,22 @@
     "role": ""
   },
   "before they show.": {
-    "text": "ಕಾಣಿಸುವ ಮೊದಲೇ.",
+    "text": "ಕಾಣಿಸಿಕೊಳ್ಳುವ ಮೊದಲೇ.",
     "context": "",
     "role": ""
   },
   "fair price,": {
-    "text": "ನ್ಯಾಯ ಬೆಲೆ,",
+    "text": "ನ್ಯಾಯಯುತ ಬೆಲೆ,",
     "context": "",
     "role": ""
   },
   "fetching live…": {
-    "text": "ಲೈವ್ ಡೇಟಾ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ…",
+    "text": "ನೇರ ಮಾಹಿತಿ ಪಡೆಯುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
   "for your land.": {
-    "text": "ನಿಮ್ಮ ಭೂಮಿಗೆ.",
+    "text": "ನಿಮ್ಮ ಭೂಮಿಗಾಗಿ.",
     "context": "",
     "role": ""
   },
@@ -1550,12 +1550,12 @@
     "role": ""
   },
   "just right": {
-    "text": "ಸರಿಯಾದ ಪ್ರಮಾಣ",
+    "text": "ಸರಿಯಾದ ಪ್ರಮಾಣದಲ್ಲಿ",
     "context": "",
     "role": ""
   },
   "known insects": {
-    "text": "ತಿಳಿದಿರುವ ಕೀಟಗಳು",
+    "text": "ಗೊತ್ತಿರುವ ಕೀಟಗಳು",
     "context": "",
     "role": ""
   },
@@ -1565,7 +1565,7 @@
     "role": ""
   },
   "live mandi": {
-    "text": "ಲೈವ್ ಮಂಡಿ",
+    "text": "ನೇರ ಮಂಡಿ",
     "context": "",
     "role": ""
   },
@@ -1575,17 +1575,17 @@
     "role": ""
   },
   "or click to choose · jpg, png, webp": {
-    "text": "ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ · jpg, png, webp",
+    "text": "ಅಥವಾ ಆಯ್ಕೆ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ · jpg, png, webp",
     "context": "",
     "role": ""
   },
   "or click to choose · wav · mp3 · m4a · ogg · webm": {
-    "text": "ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ · wav · mp3 · m4a · ogg · webm",
+    "text": "ಅಥವಾ ಆಯ್ಕೆ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ · wav · mp3 · m4a · ogg · webm",
     "context": "",
     "role": ""
   },
   "over": {
-    "text": "ಲ್ಲಿ",
+    "text": "ಮೇಲೆ",
     "context": "",
     "role": ""
   },
@@ -1595,7 +1595,7 @@
     "role": ""
   },
   "plenty": {
-    "text": "ಸಾಕಷ್ಟು",
+    "text": "ಬೇಕಾದಷ್ಟಿದೆ",
     "context": "",
     "role": ""
   },
@@ -1605,22 +1605,22 @@
     "role": ""
   },
   "quality notes": {
-    "text": "ಗುಣಮಟ್ಟ ಟಿಪ್ಪಣಿಗಳು",
+    "text": "ಗುಣಮಟ್ಟದ ಟಿಪ್ಪಣಿಗಳು",
     "context": "",
     "role": ""
   },
   "quiet daily check-in": {
-    "text": "ಶಾಂತ ದೈನಂದಿನ ಪರಿಶೀಲನೆ",
+    "text": "ದಿನಚರಿಯ ಶಾಂತ ತಪಾಸಣೆ",
     "context": "",
     "role": ""
   },
   "sweet spot": {
-    "text": "ಆದರ್ಶ ಮಟ್ಟ",
+    "text": "ಸೂಕ್ತ ಮಟ್ಟ",
     "context": "",
     "role": ""
   },
   "tip: 15–30 cm from the stem · breathe slowly": {
-    "text": "ಸೂಚನೆ: ಕಾಂಡದಿಂದ 15–30 ಸೆಮೀ · ನಿಧಾನವಾಗಿ ಉಸಿರಾಡಿ",
+    "text": "ಸಲಹೆ: ಕಾಂಡದಿಂದ 15–30 cm ದೂರ · ನಿಧಾನವಾಗಿ ಉಸಿರಾಡಿ",
     "context": "",
     "role": ""
   },
@@ -1630,7 +1630,7 @@
     "role": ""
   },
   "top detections": {
-    "text": "ಅಗ್ರ ಪತ್ತೆಗಳು",
+    "text": "ಪ್ರಮುಖ ಪತ್ತೆಗಳು",
     "context": "",
     "role": ""
   },
@@ -1640,7 +1640,7 @@
     "role": ""
   },
   "your local feel": {
-    "text": "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಅನುಭವ",
+    "text": "ನಿಮ್ಮ ಊರಿನ ಹವೆ",
     "context": "",
     "role": ""
   },
@@ -1650,12 +1650,12 @@
     "role": ""
   },
   "~6 seconds": {
-    "text": "~6 ಸೆಕೆಂಡ್",
+    "text": "~6 ಸೆಕೆಂಡುಗಳು",
     "context": "",
     "role": ""
   },
   "⏱ Recording too short — need at least 3 seconds": {
-    "text": "⏱ ರೆಕಾರ್ಡಿಂಗ್ ತುಂಬಾ ಕಡಿಮೆ — ಕನಿಷ್ಠ 3 ಸೆಕೆಂಡ್ ಬೇಕು",
+    "text": "⏱ ರೆಕಾರ್ಡಿಂಗ್ ತುಂಬಾ ಚಿಕ್ಕದು — ಕನಿಷ್ಠ 3 ಸೆಕೆಂಡ್ ಬೇಕು",
     "context": "",
     "role": ""
   },
@@ -1665,12 +1665,12 @@
     "role": ""
   },
   "⚡ Move livestock to shelter": {
-    "text": "⚡ ಜಾನುವಾರುಗಳನ್ನು ಆಶ್ರಯಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳಿ",
+    "text": "⚡ ಜಾನುವಾರುಗಳನ್ನು ಶೆಡ್‌ಗೆ ಸ್ಥಳಾಂತರಿಸಿ",
     "context": "",
     "role": ""
   },
   "✂️ Long recording — analyzed first 20 seconds": {
-    "text": "✂️ ದೀರ್ಘ ರೆಕಾರ್ಡಿಂಗ್ — ಮೊದಲ 20 ಸೆಕೆಂಡ್ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ",
+    "text": "✂️ ರೆಕಾರ್ಡಿಂಗ್ ಉದ್ದ — ಮೊದಲ 20 ಸೆಕೆಂಡ್ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ",
     "context": "",
     "role": ""
   },
@@ -1680,7 +1680,7 @@
     "role": ""
   },
   "🌊 Create bunds around fields": {
-    "text": "🌊 ಹೊಲಗಳ ಸುತ್ತ ಬದುಗಳನ್ನು ಮಾಡಿ",
+    "text": "🌊 ಹೊಲದ ಸುತ್ತ ಬದು ನಿರ್ಮಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -1690,7 +1690,7 @@
     "role": ""
   },
   "🌦 kharif season": {
-    "text": "🌦 ಖರೀಫ್ ಋತು",
+    "text": "🌦 ಮುಂಗಾರು ಹಂಗಾಮು",
     "context": "",
     "role": ""
   },
@@ -1705,12 +1705,12 @@
     "role": ""
   },
   "🌱 Avoid fertilizer — will wash away": {
-    "text": "🌱 ಗೊಬ್ಬರ ಹಾಕಬೇಡಿ — ತೊಳೆದುಹೋಗುತ್ತದೆ",
+    "text": "🌱 ಗೊಬ್ಬರ ಹಾಕಬೇಡಿ — ನೀರಿನಲ್ಲಿ ಕೊಚ್ಚಿ ಹೋಗುತ್ತದೆ",
     "context": "",
     "role": ""
   },
   "🌱 Avoid pruning until frost passes": {
-    "text": "🌱 ಮಂಜು ಕಡಿಮೆಯಾಗುವವರೆಗೆ ಕತ್ತರಿಸಬೇಡಿ",
+    "text": "🌱 ಮಂಜು ಕಳೆಯುವ ತನಕ ಚಾಟನಿ ಮಾಡಬೇಡಿ",
     "context": "",
     "role": ""
   },
@@ -1725,27 +1725,27 @@
     "role": ""
   },
   "🌿 Monitor crops for wilting": {
-    "text": "🌿 ಬಾಡುವ ಸಂದರ್ಭಕ್ಕೆ ಬೆಳೆ ಗಮನಿಸಿ",
+    "text": "🌿 ಬೆಳೆಗಳು ಬಾಡುತ್ತಿವೆಯೇ ಎಂದು ಗಮನಿಸಿ",
     "context": "",
     "role": ""
   },
   "🍄 Watch for fungal disease": {
-    "text": "🍄 ಶಿಲೀಂಧ್ರ ರೋಗಕ್ಕೆ ನಿಗಾ ಇರಿಸಿ",
+    "text": "🍄 ಫಂಗಸ್ ರೋಗದ ಬಗ್ಗೆ ಗಮನವಿರಲಿ",
     "context": "",
     "role": ""
   },
   "🎧 listening…": {
-    "text": "🎧 ಆಲಿಸುತ್ತಿದ್ದೇವೆ…",
+    "text": "🎧 ಕೇಳುತ್ತಿದೆ…",
     "context": "",
     "role": ""
   },
   "💊 Apply preventive fungicide": {
-    "text": "💊 ತಡೆಗಟ್ಟುವ ಶಿಲೀಂಧ್ರನಾಶಕ ಹಾಕಿ",
+    "text": "💊 ಮುಂಜಾಗ್ರತೆಯಾಗಿ ಶಿಲೀಂಧ್ರನಾಶಕ ಸಿಂಪಡಿಸಿ",
     "context": "",
     "role": ""
   },
   "💧 Check soil moisture levels": {
-    "text": "💧 ಮಣ್ಣಿನ ತೇವಾಂಶ ಮಟ್ಟ ಪರಿಶೀಲಿಸಿ",
+    "text": "💧 ಮಣ್ಣಿನ ತೇವಾಂಶ ಪರೀಕ್ಷಿಸಿ",
     "context": "",
     "role": ""
   },
@@ -1755,47 +1755,47 @@
     "role": ""
   },
   "💧 Good for germination": {
-    "text": "💧 ಮೊಳಕೆ ಒಡೆಯಲು ಒಳ್ಳೆಯದು",
+    "text": "💧 ಮೊಳಕೆಯೊಡೆಯಲು ಒಳ್ಳೆಯದು",
     "context": "",
     "role": ""
   },
   "💧 Increase irrigation — heat stress likely": {
-    "text": "💧 ನೀರಾವರಿ ಹೆಚ್ಚಿಸಿ — ಶಾಖ ಒತ್ತಡ ಸಂಭವಿಸಬಹುದು",
+    "text": "💧 ನೀರಾವರಿ ಹೆಚ್ಚಿಸಿ — ಬಿಸಿಲಿನ ಒತ್ತಡ ಉಂಟಾಗಬಹುದು",
     "context": "",
     "role": ""
   },
   "💧 Moderate irrigation needed": {
-    "text": "💧 ಮಧ್ಯಮ ನೀರಾವರಿ ಅಗತ್ಯ",
+    "text": "💧 ಮಧ್ಯಮ ಪ್ರಮಾಣದ ನೀರಾವರಿ ಬೇಕು",
     "context": "",
     "role": ""
   },
   "📈 Sample rate resampled to 16 kHz": {
-    "text": "📈 ಸ್ಯಾಂಪಲ್ ದರ 16 kHz ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ",
+    "text": "📈 ಸ್ಯಾಂಪಲ್ ರೇಟ್ ಅನ್ನು 16 kHz ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ",
     "context": "",
     "role": ""
   },
   "📉 Low sample rate may reduce accuracy": {
-    "text": "📉 ಕಡಿಮೆ ಸ್ಯಾಂಪಲ್ ದರ ನಿಖರತೆ ಕಡಿಮೆ ಮಾಡಬಹುದು",
+    "text": "📉 ಕಡಿಮೆ ಸ್ಯಾಂಪಲ್ ರೇಟ್ ನಿಖರತೆ ಕಡಿಮೆ ಮಾಡಬಹುದು",
     "context": "",
     "role": ""
   },
   "📞 Contact agriculture office if flooding": {
-    "text": "📞 ಪ್ರವಾಹವಾದರೆ ಕೃಷಿ ಕಚೇರಿ ಸಂಪರ್ಕಿಸಿ",
+    "text": "📞 ಪ್ರವಾಹ ಬಂದರೆ ಕೃಷಿ ಕಚೇರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ",
     "context": "",
     "role": ""
   },
   "🔇 Too quiet — hold mic closer to the plant stem": {
-    "text": "🔇 ತುಂಬಾ ಶಾಂತ — ಮೈಕ್ ಅನ್ನು ಕಾಂಡ ಹತ್ತಿರ ಹಿಡಿಯಿರಿ",
+    "text": "🔇 ತುಂಬಾ ಶಾಂತ — ಮೈಕ್ ಅನ್ನು ಗಿಡದ ಕಾಂಡಕ್ಕೆ ಹತ್ತಿರ ಹಿಡಿಯಿರಿ",
     "context": "",
     "role": ""
   },
   "🔊 analyze": {
-    "text": "🔊 ವಿಶ್ಲೇಷಿಸು",
+    "text": "🔊 ವಿಶ್ಲೇಷಿಸಿ",
     "context": "",
     "role": ""
   },
   "🔥 Light irrigation before frost protects roots": {
-    "text": "🔥 ಮಂಜಿನ ಮೊದಲು ಹಗುರ ನೀರಾವರಿ ಬೇರುಗಳನ್ನು ರಕ್ಷಿಸುತ್ತದೆ",
+    "text": "🔥 ಮಂಜು ಬೀಳುವ ಮುನ್ನ ಸ್ವಲ್ಪ ನೀರಾವರಿ ಮಾಡಿದರೆ ಬೇರುಗಳು ಸುರಕ್ಷಿತ",
     "context": "",
     "role": ""
   },
@@ -1805,12 +1805,62 @@
     "role": ""
   },
   "🚜 Ideal for harvesting": {
-    "text": "🚜 ಕೊಯ್ಲಿಗೆ ಸೂಕ್ತ",
+    "text": "🚜 ಕಟಾವಿಗೆ ಸೂಕ್ತ ದಿನ",
     "context": "",
     "role": ""
   },
   "🚫 Stop all field work immediately": {
-    "text": "🚫 ತಕ್ಷಣ ಎಲ್ಲಾ ಹೊಲದ ಕೆಲಸ ನಿಲ್ಲಿಸಿ",
+    "text": "🚫 ಎಲ್ಲಾ ಹೊಲದ ಕೆಲಸವನ್ನು ತಕ್ಷಣ ನಿಲ್ಲಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Your village or town": {
+    "text": "ನಿಮ್ಮ ಹಳ್ಳಿ ಅಥವಾ ಊರು",
+    "context": "",
+    "role": ""
+  },
+  "Toggle sidebar": {
+    "text": "ಸೈಡ್‌ಬಾರ್ ತೋರಿಸಿ/ಮರೆಮಾಡಿ",
+    "context": "",
+    "role": ""
+  },
+  "Kisan": {
+    "text": "ಕಿಸಾನ್",
+    "context": "",
+    "role": ""
+  },
+  "OS": {
+    "text": "OS",
+    "context": "",
+    "role": ""
+  },
+  "a quiet companion": {
+    "text": "ಒಂದು ನಿಶ್ಶಬ್ದ ಸಂಗಾತಿ",
+    "context": "",
+    "role": ""
+  },
+  "↺ Try again": {
+    "text": "↺ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "context": "",
+    "role": ""
+  },
+  "Sign in method": {
+    "text": "ಸೈನ್ ಇನ್ ವಿಧಾನ",
+    "context": "",
+    "role": ""
+  },
+  "npk · ph": {
+    "text": "npk · ph",
+    "context": "",
+    "role": ""
+  },
+  "scanning…": {
+    "text": "ಸ್ಕ್ಯಾನ್ ಆಗುತ್ತಿದೆ…",
+    "context": "",
+    "role": ""
+  },
+  "mm/day": {
+    "text": "mm/day",
     "context": "",
     "role": ""
   }

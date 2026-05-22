@@ -10,7 +10,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form, Query
 from PIL import Image, UnidentifiedImageError
 
-from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse
+from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse, TreatmentPriceRequest, TreatmentPriceResponse
 from core.disease_db import DISEASE_DB
 from backend.auth import require_api_key
 from backend.config import get_settings
@@ -193,6 +193,52 @@ async def analyze_symptom(
     except Exception:
         pass
     return response
+
+
+@router.post("/treatment-price", response_model=TreatmentPriceResponse)
+async def estimate_treatment_price(
+    req: TreatmentPriceRequest,
+    _: str = Depends(require_api_key),
+):
+    """Estimate treatment/fertilizer cost in INR using Claude Haiku."""
+    settings = get_settings()
+    if not settings.ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=503, detail="Anthropic API key not configured")
+
+    from anthropic import AsyncAnthropic
+    client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=10.0)
+
+    prompt = (
+        f"A farmer in India has {req.area_acres} acres of {req.crop_type}. "
+        f"Diagnosed: {req.disease}. Recommended treatment: {req.treatment}.\n\n"
+        "Estimate the total cost in Indian Rupees (INR) for this treatment covering the full field. "
+        "Include chemical/fertilizer cost and typical labor. Use current Indian market rates.\n\n"
+        "Respond ONLY with valid JSON (no markdown fences):\n"
+        '{"cost_range":"₹X,XXX – ₹Y,YYY","per_acre_inr":N,"total_inr":N,"notes":"brief note"}'
+    )
+
+    try:
+        resp = await client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=200,
+            messages=[
+                {"role": "user", "content": prompt},
+                {"role": "assistant", "content": "{"},
+            ],
+        )
+        raw = "{" + resp.content[0].text
+        # strip markdown fences if present
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        logger.info("Treatment price raw response: %s", raw)
+        data = json.loads(raw)
+        return TreatmentPriceResponse(**data)
+    except Exception as exc:
+        logger.warning("Treatment price estimation failed: %s", exc)
+        raise HTTPException(status_code=502, detail="Could not estimate treatment price")
 
 
 @router.get("/crops")

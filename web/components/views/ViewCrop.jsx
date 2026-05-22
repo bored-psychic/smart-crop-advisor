@@ -1,4 +1,4 @@
-// ViewCrop — wired to /api/crop/recommend
+// ViewCrop — wired to /api/crop/recommend + /api/soil/analyze
 const { useState, useCallback, useEffect, useRef } = React;
 
 function ProbBars({ probs, t }) {
@@ -20,7 +20,7 @@ function ProbBars({ probs, t }) {
   );
 }
 
-function ViewCrop({ profile, setProfile, t }) {
+function ViewCrop({ profile, setProfile, t, areaAcres, setAreaAcres }) {
   const [N, setN] = useState(90);
   const [P, setP] = useState(42);
   const [K, setK] = useState(43);
@@ -32,6 +32,7 @@ function ViewCrop({ profile, setProfile, t }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [soilResult, setSoilResult] = useState(null);
   const [wxNote, setWxNote] = useState('');
   const [wxLoading, setWxLoading] = useState(false);
   const wxDebounceRef = useRef(null);
@@ -69,9 +70,20 @@ function ViewCrop({ profile, setProfile, t }) {
   const handleSubmit = useCallback(() => {
     setLoading(true);
     setError(null);
-    window.api.cropRecommend({ N, P, K, temperature, humidity, ph, rainfall })
-      .then(r => {
-        setResult(r);
+    setSoilResult(null);
+
+    const cropPromise = window.api.cropRecommend({ N, P, K, temperature, humidity, ph, rainfall });
+    const soilPromise = window.api.soilAnalyze({
+      N, P, K, ph,
+      organic_matter_pct: 1.2,
+      target_crop: profile.crop || undefined,
+      area_acres: areaAcres,
+    }).catch(() => null);
+
+    Promise.all([cropPromise, soilPromise])
+      .then(([cropData, soilData]) => {
+        setResult(cropData);
+        setSoilResult(soilData);
         setLoading(false);
       })
       .catch(e => {
@@ -82,11 +94,12 @@ function ViewCrop({ profile, setProfile, t }) {
         });
         setLoading(false);
       });
-  }, [N, P, K, temperature, humidity, ph, rainfall]);
+  }, [N, P, K, temperature, humidity, ph, rainfall, areaAcres, profile.crop]);
 
   const handleReset = useCallback(() => {
     setN(90); setP(42); setK(43); setPh(6.5); setTemp(25); setHum(80); setRain(200);
-    setResult(null); setError(null);
+    setAreaAcres(1.0);
+    setResult(null); setError(null); setSoilResult(null);
   }, []);
 
   return (
@@ -101,6 +114,7 @@ function ViewCrop({ profile, setProfile, t }) {
       </div>
 
       <LocationBar
+        t={t}
         village={profile.village} setVillage={v => setProfile({ ...profile, village: v })}
         state={profile.state} setState={s => setProfile({ ...profile, state: s })}
         extra={<span className="tag">{t('🌦 kharif season')}</span>}
@@ -108,13 +122,14 @@ function ViewCrop({ profile, setProfile, t }) {
 
       <div className="grid-2">
         <div className="card rise rise-1">
-          <div className="card-h"><h3>{t('Soil')}</h3><span className="meta">npk · ph</span></div>
+          <div className="card-h"><h3>{t('Soil')}</h3><span className="meta">{t('npk · ph')}</span></div>
           <Slider label={t('Nitrogen')} unit="kg/ha" min={0} max={140} value={N} onChange={setN}
             hint={N < 40 ? t('a little hungry') : N < 90 ? t('just right') : t('plenty')} />
           <Slider label={t('Phosphorus')} unit="kg/ha" min={5} max={145} value={P} onChange={setP} />
           <Slider label={t('Potassium')} unit="kg/ha" min={5} max={205} value={K} onChange={setK} />
           <Slider label={t('Soil pH')} unit="" min={3.5} max={9.5} step={0.1} value={ph} onChange={setPh}
             hint={ph < 5.5 ? t('acidic') : ph < 7.5 ? t('sweet spot') : t('a touch alkaline')} />
+          <Slider label={t('Area')} unit="acres" min={0.5} max={50} step={0.5} value={areaAcres} onChange={setAreaAcres} />
         </div>
         <div className="card rise rise-2">
           <div className="card-h"><h3>{t('Weather')}</h3><span className="meta">{wxLoading ? t('fetching live…') : t('your local feel')}</span></div>
@@ -137,6 +152,7 @@ function ViewCrop({ profile, setProfile, t }) {
 
       {error && !loading && (
         <ErrorCard
+          t={t}
           title={error.status === 401 || error.status === 403
             ? t('API key misconfigured. Open web/config.js and verify the dev key.')
             : t('Could not analyze soil')}
@@ -179,6 +195,55 @@ function ViewCrop({ profile, setProfile, t }) {
           </div>
           {result.all_probabilities && <ProbBars probs={result.all_probabilities} t={t} />}
         </div>
+      )}
+
+      {soilResult && !loading && (
+        soilResult.deficiencies.length > 0 ? (
+          <div className="card rise" style={{ marginTop: 14 }}>
+            <div className="card-h">
+              <h3>{t('Soil Deficiencies')}</h3>
+              <span className="meta">{soilResult.soil_type}</span>
+            </div>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 14, fontStyle: 'italic' }}>
+              {soilResult.narrative}
+            </p>
+            {soilResult.deficiencies.map(d => (
+              <div key={d.nutrient} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '8px 0', borderBottom: '1px solid var(--line)'
+              }}>
+                <span style={{ fontWeight: 500, textTransform: 'uppercase', fontSize: 13 }}>{d.nutrient}</span>
+                <span style={{ fontSize: 12, color: 'var(--ink-faint)' }}>
+                  {d.current_value} / optimal {d.optimal_min}–{d.optimal_max}
+                </span>
+                <span style={{
+                  fontSize: 11, padding: '2px 8px', borderRadius: 99, fontWeight: 600,
+                  background: d.severity === 'high' ? 'rgba(232,112,95,0.18)' : d.severity === 'medium' ? 'rgba(240,192,96,0.18)' : 'rgba(127,217,140,0.18)',
+                  color: d.severity === 'high' ? 'var(--berry)' : d.severity === 'medium' ? 'var(--sun)' : 'var(--leaf)',
+                }}>{d.severity}</span>
+              </div>
+            ))}
+            {soilResult.amendments.length > 0 && (
+              <div style={{ marginTop: 14 }}>
+                <div className="page-eyebrow" style={{ marginBottom: 10 }}>{t('Amendments')}</div>
+                {soilResult.amendments.map((a, i) => (
+                  <div key={i} style={{ padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{a.name}
+                      {a.dose_kg_per_acre && <span style={{ color: 'var(--ink-faint)', fontWeight: 400, marginLeft: 8, fontSize: 12 }}>{a.dose_kg_per_acre} kg/acre</span>}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 3 }}>{a.application_method}</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginTop: 2 }}>{a.notes} · {t('Effect in')} {a.time_to_effect_days} {t('days')}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="card rise" style={{ marginTop: 14, borderColor: 'rgba(127,217,140,0.32)', background: 'rgba(127,217,140,0.08)' }}>
+            <span style={{ color: 'var(--leaf)', fontWeight: 600 }}>✓ {t('Soil looks healthy')}</span>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginTop: 6, fontStyle: 'italic' }}>{soilResult.narrative}</p>
+          </div>
+        )
       )}
     </div>
   );
