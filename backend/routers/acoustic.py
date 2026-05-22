@@ -80,14 +80,23 @@ def _cache_put(key: str, value: dict) -> None:
 # ── Feedback / active-learning helpers ────────────────────────────────────────
 
 def _save_feedback_clip(pcm: np.ndarray, rate: int) -> str:
-    """Write decoded PCM to feedback_clips/ and return the clip UUID."""
+    """Encrypt + write decoded PCM to feedback_clips/ and return clip UUID.
+
+    P1 Task 3: clips are Fernet-encrypted at rest so a leaked
+    `data/feedback_clips/` directory does not yield playable farmer
+    recordings. The retrain pipeline (scripts/retrain_from_feedback.py)
+    must Fernet-decrypt before feeding clips back into training.
+    """
+    from cryptography.fernet import Fernet
     FEEDBACK_CLIPS_DIR.mkdir(parents=True, exist_ok=True)
     clip_id = str(uuid.uuid4())
     out = FEEDBACK_CLIPS_DIR / f"{clip_id}.wav"
     int16 = np.clip(pcm * 32767.0, -32768, 32767).astype(np.int16)
     buf = io.BytesIO()
     wav.write(buf, rate, int16)
-    out.write_bytes(buf.getvalue())
+    settings = get_settings()
+    encrypted = Fernet(settings.FERNET_KEY.encode()).encrypt(buf.getvalue())
+    out.write_bytes(encrypted)
     return clip_id
 
 
@@ -118,11 +127,22 @@ async def submit_feedback(body: _FeedbackBody, _: str = Depends(require_api_key)
         raise HTTPException(status_code=404, detail="clip_id not found")
 
     # Copy clip to the matching training-data folder so the next retrain run
-    # picks it up automatically via collect_dataset().
+    # picks it up automatically via collect_dataset(). Clips are Fernet-
+    # encrypted at rest (P1 Task 3), so decrypt before writing the
+    # plaintext WAV into the training set.
+    from cryptography.fernet import Fernet, InvalidToken
+    settings = get_settings()
+    try:
+        decrypted = Fernet(settings.FERNET_KEY.encode()).decrypt(
+            clip_src.read_bytes()
+        )
+    except InvalidToken:
+        # Legacy unencrypted clip from before P1 Task 3 — accept as-is.
+        decrypted = clip_src.read_bytes()
     dest_dir = AUDIO_SAMPLES_DIR / label.replace("/", "_").replace(" ", "_")
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / f"feedback_{body.clip_id}.wav"
-    dest.write_bytes(clip_src.read_bytes())
+    dest.write_bytes(decrypted)
 
     # Append to JSONL queue for audit / statistics.
     FEEDBACK_QUEUE_FILE.parent.mkdir(parents=True, exist_ok=True)
