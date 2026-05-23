@@ -41,7 +41,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "default-src 'self'; "
             "img-src 'self' data:; "
             "media-src 'self' blob:; "
-            "connect-src 'self'; "
+            "connect-src 'self' https://unpkg.com; "
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; "
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com"
