@@ -3,85 +3,25 @@
 //             useToast, ToastContainer
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-/* City → Indian state lookup (major cities, lowercase keys) */
-const CITY_TO_STATE = {
-  // Andhra Pradesh
-  visakhapatnam:'Andhra Pradesh', vizag:'Andhra Pradesh', vijayawada:'Andhra Pradesh',
-  guntur:'Andhra Pradesh', nellore:'Andhra Pradesh', kurnool:'Andhra Pradesh',
-  rajahmundry:'Andhra Pradesh', tirupati:'Andhra Pradesh', kakinada:'Andhra Pradesh',
-  anantapur:'Andhra Pradesh', nandyal:'Andhra Pradesh', ongole:'Andhra Pradesh',
-  // Assam
-  guwahati:'Assam', silchar:'Assam', dibrugarh:'Assam',
-  // Bihar
-  patna:'Bihar', gaya:'Bihar', muzaffarpur:'Bihar', bhagalpur:'Bihar', darbhanga:'Bihar',
-  // Chhattisgarh
-  raipur:'Chhattisgarh', bhilai:'Chhattisgarh', bilaspur:'Chhattisgarh',
-  // Gujarat
-  ahmedabad:'Gujarat', surat:'Gujarat', vadodara:'Gujarat', rajkot:'Gujarat',
-  bhavnagar:'Gujarat', jamnagar:'Gujarat', gandhinagar:'Gujarat',
-  // Haryana
-  faridabad:'Haryana', gurgaon:'Haryana', gurugram:'Haryana', ambala:'Haryana',
-  hisar:'Haryana', rohtak:'Haryana', karnal:'Haryana', panipat:'Haryana',
-  // Himachal Pradesh
-  shimla:'Himachal Pradesh', dharamsala:'Himachal Pradesh', manali:'Himachal Pradesh', solan:'Himachal Pradesh',
-  // Jharkhand
-  ranchi:'Jharkhand', jamshedpur:'Jharkhand', dhanbad:'Jharkhand', bokaro:'Jharkhand',
-  // Karnataka
-  bengaluru:'Karnataka', bangalore:'Karnataka', mysuru:'Karnataka', mysore:'Karnataka',
-  hubli:'Karnataka', mangaluru:'Karnataka', mangalore:'Karnataka', belagavi:'Karnataka',
-  belgaum:'Karnataka', davangere:'Karnataka', bellary:'Karnataka', ballari:'Karnataka',
-  tumkur:'Karnataka', shivamogga:'Karnataka', shimoga:'Karnataka', gulbarga:'Karnataka',
-  kalaburagi:'Karnataka', bidar:'Karnataka', raichur:'Karnataka', dharwad:'Karnataka',
-  udupi:'Karnataka', hassan:'Karnataka', mandya:'Karnataka', bagalkot:'Karnataka',
-  gadag:'Karnataka', koppal:'Karnataka', chitradurga:'Karnataka',
-  // Kerala
-  thiruvananthapuram:'Kerala', trivandrum:'Kerala', kochi:'Kerala', cochin:'Kerala',
-  kozhikode:'Kerala', calicut:'Kerala', thrissur:'Kerala', kollam:'Kerala',
-  palakkad:'Kerala', malappuram:'Kerala', kannur:'Kerala', alappuzha:'Kerala', alleppey:'Kerala',
-  // Madhya Pradesh
-  bhopal:'Madhya Pradesh', indore:'Madhya Pradesh', gwalior:'Madhya Pradesh',
-  jabalpur:'Madhya Pradesh', ujjain:'Madhya Pradesh', sagar:'Madhya Pradesh',
-  rewa:'Madhya Pradesh', satna:'Madhya Pradesh', dewas:'Madhya Pradesh',
-  // Maharashtra
-  mumbai:'Maharashtra', pune:'Maharashtra', nagpur:'Maharashtra', nashik:'Maharashtra',
-  aurangabad:'Maharashtra', solapur:'Maharashtra', amravati:'Maharashtra',
-  kolhapur:'Maharashtra', nanded:'Maharashtra', sangli:'Maharashtra',
-  jalgaon:'Maharashtra', akola:'Maharashtra', latur:'Maharashtra',
-  chandrapur:'Maharashtra', parbhani:'Maharashtra', thane:'Maharashtra',
-  // Odisha
-  bhubaneswar:'Odisha', cuttack:'Odisha', rourkela:'Odisha', brahmapur:'Odisha',
-  berhampur:'Odisha', sambalpur:'Odisha',
-  // Punjab
-  ludhiana:'Punjab', amritsar:'Punjab', jalandhar:'Punjab', patiala:'Punjab',
-  bathinda:'Punjab', mohali:'Punjab', pathankot:'Punjab',
-  // Rajasthan
-  jaipur:'Rajasthan', jodhpur:'Rajasthan', udaipur:'Rajasthan', kota:'Rajasthan',
-  bikaner:'Rajasthan', ajmer:'Rajasthan', bhilwara:'Rajasthan', alwar:'Rajasthan', sikar:'Rajasthan',
-  // Tamil Nadu
-  chennai:'Tamil Nadu', coimbatore:'Tamil Nadu', madurai:'Tamil Nadu',
-  tiruchirappalli:'Tamil Nadu', trichy:'Tamil Nadu', tirupur:'Tamil Nadu',
-  salem:'Tamil Nadu', tirunelveli:'Tamil Nadu', vellore:'Tamil Nadu',
-  erode:'Tamil Nadu', thanjavur:'Tamil Nadu', thoothukudi:'Tamil Nadu',
-  tuticorin:'Tamil Nadu', cuddalore:'Tamil Nadu', krishnagiri:'Tamil Nadu',
-  // Telangana
-  hyderabad:'Telangana', secunderabad:'Telangana', warangal:'Telangana',
-  nizamabad:'Telangana', karimnagar:'Telangana', khammam:'Telangana',
-  mahbubnagar:'Telangana', nalgonda:'Telangana', adilabad:'Telangana', ramagundam:'Telangana',
-  // Uttar Pradesh
-  lucknow:'Uttar Pradesh', kanpur:'Uttar Pradesh', agra:'Uttar Pradesh',
-  varanasi:'Uttar Pradesh', allahabad:'Uttar Pradesh', prayagraj:'Uttar Pradesh',
-  ghaziabad:'Uttar Pradesh', meerut:'Uttar Pradesh', noida:'Uttar Pradesh',
-  mathura:'Uttar Pradesh', bareilly:'Uttar Pradesh', aligarh:'Uttar Pradesh',
-  moradabad:'Uttar Pradesh', saharanpur:'Uttar Pradesh', gorakhpur:'Uttar Pradesh',
-  jhansi:'Uttar Pradesh', muzaffarnagar:'Uttar Pradesh', firozabad:'Uttar Pradesh',
-  // Uttarakhand
-  dehradun:'Uttarakhand', haridwar:'Uttarakhand', roorkee:'Uttarakhand',
-  nainital:'Uttarakhand', haldwani:'Uttarakhand',
-  // West Bengal
-  kolkata:'West Bengal', calcutta:'West Bengal', howrah:'West Bengal',
-  durgapur:'West Bengal', asansol:'West Bengal', siliguri:'West Bengal',
-  malda:'West Bengal', bardhaman:'West Bengal',
-};
+/* useCities — fetches city→state list from GET /geo/cities on first mount.
+   Returns a Map<string, string> (lowercase city → state) for O(1) lookups.
+   Falls back to an empty Map on network/parse error. */
+function useCities() {
+  const [cityMap, setCityMap] = useState(new Map());
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/geo/cities')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(list => {
+        if (!cancelled) {
+          setCityMap(new Map(list.map(({ city, state }) => [city, state])));
+        }
+      })
+      .catch(() => { /* leave empty Map in place */ });
+    return () => { cancelled = true; };
+  }, []);
+  return cityMap;
+}
 
 /* ============ Atoms ============ */
 function Slider({ label, unit, min, max, step=1, value, onChange, hint }){
@@ -177,11 +117,12 @@ const GOVT_HELPLINES = [
 ];
 
 function LocationBar({ village, setVillage, state, setState, extra, t }){
+  const cityMap = useCities();
   useEffect(() => {
     if (!village) return;
-    const derived = CITY_TO_STATE[village.trim().toLowerCase()];
+    const derived = cityMap.get(village.trim().toLowerCase());
     if (derived && derived !== state) setState(derived);
-  }, [village]);
+  }, [village, cityMap]);
 
   return (
     <div className="locbar rise rise-1">

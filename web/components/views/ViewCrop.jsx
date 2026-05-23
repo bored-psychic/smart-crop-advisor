@@ -1,5 +1,5 @@
 // ViewCrop — wired to /api/crop/recommend + /api/soil/analyze
-const { useState, useCallback, useEffect, useRef } = React;
+// Form state, weather auto-fill, and API calls live in hooks/useViewCropForm.js
 
 function ProbBars({ probs, t }) {
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, 8);
@@ -21,86 +21,13 @@ function ProbBars({ probs, t }) {
 }
 
 function ViewCrop({ profile, setProfile, t, areaAcres, setAreaAcres }) {
-  const [N, setN] = useState(90);
-  const [P, setP] = useState(42);
-  const [K, setK] = useState(43);
-  const [ph, setPh] = useState(6.5);
-  const [temperature, setTemp] = useState(25);
-  const [humidity, setHum] = useState(80);
-  const [rainfall, setRain] = useState(200);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [result, setResult] = useState(null);
-  const [soilResult, setSoilResult] = useState(null);
-  const [wxNote, setWxNote] = useState('');
-  const [wxLoading, setWxLoading] = useState(false);
-  const wxDebounceRef = useRef(null);
-  const wxLastCityRef = useRef('');
-
-  useEffect(() => () => clearTimeout(wxDebounceRef.current), []);
-
-  useEffect(() => {
-    const val = (profile.village || '').trim();
-    if (wxDebounceRef.current) clearTimeout(wxDebounceRef.current);
-    if (val.length < 3 || val.toLowerCase() === wxLastCityRef.current) return;
-    wxDebounceRef.current = setTimeout(async () => {
-      setWxLoading(true);
-      try {
-        const data = await window.api.fieldWatchScan(val);
-        const w = data && data.weather;
-        if (w) {
-          if (w.temp != null) setTemp(Math.min(45, Math.max(8, parseFloat(w.temp))));
-          if (w.humidity != null) setHum(Math.min(100, Math.max(14, parseFloat(w.humidity))));
-          const rf24 = (w.rain_1h != null ? parseFloat(w.rain_1h) : 0) * 24;
-          if (rf24 > 0) setRain(Math.min(300, Math.max(20, rf24)));
-          wxLastCityRef.current = val.toLowerCase();
-          setWxNote(`Live weather · ${data.city || val}: ${w.temp?.toFixed(1)}°C, ${w.humidity}% humidity${w.description ? ' · ' + w.description : ''}`);
-        } else {
-          setWxNote(`No live weather for "${val}"`);
-        }
-      } catch (_) {
-        setWxNote(`Couldn't fetch weather for "${val}"`);
-      } finally {
-        setWxLoading(false);
-      }
-    }, 500);
-  }, [profile.village]);
-
-  const handleSubmit = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    setSoilResult(null);
-
-    const cropPromise = window.api.cropRecommend({ N, P, K, temperature, humidity, ph, rainfall });
-    const soilPromise = window.api.soilAnalyze({
-      N, P, K, ph,
-      organic_matter_pct: 1.2,
-      target_crop: profile.crop || undefined,
-      area_acres: areaAcres,
-    }).catch(() => null);
-
-    Promise.all([cropPromise, soilPromise])
-      .then(([cropData, soilData]) => {
-        setResult(cropData);
-        setSoilResult(soilData);
-        setLoading(false);
-      })
-      .catch(e => {
-        setError({
-          status: e.status || null,
-          detail: e.detail || e.message || String(e),
-          message: e.message || String(e),
-        });
-        setLoading(false);
-      });
-  }, [N, P, K, temperature, humidity, ph, rainfall, areaAcres, profile.crop]);
-
-  const handleReset = useCallback(() => {
-    setN(90); setP(42); setK(43); setPh(6.5); setTemp(25); setHum(80); setRain(200);
-    setAreaAcres(1.0);
-    setResult(null); setError(null); setSoilResult(null);
-  }, []);
+  const {
+    N, setN, P, setP, K, setK, ph, setPh,
+    temperature, setTemp, humidity, setHum, rainfall, setRain,
+    loading, error, result, soilResult,
+    wxNote, wxLoading,
+    handleSubmit, handleReset,
+  } = window.useViewCropForm(profile, areaAcres, setAreaAcres);
 
   return (
     <div className="view-fade">
@@ -133,9 +60,7 @@ function ViewCrop({ profile, setProfile, t, areaAcres, setAreaAcres }) {
         </div>
         <div className="card rise rise-2">
           <div className="card-h"><h3>{t('Weather')}</h3><span className="meta">{wxLoading ? t('fetching live…') : t('your local feel')}</span></div>
-          {wxNote && (
-            <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 10 }}>{wxNote}</div>
-          )}
+          {wxNote && <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 10 }}>{wxNote}</div>}
           <Slider label={t('Temperature')} unit="°C" min={8} max={45} step={0.5} value={temperature} onChange={setTemp} />
           <Slider label={t('Humidity')} unit="%" min={14} max={100} value={humidity} onChange={setHum} />
           <Slider label={t('Rainfall')} unit="mm" min={20} max={300} step={5} value={rainfall} onChange={setRain} />
@@ -170,9 +95,7 @@ function ViewCrop({ profile, setProfile, t, areaAcres, setAreaAcres }) {
               <div style={{ fontFamily: 'var(--display)', fontSize: 60, letterSpacing: '-0.02em', color: 'var(--ink)', marginTop: 4, lineHeight: 1.1 }}>
                 {result.top_crop.emoji} <em style={{ color: 'var(--leaf)', fontStyle: 'italic', fontWeight: 300 }}>{result.top_crop.crop}</em>
               </div>
-              {result.tip && (
-                <p className="muted" style={{ maxWidth: 480, marginTop: 10 }}>{result.tip}</p>
-              )}
+              {result.tip && <p className="muted" style={{ maxWidth: 480, marginTop: 10 }}>{result.tip}</p>}
               {result.soil && (
                 <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12 }}>
                   <div className="page-eyebrow" style={{ color: 'var(--leaf)' }}>{t('soil')} · {result.soil.soil_type}</div>
@@ -204,18 +127,11 @@ function ViewCrop({ profile, setProfile, t, areaAcres, setAreaAcres }) {
               <h3>{t('Soil Deficiencies')}</h3>
               <span className="meta">{soilResult.soil_type}</span>
             </div>
-            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 14, fontStyle: 'italic' }}>
-              {soilResult.narrative}
-            </p>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 14, fontStyle: 'italic' }}>{soilResult.narrative}</p>
             {soilResult.deficiencies.map(d => (
-              <div key={d.nutrient} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '8px 0', borderBottom: '1px solid var(--line)'
-              }}>
+              <div key={d.nutrient} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--line)' }}>
                 <span style={{ fontWeight: 500, textTransform: 'uppercase', fontSize: 13 }}>{d.nutrient}</span>
-                <span style={{ fontSize: 12, color: 'var(--ink-faint)' }}>
-                  {d.current_value} / optimal {d.optimal_min}–{d.optimal_max}
-                </span>
+                <span style={{ fontSize: 12, color: 'var(--ink-faint)' }}>{d.current_value} / optimal {d.optimal_min}–{d.optimal_max}</span>
                 <span style={{
                   fontSize: 11, padding: '2px 8px', borderRadius: 99, fontWeight: 600,
                   background: d.severity === 'high' ? 'rgba(232,112,95,0.18)' : d.severity === 'medium' ? 'rgba(240,192,96,0.18)' : 'rgba(127,217,140,0.18)',

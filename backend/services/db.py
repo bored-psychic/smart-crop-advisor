@@ -53,16 +53,19 @@ async def init_db() -> None:
         # NOTE: preferred_lang is intentionally omitted here — it is
         # present in the CREATE TABLE statement and managed by Alembic
         # for schema-version tracking.  See docs/audit/migrations.md.
+        ALLOWED_TABLES = {"alert_subscriptions", "webpush_subscriptions"}
         for table in ("alert_subscriptions", "webpush_subscriptions"):
-            cursor = await db.execute(f"PRAGMA table_info({table})")
+            if table not in ALLOWED_TABLES:
+                raise ValueError(f"unknown table: {table}")
+            cursor = await db.execute("PRAGMA table_info(" + table + ")")
             cols = {row[1] for row in await cursor.fetchall()}
             if "phone_hash" not in cols:
                 await db.execute(
-                    f"ALTER TABLE {table} ADD COLUMN phone_hash TEXT"
+                    "ALTER TABLE " + table + " ADD COLUMN phone_hash TEXT"
                 )
             if "phone_ciphertext" not in cols:
                 await db.execute(
-                    f"ALTER TABLE {table} ADD COLUMN phone_ciphertext TEXT"
+                    "ALTER TABLE " + table + " ADD COLUMN phone_ciphertext TEXT"
                 )
 
         await db.commit()

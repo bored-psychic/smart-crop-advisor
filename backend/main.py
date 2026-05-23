@@ -220,7 +220,7 @@ def create_app() -> FastAPI:
     app.add_middleware(LocaleMiddleware)
 
     # ── Register routers ─────────────────────────────────────────────
-    from backend.routers import crop, disease, market, irrigation, acoustic, field_watch, soil, dosage
+    from backend.routers import crop, disease, market, irrigation, acoustic, field_watch, soil, dosage, geo
 
     app.include_router(crop.router)
     app.include_router(disease.router)
@@ -232,6 +232,7 @@ def create_app() -> FastAPI:
     app.include_router(dosage.router)
     app.include_router(subscriptions_router.router)
     app.include_router(auth_router.router)
+    app.include_router(geo.router)
 
     # ── Health check ─────────────────────────────────────────────────
     @app.get("/health", tags=["System"])

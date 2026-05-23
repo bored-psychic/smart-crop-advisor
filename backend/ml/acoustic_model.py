@@ -73,7 +73,8 @@ def _features_from_pcm(raw: np.ndarray, rate: int) -> list[float] | None:
 
     centroid = float(np.sum(freqs * fft_vals) / (np.sum(fft_vals) + eps))
     zcr = float(np.mean(np.abs(np.diff(np.sign(seg)))) / 2)
-    peak_bin = float(min(int(np.argmax(fft_vals) * 15 / (len(fft_vals) + 1)), 15))
+    # Scale argmax index [0, len-1] → [0, 15]; clip guards single-element edge case.
+    peak_bin = float(np.clip(int(np.argmax(fft_vals) * 15 / max(len(fft_vals) - 1, 1)), 0, 15))
 
     frame_size = 512
     frames = [seg[i:i + frame_size] for i in range(0, len(seg) - frame_size, frame_size)]
