@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Request, Depends, UploadFile, File, Form
 from backend.schemas.errors import http_error
 
-from backend.auth import require_api_key, require_user
+from backend.auth import require_api_key, require_user, require_user_or_api_key
 from backend.config import get_settings
 from backend.core.constants import PEST_META
 from backend.middleware.rate_limit import limiter
@@ -89,7 +89,7 @@ class _FeedbackBody(BaseModel):
 
 
 @router.post("/feedback")
-async def submit_feedback(body: _FeedbackBody, _: str = Depends(require_api_key)):
+async def submit_feedback(body: _FeedbackBody, _=Depends(require_user_or_api_key)):
     """Record a farmer label correction and move the clip to the training queue.
 
     Called by the frontend when a user submits the "Help improve the AI" widget.

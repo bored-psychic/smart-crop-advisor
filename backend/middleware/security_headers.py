@@ -32,13 +32,19 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "max-age=31536000; includeSubDomains"
             )
 
-        # Content-Security-Policy: pragmatic for React bundle with inline styles/scripts
+        # Content-Security-Policy: tuned for the in-browser Babel/React SPA.
+        # unsafe-eval is required by @babel/standalone to compile JSX at runtime.
+        # unpkg.com hosts React/ReactDOM/Babel UMD bundles; Google Fonts hosts
+        # the display fonts. Production should self-host React/Babel and drop
+        # both the unpkg allowance and 'unsafe-eval'.
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "img-src 'self' data:; "
+            "media-src 'self' blob:; "
             "connect-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
-            "style-src 'self' 'unsafe-inline'"
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com"
         )
 
         return response

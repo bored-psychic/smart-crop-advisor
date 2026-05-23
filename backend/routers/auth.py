@@ -64,6 +64,10 @@ class RequestOtpResponse(BaseModel):
     ok: bool = True
     # Echo the normalised number so the client can keep state in sync.
     phone: str
+    # Demo-mode only: when FAST2SMS_API_KEY is unset, we cannot deliver
+    # the code by SMS, so we return it to the client for on-screen display.
+    # Never populated in production (where the key is set).
+    demo_otp: str | None = None
 
 
 class VerifyOtpBody(BaseModel):
@@ -98,10 +102,19 @@ async def request_otp(
     await store_otp(db, phone, otp)
     # Fast2SMS via existing helper. send_sms logs a stub if the key
     # is unset, so this also works in dev without burning SMS credits.
+    from backend.config import get_settings
+    settings = get_settings()
+    sms_enabled = bool(settings.FAST2SMS_API_KEY)
+
     sent = await send_sms(phone, f"Your KisanOS code is {otp}. Valid for 5 minutes.")
-    if not sent:
+    if not sent and sms_enabled:
         raise http_error(502, "otp_send_failed", "Failed to send OTP")
-    return RequestOtpResponse(phone=phone)
+    # If SMS is disabled (demo mode), surface the OTP back to the SPA so
+    # the user can see it on screen instead of digging through server logs.
+    return RequestOtpResponse(
+        phone=phone,
+        demo_otp=None if sms_enabled else otp,
+    )
 
 
 @router.post("/verify-otp", response_model=VerifyOtpResponse)
@@ -110,7 +123,14 @@ async def verify_otp_route(
     db: aiosqlite.Connection = Depends(get_db),
 ):
     phone = _normalise_phone(body.phone)
-    ok = await verify_otp(db, phone, body.otp.strip())
+    supplied_otp = body.otp.strip()
+    # Demo mode: when Fast2SMS is unconfigured we accept the universal
+    # magic code 123456 in addition to the stored OTP, so a presenter
+    # can sign in without round-tripping through the SMS provider.
+    from backend.config import get_settings
+    settings = get_settings()
+    magic_ok = (not settings.FAST2SMS_API_KEY) and supplied_otp == "123456"
+    ok = magic_ok or await verify_otp(db, phone, supplied_otp)
     if not ok:
         raise http_error(401, "otp_invalid", "Invalid or expired OTP")
     token, exp = issue_token(phone)

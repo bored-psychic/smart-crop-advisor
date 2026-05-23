@@ -74,6 +74,7 @@ function App() {
   const [fieldLoading, setFieldLoading] = useState(false);
   const fieldFetchRef = useRef({ city: '', timer: null });
   useEffect(() => {
+    if (!authed) return;
     const city = (profile.village || '').trim();
     if (fieldFetchRef.current.timer) clearTimeout(fieldFetchRef.current.timer);
     if (city.length < 2) { setFieldData(null); return; }
@@ -91,7 +92,7 @@ function App() {
       }
     }, 400);
     return () => clearTimeout(fieldFetchRef.current.timer);
-  }, [profile.village]);
+  }, [profile.village, authed]);
 
   // tab bloom transition
   const [displayTab, setDisplayTab] = useState(active);

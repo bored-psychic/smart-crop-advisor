@@ -13,7 +13,7 @@ from PIL import Image, UnidentifiedImageError
 
 from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse, TreatmentPriceRequest, TreatmentPriceResponse
 from core.disease_db import DISEASE_DB
-from backend.auth import require_api_key, require_user
+from backend.auth import require_api_key, require_user, require_user_or_api_key
 from backend.config import get_settings
 from backend.middleware.rate_limit import limiter
 from backend.services import dosage_service
@@ -46,7 +46,7 @@ async def _claude_diagnose(image_bytes: bytes, crop_type: str, media_type: str) 
         client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=15.0)
         img_b64 = base64.standard_b64encode(image_bytes).decode()
         resp = await client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-opus-4-7",
             max_tokens=800,
             system=[{
                 "type": "text",
@@ -180,7 +180,7 @@ async def analyze_image(
 @router.post("/analyze-symptom", response_model=SymptomResponse)
 async def analyze_symptom(
     req: SymptomRequest,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """Look up disease/pest from crop + symptom combination."""
     if req.crop not in DISEASE_DB:
@@ -216,7 +216,7 @@ async def analyze_symptom(
 @router.post("/treatment-price", response_model=TreatmentPriceResponse)
 async def estimate_treatment_price(
     req: TreatmentPriceRequest,
-    _: str = Depends(require_api_key),
+    _=Depends(require_user_or_api_key),
 ):
     """Estimate treatment/fertilizer cost in INR using Claude Haiku."""
     settings = get_settings()

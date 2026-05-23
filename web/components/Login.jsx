@@ -19,6 +19,9 @@ function Login({ onSignIn, t }) {
   const [error, setError] = useStateLogin('');
   const [busy, setBusy] = useStateLogin(false);
   const [info, setInfo] = useStateLogin('');
+  // Set only when the server returns demo_otp (Fast2SMS disabled). The
+  // SPA shows the code on screen instead of requiring SMS delivery.
+  const [demoOtp, setDemoOtp] = useStateLogin('');
 
   function validatePhone() {
     const digits = phone.replace(/\D/g, '');
@@ -40,8 +43,9 @@ function Login({ onSignIn, t }) {
     try {
       const resp = await window.api.authRequestOtp(phone.trim());
       setNormalisedPhone(resp.phone || phone.trim());
+      setDemoOtp(resp.demo_otp || '');
       setStep('otp');
-      setInfo(tr('Code sent. Check your phone.'));
+      setInfo(resp.demo_otp ? '' : tr('Code sent. Check your phone.'));
     } catch (ex) {
       setError(ex.detail || ex.message || tr('Could not send code. Try again.'));
     } finally {
@@ -78,7 +82,8 @@ function Login({ onSignIn, t }) {
     try {
       const resp = await window.api.authRequestOtp(normalisedPhone || phone.trim());
       setNormalisedPhone(resp.phone || normalisedPhone);
-      setInfo(tr('Code resent.'));
+      setDemoOtp(resp.demo_otp || '');
+      setInfo(resp.demo_otp ? '' : tr('Code resent.'));
     } catch (ex) {
       setError(ex.detail || ex.message || tr('Could not resend code.'));
     } finally {
@@ -122,6 +127,44 @@ function Login({ onSignIn, t }) {
                      value={normalisedPhone}
                      readOnly />
             </div>
+            {demoOtp && (
+              <div
+                role="status"
+                style={{
+                  margin: '4px 0 14px',
+                  padding: '10px 14px',
+                  borderRadius: 12,
+                  background: 'rgba(127,217,140,0.10)',
+                  border: '1px solid rgba(127,217,140,0.42)',
+                  color: 'var(--ink)',
+                  fontSize: 13,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                }}>
+                <span style={{ color: 'var(--ink-soft)' }}>
+                  {tr('Demo mode — your code:')}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setOtp(demoOtp)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--leaf)',
+                    fontFamily: 'var(--display)',
+                    fontSize: 22,
+                    fontWeight: 500,
+                    letterSpacing: '0.18em',
+                    padding: '0 4px',
+                  }}
+                  title={tr('Tap to fill')}>
+                  {demoOtp}
+                </button>
+              </div>
+            )}
             <div className="auth-field">
               <label htmlFor="auth-otp">{tr('Verification code')}</label>
               <input id="auth-otp"
