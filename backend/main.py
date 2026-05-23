@@ -7,6 +7,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, Request
+from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,7 +17,9 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from backend.config import get_settings
 from backend.middleware.locale import LocaleMiddleware
+from backend.middleware.security_headers import SecurityHeadersMiddleware
 from backend.middleware.rate_limit import limiter
+from backend.schemas.errors import ErrorResponse
 from backend.services.db import init_db
 from backend.services.alerts import check_and_send_alerts
 from backend.routers import subscriptions as subscriptions_router
@@ -98,6 +101,15 @@ async def lifespan(app: FastAPI):
         )
         app.state.acoustic_model = None
 
+    # Startup probe for YAMNet (secondary fallback, not loaded into app state).
+    # This sets yamnet_model.MODEL_AVAILABLE so the pipeline 503 guard is accurate.
+    try:
+        from backend.ml import yamnet_model as _yamnet_module
+        _yamnet_module.load()
+        logger.info("  ✅ YAMNet head available (secondary fallback)")
+    except Exception as _e:
+        logger.info(f"  ℹ️ YAMNet unavailable (expected if only PANNs is trained): {_e}")
+
     # Alert system — DB tables + scheduled checker
     await init_db()
     _scheduler = AsyncIOScheduler()
@@ -161,6 +173,31 @@ def create_app() -> FastAPI:
 
     app.add_exception_handler(RateLimitExceeded, _rate_limited_json)
 
+    # ── Unified HTTPException → ErrorResponse handler ─────────────────
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+        """Convert every HTTPException to the canonical ErrorResponse shape.
+
+        Sites that already pass a dict with a ``code`` key (e.g. T8's
+        ``{"code": "model_unavailable", ...}``) are forwarded as-is.
+        Plain-string detail values get a snake_case code derived from the
+        HTTP status phrase (e.g. 404 → ``not_found``).
+        """
+        if isinstance(exc.detail, dict) and "code" in exc.detail:
+            payload = ErrorResponse(
+                code=exc.detail["code"],
+                message=exc.detail.get("message", str(exc.detail)),
+                detail=(
+                    {k: v for k, v in exc.detail.items() if k not in ("code", "message")}
+                    or None
+                ),
+            )
+        else:
+            import http
+            code = http.HTTPStatus(exc.status_code).phrase.lower().replace(" ", "_")
+            payload = ErrorResponse(code=code, message=str(exc.detail))
+        return JSONResponse(status_code=exc.status_code, content=payload.model_dump())
+
     # ── CORS ─────────────────────────────────────────────────────────
     # Token-based auth (Authorization: Bearer) doesn't require allow_credentials.
     # allow_origins is controlled via CORS_ORIGINS env var (dev default: localhost:5173, localhost:3000).
@@ -172,6 +209,11 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST"],
         allow_headers=["Authorization", "Content-Type"],
     )
+
+    # ── SecurityHeadersMiddleware ────────────────────────────────────
+    # Adds HTTP security headers (X-Content-Type-Options, X-Frame-Options,
+    # Referrer-Policy, HSTS, CSP) to every response.
+    app.add_middleware(SecurityHeadersMiddleware)
 
     # ── LocaleMiddleware ─────────────────────────────────────────────
     # Parses Accept-Language header and attaches request.state.lang

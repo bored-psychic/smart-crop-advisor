@@ -2,8 +2,9 @@ import hashlib
 import json
 import aiosqlite
 from cryptography.fernet import Fernet, InvalidToken
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 
+from backend.schemas.errors import http_error
 from backend.schemas.subscriptions import (
     SubscribeRequest, SubscribeResponse,
     PushSubscribeRequest, VapidKeyResponse,
@@ -153,10 +154,10 @@ async def push_subscribe(
 
 
 @router.get("/vapid-public-key", response_model=VapidKeyResponse)
-async def vapid_key():
+async def vapid_key(user=Depends(require_user)):
     settings = get_settings()
     if not settings.VAPID_PUBLIC_KEY:
-        raise HTTPException(503, "VAPID keys not configured")
+        raise http_error(503, "vapid_not_configured", "VAPID keys not configured")
     return VapidKeyResponse(public_key=settings.VAPID_PUBLIC_KEY)
 
 

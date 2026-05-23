@@ -65,6 +65,9 @@ class Settings(BaseSettings):
     # ── Upload Limits ────────────────────────────────────────────────────
     MAX_IMAGE_BYTES: int = 10 * 1024 * 1024  # 10 MB
 
+    # ── i18n Configuration ───────────────────────────────────────────────
+    I18N_STRICT: bool = False  # Raise KeyError on missing translations instead of returning ???
+
     # ── Redis Configuration ─────────────────────────────────────────────
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379

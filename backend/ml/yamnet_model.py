@@ -56,6 +56,10 @@ WINDOW_STRIDE = 3   # ≈ 1.4 s hop (50 % overlap)
 
 _SINGLETON: Optional["YAMNetBundle"] = None
 
+# Set to True by load() on success, False on any load failure.
+# Checked by backend.services.acoustic.pipeline before invoking this model.
+MODEL_AVAILABLE: bool = False
+
 
 class YAMNetAbstain(Exception):
     """Raised when YAMNet's softmax is too weak/ambiguous to commit to a call.
@@ -306,98 +310,115 @@ class YAMNetBundle:
 
 
 def load() -> YAMNetBundle:
-    """Load and cache the YAMNet bundle. Raises on TF / Hub / head failure."""
-    global _SINGLETON
+    """Load and cache the YAMNet bundle. Raises on TF / Hub / head failure.
+
+    Sets the module-level MODEL_AVAILABLE flag on success or failure so the
+    acoustic pipeline can check availability without catching exceptions.
+    """
+    global _SINGLETON, MODEL_AVAILABLE
     if _SINGLETON is not None:
         return _SINGLETON
 
     if not HEAD_PATH.exists():
+        MODEL_AVAILABLE = False
+        logger.error(
+            "ML model unavailable: %s — %s",
+            "YAMNet",
+            f"head file not found at {HEAD_PATH}",
+        )
         raise FileNotFoundError(
             f"Trained YAMNet head not found at {HEAD_PATH}. "
             "Run scripts/fetch_audio_dataset.py then scripts/train_yamnet_head.py."
         )
 
-    # Lazy imports — TF is heavy and we only want to pay the cost when the
-    # model is actually used. Import errors propagate so main.py can route
-    # to the API-only fallback.
-    import joblib
-    import tensorflow_hub as hub  # noqa: F401  (validates TF install)
-
-    logger.info("Loading YAMNet from TF Hub: %s", YAMNET_TFHUB)
-    yamnet = hub.load(YAMNET_TFHUB)
-
-    _CONFOUNDER_SUBSTRINGS = (
-        "wind", "rain", "rustling", "white noise", "pink noise",
-        "static", "engine", "motor vehicle", "pump",
-    )
     try:
-        raw_names = yamnet.class_names()
-        class_name_list = [
-            c.numpy().decode("utf-8") if hasattr(c, "numpy") else str(c)
-            for c in raw_names
-        ]
-        confounder_indices = [
-            i for i, n in enumerate(class_name_list)
-            if any(s in n.lower() for s in _CONFOUNDER_SUBSTRINGS)
-        ]
+        # Lazy imports — TF is heavy and we only want to pay the cost when the
+        # model is actually used. Import errors propagate so main.py can route
+        # to the API-only fallback.
+        import joblib
+        import tensorflow_hub as hub  # noqa: F401  (validates TF install)
+
+        logger.info("Loading YAMNet from TF Hub: %s", YAMNET_TFHUB)
+        yamnet = hub.load(YAMNET_TFHUB)
+
+        _CONFOUNDER_SUBSTRINGS = (
+            "wind", "rain", "rustling", "white noise", "pink noise",
+            "static", "engine", "motor vehicle", "pump",
+        )
+        try:
+            raw_names = yamnet.class_names()
+            class_name_list = [
+                c.numpy().decode("utf-8") if hasattr(c, "numpy") else str(c)
+                for c in raw_names
+            ]
+            confounder_indices = [
+                i for i, n in enumerate(class_name_list)
+                if any(s in n.lower() for s in _CONFOUNDER_SUBSTRINGS)
+            ]
+            logger.info(
+                "YAMNet confounder indices (%d classes): %s",
+                len(confounder_indices), confounder_indices,
+            )
+        except Exception as exc:
+            logger.warning("Could not extract YAMNet class names for confounder gate: %s", exc)
+            confounder_indices = []
+
+        logger.info("Loading classifier head: %s", HEAD_PATH)
+        bundle_dict = joblib.load(HEAD_PATH)
+
+        bio_gate_clf = bundle_dict.get("bio_gate_clf")
+        if bio_gate_clf is not None:
+            logger.info(
+                "Bio gate loaded (threshold=%.2f)",
+                bundle_dict.get("bio_gate_threshold", 0.25),
+            )
+        else:
+            logger.info(
+                "No bio gate in bundle — retrain with Non-biological/ data to enable Stage 1"
+            )
+
+        _SINGLETON = YAMNetBundle(
+            yamnet=yamnet,
+            clf=bundle_dict["clf"],
+            label_encoder=bundle_dict["label_encoder"],
+            classes=bundle_dict["classes"],
+            test_accuracy=bundle_dict.get("test_accuracy"),
+            trained_at=bundle_dict.get("trained_at"),
+            temperature=bundle_dict.get("temperature", 1.0),
+            confounder_indices=confounder_indices,
+            bio_gate_clf=bio_gate_clf,
+            bio_gate_threshold=bundle_dict.get("bio_gate_threshold", 0.25),
+        )
         logger.info(
-            "YAMNet confounder indices (%d classes): %s",
-            len(confounder_indices), confounder_indices,
-        )
-    except Exception as exc:
-        logger.warning("Could not extract YAMNet class names for confounder gate: %s", exc)
-        confounder_indices = []
-
-    logger.info("Loading classifier head: %s", HEAD_PATH)
-    bundle_dict = joblib.load(HEAD_PATH)
-
-    bio_gate_clf = bundle_dict.get("bio_gate_clf")
-    if bio_gate_clf is not None:
-        logger.info(
-            "Bio gate loaded (threshold=%.2f)",
-            bundle_dict.get("bio_gate_threshold", 0.25),
-        )
-    else:
-        logger.info(
-            "No bio gate in bundle — retrain with Non-biological/ data to enable Stage 1"
+            "YAMNet ready — %d classes, test_accuracy=%.3f, T=%.2f",
+            len(_SINGLETON.classes),
+            _SINGLETON.test_accuracy or 0.0,
+            _SINGLETON.temperature,
         )
 
-    _SINGLETON = YAMNetBundle(
-        yamnet=yamnet,
-        clf=bundle_dict["clf"],
-        label_encoder=bundle_dict["label_encoder"],
-        classes=bundle_dict["classes"],
-        test_accuracy=bundle_dict.get("test_accuracy"),
-        trained_at=bundle_dict.get("trained_at"),
-        temperature=bundle_dict.get("temperature", 1.0),
-        confounder_indices=confounder_indices,
-        bio_gate_clf=bio_gate_clf,
-        bio_gate_threshold=bundle_dict.get("bio_gate_threshold", 0.25),
-    )
-    logger.info(
-        "YAMNet ready — %d classes, test_accuracy=%.3f, T=%.2f",
-        len(_SINGLETON.classes),
-        _SINGLETON.test_accuracy or 0.0,
-        _SINGLETON.temperature,
-    )
+        # Vocab alignment with the API-path prompts: every local class should
+        # exist in PEST_META, and any PEST_META label the API prompts can emit
+        # should be present locally (otherwise the two pipelines disagree on
+        # vocabulary and aggregation/UI fields fall back to neutral defaults).
+        local = set(_SINGLETON.classes)
+        canonical = set(PEST_META.keys())
+        missing_in_meta = local - canonical
+        missing_in_head = canonical - local
+        if missing_in_meta:
+            logger.warning(
+                "YAMNet head emits labels missing from PEST_META: %s",
+                sorted(missing_in_meta),
+            )
+        if missing_in_head:
+            logger.info(
+                "PEST_META labels not in current YAMNet head (API path only): %s",
+                sorted(missing_in_head),
+            )
 
-    # Vocab alignment with the API-path prompts: every local class should
-    # exist in PEST_META, and any PEST_META label the API prompts can emit
-    # should be present locally (otherwise the two pipelines disagree on
-    # vocabulary and aggregation/UI fields fall back to neutral defaults).
-    local = set(_SINGLETON.classes)
-    canonical = set(PEST_META.keys())
-    missing_in_meta = local - canonical
-    missing_in_head = canonical - local
-    if missing_in_meta:
-        logger.warning(
-            "YAMNet head emits labels missing from PEST_META: %s",
-            sorted(missing_in_meta),
-        )
-    if missing_in_head:
-        logger.info(
-            "PEST_META labels not in current YAMNet head (API path only): %s",
-            sorted(missing_in_head),
-        )
+        MODEL_AVAILABLE = True
+        return _SINGLETON
 
-    return _SINGLETON
+    except Exception as _load_exc:
+        MODEL_AVAILABLE = False
+        logger.error("ML model unavailable: %s — %s", "YAMNet", _load_exc)
+        raise

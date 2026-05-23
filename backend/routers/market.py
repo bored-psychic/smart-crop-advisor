@@ -1,6 +1,7 @@
 """Market price + forecast router."""
 
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends
+from backend.schemas.errors import http_error
 from backend.schemas.market import MarketForecastRequest, MarketForecastResponse, LivePrice, ForecastDay, CityPrice
 from backend.services.market_service import get_market_service
 from backend.services.weather_service import resolve_city_state
@@ -20,9 +21,10 @@ async def get_forecast(
     """Get live mandi price + Prophet forecast. State is derived from city via geocoding."""
     state = await resolve_city_state(req.city)
     if not state:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Could not determine state for city '{req.city}'. Please check the city name.",
+        raise http_error(
+            422,
+            "city_not_resolved",
+            f"Could not determine state for city '{req.city}'. Please check the city name.",
         )
 
     market_svc = get_market_service()

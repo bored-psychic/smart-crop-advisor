@@ -7,7 +7,8 @@ import logging
 from typing import Optional
 
 import numpy as np
-from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form, Query
+from fastapi import APIRouter, Request, Depends, UploadFile, File, Form, Query
+from backend.schemas.errors import http_error
 from PIL import Image, UnidentifiedImageError
 
 from backend.schemas.disease import DiseaseResult, SymptomRequest, SymptomResponse, TreatmentPriceRequest, TreatmentPriceResponse
@@ -107,22 +108,22 @@ async def analyze_image(
     # Validate crop_type against the known allowlist to prevent injection of
     # arbitrary strings into AI prompts and downstream processing.
     if crop_type != "Unknown" and crop_type not in _VALID_CROP_TYPES:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Unsupported crop_type: {crop_type!r}. "
-                   f"Valid values: {sorted(_VALID_CROP_TYPES)} or 'Unknown'.",
+        raise http_error(
+            422,
+            "invalid_crop_type",
+            f"Unsupported crop_type: {crop_type!r}. "
+            f"Valid values: {sorted(_VALID_CROP_TYPES)} or 'Unknown'.",
         )
 
     settings = get_settings()
     contents = await file.read()
 
     if len(contents) > settings.MAX_IMAGE_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail=(
-                f"Image too large ({len(contents) / 1_048_576:.1f} MB; "
-                f"max {settings.MAX_IMAGE_BYTES // 1_048_576} MB)."
-            ),
+        raise http_error(
+            413,
+            "image_too_large",
+            f"Image too large ({len(contents) / 1_048_576:.1f} MB; "
+            f"max {settings.MAX_IMAGE_BYTES // 1_048_576} MB).",
         )
 
     try:
@@ -131,13 +132,14 @@ async def analyze_image(
         img = Image.open(io.BytesIO(contents))
         img_format = (img.format or "").upper()
     except (UnidentifiedImageError, OSError) as exc:
-        raise HTTPException(status_code=400, detail=f"Invalid image file: {exc}")
+        raise http_error(400, "invalid_image", f"Invalid image file: {exc}")
 
     media_type = _MIME_BY_FORMAT.get(img_format)
     if media_type is None:
-        raise HTTPException(
-            status_code=415,
-            detail=f"Unsupported image format '{img_format or 'unknown'}'. Use JPEG, PNG, WebP, or GIF.",
+        raise http_error(
+            415,
+            "unsupported_media_type",
+            f"Unsupported image format '{img_format or 'unknown'}'. Use JPEG, PNG, WebP, or GIF.",
         )
 
     claude_result = await _claude_diagnose(contents, crop_type, media_type)
@@ -157,7 +159,7 @@ async def analyze_image(
 
     disease_bundle = request.app.state.disease_model
     if disease_bundle is None:
-        raise HTTPException(status_code=503, detail="Disease model unavailable")
+        raise http_error(503, "model_unavailable", "Disease model unavailable")
     rgb_array = np.asarray(img.convert('RGB'), dtype=np.uint8)
     result = disease_bundle.predict_from_image(rgb_array)
 
@@ -182,11 +184,11 @@ async def analyze_symptom(
 ):
     """Look up disease/pest from crop + symptom combination."""
     if req.crop not in DISEASE_DB:
-        raise HTTPException(status_code=404, detail=f"Crop '{req.crop}' not found in database")
+        raise http_error(404, "crop_not_found", f"Crop '{req.crop}' not found in database")
 
     crop_diseases = DISEASE_DB[req.crop]
     if req.symptom not in crop_diseases:
-        raise HTTPException(status_code=404, detail=f"Symptom not found for crop '{req.crop}'")
+        raise http_error(404, "symptom_not_found", f"Symptom not found for crop '{req.crop}'")
 
     data = crop_diseases[req.symptom]
     response = SymptomResponse(
@@ -219,7 +221,7 @@ async def estimate_treatment_price(
     """Estimate treatment/fertilizer cost in INR using Claude Haiku."""
     settings = get_settings()
     if not settings.ANTHROPIC_API_KEY:
-        raise HTTPException(status_code=503, detail="Anthropic API key not configured")
+        raise http_error(503, "api_key_not_configured", "Anthropic API key not configured")
 
     from anthropic import AsyncAnthropic
     client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=10.0)
@@ -243,7 +245,7 @@ async def estimate_treatment_price(
             ],
         )
         if not resp.content:
-            raise HTTPException(status_code=503, detail="AI provider returned empty response")
+            raise http_error(503, "ai_empty_response", "AI provider returned empty response")
         raw = "{" + resp.content[0].text
         # strip markdown fences if present
         raw = raw.strip()
@@ -256,7 +258,7 @@ async def estimate_treatment_price(
         return TreatmentPriceResponse(**data)
     except Exception as exc:
         logger.warning("Treatment price estimation failed: %s", exc)
-        raise HTTPException(status_code=502, detail="Could not estimate treatment price")
+        raise http_error(502, "treatment_price_failed", "Could not estimate treatment price")
 
 
 @router.get("/crops")

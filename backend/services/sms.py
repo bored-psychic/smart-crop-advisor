@@ -1,13 +1,14 @@
 import logging
 import httpx
 from backend.config import get_settings
+from backend.utils.redaction import mask_phone
 
 logger = logging.getLogger(__name__)
 
 
 async def send_sms(phone: str, message: str) -> bool:
     settings = get_settings()
-    masked_phone = phone[:3] + "***" + phone[-2:]
+    masked_phone = mask_phone(phone)
     if not settings.FAST2SMS_API_KEY:
         logger.info(f"[SMS STUB] To: {masked_phone} | {message}")
         return True

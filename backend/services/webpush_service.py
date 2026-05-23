@@ -2,6 +2,7 @@ import json
 import logging
 from pywebpush import webpush, WebPushException
 from backend.config import get_settings
+from backend.utils.redaction import mask_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 async def send_web_push(endpoint: str, p256dh: str, auth: str, payload: dict) -> bool:
     settings = get_settings()
     if not settings.VAPID_PRIVATE_KEY:
-        logger.info(f"[PUSH STUB] To: {endpoint[:60]}… | {payload}")
+        logger.info(f"[PUSH STUB] To: {mask_endpoint(endpoint)} | {payload}")
         return True
 
     try:
@@ -21,5 +22,5 @@ async def send_web_push(endpoint: str, p256dh: str, auth: str, payload: dict) ->
         )
         return True
     except WebPushException as e:
-        logger.error(f"Web push failed to {endpoint[:60]}: {e}")
+        logger.error(f"Web push failed to {mask_endpoint(endpoint)}: {e}")
         return False

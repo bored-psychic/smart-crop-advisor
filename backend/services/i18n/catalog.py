@@ -4,9 +4,13 @@ Mirrors the frontend t() semantics: structured entries with `.text`,
 English fallback, key fallback. Loaded lazily; can be reloaded for tests.
 """
 import json
+import logging
+import os
 from pathlib import Path
 from threading import Lock
 from typing import Dict, Any
+
+logger = logging.getLogger(__name__)
 
 _BUNDLES_DIR = Path(__file__).parent / "bundles"
 _cache: Dict[str, Dict[str, Any]] = {}
@@ -47,12 +51,22 @@ def _entry_text(entry):
 
 
 def t(key: str, lang: str) -> str:
-    """Translate `key` into `lang`. Falls back to English, then to the key itself."""
+    """Translate `key` into `lang`. Falls back to English, then to ???.
+
+    If I18N_STRICT=1 (env), raises KeyError for missing keys instead of returning ???.
+    """
     _ensure_loaded()
     lang_bundle = _cache.get(lang) or {}
     en_bundle = _cache.get("en") or {}
-    return (
-        _entry_text(lang_bundle.get(key))
-        or _entry_text(en_bundle.get(key))
-        or key
-    )
+
+    result = _entry_text(lang_bundle.get(key)) or _entry_text(en_bundle.get(key))
+    if result:
+        return result
+
+    # Missing key fallback
+    strict_mode = os.environ.get("I18N_STRICT", "").lower() in ("1", "true")
+    if strict_mode:
+        raise KeyError(f"i18n missing key: lang={lang} key={key}")
+
+    logger.warning("i18n miss: lang=%s key=%s", lang, key)
+    return "???"

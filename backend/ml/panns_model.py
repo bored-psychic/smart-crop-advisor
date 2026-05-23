@@ -51,6 +51,10 @@ ABSTAIN_MARGIN = 0.10
 
 _SINGLETON: Optional["PANNsBundle"] = None
 
+# Set to True by load() on success, False on any load failure.
+# Checked by backend.services.acoustic.pipeline before invoking this model.
+MODEL_AVAILABLE: bool = False
+
 
 class PANNsAbstain(Exception):
     """Raised when CNN14's calibrated softmax is too weak/ambiguous to commit."""
@@ -279,90 +283,107 @@ class PANNsBundle:
 
 
 def load() -> PANNsBundle:
-    """Load and cache the PANNs bundle. Raises on torch/checkpoint/head failure."""
-    global _SINGLETON
+    """Load and cache the PANNs bundle. Raises on torch/checkpoint/head failure.
+
+    Sets the module-level MODEL_AVAILABLE flag on success or failure so the
+    acoustic pipeline can check availability without catching exceptions.
+    """
+    global _SINGLETON, MODEL_AVAILABLE
     if _SINGLETON is not None:
         return _SINGLETON
 
     if not HEAD_PATH.exists():
+        MODEL_AVAILABLE = False
+        logger.error(
+            "ML model unavailable: %s — %s",
+            "PANNs CNN14",
+            f"head file not found at {HEAD_PATH}",
+        )
         raise FileNotFoundError(
             f"Trained PANNs head not found at {HEAD_PATH}. "
             "Run scripts/fetch_audio_dataset.py then scripts/train_panns_head.py."
         )
 
-    import joblib
-    # Lazy import — torch + panns_inference are heavy and only needed when the
-    # local model actually runs.
-    from panns_inference import AudioTagging
-    from panns_inference.config import labels as audioset_labels
-
-    logger.info("Loading CNN14 via panns_inference …")
-    audio_tagger = AudioTagging(checkpoint_path=None, device="cpu")
-
-    _CONFOUNDER_SUBSTRINGS = (
-        "wind", "rain", "rustling", "white noise", "pink noise",
-        "static", "engine", "motor vehicle", "pump",
-    )
     try:
-        confounder_indices = [
-            i for i, n in enumerate(audioset_labels)
-            if any(s in n.lower() for s in _CONFOUNDER_SUBSTRINGS)
-        ]
+        import joblib
+        # Lazy import — torch + panns_inference are heavy and only needed when the
+        # local model actually runs.
+        from panns_inference import AudioTagging
+        from panns_inference.config import labels as audioset_labels
+
+        logger.info("Loading CNN14 via panns_inference …")
+        audio_tagger = AudioTagging(checkpoint_path=None, device="cpu")
+
+        _CONFOUNDER_SUBSTRINGS = (
+            "wind", "rain", "rustling", "white noise", "pink noise",
+            "static", "engine", "motor vehicle", "pump",
+        )
+        try:
+            confounder_indices = [
+                i for i, n in enumerate(audioset_labels)
+                if any(s in n.lower() for s in _CONFOUNDER_SUBSTRINGS)
+            ]
+            logger.info(
+                "CNN14 confounder indices (%d classes): %s",
+                len(confounder_indices), confounder_indices,
+            )
+        except Exception as exc:
+            logger.warning("Could not extract AudioSet class names for confounder gate: %s", exc)
+            confounder_indices = []
+
+        logger.info("Loading classifier head: %s", HEAD_PATH)
+        bundle_dict = joblib.load(HEAD_PATH)
+
+        # Sanity-check: the runtime concat is 2048 (embedding) + 527 (clipwise) =
+        # 2575. If the saved bundle was trained on a different feature dim
+        # (e.g. legacy 2048-only), refuse to load — load() raises and the router
+        # falls through to the API path rather than mis-predicting silently.
+        expected_dim = 2048 + 527
+        saved_dim = bundle_dict.get("feature_dim")
+        if saved_dim is not None and int(saved_dim) != expected_dim:
+            raise RuntimeError(
+                f"PANNs head feature_dim={saved_dim} does not match runtime "
+                f"({expected_dim}). Re-run scripts/train_panns_head.py to "
+                "regenerate the bundle with the current feature pipeline."
+            )
+
+        _SINGLETON = PANNsBundle(
+            audio_tagger=audio_tagger,
+            clf=bundle_dict["clf"],
+            label_encoder=bundle_dict["label_encoder"],
+            classes=bundle_dict["classes"],
+            test_accuracy=bundle_dict.get("test_accuracy"),
+            trained_at=bundle_dict.get("trained_at"),
+            temperature=bundle_dict.get("temperature", 1.0),
+            confounder_indices=confounder_indices,
+        )
         logger.info(
-            "CNN14 confounder indices (%d classes): %s",
-            len(confounder_indices), confounder_indices,
-        )
-    except Exception as exc:
-        logger.warning("Could not extract AudioSet class names for confounder gate: %s", exc)
-        confounder_indices = []
-
-    logger.info("Loading classifier head: %s", HEAD_PATH)
-    bundle_dict = joblib.load(HEAD_PATH)
-
-    # Sanity-check: the runtime concat is 2048 (embedding) + 527 (clipwise) =
-    # 2575. If the saved bundle was trained on a different feature dim
-    # (e.g. legacy 2048-only), refuse to load — load() raises and the router
-    # falls through to the API path rather than mis-predicting silently.
-    expected_dim = 2048 + 527
-    saved_dim = bundle_dict.get("feature_dim")
-    if saved_dim is not None and int(saved_dim) != expected_dim:
-        raise RuntimeError(
-            f"PANNs head feature_dim={saved_dim} does not match runtime "
-            f"({expected_dim}). Re-run scripts/train_panns_head.py to "
-            "regenerate the bundle with the current feature pipeline."
+            "PANNs ready — %d classes, test_accuracy=%.3f, T=%.2f, feature_dim=%d",
+            len(_SINGLETON.classes),
+            _SINGLETON.test_accuracy or 0.0,
+            _SINGLETON.temperature,
+            expected_dim,
         )
 
-    _SINGLETON = PANNsBundle(
-        audio_tagger=audio_tagger,
-        clf=bundle_dict["clf"],
-        label_encoder=bundle_dict["label_encoder"],
-        classes=bundle_dict["classes"],
-        test_accuracy=bundle_dict.get("test_accuracy"),
-        trained_at=bundle_dict.get("trained_at"),
-        temperature=bundle_dict.get("temperature", 1.0),
-        confounder_indices=confounder_indices,
-    )
-    logger.info(
-        "PANNs ready — %d classes, test_accuracy=%.3f, T=%.2f, feature_dim=%d",
-        len(_SINGLETON.classes),
-        _SINGLETON.test_accuracy or 0.0,
-        _SINGLETON.temperature,
-        expected_dim,
-    )
+        local = set(_SINGLETON.classes)
+        canonical = set(PEST_META.keys())
+        missing_in_meta = local - canonical
+        missing_in_head = canonical - local
+        if missing_in_meta:
+            logger.warning(
+                "PANNs head emits labels missing from PEST_META: %s",
+                sorted(missing_in_meta),
+            )
+        if missing_in_head:
+            logger.info(
+                "PEST_META labels not in current PANNs head (API path only): %s",
+                sorted(missing_in_head),
+            )
 
-    local = set(_SINGLETON.classes)
-    canonical = set(PEST_META.keys())
-    missing_in_meta = local - canonical
-    missing_in_head = canonical - local
-    if missing_in_meta:
-        logger.warning(
-            "PANNs head emits labels missing from PEST_META: %s",
-            sorted(missing_in_meta),
-        )
-    if missing_in_head:
-        logger.info(
-            "PEST_META labels not in current PANNs head (API path only): %s",
-            sorted(missing_in_head),
-        )
+        MODEL_AVAILABLE = True
+        return _SINGLETON
 
-    return _SINGLETON
+    except Exception as _load_exc:
+        MODEL_AVAILABLE = False
+        logger.error("ML model unavailable: %s — %s", "PANNs CNN14", _load_exc)
+        raise

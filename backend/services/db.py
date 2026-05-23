@@ -46,14 +46,16 @@ async def init_db() -> None:
             );
         """)
 
+        # ── PII-at-rest compatibility shim ───────────────────────────────
+        # Idempotent ALTER TABLE for databases that predate P1 Task 3.
+        # New databases receive these columns from `CREATE TABLE IF NOT
+        # EXISTS` above; only legacy DBs need the shim.
+        # NOTE: preferred_lang is intentionally omitted here — it is
+        # present in the CREATE TABLE statement and managed by Alembic
+        # for schema-version tracking.  See docs/audit/migrations.md.
         for table in ("alert_subscriptions", "webpush_subscriptions"):
             cursor = await db.execute(f"PRAGMA table_info({table})")
             cols = {row[1] for row in await cursor.fetchall()}
-            if "preferred_lang" not in cols:
-                await db.execute(
-                    f"ALTER TABLE {table} ADD COLUMN preferred_lang TEXT NOT NULL DEFAULT 'en'"
-                )
-            # PII-at-rest migration (idempotent ALTER TABLE for existing dbs).
             if "phone_hash" not in cols:
                 await db.execute(
                     f"ALTER TABLE {table} ADD COLUMN phone_hash TEXT"
@@ -62,18 +64,6 @@ async def init_db() -> None:
                 await db.execute(
                     f"ALTER TABLE {table} ADD COLUMN phone_ciphertext TEXT"
                 )
-
-        # Index the lookup column — equality checks against phone_hash
-        # are the new hot path (subscriptions.history, alerts cross-table
-        # joins after migrate_pii.py is run).
-        await db.execute(
-            "CREATE INDEX IF NOT EXISTS idx_alert_subs_phone_hash "
-            "ON alert_subscriptions(phone_hash)"
-        )
-        await db.execute(
-            "CREATE INDEX IF NOT EXISTS idx_webpush_phone_hash "
-            "ON webpush_subscriptions(phone_hash)"
-        )
 
         await db.commit()
 

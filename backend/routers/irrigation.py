@@ -1,7 +1,8 @@
 """Irrigation advisor router — FAO-56 Penman-Monteith."""
 
 import numpy as np
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
+from backend.schemas.errors import http_error
 from backend.schemas.irrigation import IrrigationRequest, IrrigationResponse, FertilizerAdvice
 from backend.core.constants import CROP_KC, FERTILIZER_SCHEDULE
 from backend.auth import require_user_or_api_key
@@ -26,9 +27,9 @@ async def irrigation_advice(
 ):
     """Calculate water + fertilizer needs using FAO-56."""
     if req.crop not in CROP_KC:
-        raise HTTPException(status_code=404, detail=f"Crop '{req.crop}' not found in Kc database")
+        raise http_error(404, "crop_not_found", f"Crop '{req.crop}' not found in Kc database")
     if req.growth_stage not in CROP_KC[req.crop]:
-        raise HTTPException(status_code=400, detail=f"Invalid growth stage: {req.growth_stage}")
+        raise http_error(400, "invalid_growth_stage", f"Invalid growth stage: {req.growth_stage}")
 
     ET0 = calculate_ET0(req.temperature, req.humidity, req.wind_speed)
     Kc = CROP_KC[req.crop][req.growth_stage]

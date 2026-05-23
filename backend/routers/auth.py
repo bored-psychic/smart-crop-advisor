@@ -18,10 +18,11 @@ from __future__ import annotations
 import re
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 
 from backend.auth import issue_token, require_user
+from backend.schemas.errors import http_error
 from backend.middleware.rate_limit import limiter, _otp_rate_limit_key
 from backend.services.auth_otp import (
     generate_otp,
@@ -47,11 +48,11 @@ def _normalise_phone(raw: str) -> str:
     """
     digits = _DIGITS.sub("", raw or "")
     if not digits:
-        raise HTTPException(status_code=400, detail="Phone number required")
+        raise http_error(400, "phone_required", "Phone number required")
     if len(digits) == 10:
         digits = "91" + digits
     if len(digits) < 10:
-        raise HTTPException(status_code=400, detail="Phone number too short")
+        raise http_error(400, "phone_too_short", "Phone number too short")
     return "+" + digits
 
 
@@ -99,7 +100,7 @@ async def request_otp(
     # is unset, so this also works in dev without burning SMS credits.
     sent = await send_sms(phone, f"Your KisanOS code is {otp}. Valid for 5 minutes.")
     if not sent:
-        raise HTTPException(status_code=502, detail="Failed to send OTP")
+        raise http_error(502, "otp_send_failed", "Failed to send OTP")
     return RequestOtpResponse(phone=phone)
 
 
@@ -111,7 +112,7 @@ async def verify_otp_route(
     phone = _normalise_phone(body.phone)
     ok = await verify_otp(db, phone, body.otp.strip())
     if not ok:
-        raise HTTPException(status_code=401, detail="Invalid or expired OTP")
+        raise http_error(401, "otp_invalid", "Invalid or expired OTP")
     token, exp = issue_token(phone)
     return VerifyOtpResponse(token=token, exp=exp, phone=phone)
 
