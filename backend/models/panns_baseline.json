@@ -1,0 +1,85 @@
+{
+  "accuracy": 0.7938461538461539,
+  "macro_f1": 0.8152314437467849,
+  "per_class_f1": {
+    "Bee": 0.773109243697479,
+    "Beetle": 0.7714285714285715,
+    "Cicada": 0.9072164948453608,
+    "Cricket": 0.746268656716418,
+    "Grasshopper": 0.7766990291262136,
+    "Non-biological": 0.9166666666666666
+  },
+  "confusion_matrix": [
+    [
+      46,
+      5,
+      0,
+      5,
+      6,
+      1
+    ],
+    [
+      2,
+      27,
+      2,
+      1,
+      4,
+      0
+    ],
+    [
+      1,
+      1,
+      44,
+      0,
+      4,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      50,
+      12,
+      0
+    ],
+    [
+      5,
+      0,
+      1,
+      14,
+      80,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      11
+    ]
+  ],
+  "labels_in_test": [
+    "Bee",
+    "Beetle",
+    "Cicada",
+    "Cricket",
+    "Grasshopper",
+    "Non-biological"
+  ],
+  "n_test": 325,
+  "head_name": "histgb",
+  "temperature": 1.7559643422198101,
+  "feature_dim": 2575,
+  "classes": [
+    "Bee",
+    "Beetle",
+    "Cicada",
+    "Cricket",
+    "Grasshopper",
+    "Non-biological"
+  ],
+  "trained_at": "2026-05-23T10:50:33.047688Z",
+  "dataset_fingerprint": "46ef87f6801dcefb718e3d1f1a57c1b5bbf4b44c5712f126e915ecaeb98e72f2",
+  "tolerance_macro_f1": 0.005
+}
