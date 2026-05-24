@@ -21,6 +21,7 @@ Bug reports are not fix orders — reproduce first, then wait for go-ahead.
 - **Python 3.10.12** — pinned. TF 2.13 breaks on 3.12, Prophet on 3.11+.
 - **`numpy<1.24.0`** — Prophet hard requirement. Upgrading silently corrupts price forecasts.
 - **TensorFlow is optional** — not in `requirements.txt`. When absent, disease detection uses `_hsv_analysis()` in `backend/services/vision.py` (NumPy HSV color analysis). This is a real, intentional fallback — not a bug.
+- **`ffmpeg` is a system binary, not a pip package.** `pydub` is pinned in `requirements.txt` but shells out to the `ffmpeg` CLI for MP3/OGG/M4A/AMR decode. Without it, `_decode_audio()` in `backend/services/acoustic/dsp.py` silently returns `(None, 0, None)` and `pipeline.py:165-171` converts that into a `_rejected("Could not decode audio. ...")` 200 response. The rejection shape is uniform with low-SNR/low-confidence/no-onset rejections — do NOT split decode-fail into a 415 without updating the frontend. Install ffmpeg per README.
 - **Two config files**: `backend/config.py` (new services) and `backend/core/config.py` (original). See `.env.example` for which vars go where.
 - **Schema changes break the frontend silently.** Grep `web/` before touching `backend/schemas/*.py`.
 - **ModelManager returns `None` on missing artifacts.** Endpoints must handle this and return 503.

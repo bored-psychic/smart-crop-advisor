@@ -26,6 +26,11 @@
 - Python 3.9+
 - pip / venv
 - 2+ GB free disk (ML models)
+- **`ffmpeg`** (system binary) — required for non-WAV acoustic uploads (MP3/OGG/M4A/AMR). WAV works without it.
+  - macOS: `brew install ffmpeg`
+  - Linux (Debian/Ubuntu): `sudo apt-get install -y ffmpeg`
+  - Windows: `choco install ffmpeg`
+  - Verify: `ffmpeg -version | head -1`
 
 ### Installation
 
