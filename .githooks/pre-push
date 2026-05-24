@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Pre-push hook: acoustic eval no-regression gate (Phase B / B3).
+#
+# Runs scripts/eval_acoustic.py against backend/models/panns_baseline.json
+# and blocks the push if macro-F1 regresses beyond tolerance_macro_f1
+# (default 0.005). First run primes the embedding cache (~5 min); warm
+# runs are <30s thanks to cached_embed.
+#
+# Setup (one-time, per clone):
+#   git config core.hooksPath .githooks
+#
+# Bypass (emergencies only, prefer fixing the regression):
+#   git push --no-verify
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+HEAD_BUNDLE="backend/models/panns_head.joblib"
+BASELINE="backend/models/panns_baseline.json"
+
+if [ ! -f "$HEAD_BUNDLE" ]; then
+    echo "[pre-push] $HEAD_BUNDLE missing — skipping acoustic gate."
+    echo "[pre-push] (Run scripts/train_panns_head.py to produce it.)"
+    exit 0
+fi
+
+if [ ! -f "$BASELINE" ]; then
+    echo "[pre-push] $BASELINE missing — skipping acoustic gate."
+    echo "[pre-push] (Run scripts/eval_acoustic.py --write-baseline to seed.)"
+    exit 0
+fi
+
+echo "[pre-push] Acoustic eval gate: scoring $HEAD_BUNDLE against $BASELINE..."
+
+# panns_inference may need to fetch CNN14 weights on first run; macOS
+# Python often can't find a cert bundle without this.
+PY_CERT="$(python -c 'import certifi; print(certifi.where())' 2>/dev/null || true)"
+if [ -n "$PY_CERT" ]; then
+    export SSL_CERT_FILE="$PY_CERT"
+fi
+
+python scripts/eval_acoustic.py
+
+echo "[pre-push] Acoustic eval gate PASSED."
