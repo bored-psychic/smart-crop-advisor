@@ -59,15 +59,31 @@ def synth_audio_bytes() -> dict[str, bytes]:
         seg = AudioSegment(
             int16.tobytes(), frame_rate=rate, sample_width=2, channels=1,
         )
-        export_args = {"mp3": {"format": "mp3"}, "ogg": {"format": "ogg"},
-                       "m4a": {"format": "ipod"}}
-        for fmt, kwargs in export_args.items():
-            try:
-                buf = io.BytesIO()
-                seg.export(buf, **kwargs)
-                out[fmt] = buf.getvalue()
-            except Exception:
-                out[fmt] = b""
+        # Some Homebrew ffmpeg builds ship without libvorbis (the native
+        # `vorbis` encoder is flagged experimental and pydub refuses it by
+        # default), so the ogg slot tries libvorbis first and falls back to
+        # libopus — both produce a real `.ogg`-container clip that the
+        # pipeline's pydub→ffmpeg decode path handles identically.
+        export_attempts: dict[str, list[dict[str, str]]] = {
+            "mp3": [{"format": "mp3"}],
+            "ogg": [
+                {"format": "ogg", "codec": "libvorbis"},
+                {"format": "ogg", "codec": "libopus"},
+            ],
+            "m4a": [{"format": "ipod"}],
+        }
+        for fmt, attempts in export_attempts.items():
+            out[fmt] = b""
+            for kwargs in attempts:
+                try:
+                    buf = io.BytesIO()
+                    seg.export(buf, **kwargs)
+                    encoded = buf.getvalue()
+                    if encoded:
+                        out[fmt] = encoded
+                        break
+                except Exception:
+                    continue
     except Exception:
         out.update({"mp3": b"", "ogg": b"", "m4a": b""})
 
