@@ -59,8 +59,51 @@ BASELINE_PATH = REPO_ROOT / "backend" / "models" / "panns_baseline.json"
 # across BLAS implementations.
 DEFAULT_TOL = 0.005
 
+# Bootstrap settings for 95% CIs on macro_f1 and per-class F1. n=1000 keeps
+# the eval well under a second over the test fold (~442 clips), and the seed
+# makes CIs reproducible run-to-run so a baseline rewrite is deterministic.
+N_BOOTSTRAP = 1000
+RNG_SEED = 42
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("eval_acoustic")
+
+
+def bootstrap_ci(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: np.ndarray,
+    n_boot: int = N_BOOTSTRAP,
+    seed: int = RNG_SEED,
+) -> tuple[tuple[float, float], dict[int, tuple[float, float]]]:
+    """Resample the test fold with replacement to build 95% CIs.
+
+    Returns (macro_lo_hi, per_class_lo_hi) where per_class_lo_hi maps each
+    class index in ``labels`` to its (lo, hi) F1 bounds. Point estimates are
+    computed separately by the caller — this helper is CI-only.
+
+    Why this matters: per-class F1 numbers like Wasp=0.50 on n=13 have CI
+    half-widths >0.25. Reporting only point estimates makes the eval look
+    more precise than it is and turns the no-regression gate brittle.
+    """
+    rng = np.random.default_rng(seed)
+    n = len(y_true)
+    macros = np.empty(n_boot, dtype=float)
+    per_cls: dict[int, list[float]] = {int(c): [] for c in labels}
+    for b in range(n_boot):
+        idx = rng.integers(0, n, size=n)
+        yt, yp = y_true[idx], y_pred[idx]
+        macros[b] = f1_score(yt, yp, average="macro", labels=labels, zero_division=0)
+        pcf = f1_score(yt, yp, average=None, labels=labels, zero_division=0)
+        for c, v in zip(labels, pcf):
+            per_cls[int(c)].append(float(v))
+    macro_lo = float(np.quantile(macros, 0.025))
+    macro_hi = float(np.quantile(macros, 0.975))
+    per_lo_hi = {
+        c: (float(np.quantile(vs, 0.025)), float(np.quantile(vs, 0.975)))
+        for c, vs in per_cls.items()
+    }
+    return (macro_lo, macro_hi), per_lo_hi
 
 
 def reproduce_test_indices(n_clips: int, y_enc: np.ndarray) -> np.ndarray:
@@ -136,11 +179,17 @@ def evaluate(bundle, paths, idx_test, tagger):
     per_class_named = {
         classes[int(c)]: float(s) for c, s in zip(present, per_class_f1)
     }
+    macro_ci, per_ci = bootstrap_ci(y_test, y_pred, present)
+    per_class_ci_named = {
+        classes[int(c)]: [lo, hi] for c, (lo, hi) in per_ci.items()
+    }
     return {
         "n_test": int(len(y_test)),
         "accuracy": float(accuracy_score(y_test, y_pred)),
         "macro_f1": float(f1_score(y_test, y_pred, average="macro", labels=present)),
+        "macro_f1_ci95": [macro_ci[0], macro_ci[1]],
         "per_class_f1": per_class_named,
+        "per_class_f1_ci95": per_class_ci_named,
         "confusion_matrix": confusion_matrix(y_test, y_pred, labels=present).tolist(),
         "labels_in_test": [classes[int(c)] for c in present],
         "report": classification_report(
@@ -157,25 +206,33 @@ def compare_to_baseline(metrics: dict, baseline: dict, tol: float) -> bool:
     base_macro = baseline["macro_f1"]
     dacc = metrics["accuracy"] - base_acc
     dmacro = metrics["macro_f1"] - base_macro
-    log.info("=" * 64)
+    macro_ci = metrics.get("macro_f1_ci95")
+    per_ci = metrics.get("per_class_f1_ci95", {})
+    log.info("=" * 78)
     log.info("BASELINE COMPARISON  (tolerance: %.4f macro-F1)", tol)
-    log.info("                       baseline   current    delta")
+    log.info("                       baseline   current    delta     95%% CI (current)")
     log.info("  accuracy             %.4f     %.4f     %+.4f",
              base_acc, metrics["accuracy"], dacc)
-    log.info("  macro_f1             %.4f     %.4f     %+.4f",
-             base_macro, metrics["macro_f1"], dmacro)
+    macro_ci_str = (
+        f"   [{macro_ci[0]:.4f}, {macro_ci[1]:.4f}]" if macro_ci else ""
+    )
+    log.info("  macro_f1             %.4f     %.4f     %+.4f%s",
+             base_macro, metrics["macro_f1"], dmacro, macro_ci_str)
     log.info("  per-class F1:")
     base_pcf = baseline.get("per_class_f1", {})
     for cls in sorted(set(metrics["per_class_f1"]) | set(base_pcf)):
         bf = base_pcf.get(cls)
         cf = metrics["per_class_f1"].get(cls)
+        ci = per_ci.get(cls)
+        ci_str = f"   [{ci[0]:.4f}, {ci[1]:.4f}]" if ci else ""
         if bf is None:
-            log.info("    %-18s   ——         %.4f     (new class)", cls, cf)
+            log.info("    %-18s   ——         %.4f     (new class)%s", cls, cf, ci_str)
         elif cf is None:
             log.info("    %-18s   %.4f     ——         (missing)", cls, bf)
         else:
-            log.info("    %-18s   %.4f     %.4f     %+.4f", cls, bf, cf, cf - bf)
-    log.info("=" * 64)
+            log.info("    %-18s   %.4f     %.4f     %+.4f%s",
+                     cls, bf, cf, cf - bf, ci_str)
+    log.info("=" * 78)
     return dmacro >= -tol
 
 
@@ -183,7 +240,9 @@ def write_baseline(metrics: dict, bundle: dict, fingerprint: str) -> None:
     payload = {
         "accuracy": metrics["accuracy"],
         "macro_f1": metrics["macro_f1"],
+        "macro_f1_ci95": metrics.get("macro_f1_ci95"),
         "per_class_f1": metrics["per_class_f1"],
+        "per_class_f1_ci95": metrics.get("per_class_f1_ci95", {}),
         "confusion_matrix": metrics["confusion_matrix"],
         "labels_in_test": metrics["labels_in_test"],
         "n_test": metrics["n_test"],
