@@ -43,11 +43,30 @@ HEAD_PATH = Path(__file__).resolve().parent.parent / "models" / "panns_head.jobl
 WINDOW_SECONDS = 2.0
 HOP_SECONDS = 1.0
 
-# Same calibration bar as the YAMNet path — top1 must clear ABSTAIN_TOP1
-# AND beat top2 by ABSTAIN_MARGIN, otherwise we abstain and the router
-# falls through to the API fallback (or surfaces 'uncertain' when offline).
-ABSTAIN_TOP1 = 0.45
+# Same calibration bar as the YAMNet path — top1 must clear the per-class
+# threshold AND beat top2 by ABSTAIN_MARGIN, otherwise we abstain and the
+# router falls through to the API fallback (or surfaces 'uncertain' when
+# offline). Most classes use ABSTAIN_TOP1_DEFAULT; high-stakes routing
+# classes get a lower bar via ABSTAIN_TOP1_PER_CLASS because false-abstain
+# costs (missed SWARM advisory, missed parasitoid protection) outweigh
+# false-positive costs (over-cautious treatment).
+ABSTAIN_TOP1_DEFAULT = 0.45
+ABSTAIN_TOP1_PER_CLASS: dict[str, float] = {
+    # False-abstain on a true Locust means the farmer misses the
+    # 1800-180-1551 SWARM hotline escalation — much costlier than a
+    # false-positive Locust (over-cautious spray advisory).
+    "Locust": 0.35,
+    # Parasitoid-protection routing: false-positive Wasp ("don't blanket
+    # spray, parasitoids may be present") is benign; false-abstain loses
+    # the routing distinction from honey-bee protection.
+    "Wasp": 0.35,
+}
 ABSTAIN_MARGIN = 0.10
+
+
+def _abstain_threshold(cls: str) -> float:
+    """Per-class abstain top1 floor (see ABSTAIN_TOP1_PER_CLASS rationale)."""
+    return ABSTAIN_TOP1_PER_CLASS.get(cls, ABSTAIN_TOP1_DEFAULT)
 
 _SINGLETON: Optional["PANNsBundle"] = None
 
@@ -251,9 +270,11 @@ class PANNsBundle:
         top2_p = float(probs[top2_idx])
         margin = top1_p - top2_p
 
-        if top1_p < ABSTAIN_TOP1 or margin < ABSTAIN_MARGIN:
+        abstain_top1 = _abstain_threshold(ordered_classes[top1_idx])
+        if top1_p < abstain_top1 or margin < ABSTAIN_MARGIN:
             raise PANNsAbstain(
-                f"low_confidence top1={top1_p:.2f} margin={margin:.2f}"
+                f"low_confidence top1={top1_p:.2f} (floor={abstain_top1:.2f}) "
+                f"margin={margin:.2f}"
             )
 
         pred_label = ordered_classes[top1_idx]

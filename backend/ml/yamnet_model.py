@@ -39,11 +39,23 @@ SAMPLE_RATE = 16000
 HEAD_PATH = Path(__file__).resolve().parent.parent / "models" / "yamnet_head.joblib"
 
 # Abstain thresholds — applied AFTER calibration and crop-prior reweighting.
-# top1 must clear ABSTAIN_TOP1 in absolute probability AND beat top2 by at
-# least ABSTAIN_MARGIN, otherwise we raise YAMNetAbstain and the router
-# falls through to the API fallback (or surfaces 'uncertain' when offline).
-ABSTAIN_TOP1 = 0.45
+# top1 must clear the per-class top1 floor AND beat top2 by ABSTAIN_MARGIN,
+# otherwise we raise YAMNetAbstain and the router falls through to the API
+# fallback (or surfaces 'uncertain' when offline). Mirrors panns_model.py so
+# abstain math stays consistent across both local heads. High-stakes routing
+# classes (Locust SWARM, Wasp parasitoid) get a lower bar because false-
+# abstain costs outweigh false-positive costs for those routes.
+ABSTAIN_TOP1_DEFAULT = 0.45
+ABSTAIN_TOP1_PER_CLASS: dict[str, float] = {
+    "Locust": 0.35,
+    "Wasp": 0.35,
+}
 ABSTAIN_MARGIN = 0.10
+
+
+def _abstain_threshold(cls: str) -> float:
+    """Per-class abstain top1 floor (see ABSTAIN_TOP1_PER_CLASS rationale)."""
+    return ABSTAIN_TOP1_PER_CLASS.get(cls, ABSTAIN_TOP1_DEFAULT)
 
 # Sliding-window aggregation. YAMNet emits one 1024-d embedding per ~0.48 s
 # frame. We chunk frames into ~3 s windows (with 50 % overlap), classify each
@@ -257,9 +269,11 @@ class YAMNetBundle:
         top2_p = float(probs[top2_idx])
         margin = top1_p - top2_p
 
-        if top1_p < ABSTAIN_TOP1 or margin < ABSTAIN_MARGIN:
+        abstain_top1 = _abstain_threshold(ordered_classes[top1_idx])
+        if top1_p < abstain_top1 or margin < ABSTAIN_MARGIN:
             raise YAMNetAbstain(
-                f"low_confidence top1={top1_p:.2f} margin={margin:.2f}"
+                f"low_confidence top1={top1_p:.2f} (floor={abstain_top1:.2f}) "
+                f"margin={margin:.2f}"
             )
 
         pred_label = ordered_classes[top1_idx]

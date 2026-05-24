@@ -116,3 +116,28 @@ def test_predict_reports_window_count_for_multi_window_clip():
     except panns_model.PANNsAbstain:
         return
     assert result["_n_windows"] >= 2, "_n_windows must equal the window count _embed_windows produced"
+
+
+def test_abstain_threshold_returns_lower_for_high_stakes_classes():
+    # Locust and Wasp carry routing cost asymmetry (SWARM hotline,
+    # parasitoid protection). A false-abstain is much worse than a
+    # false-positive for those classes, so they get a lower top1 floor.
+    # Everything else (and unknown classes) gets the default 0.45.
+    from backend.ml.panns_model import (
+        ABSTAIN_TOP1_DEFAULT, _abstain_threshold,
+    )
+    assert _abstain_threshold("Locust") == 0.35
+    assert _abstain_threshold("Wasp") == 0.35
+    assert _abstain_threshold("Bee") == ABSTAIN_TOP1_DEFAULT
+    assert _abstain_threshold("Beetle") == ABSTAIN_TOP1_DEFAULT
+    assert _abstain_threshold("Non-biological") == ABSTAIN_TOP1_DEFAULT
+    assert _abstain_threshold("UnknownNovelClass") == ABSTAIN_TOP1_DEFAULT
+
+
+def test_yamnet_abstain_threshold_mirrors_panns():
+    # The two local heads must stay in lockstep on abstain math — if Locust
+    # is high-stakes for PANNs routing, it's high-stakes for YAMNet too.
+    from backend.ml.panns_model import _abstain_threshold as panns_th
+    from backend.ml.yamnet_model import _abstain_threshold as yamnet_th
+    for cls in ("Locust", "Wasp", "Bee", "Beetle", "Cricket", "Unknown"):
+        assert panns_th(cls) == yamnet_th(cls), f"abstain drift on {cls}"
