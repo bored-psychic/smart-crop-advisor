@@ -94,30 +94,34 @@ def _resample_to_32k(pcm: np.ndarray, src_rate: int) -> np.ndarray:
     return resampled.astype(np.float32, copy=False)
 
 
-def _probs_from_clf(clf, feat: np.ndarray, temperature: float) -> np.ndarray:
+def _probs_from_clf(clf, feats: np.ndarray, temperature: float) -> np.ndarray:
     """Temperature-scaled probabilities from the trained head.
 
+    Accepts (N, D) feature matrix, returns (N, n_classes) prob matrix.
     Prefers `decision_function` logits; falls back to log(predict_proba).
     Identical math to the YAMNet path — keeps abstain thresholds comparable.
+
+    Production callers pass a single mean-pooled feature (N=1) and index [0].
+    The batch-aware signature is retained because the confounder gate and any
+    future per-window experiments (see scripts/probe_tta.py) need it.
     """
     T = max(float(temperature), 1e-3)
+    feats = np.atleast_2d(feats)
     if hasattr(clf, "decision_function"):
-        scores = np.atleast_2d(clf.decision_function(feat))[0]
-        if scores.ndim == 0:
-            scores = np.array([scores])
-        if scores.size == 1:
-            scores = np.array([-scores[0], scores[0]])
+        scores = np.atleast_2d(clf.decision_function(feats))
+        if scores.shape[1] == 1:
+            scores = np.hstack([-scores, scores])
     elif hasattr(clf, "predict_proba"):
-        proba = clf.predict_proba(feat)[0]
+        proba = clf.predict_proba(feats)
         scores = np.log(np.clip(proba, 1e-9, 1.0))
     else:
-        return np.array([1.0])
+        return np.ones((feats.shape[0], 1), dtype=np.float32)
 
     scaled = scores / T
-    scaled = scaled - scaled.max()
+    scaled = scaled - scaled.max(axis=1, keepdims=True)
     probs = np.exp(scaled)
-    s = probs.sum()
-    return probs / s if s > 0 else probs
+    s = probs.sum(axis=1, keepdims=True)
+    return np.where(s > 0, probs / s, probs)
 
 
 def _apply_crop_prior(probs: np.ndarray, classes: list[str],
@@ -154,13 +158,17 @@ class PANNsBundle:
         self.temperature = float(temperature) if temperature else 1.0
         self.confounder_indices: list[int] = confounder_indices or []
 
-    def _embed(self, wave_32k: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Return (mean_clipwise_527, mean_embedding_2048) for one clip.
+    def _embed_windows(self, wave_32k: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """Return (clipwise_per_window_(N,527), embedding_per_window_(N,2048)).
 
-        Chunks the waveform into WINDOW_SECONDS / HOP_SECONDS windows, runs
-        CNN14 over the batch, and mean-pools the per-window outputs. Mirrors
-        scripts/train_panns_head.py:embed_clip_windowed so train and inference
-        see the same feature distribution.
+        Chunks the waveform into WINDOW_SECONDS / HOP_SECONDS windows and runs
+        CNN14 over the batch. Per-window outputs are returned without pooling
+        so the confounder gate can inspect each window's clipwise softmax
+        before the inference path mean-pools the embedding for the head.
+        A per-window TTA experiment was measured on the 8-class bundle and
+        falsified (Non-biological −0.23 F1 due to train/inference mean-pool/
+        per-window mismatch) — see scripts/probe_tta.py and the plan at
+        docs/superpowers/plans/2026-05-24-ship-8class-mean-pool.md.
         """
         win = int(WINDOW_SECONDS * SAMPLE_RATE)
         hop = int(HOP_SECONDS * SAMPLE_RATE)
@@ -173,7 +181,7 @@ class PANNsBundle:
             n = 1 + (pcm.size - win) // hop
             audio = np.stack([pcm[i * hop:i * hop + win] for i in range(n)])
         clipwise, embedding = self.audio_tagger.inference(audio)
-        return clipwise.mean(axis=0), embedding.mean(axis=0)
+        return clipwise, embedding
 
     def predict(self, pcm: np.ndarray, rate: int,
                 crop_type: str = "Unknown",
@@ -187,7 +195,11 @@ class PANNsBundle:
         if wave_32k.size < SAMPLE_RATE // 2:
             raise ValueError("audio too short for CNN14 (<0.5 s after resample)")
 
-        clipwise, embedding = self._embed(wave_32k)
+        clipwise_per, embedding_per = self._embed_windows(wave_32k)
+        n_windows = int(clipwise_per.shape[0])
+        # Mean-pool the AudioSet clipwise output for the confounder gate —
+        # noise detection is a clip-level property, not per-window.
+        clipwise = clipwise_per.mean(axis=0)
 
         # AudioSet confounder mass — same trick as YAMNet, just sourced from
         # CNN14's 527-class output instead of YAMNet's 521-class output.
@@ -200,10 +212,18 @@ class PANNsBundle:
             max(weather_noise_score, cnn_noise_score), 0.0, 1.0
         ))
 
-        # Head input is the 2048-d embedding concatenated with the 527-d
-        # AudioSet clipwise softmax — matches scripts/train_panns_head.py.
-        feat = np.concatenate([embedding, clipwise], axis=0).reshape(1, -1)
-        probs = _probs_from_clf(self.clf, feat, self.temperature)
+        # Mean-pool embedding before the head — matches training distribution.
+        # An asymmetric-TTA experiment (per-window inference, mean over probs)
+        # was measured on the 8-class bundle in scripts/probe_tta.py and
+        # failed: macro F1 0.776 → 0.762 (Δ −0.014), driven by Non-biological
+        # collapsing −0.23 F1 because per-window noise occasionally matches
+        # sparse pest classes. The head was trained on mean-pooled features,
+        # so the inference-time TTA introduced a distribution shift. Fix
+        # would require per-window head training; logged as future work in
+        # docs/superpowers/plans/2026-05-24-ship-8class-mean-pool.md.
+        embedding = embedding_per.mean(axis=0)
+        feats = np.concatenate([embedding, clipwise])
+        probs = _probs_from_clf(self.clf, feats, self.temperature)[0]
 
         ordered_classes = [str(self.le.inverse_transform([i])[0])
                            for i in range(len(probs))]
@@ -276,7 +296,7 @@ class PANNsBundle:
             "_test_accuracy": self.test_accuracy,
             "_temperature": self.temperature,
             "_crop_prior_applied": prior_applied,
-            "_n_windows": 1,
+            "_n_windows": n_windows,
             "weather_noise_score": round(blended_noise, 3),
             "yamnet_noise_score": round(cnn_noise_score, 3),
         }
