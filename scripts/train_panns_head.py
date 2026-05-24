@@ -48,6 +48,7 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.utils.class_weight import compute_sample_weight
 
 # Pickle-stable location for the ensemble wrapper — defined in backend/ml so
 # joblib can unpickle the bundle at runtime without depending on scripts/.
@@ -353,7 +354,14 @@ def train_head(
         validation_fraction=0.15,
         n_iter_no_change=20,
     )
-    hgb.fit(X_train, y_train)
+    # LogRegCV sibling uses class_weight="balanced"; HistGB lacks that
+    # constructor arg, so balance via fit-time sample_weight. Without this,
+    # minority classes (Wasp n≈128, Beetle n≈362) get squashed against
+    # Cricket/Grasshopper (n≈800+) in the ensemble vote.
+    sw_train = compute_sample_weight("balanced", y_train)
+    hgb.fit(X_train, y_train, sample_weight=sw_train)
+    log.info("HistGB trained with sample_weight=balanced (min=%.3f max=%.3f)",
+             float(sw_train.min()), float(sw_train.max()))
     val_acc_hgb = float(accuracy_score(y_val, hgb.predict(X_val)))
     log.info("HistGB val accuracy: %.3f (n_iter=%d)", val_acc_hgb, int(hgb.n_iter_))
 
