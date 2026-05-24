@@ -6,7 +6,11 @@ the JWT-gated endpoints introduced in P0 Task 3 and P1 Task 9.
 """
 from __future__ import annotations
 
+import io
+
+import numpy as np
 import pytest
+import scipy.io.wavfile as wav
 
 from backend.auth import issue_token
 
@@ -28,3 +32,43 @@ def auth_token(test_phone: str) -> str:
 def auth_headers(auth_token: str) -> dict[str, str]:
     """Authorization header ready to splat into a TestClient call."""
     return {"Authorization": f"Bearer {auth_token}"}
+
+
+@pytest.fixture(scope="session")
+def synth_audio_bytes() -> dict[str, bytes]:
+    """In-memory audio bytes for every format the acoustic pipeline accepts.
+
+    WAV is built with scipy.io.wavfile — no ffmpeg needed. MP3/OGG/M4A go
+    through pydub.AudioSegment.export, which shells out to ffmpeg; when
+    ffmpeg is missing those keys map to b"" so tests can self-skip rather
+    than fail with a confusing pydub stack trace.
+    """
+    rate = 22050
+    duration_s = 1.0
+    t = np.linspace(0, duration_s, int(rate * duration_s), endpoint=False)
+    sine = (0.3 * np.sin(2 * np.pi * 440.0 * t)).astype(np.float32)
+    int16 = (sine * 32767.0).astype(np.int16)
+
+    wav_buf = io.BytesIO()
+    wav.write(wav_buf, rate, int16)
+    out: dict[str, bytes] = {"wav": wav_buf.getvalue()}
+
+    try:
+        from pydub import AudioSegment
+
+        seg = AudioSegment(
+            int16.tobytes(), frame_rate=rate, sample_width=2, channels=1,
+        )
+        export_args = {"mp3": {"format": "mp3"}, "ogg": {"format": "ogg"},
+                       "m4a": {"format": "ipod"}}
+        for fmt, kwargs in export_args.items():
+            try:
+                buf = io.BytesIO()
+                seg.export(buf, **kwargs)
+                out[fmt] = buf.getvalue()
+            except Exception:
+                out[fmt] = b""
+    except Exception:
+        out.update({"mp3": b"", "ogg": b"", "m4a": b""})
+
+    return out
