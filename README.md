@@ -2,9 +2,6 @@
 
 > AI-powered decision support for small and marginal farmers in India
 
-## Live Demo
-[smart-crop-advisor-pryetrqjrna69seh6ne4uq.streamlit.app](https://smart-crop-advisor-pryetrqjrna69seh6ne4uq.streamlit.app)
-
 ## Features
 | Feature | Tech / Model | Status |
 |---|---|---|
@@ -18,10 +15,10 @@
 ## Tech Stack
 - **Backend:** Python, FastAPI, SQLite, APScheduler
 - **ML:** Scikit-learn, TensorFlow/Keras (disease), PyTorch + PANNs (acoustic)
-- **Frontend:** React (web), Streamlit (legacy)
+- **Frontend:** Static web UI (`web/`) — vanilla HTML/JS, no build step
 - **APIs:** OpenWeatherMap, NASA FIRMS, Agmarknet, Anthropic, Gemini
 - **Security:** JWT (HS256), Fernet encryption (PII at rest), peppered hash lookups
-- **Deployment:** Docker-ready, Streamlit Cloud, Git
+- **Deployment:** Docker-ready, Git
 
 ## Setup
 

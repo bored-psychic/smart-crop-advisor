@@ -3,7 +3,6 @@ anthropic==0.97.0
 google-genai==2.0.1
 
 # ── Core ML ──────────────────────────────────────
-streamlit==1.57.0
 scikit-learn==1.7.2
 numpy==1.23.5
 pandas==2.3.3

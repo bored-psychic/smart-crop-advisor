@@ -140,7 +140,7 @@ async def require_user(
     return claims
 
 
-# ─── Dual-mode auth (JWT for SPA, API key for Streamlit/service callers) ──
+# ─── Dual-mode auth (JWT for SPA, API key for cron/service callers) ──
 async def require_user_or_api_key(
     request: Request,
     creds: HTTPAuthorizationCredentials | None = Security(_bearer_scheme),
@@ -149,10 +149,10 @@ async def require_user_or_api_key(
     """
     Accept either a per-user JWT or the service-to-service API key.
 
-    Used for routes that are called from BOTH the SPA (JWT) and the
-    Streamlit dashboard / cron workers (API key). Prefers the JWT when
-    present so user context is preserved; falls back to API-key
-    validation otherwise.
+    Used for routes that are called from BOTH the SPA (JWT) and cron
+    workers / scheduled jobs (API key). Prefers the JWT when present
+    so user context is preserved; falls back to API-key validation
+    otherwise.
 
     Returns the JWT claims dict when authed via JWT, or a sentinel
     ``{"sub": "service", "auth": "api_key"}`` when authed via API key,

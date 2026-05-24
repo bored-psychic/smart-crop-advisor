@@ -9,7 +9,7 @@ Usage:
 The script:
 1. Reads new keys (English text) from --keys JSON or --file
 2. Calls Claude claude-haiku-4-5 to translate each into 8 Indian languages
-3. Merges results into web/lib/bundles.json and core/bundles.json
+3. Merges results into web/lib/bundles.json
 4. Prints a diff of what was added
 """
 
@@ -22,7 +22,6 @@ import anthropic
 
 REPO_ROOT = Path(__file__).parent.parent
 WEB_BUNDLES = REPO_ROOT / "web" / "lib" / "bundles.json"
-CORE_BUNDLES = REPO_ROOT / "core" / "bundles.json"
 
 TARGET_LANGS = {
     "hi": "Hindi",
@@ -188,13 +187,6 @@ def main():
     added = merge_translations(bundles, new_keys, translations)
     save_bundles(WEB_BUNDLES, bundles)
     print(f"\nUpdated: {WEB_BUNDLES}")
-
-    # Mirror to core/bundles.json if it exists
-    if CORE_BUNDLES.exists():
-        core_bundles = load_bundles(CORE_BUNDLES)
-        merge_translations(core_bundles, new_keys, translations)
-        save_bundles(CORE_BUNDLES, core_bundles)
-        print(f"Mirrored: {CORE_BUNDLES}")
 
     # Print diff
     if added:
