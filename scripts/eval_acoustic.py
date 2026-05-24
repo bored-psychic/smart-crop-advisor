@@ -48,7 +48,7 @@ sys.path.insert(0, str(REPO_ROOT))
 # is the source-of-truth pattern — if WINDOW_SECONDS / CACHE_VERSION ever
 # change, the eval automatically tracks.
 from scripts.train_panns_head import (  # noqa: E402
-    cached_embed, collect_clip_paths, load_panns,
+    LABEL_REMAP, cached_embed, collect_clip_paths, load_panns,
 )
 
 MODEL_PATH = REPO_ROOT / "backend" / "models" / "panns_head.joblib"
@@ -105,10 +105,13 @@ def evaluate(bundle, paths, idx_test, tagger):
     for i in idx_test:
         path = paths[i]
         label = path.parent.name
-        # Apply the same Wasp→Bee / Locust→Grasshopper pooling the training
-        # script applies (without re-importing the constant we infer pooling
-        # from the saved encoder's class list).
-        pooled = {"Wasp": "Bee", "Locust": "Grasshopper"}.get(label, label)
+        # Apply the same pooling the training script applies. Source of
+        # truth is LABEL_REMAP in scripts/train_panns_head.py — if it goes
+        # back to {} (unpool), Wasp/Locust stay distinct in y_test and the
+        # head is scored on the 8-class label space it was actually trained
+        # on. Hardcoding the old {Wasp→Bee, Locust→Grasshopper} dict here
+        # caused a silent 6-class scoring bug.
+        pooled = LABEL_REMAP.get(label, label)
         if pooled not in classes:
             n_skip_class += 1
             continue
@@ -216,7 +219,7 @@ def main() -> int:
     # Encode labels exactly the way training did, so the split's stratify
     # vector matches and idx_test resolves to the same clips.
     le = bundle["label_encoder"]
-    pooled = [{"Wasp": "Bee", "Locust": "Grasshopper"}.get(l, l) for l in labels]
+    pooled = [LABEL_REMAP.get(l, l) for l in labels]
     # If a class appears in the dataset that isn't in the saved encoder,
     # encode it as -1 so it goes into stratify without colliding with real
     # classes — the per-clip filter in evaluate() drops these later.
