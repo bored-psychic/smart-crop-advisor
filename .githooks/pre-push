@@ -33,13 +33,26 @@ fi
 
 echo "[pre-push] Acoustic eval gate: scoring $HEAD_BUNDLE against $BASELINE..."
 
+# Resolve a usable python interpreter. macOS often lacks a global `python`
+# symlink, so prefer the repo venv when present and fall back to PATH.
+if [ -x "venv/bin/python" ]; then
+    PY="venv/bin/python"
+elif command -v python >/dev/null 2>&1; then
+    PY="python"
+elif command -v python3 >/dev/null 2>&1; then
+    PY="python3"
+else
+    echo "[pre-push] No python interpreter found — skipping acoustic gate."
+    exit 0
+fi
+
 # panns_inference may need to fetch CNN14 weights on first run; macOS
 # Python often can't find a cert bundle without this.
-PY_CERT="$(python -c 'import certifi; print(certifi.where())' 2>/dev/null || true)"
+PY_CERT="$("$PY" -c 'import certifi; print(certifi.where())' 2>/dev/null || true)"
 if [ -n "$PY_CERT" ]; then
     export SSL_CERT_FILE="$PY_CERT"
 fi
 
-python scripts/eval_acoustic.py
+"$PY" scripts/eval_acoustic.py
 
 echo "[pre-push] Acoustic eval gate PASSED."
