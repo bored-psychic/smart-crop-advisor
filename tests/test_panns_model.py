@@ -86,3 +86,33 @@ def test_predict_rejects_too_short_audio():
     pcm = np.zeros(100, dtype=np.float32)
     with pytest.raises(ValueError):
         bundle.predict(pcm, rate=32000)
+
+
+def test_embed_windows_returns_per_window_matrices():
+    # _embed_windows must return per-window matrices so the confounder
+    # gate in predict() can mean-pool over a stable axis. Inference itself
+    # mean-pools the embedding before the head — keeping per-window outputs
+    # lets the noise gate run on every window while the head still sees a
+    # single feature vector that matches training.
+    # 3s @ 32 kHz with WINDOW=2s, HOP=1s ⇒ 1 + (96000-64000)//32000 = 2 windows.
+    from backend.ml import panns_model
+    bundle = panns_model.load()
+    pcm = _synthetic_tone(freq=440.0, duration=3.0, sample_rate=32000)
+    clipwise, embedding = bundle._embed_windows(pcm)
+    assert clipwise.ndim == 2 and clipwise.shape == (2, 527)
+    assert embedding.ndim == 2 and embedding.shape == (2, 2048)
+
+
+def test_predict_reports_window_count_for_multi_window_clip():
+    # A 3s clip must report _n_windows >= 2 in its result. Diagnostics
+    # only — the head runs on the mean-pooled feature, but _n_windows
+    # records how many windows _embed_windows produced so we can spot
+    # suspiciously short clips in production telemetry.
+    from backend.ml import panns_model
+    bundle = panns_model.load()
+    pcm = _synthetic_tone(freq=440.0, duration=3.0, sample_rate=32000)
+    try:
+        result = bundle.predict(pcm, rate=32000, crop_type="Unknown")
+    except panns_model.PANNsAbstain:
+        return
+    assert result["_n_windows"] >= 2, "_n_windows must equal the window count _embed_windows produced"
