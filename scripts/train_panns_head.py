@@ -91,14 +91,13 @@ CACHE_VERSION = "v2-window2.0-hop1.0-clipwise-concat"
 AUG_VARIANTS_TRAIN = ("clean", "stretch", "noise")
 AUG_VARIANTS_EVAL = ("clean",)
 
-# Pool acoustically near-duplicate classes so the head can learn separable
-# boundaries from the data we have:
-#   - Wasp → Bee: same Hymenoptera wing-beat spectrum; only 128 Wasp clips
-#     (F1≈0.33 standalone). Treatment guidance is identical.
-#   - Locust → Grasshopper: same Orthopteran stridulation; locusts are
-#     just gregarious-phase grasshoppers. Acoustic boundary at this scale
-#     hovers near chance (Locust F1 0.57→0.59 across runs).
-LABEL_REMAP = {"Wasp": "Bee", "Locust": "Grasshopper"}
+# Empty: every collected species trains as its own class. Locust and
+# Grasshopper are acoustically similar (gregarious-phase grasshoppers
+# stridulate the same way) but the treatment-advice gap is large enough
+# that the user prefers two noisy classes over one tidy aggregate —
+# locust events trigger State-level escalation while grasshoppers get
+# routine field spraying.
+LABEL_REMAP: dict[str, str] = {}
 
 
 def _slug_to_species(slug: str) -> str:
