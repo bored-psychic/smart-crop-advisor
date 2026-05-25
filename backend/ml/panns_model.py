@@ -83,6 +83,18 @@ CICADA_ORTHO_BOUNDARY_LABELS = frozenset({"Cicada", "Grasshopper", "Locust"})
 CICADA_ORTHO_BOUNDARY_TOP1_FLOOR = 0.65
 CICADA_ORTHO_BOUNDARY_MARGIN = 0.20
 
+# Cicada top-k boundary (cycle 2, 2026-05-25). Catches the conf-49 residual
+# where the orthoptera-vs-cicada confusion isn't visible in top-2: probe clip
+# inat_Cicada_289036482 has top1=Grasshopper 0.49, top2=Locust 0.30 (same
+# orthoptera group, so the pure-boundary rule above is inert), Cicada 3rd at
+# ~0.19. When the head is uncertain (gap top1−p_cicada < 0.40) and Cicada is
+# a real contender (p_cicada ≥ 0.15) at top-3, abstain rather than commit to
+# the orthoptera label. Targets the conf-49 case directly; complementary to
+# the margin<0.20 boundary rule.
+CICADA_TOPK_TOP1_LABELS = frozenset({"Grasshopper", "Locust"})
+CICADA_TOPK_MIN_P_CICADA = 0.15
+CICADA_TOPK_MAX_TOP1_MINUS_PCICADA = 0.40
+
 
 def _abstain_threshold(cls: str) -> float:
     """Per-class abstain top1 floor (see ABSTAIN_TOP1_PER_CLASS rationale)."""
@@ -105,6 +117,31 @@ def _is_cicada_ortho_boundary(top1_lbl: str, top2_lbl: str,
     if grp1 == grp2:
         return False
     return margin < CICADA_ORTHO_BOUNDARY_MARGIN
+
+
+def _is_cicada_topk_boundary(top1_lbl: str, probs: np.ndarray,
+                              ordered_classes: list[str],
+                              order: np.ndarray) -> bool:
+    """True when top1∈{Grasshopper,Locust} and Cicada is a top-3 contender.
+
+    Specifically: Cicada in top-3, p_cicada ≥ MIN_P_CICADA, and the gap
+    top1−p_cicada < MAX_TOP1_MINUS_PCICADA. The intent is to catch the
+    failure mode where the head's top-2 are both orthoptera but Cicada is
+    a strong third (probe 2026-05-25: inat_Cicada_289036482).
+    """
+    if top1_lbl not in CICADA_TOPK_TOP1_LABELS:
+        return False
+    if "Cicada" not in ordered_classes:
+        return False
+    top3 = [ordered_classes[i] for i in order[:3]]
+    if "Cicada" not in top3:
+        return False
+    cicada_idx = ordered_classes.index("Cicada")
+    p_cicada = float(probs[cicada_idx])
+    if p_cicada < CICADA_TOPK_MIN_P_CICADA:
+        return False
+    top1_p = float(probs[order[0]])
+    return (top1_p - p_cicada) < CICADA_TOPK_MAX_TOP1_MINUS_PCICADA
 
 _SINGLETON: Optional["PANNsBundle"] = None
 
@@ -313,6 +350,14 @@ class PANNsBundle:
             ordered_classes[top1_idx], ordered_classes[top2_idx], margin
         ):
             abstain_top1 = max(abstain_top1, CICADA_ORTHO_BOUNDARY_TOP1_FLOOR)
+        if _is_cicada_topk_boundary(
+            ordered_classes[top1_idx], probs, ordered_classes, order
+        ):
+            cicada_p = float(probs[ordered_classes.index("Cicada")])
+            raise PANNsAbstain(
+                f"cicada_topk_boundary top1={top1_p:.2f} "
+                f"p_cicada={cicada_p:.2f} gap={top1_p - cicada_p:.2f}"
+            )
         if top1_p < abstain_top1 or margin < ABSTAIN_MARGIN:
             raise PANNsAbstain(
                 f"low_confidence top1={top1_p:.2f} (floor={abstain_top1:.2f}) "

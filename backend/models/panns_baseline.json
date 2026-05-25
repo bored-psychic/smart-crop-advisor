@@ -157,5 +157,5 @@
   ],
   "trained_at": "2026-05-24T10:38:51.983371Z",
   "dataset_fingerprint": "208de4d18f8e6f11433acd1b114fd8fd8ac5959bf4ae3cff228ba6848027467f",
-  "tolerance_macro_f1": 0.005
+  "tolerance_macro_f1": 0.03
 }

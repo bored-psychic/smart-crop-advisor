@@ -21,6 +21,9 @@ from backend.ml.panns_model import (
     PANNsBundle,
     CICADA_ORTHO_BOUNDARY_TOP1_FLOOR,
     CICADA_ORTHO_BOUNDARY_MARGIN,
+    CICADA_TOPK_TOP1_LABELS,
+    CICADA_TOPK_MIN_P_CICADA,
+    CICADA_TOPK_MAX_TOP1_MINUS_PCICADA,
 )
 
 
@@ -161,3 +164,98 @@ def test_boundary_inert_when_real_world_margin_017_caught():
                             "Bee": 0.04, "Beetle": 0.03})
     with pytest.raises(PANNsAbstain):
         bundle.predict(_pcm_2s(), 32000)
+
+
+# ---------------------------------------------------------------------------
+# Top-k boundary rule (added 2026-05-25, cycle 2). Catches cases where Cicada
+# isn't top-2 but is a real contender at top-3. Real-world target: probe clip
+# inat_Cicada_289036482 (Grasshopper conf 49, top2=Locust same group, Cicada
+# 3rd at ~19%). The pure-boundary rule above can't see it because top2 is in
+# the orthoptera group, not Cicada. Spec from NULL_RESULT.md option 1.
+# ---------------------------------------------------------------------------
+
+def test_topk_constants_match_design():
+    assert CICADA_TOPK_TOP1_LABELS == frozenset({"Grasshopper", "Locust"})
+    assert CICADA_TOPK_MIN_P_CICADA == 0.15
+    assert CICADA_TOPK_MAX_TOP1_MINUS_PCICADA == 0.40
+
+
+def test_topk_abstains_when_cicada_third_at_low_margin():
+    # Emulates inat_Cicada_289036482 (conf-49 residual). Grasshopper top1 0.49,
+    # Locust top2 0.30, Cicada top3 0.19. Existing boundary rule INERT
+    # (top1+top2 same orthoptera group). New rule: top1∈targets ✓, Cicada in
+    # top-3 ✓, p_cicada=0.19≥0.15 ✓, 0.49-0.19=0.30<0.40 ✓ → abstain.
+    bundle = _make_bundle({"Grasshopper": 0.49, "Locust": 0.30,
+                            "Cicada": 0.19, "Bee": 0.02})
+    with pytest.raises(PANNsAbstain):
+        bundle.predict(_pcm_2s(), 32000)
+
+
+def test_topk_locust_top1_variant_fires():
+    # Locust top1 (which has per-class floor 0.35, so without this rule it'd
+    # commit). Bee top2 0.30, Cicada top3 0.18. Rule fires → abstain.
+    bundle = _make_bundle({"Locust": 0.49, "Bee": 0.30,
+                            "Cicada": 0.18, "Beetle": 0.03})
+    with pytest.raises(PANNsAbstain):
+        bundle.predict(_pcm_2s(), 32000)
+
+
+def test_topk_inert_when_cicada_outside_top3():
+    # Grasshopper 0.50, Bee 0.20, Beetle 0.15, Cicada 0.10 (4th).
+    bundle = _make_bundle({"Grasshopper": 0.50, "Bee": 0.20,
+                            "Beetle": 0.15, "Cicada": 0.10, "Cricket": 0.05})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Grasshopper"
+
+
+def test_topk_inert_when_pcicada_below_floor():
+    # Cicada in top-3 but at 0.10 < 0.15 floor → rule inert.
+    bundle = _make_bundle({"Grasshopper": 0.50, "Bee": 0.30,
+                            "Cicada": 0.10, "Beetle": 0.10})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Grasshopper"
+
+
+def test_topk_inert_when_gap_above_threshold():
+    # Grasshopper 0.70, Cicada 0.16 → gap 0.54 ≥ 0.40 → inert.
+    bundle = _make_bundle({"Grasshopper": 0.70, "Cicada": 0.16,
+                            "Bee": 0.10, "Beetle": 0.04})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Grasshopper"
+
+
+def test_topk_inert_when_top1_is_cicada():
+    # Cicada top1 — outside {Grasshopper, Locust} → rule inactive.
+    bundle = _make_bundle({"Cicada": 0.50, "Bee": 0.20,
+                            "Grasshopper": 0.15, "Beetle": 0.15})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Cicada"
+
+
+def test_topk_inert_for_bee_top1_even_with_cicada_contender():
+    # Bee top1 — outside target set. Cicada at 0.18 in top-3, gap 0.32 < 0.40,
+    # but Bee not in {Grasshopper, Locust} → rule inactive → commits Bee.
+    bundle = _make_bundle({"Bee": 0.50, "Beetle": 0.20,
+                            "Cicada": 0.18, "Cricket": 0.12})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Bee"
+
+
+def test_topk_compatible_with_existing_boundary_rule():
+    # Overlapping precondition: Grasshopper 0.45 top1, Cicada 0.40 top2.
+    # Existing boundary fires (margin 0.05 < 0.20, spans groups, top1 < 0.65).
+    # New top-k rule ALSO fires (Cicada in top-3 at 0.40 ≥ 0.15, gap 0.05 < 0.40).
+    # Both should yield abstain — no double-raise crash.
+    bundle = _make_bundle({"Grasshopper": 0.45, "Cicada": 0.40,
+                            "Bee": 0.10, "Beetle": 0.05})
+    with pytest.raises(PANNsAbstain):
+        bundle.predict(_pcm_2s(), 32000)
+
+
+def test_topk_inert_when_grasshopper_strongly_confident():
+    # Grasshopper 0.85, Cicada 0.05 (not in top-3 anyway). Rule must not
+    # interfere with high-confidence predictions.
+    bundle = _make_bundle({"Grasshopper": 0.85, "Bee": 0.05,
+                            "Cicada": 0.05, "Beetle": 0.05})
+    out = bundle.predict(_pcm_2s(), 32000)
+    assert out["pest"] == "Grasshopper"
