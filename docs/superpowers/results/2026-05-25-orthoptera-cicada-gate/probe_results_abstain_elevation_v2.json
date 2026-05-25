@@ -1,0 +1,126 @@
+{
+  "by_source": {
+    "orthoptera": {
+      "n": 80,
+      "correct_group": 62,
+      "cross_group": 0,
+      "other": 4,
+      "abstain": 14,
+      "details": []
+    },
+    "cicada": {
+      "n": 40,
+      "correct_group": 28,
+      "cross_group": 2,
+      "other": 1,
+      "abstain": 9,
+      "details": [
+        {
+          "file": "inat_Cicada_289036482_1520256.wav",
+          "true": "Cicada",
+          "pred": "Grasshopper",
+          "confidence": 49
+        },
+        {
+          "file": "inat_Cicada_291008566_1532448.wav",
+          "true": "Cicada",
+          "pred": "Grasshopper",
+          "confidence": 90
+        }
+      ]
+    },
+    "mixed": {
+      "n": 80,
+      "correct_group": 50,
+      "cross_group": 13,
+      "other": 1,
+      "abstain": 16,
+      "details": [
+        {
+          "file": "mix_000_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 56
+        },
+        {
+          "file": "mix_001_dom-ortho_snr+10_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_001_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_002_dom-ortho_snr+10_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_002_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_003_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 74
+        },
+        {
+          "file": "mix_005_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 96
+        },
+        {
+          "file": "mix_007_dom-ortho_snr+10_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_007_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 100
+        },
+        {
+          "file": "mix_008_dom-cicada_snr+10_Cicada.wav",
+          "true": "Cicada",
+          "pred": "Grasshopper",
+          "confidence": 70
+        },
+        {
+          "file": "mix_008_dom-cicada_snr+5_Cicada.wav",
+          "true": "Cicada",
+          "pred": "Grasshopper",
+          "confidence": 64
+        },
+        {
+          "file": "mix_016_dom-cicada_snr+5_Cicada.wav",
+          "true": "Cicada",
+          "pred": "Grasshopper",
+          "confidence": 58
+        },
+        {
+          "file": "mix_019_dom-ortho_snr+5_Grasshopper.wav",
+          "true": "Grasshopper",
+          "pred": "Cicada",
+          "confidence": 80
+        }
+      ]
+    }
+  },
+  "aggregate": {
+    "n": 200,
+    "cross_group": 15,
+    "abstain": 39,
+    "cross_group_rate": 0.09316770186335403
+  }
+}

@@ -63,10 +63,48 @@ ABSTAIN_TOP1_PER_CLASS: dict[str, float] = {
 }
 ABSTAIN_MARGIN = 0.10
 
+# Cicada/Orthoptera boundary defense. The held-out iNat probe on 2026-05-25
+# showed the head producing confidently-wrong Cicada→Grasshopper predictions
+# (4 of 5 cicada-source errors at top1≈0.55, top2-Cicada≈0.38, margin≈0.17).
+# A variance-driven tie-breaker gate failed first (fired on 1/200 clips). An
+# abstain elevation at margin<0.15 also failed (margin floor too narrow —
+# zero firings on the actual error distribution). Margin sweep on the probe
+# (counting catches vs false-abstains across 200 clips) showed margin<0.20
+# catches 4 of 5 cicada errors with zero false-abstains; 0.25 adds nothing;
+# 0.30 starts costing precision. So: when top-1 and top-2 are both in this
+# set AND span different groups (orthoptera ↔ cicada) AND margin < 0.20,
+# require top1 ≥ 0.65 to commit. With margin<0.20, top1 ≤ (1+0.20)/2 = 0.60,
+# strictly below the 0.65 floor — so the precondition collapses to "abstain
+# whenever the boundary fires." Errors at top1=0.55 abstain → API fallback.
+# The confidence-90 cicada→grasshopper error (margin≈0.85) is the acknowledged
+# residual; spectral features or hard-negative retraining would be needed to
+# catch it (see NULL_RESULT.md "next cycle" options 2 and 3).
+CICADA_ORTHO_BOUNDARY_LABELS = frozenset({"Cicada", "Grasshopper", "Locust"})
+CICADA_ORTHO_BOUNDARY_TOP1_FLOOR = 0.65
+CICADA_ORTHO_BOUNDARY_MARGIN = 0.20
+
 
 def _abstain_threshold(cls: str) -> float:
     """Per-class abstain top1 floor (see ABSTAIN_TOP1_PER_CLASS rationale)."""
     return ABSTAIN_TOP1_PER_CLASS.get(cls, ABSTAIN_TOP1_DEFAULT)
+
+
+def _is_cicada_ortho_boundary(top1_lbl: str, top2_lbl: str,
+                               margin: float) -> bool:
+    """True when (top1, top2) span the cicada↔orthoptera boundary at low margin.
+
+    Both labels must be in the boundary set, span different groups
+    (one = "Cicada", other ∈ {"Grasshopper", "Locust"}), and the head's
+    top1-top2 margin must be below the configured floor.
+    """
+    if (top1_lbl not in CICADA_ORTHO_BOUNDARY_LABELS
+            or top2_lbl not in CICADA_ORTHO_BOUNDARY_LABELS):
+        return False
+    grp1 = "cicada" if top1_lbl == "Cicada" else "orthoptera"
+    grp2 = "cicada" if top2_lbl == "Cicada" else "orthoptera"
+    if grp1 == grp2:
+        return False
+    return margin < CICADA_ORTHO_BOUNDARY_MARGIN
 
 _SINGLETON: Optional["PANNsBundle"] = None
 
@@ -271,6 +309,10 @@ class PANNsBundle:
         margin = top1_p - top2_p
 
         abstain_top1 = _abstain_threshold(ordered_classes[top1_idx])
+        if _is_cicada_ortho_boundary(
+            ordered_classes[top1_idx], ordered_classes[top2_idx], margin
+        ):
+            abstain_top1 = max(abstain_top1, CICADA_ORTHO_BOUNDARY_TOP1_FLOOR)
         if top1_p < abstain_top1 or margin < ABSTAIN_MARGIN:
             raise PANNsAbstain(
                 f"low_confidence top1={top1_p:.2f} (floor={abstain_top1:.2f}) "
