@@ -1,0 +1,41 @@
+{
+  "stats": {
+    "correct_group": 37,
+    "abstain": 7,
+    "cross_orthoptera": 6
+  },
+  "n": 50,
+  "cross_orthoptera_files": [
+    [
+      "xc_1092578_Cricket.wav",
+      "Locust",
+      79
+    ],
+    [
+      "xc_1092588_Cricket.wav",
+      "Locust",
+      61
+    ],
+    [
+      "xc_1092590_Cricket.wav",
+      "Locust",
+      74
+    ],
+    [
+      "xc_1092592_Cricket.wav",
+      "Grasshopper",
+      48
+    ],
+    [
+      "xc_1092670_Cricket.wav",
+      "Locust",
+      69
+    ],
+    [
+      "xc_1092885_Cricket.wav",
+      "Locust",
+      72
+    ]
+  ],
+  "other_files": []
+}
