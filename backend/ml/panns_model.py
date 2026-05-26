@@ -289,6 +289,19 @@ class PANNsBundle:
         if wave_32k.size < SAMPLE_RATE // 2:
             raise ValueError("audio too short for CNN14 (<0.5 s after resample)")
 
+        # SNR is the dominant error source for insect-audio classification.
+        # When enabled, apply bandpass 1–15 kHz + per-channel energy norm to
+        # the resampled wave so CNN14 sees the same distribution the head
+        # was trained on (training path in scripts/train_panns_head.py mirrors
+        # this gate). Diagnostic features (band_energy, snr_db) are computed
+        # upstream on raw audio and remain unaffected.
+        from backend.services.acoustic.dsp import (
+            bandpass_and_energy_normalize,
+            bandpass_filter_enabled,
+        )
+        if bandpass_filter_enabled():
+            wave_32k = bandpass_and_energy_normalize(wave_32k, SAMPLE_RATE)
+
         clipwise_per, embedding_per = self._embed_windows(wave_32k)
         n_windows = int(clipwise_per.shape[0])
         # Mean-pool the AudioSet clipwise output for the confounder gate —

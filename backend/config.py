@@ -68,6 +68,18 @@ class Settings(BaseSettings):
     # ── i18n Configuration ───────────────────────────────────────────────
     I18N_STRICT: bool = False  # Raise KeyError on missing translations instead of returning ???
 
+    # ── Acoustic Pre-filter ──────────────────────────────────────────────
+    # The ENABLE_BANDPASS_FILTER env var is NOT a Settings field — it is
+    # read directly from os.environ by backend.ml.panns_model and
+    # scripts.train_panns_head so the flag check does not force a full
+    # Settings instantiation in unit tests or training scripts that have
+    # no need for API_KEY / JWT_SECRET / etc. The flag toggles a bandpass
+    # 1–15 kHz + per-channel energy norm applied to the PCM that reaches
+    # CNN14 (both inference and training). Default off — flip to "true"
+    # only after the baseline comparison
+    # (docs/superpowers/results/2026-05-26-acoustic-prefilter/) confirms
+    # macro-F1 lift with no per-class regression beyond CI half-width.
+
     # ── Redis Configuration ─────────────────────────────────────────────
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379

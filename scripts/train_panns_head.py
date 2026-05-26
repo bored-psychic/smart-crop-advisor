@@ -75,8 +75,12 @@ WINDOW_SECONDS = 2.0
 HOP_SECONDS = 1.0
 
 # Bump if the windowing/feature-extraction code changes — cached embeddings
-# only encode the logic of whichever CACHE_VERSION wrote them.
-CACHE_VERSION = "v2-window2.0-hop1.0-clipwise-concat"
+# only encode the logic of whichever CACHE_VERSION wrote them. The v3 bump
+# reflects the optional bandpass+energy-norm pre-filter applied when
+# Settings.ENABLE_BANDPASS_FILTER is true (see cached_embed below). The
+# pre-filter changes the input distribution, so cached v2 embeddings would
+# train a head that diverges from inference.
+CACHE_VERSION = "v3-bandpass1-15k-norm-window2.0-hop1.0-clipwise-concat"
 
 # Augmentation variants applied to **training clips only** (val/test stay
 # clean — we measure generalization, not augmentation-fit). Each variant
@@ -205,6 +209,19 @@ def cached_embed(tagger, wav_path: Path, aug_id: str = "clean") -> np.ndarray | 
             return None
         if pcm.size < SAMPLE_RATE // 2:
             return None  # time-stretch can compress short clips below the floor
+
+    # Pre-filter must run AFTER augmentation so the "noise" augmentation's
+    # additive Gaussian (which is broadband) gets its out-of-band components
+    # removed too — matching what inference sees. Filtering before augment
+    # would inject untouched noise into the training distribution, which
+    # the inference-time pre-filter would then attenuate, creating a
+    # train/inference distribution gap.
+    from backend.services.acoustic.dsp import (
+        bandpass_and_energy_normalize,
+        bandpass_filter_enabled,
+    )
+    if bandpass_filter_enabled():
+        pcm = bandpass_and_energy_normalize(pcm, SAMPLE_RATE)
 
     feat = embed_clip_windowed(tagger, pcm)
     cache_path.parent.mkdir(parents=True, exist_ok=True)

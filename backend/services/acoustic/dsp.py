@@ -7,11 +7,26 @@ signal-processing — no ML, no I/O, no FastAPI.
 
 import importlib
 import io
+import os
 from typing import Optional
 
 import numpy as np
 import scipy.io.wavfile as wav
 from PIL import Image
+
+
+def bandpass_filter_enabled() -> bool:
+    """Read the ENABLE_BANDPASS_FILTER env var.
+
+    The flag bypasses pydantic-settings (see backend/config.py rationale)
+    so the hot path doesn't force a full Settings instantiation that
+    fails in tests / training scripts without the API_KEY / JWT_SECRET
+    boot env. Accepts "1", "true", "yes", "on" (case-insensitive) as
+    truthy; anything else (including unset) is false.
+    """
+    return os.environ.get("ENABLE_BANDPASS_FILTER", "").lower() in (
+        "1", "true", "yes", "on",
+    )
 
 
 def _decode_audio(audio_bytes: bytes) -> tuple[Optional[np.ndarray], int, Optional[str]]:
@@ -90,6 +105,61 @@ def _normalize_lufs(pcm: np.ndarray, rate: int, target_lufs: float = -23.0) -> n
     if peak > 0.99:
         normalized *= 0.99 / peak
     return normalized
+
+
+_BANDPASS_LO_HZ = 1000.0
+_BANDPASS_HI_HZ = 15000.0
+_BANDPASS_ORDER = 4
+
+
+def bandpass_and_energy_normalize(pcm: np.ndarray, rate: int) -> np.ndarray:
+    """Butterworth bandpass 1–15 kHz + per-channel energy normalization.
+
+    SNR is the dominant error source for insect-audio classification:
+    sub-1 kHz wind/motor/handling rumble and >15 kHz hiss carry no insect
+    signal but shift the learned-feature distribution at inference time.
+    The passband retains cricket stridulation (2–8 kHz), grasshopper
+    broadband (3–10 kHz), and cicada (4–7 kHz).
+
+    Applied identically at training (scripts/train_panns_head.cached_embed,
+    post-augmentation) and inference (backend.ml.panns_model.PANNsBundle.
+    predict, post-resample). The pre-filter is feature-flagged via
+    Settings.ENABLE_BANDPASS_FILTER at each call site; this helper itself
+    is unconditional and pure.
+
+    Energy normalization (divide by RMS, clip to [-1, 1]) follows the
+    bandpass so the post-filter signal lands at unit RMS regardless of the
+    pre-filter loudness — removes a degree of freedom the head would
+    otherwise have to learn around.
+    """
+    from scipy.signal import butter, sosfiltfilt
+
+    pcm = pcm.astype(np.float32, copy=False)
+    if pcm.size == 0:
+        return pcm
+
+    nyquist = rate / 2.0
+    lo = _BANDPASS_LO_HZ / nyquist
+    hi = min(_BANDPASS_HI_HZ, nyquist * 0.99) / nyquist
+    if not (0.0 < lo < hi < 1.0):
+        return pcm
+    sos = butter(_BANDPASS_ORDER, [lo, hi], btype="band", output="sos")
+    filtered = sosfiltfilt(sos, pcm).astype(np.float32, copy=False)
+
+    rms = float(np.sqrt(np.mean(filtered.astype(np.float64) ** 2)))
+    if rms < 1e-9:
+        return filtered
+    # Two-stage scale: first to unit RMS, then back off if the peak exceeds
+    # ±1 so the output fits the [-1, 1] PCM convention. Hard-clipping would
+    # introduce broadband distortion harmonics that defeat the bandpass —
+    # the stop-band fills back in with intermodulation products. Linear
+    # scale-down preserves the spectrum; the final RMS may be < 1 for
+    # high-crest signals (pure tones land at ~1/√2).
+    normalized = filtered / rms
+    peak = float(np.max(np.abs(normalized)))
+    if peak > 1.0:
+        normalized = normalized / peak
+    return normalized.astype(np.float32, copy=False)
 
 
 def _encode_wav(pcm: np.ndarray, rate: int) -> bytes:
