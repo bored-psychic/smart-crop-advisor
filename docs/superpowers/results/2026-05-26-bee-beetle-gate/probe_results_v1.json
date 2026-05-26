@@ -1,0 +1,392 @@
+{
+  "by_source": {
+    "bee": {
+      "n": 60,
+      "correct_group": 43,
+      "bee_to_beetle": 1,
+      "beetle_to_bee": 0,
+      "other": 7,
+      "abstain": 9,
+      "details": [
+        {
+          "file": "inat_Bee_293552987_1546099.wav",
+          "true": "Bee",
+          "pred": "Cricket",
+          "confidence": 73,
+          "top3": [
+            [
+              "Cricket",
+              73
+            ],
+            [
+              "Bee",
+              12
+            ],
+            [
+              "Beetle",
+              6
+            ]
+          ],
+          "all_class_confidence": {
+            "Cricket": 73,
+            "Bee": 12,
+            "Beetle": 6,
+            "Locust": 4,
+            "Grasshopper": 2,
+            "Cicada": 1,
+            "Wasp": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_305621863_1601330.wav",
+          "true": "Bee",
+          "pred": "Locust",
+          "confidence": 39,
+          "top3": [
+            [
+              "Locust",
+              39
+            ],
+            [
+              "Bee",
+              24
+            ],
+            [
+              "Grasshopper",
+              19
+            ]
+          ],
+          "all_class_confidence": {
+            "Locust": 39,
+            "Bee": 24,
+            "Grasshopper": 19,
+            "Beetle": 14,
+            "Cricket": 2,
+            "Wasp": 1,
+            "Cicada": 1,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_318582706_1657164.wav",
+          "true": "Bee",
+          "pred": "Beetle",
+          "confidence": 75,
+          "top3": [
+            [
+              "Beetle",
+              75
+            ],
+            [
+              "Wasp",
+              15
+            ],
+            [
+              "Bee",
+              7
+            ]
+          ],
+          "all_class_confidence": {
+            "Beetle": 75,
+            "Wasp": 15,
+            "Bee": 7,
+            "Cricket": 2,
+            "Grasshopper": 0,
+            "Cicada": 0,
+            "Locust": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_323118663_1677970.wav",
+          "true": "Bee",
+          "pred": "Locust",
+          "confidence": 63,
+          "top3": [
+            [
+              "Locust",
+              63
+            ],
+            [
+              "Cricket",
+              15
+            ],
+            [
+              "Grasshopper",
+              10
+            ]
+          ],
+          "all_class_confidence": {
+            "Locust": 63,
+            "Cricket": 15,
+            "Grasshopper": 10,
+            "Bee": 7,
+            "Wasp": 2,
+            "Cicada": 2,
+            "Beetle": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_364575120_1974567.wav",
+          "true": "Bee",
+          "pred": "Grasshopper",
+          "confidence": 58,
+          "top3": [
+            [
+              "Grasshopper",
+              58
+            ],
+            [
+              "Locust",
+              17
+            ],
+            [
+              "Bee",
+              8
+            ]
+          ],
+          "all_class_confidence": {
+            "Grasshopper": 58,
+            "Locust": 17,
+            "Bee": 8,
+            "Wasp": 8,
+            "Cicada": 4,
+            "Beetle": 3,
+            "Cricket": 2,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_364972824_1977477.wav",
+          "true": "Bee",
+          "pred": "Wasp",
+          "confidence": 68,
+          "top3": [
+            [
+              "Wasp",
+              68
+            ],
+            [
+              "Grasshopper",
+              22
+            ],
+            [
+              "Locust",
+              3
+            ]
+          ],
+          "all_class_confidence": {
+            "Wasp": 68,
+            "Grasshopper": 22,
+            "Locust": 3,
+            "Cricket": 2,
+            "Bee": 2,
+            "Non-biological": 2,
+            "Beetle": 1,
+            "Cicada": 0
+          }
+        },
+        {
+          "file": "inat_Bee_364975247_1977497.wav",
+          "true": "Bee",
+          "pred": "Wasp",
+          "confidence": 90,
+          "top3": [
+            [
+              "Wasp",
+              90
+            ],
+            [
+              "Grasshopper",
+              6
+            ],
+            [
+              "Cricket",
+              3
+            ]
+          ],
+          "all_class_confidence": {
+            "Wasp": 90,
+            "Grasshopper": 6,
+            "Cricket": 3,
+            "Beetle": 0,
+            "Locust": 0,
+            "Bee": 0,
+            "Cicada": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Bee_365328752_1980023.wav",
+          "true": "Bee",
+          "pred": "Cricket",
+          "confidence": 67,
+          "top3": [
+            [
+              "Cricket",
+              67
+            ],
+            [
+              "Bee",
+              12
+            ],
+            [
+              "Locust",
+              8
+            ]
+          ],
+          "all_class_confidence": {
+            "Cricket": 67,
+            "Bee": 12,
+            "Locust": 8,
+            "Beetle": 8,
+            "Cicada": 4,
+            "Grasshopper": 2,
+            "Wasp": 1,
+            "Non-biological": 0
+          }
+        }
+      ]
+    },
+    "beetle": {
+      "n": 49,
+      "correct_group": 38,
+      "bee_to_beetle": 0,
+      "beetle_to_bee": 2,
+      "other": 2,
+      "abstain": 7,
+      "details": [
+        {
+          "file": "inat_Beetle_197608400_896731.wav",
+          "true": "Beetle",
+          "pred": "Bee",
+          "confidence": 50,
+          "top3": [
+            [
+              "Bee",
+              50
+            ],
+            [
+              "Beetle",
+              37
+            ],
+            [
+              "Cricket",
+              4
+            ]
+          ],
+          "all_class_confidence": {
+            "Bee": 50,
+            "Beetle": 37,
+            "Cricket": 4,
+            "Grasshopper": 4,
+            "Cicada": 3,
+            "Locust": 1,
+            "Wasp": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Beetle_236854140_1168715.wav",
+          "true": "Beetle",
+          "pred": "Bee",
+          "confidence": 59,
+          "top3": [
+            [
+              "Bee",
+              59
+            ],
+            [
+              "Beetle",
+              38
+            ],
+            [
+              "Grasshopper",
+              2
+            ]
+          ],
+          "all_class_confidence": {
+            "Bee": 59,
+            "Beetle": 38,
+            "Grasshopper": 2,
+            "Cricket": 0,
+            "Wasp": 0,
+            "Locust": 0,
+            "Cicada": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Beetle_237040025_1176239.wav",
+          "true": "Beetle",
+          "pred": "Locust",
+          "confidence": 54,
+          "top3": [
+            [
+              "Locust",
+              54
+            ],
+            [
+              "Beetle",
+              15
+            ],
+            [
+              "Cicada",
+              13
+            ]
+          ],
+          "all_class_confidence": {
+            "Locust": 54,
+            "Beetle": 15,
+            "Cicada": 13,
+            "Grasshopper": 12,
+            "Cricket": 4,
+            "Bee": 1,
+            "Wasp": 0,
+            "Non-biological": 0
+          }
+        },
+        {
+          "file": "inat_Beetle_55721712_128380.wav",
+          "true": "Beetle",
+          "pred": "Cricket",
+          "confidence": 64,
+          "top3": [
+            [
+              "Cricket",
+              64
+            ],
+            [
+              "Locust",
+              23
+            ],
+            [
+              "Beetle",
+              10
+            ]
+          ],
+          "all_class_confidence": {
+            "Cricket": 64,
+            "Locust": 23,
+            "Beetle": 10,
+            "Grasshopper": 2,
+            "Bee": 2,
+            "Cicada": 0,
+            "Wasp": 0,
+            "Non-biological": 0
+          }
+        }
+      ]
+    }
+  },
+  "aggregate": {
+    "n": 109,
+    "bee_to_beetle": 1,
+    "beetle_to_bee": 2,
+    "abstain": 16,
+    "bee_to_beetle_rate": 0.010752688172043012,
+    "beetle_to_bee_rate": 0.021505376344086023
+  }
+}
