@@ -1,0 +1,78 @@
+{
+  "stats": {
+    "n": 100,
+    "correct_group": 70,
+    "cross_group": 1,
+    "other": 12,
+    "abstain": 17
+  },
+  "cross_files": [
+    [
+      "xc_1064834_Grasshopper.wav",
+      "Cicada",
+      54
+    ]
+  ],
+  "other_files": [
+    [
+      "xc_1033359_Grasshopper.wav",
+      "Wasp",
+      52
+    ],
+    [
+      "xc_1035603_Grasshopper.wav",
+      "Wasp",
+      41
+    ],
+    [
+      "xc_1035604_Grasshopper.wav",
+      "Wasp",
+      40
+    ],
+    [
+      "xc_1054382_Grasshopper.wav",
+      "Bee",
+      46
+    ],
+    [
+      "xc_1064292_Grasshopper.wav",
+      "Cricket",
+      49
+    ],
+    [
+      "xc_1086769_Grasshopper.wav",
+      "Beetle",
+      55
+    ],
+    [
+      "xc_1095476_Grasshopper.wav",
+      "Non-biological",
+      55
+    ],
+    [
+      "xc_1095670_Grasshopper.wav",
+      "Non-biological",
+      51
+    ],
+    [
+      "xc_1102361_Grasshopper.wav",
+      "Wasp",
+      38
+    ],
+    [
+      "xc_1102363_Grasshopper.wav",
+      "Bee",
+      52
+    ],
+    [
+      "xc_1102364_Grasshopper.wav",
+      "Bee",
+      53
+    ],
+    [
+      "xc_1102365_Grasshopper.wav",
+      "Bee",
+      71
+    ]
+  ]
+}
