@@ -123,9 +123,9 @@ def bandpass_and_energy_normalize(pcm: np.ndarray, rate: int) -> np.ndarray:
 
     Applied identically at training (scripts/train_panns_head.cached_embed,
     post-augmentation) and inference (backend.ml.panns_model.PANNsBundle.
-    predict, post-resample). The pre-filter is feature-flagged via
-    Settings.ENABLE_BANDPASS_FILTER at each call site; this helper itself
-    is unconditional and pure.
+    predict, post-resample). The pre-filter is feature-flagged via the
+    ENABLE_BANDPASS_FILTER env var (read by `bandpass_filter_enabled()`)
+    at each call site; this helper itself is unconditional and pure.
 
     Energy normalization (divide by RMS, clip to [-1, 1]) follows the
     bandpass so the post-filter signal lands at unit RMS regardless of the

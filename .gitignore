@@ -28,6 +28,11 @@ data/audio_samples/
 data/_cache/
 backend/models/yamnet_head.joblib
 
+# Acoustic baseline sidecars (rollback/comparison snapshots; canonical is panns_baseline.json)
+backend/models/panns_baseline.flag_*.json
+backend/models/panns_baseline_*.json
+!backend/models/panns_baseline.json
+
 # Web SPA local API config (copy from config.example.js)
 web/config.js
 
