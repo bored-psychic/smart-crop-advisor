@@ -26,7 +26,6 @@ from backend.core.constants import PEST_META
 from backend.middleware.rate_limit import limiter
 from backend.ml.acoustic_model import _normalize_crop_type
 from backend.schemas.acoustic import AcousticResponse
-from backend.services import dosage_service
 from backend.services.acoustic import pipeline
 # Re-export so existing imports (and the contract test in
 # tests/test_acoustic_pest_names.py) keep working without churn.
@@ -170,5 +169,4 @@ async def analyze_audio(
         normalized_crop=normalized_crop,
         local_bundle=request.app.state.acoustic_model,
         save_feedback_clip=_save_feedback_clip,
-        dosage_lookup=dosage_service.lookup,
     )

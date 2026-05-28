@@ -16,7 +16,6 @@ from core.disease_db import DISEASE_DB
 from backend.auth import require_api_key, require_user, require_user_or_api_key
 from backend.config import get_settings
 from backend.middleware.rate_limit import limiter
-from backend.services import dosage_service
 
 # Authoritative crop allowlist for the analyze-image endpoint (same source of
 # truth as the symptom database). "Unknown" is always accepted as the
@@ -144,37 +143,14 @@ async def analyze_image(
 
     claude_result = await _claude_diagnose(contents, crop_type, media_type)
     if claude_result:
-        result_obj = DiseaseResult(**claude_result)
-        try:
-            result_obj.dosage_advice = await dosage_service.lookup(
-                pest_id=result_obj.disease,
-                crop=crop_type,
-                crop_stage_days=0,
-                area_acres=1.0,
-                state=None,
-            )
-        except Exception:
-            pass
-        return result_obj
+        return DiseaseResult(**claude_result)
 
     disease_bundle = request.app.state.disease_model
     if disease_bundle is None:
         raise http_error(503, "model_unavailable", "Disease model unavailable")
     rgb_array = np.asarray(img.convert('RGB'), dtype=np.uint8)
     result = disease_bundle.predict_from_image(rgb_array)
-
-    result_obj = DiseaseResult(**result)
-    try:
-        result_obj.dosage_advice = await dosage_service.lookup(
-            pest_id=result_obj.disease,
-            crop=crop_type,
-            crop_stage_days=0,
-            area_acres=1.0,
-            state=None,
-        )
-    except Exception:
-        pass
-    return result_obj
+    return DiseaseResult(**result)
 
 
 @router.post("/analyze-symptom", response_model=SymptomResponse)
@@ -191,7 +167,7 @@ async def analyze_symptom(
         raise http_error(404, "symptom_not_found", f"Symptom not found for crop '{req.crop}'")
 
     data = crop_diseases[req.symptom]
-    response = SymptomResponse(
+    return SymptomResponse(
         disease=data['disease'],
         severity=data['severity'],
         disease_type=data.get('type', 'Disease'),
@@ -200,17 +176,6 @@ async def analyze_symptom(
         crop=req.crop,
         symptom=req.symptom,
     )
-    try:
-        response.dosage_advice = await dosage_service.lookup(
-            pest_id=data['disease'],
-            crop=req.crop,
-            crop_stage_days=0,
-            area_acres=1.0,
-            state=None,
-        )
-    except Exception:
-        pass
-    return response
 
 
 @router.post("/treatment-price", response_model=TreatmentPriceResponse)

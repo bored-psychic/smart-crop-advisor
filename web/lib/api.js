@@ -144,8 +144,6 @@ window.api = {
 
   soilAnalyze: (body) => _req('/soil/analyze', { method: 'POST', body }),
 
-  dosageRecommend: (body) => _req('/dosage/recommend', { method: 'POST', body }),
-
   alertsSubscribe:     (body) => _req('/alerts/subscribe',        { method: 'POST', body }),
   alertsUnsubscribe:   (id)   => _req(`/alerts/unsubscribe/${id}`, { method: 'DELETE' }),
   alertsHistory:       ()     => _req('/alerts/history'),

@@ -2,7 +2,6 @@
 
 from typing import Optional
 from pydantic import BaseModel, Field
-from backend.schemas.dosage import DosageAdvice
 
 
 class DiseaseResult(BaseModel):
@@ -15,7 +14,6 @@ class DiseaseResult(BaseModel):
     model_used: str
     top3: list[tuple[str, int]] = []
     color: Optional[str] = None
-    dosage_advice: Optional[DosageAdvice] = None
 
 
 class SymptomRequest(BaseModel):
@@ -31,7 +29,6 @@ class SymptomResponse(BaseModel):
     prevention: str
     crop: str
     symptom: str
-    dosage_advice: Optional[DosageAdvice] = None
 
 
 class TreatmentPriceRequest(BaseModel):

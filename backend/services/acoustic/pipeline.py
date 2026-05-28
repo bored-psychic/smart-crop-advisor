@@ -140,15 +140,12 @@ async def analyze(
     normalized_crop: str,
     local_bundle,
     save_feedback_clip: Callable[[np.ndarray, int], str],
-    dosage_lookup: Callable,
 ) -> AcousticResponse:
     """Run the full acoustic pipeline and return the response model.
 
     `local_bundle` is `request.app.state.acoustic_model` (PANNs bundle or
     None). `save_feedback_clip` is injected by the route so the Fernet
     encryptor and clip-dir location stay in the routes module.
-    `dosage_lookup` is `dosage_service.lookup` — injected so this module
-    doesn't import the route's siblings.
     """
     if not contents:
         return _rejected(
@@ -366,19 +363,6 @@ async def analyze(
             result["clip_id"] = save_feedback_clip(seg, rate)
         except Exception as _exc:
             logger.warning("acoustic: could not save feedback clip: %s", _exc)
-
-    if result.get("role") == "pest" and result.get("pest") not in ("Uncertain", "Unknown", "Analysis Rejected"):
-        try:
-            _dosage = await dosage_lookup(
-                pest_id=result["pest"],
-                crop=normalized_crop,
-                crop_stage_days=0,
-                area_acres=1.0,
-                state=None,
-            )
-            result["dosage_advice"] = _dosage.model_dump()
-        except Exception:
-            pass
 
     _cache_put(cache_key, result)
     return AcousticResponse(**result)
