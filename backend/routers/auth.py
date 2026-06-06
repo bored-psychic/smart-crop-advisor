@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 
 from backend.auth import issue_token, require_user
 from backend.schemas.errors import http_error
-from backend.middleware.rate_limit import limiter, _otp_rate_limit_key
+from backend.middleware.rate_limit import limiter, _otp_rate_limit_key, _otp_phone_dep
 from backend.services.auth_otp import (
     generate_otp,
     store_otp,
@@ -88,11 +88,12 @@ class MeResponse(BaseModel):
 
 
 @router.post("/request-otp", response_model=RequestOtpResponse)
-@limiter.limit("3/hour", key_func=_otp_rate_limit_key)
+@limiter.limit("5/hour", key_func=_otp_rate_limit_key)
 async def request_otp(
     request: Request,
     body: RequestOtpBody,
     db: aiosqlite.Connection = Depends(get_db),
+    _phone_for_limit: None = Depends(_otp_phone_dep),
 ):
     phone = _normalise_phone(body.phone)
     # Store the normalised phone on request.state so _otp_rate_limit_key

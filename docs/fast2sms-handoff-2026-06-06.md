@@ -93,9 +93,9 @@ for instant login — works in production. Every *other* number still gets a rea
 SMS, and real codes are never leaked. Judges use `1234567890`; the OTP appears
 on screen. Don't set it to a real user's number.
 
-> Rate limit: `/request-otp` is capped at **3/hour per number**. If judges hammer
-> the demo number, they can hit that cap — say the word and we raise/exempt it
-> for `DEMO_PHONE`.
+> Rate limit: `/request-otp` is **5/hour per IP**, and the `DEMO_PHONE` is
+> **exempt** (unlimited) — judges can log in with `1234567890` as many times as
+> they like, while real numbers stay capped at 5/hour per IP.
 
 For a real launch later: complete **DLT registration** (TRAI DLT portal → Entity +
 6-char Sender ID + approved template), then switch to `route=dlt` (~₹0.25/SMS).

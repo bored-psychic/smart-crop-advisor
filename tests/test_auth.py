@@ -359,6 +359,15 @@ def test_demo_phone_does_not_leak_other_numbers(demo_number_client, monkeypatch)
     assert r.json()["demo_otp"] is None        # real number never leaked
 
 
+def test_demo_number_is_never_rate_limited(demo_number_client):
+    """The demo number bypasses the 5/hour OTP limit (8 calls, no 429)."""
+    for i in range(8):
+        r = demo_number_client.post(
+            "/api/auth/request-otp", json={"phone": "1234567890"}
+        )
+        assert r.status_code == 200, f"call {i + 1}: {r.status_code} {r.text}"
+
+
 @pytest.fixture
 def prod_client(settings_singleton_clear, tmp_path, monkeypatch):
     """TestClient with ENVIRONMENT=production and SMS unconfigured.

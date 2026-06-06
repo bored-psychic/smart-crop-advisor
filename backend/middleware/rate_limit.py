@@ -34,10 +34,11 @@ runs::
     from backend.middleware.rate_limit import limiter, _otp_rate_limit_key
 
     @router.post("/request-otp")
-    @limiter.limit("3/hour", key_func=_otp_rate_limit_key)
+    @limiter.limit("5/hour", key_func=_otp_rate_limit_key)
     async def request_otp(
         request: Request,
         body: RequestOtpBody,
+        _phone_for_limit: None = Depends(_otp_phone_dep),
         ...
     ):
         ...
@@ -53,8 +54,43 @@ Wire-up in main.py (already done in create_app)::
 
 from __future__ import annotations
 
+import re
+
 from starlette.requests import Request
 from slowapi import Limiter
+
+from backend.config import get_settings
+
+_DIGITS = re.compile(r"\D+")
+
+
+def _loose_normalise(raw: str) -> str:
+    """Collapse a phone string to ``+<digits>`` (default +91), non-raising.
+
+    Mirrors ``auth._normalise_phone`` for the 10-digit / country-code cases so
+    the demo-number comparison in the key function is consistent. Returns ``""``
+    for empty/garbage input (callers treat that as "no phone").
+    """
+    digits = _DIGITS.sub("", raw or "")
+    if len(digits) == 10:
+        digits = "91" + digits
+    return "+" + digits if digits else ""
+
+
+async def _otp_phone_dep(request: Request) -> None:
+    """Stash the request's normalised phone on ``request.state`` *before* the
+    slowapi limiter fires, so the key function can exempt the demo number.
+
+    Runs as a FastAPI dependency — resolved before slowapi's wrapper performs
+    the limit check. Reads the cached JSON body (Starlette caches it, so the
+    route's own ``body: RequestOtpBody`` parsing is unaffected).
+    """
+    try:
+        data = await request.json()
+        raw = data.get("phone", "") if isinstance(data, dict) else ""
+    except Exception:
+        raw = ""
+    request.state.otp_phone = _loose_normalise(raw)
 
 
 def _ip_fallback(request: Request) -> str:
@@ -96,35 +132,20 @@ def _otp_rate_limit_key(request: Request) -> str:
     """
     Key function for the /auth/request-otp endpoint.
 
-    Keys on ``request.state.otp_phone`` (set by FastAPI's body parsing
-    when the route parameter ``body: RequestOtpBody`` is resolved — the
-    phone value is stored there by the route handler before the limiter
-    fires in the same dependency chain).
+    Returns an **empty string** for the dedicated ``DEMO_PHONE`` — slowapi
+    treats a falsy key as "no limit" and skips throttling entirely, so the
+    demo login is never rate-limited.
 
-    Falls back to IP if the phone is not yet available.
-
-    Note: In practice, FastAPI resolves all route parameters (including
-    Pydantic body models) before slowapi's injected dependency runs, so
-    ``request.state.otp_phone`` is available here for the OTP route.
-    The route handler must call::
-
-        request.state.otp_phone = _normalise_phone(body.phone)
-
-    at the top of its body to populate this field for the key function.
-    Since slowapi hooks into the route as a *post-parameter* dependency,
-    the body parameters are parsed first, giving the handler time to set
-    the state.
-
-    We achieve this by storing the phone at the start of the route
-    function body; however since the limiter dependency fires *after*
-    the body is parsed but potentially *before* the handler body runs,
-    we use a ``Depends``-based approach: the route declares
-    ``_phone_for_limit=Depends(_otp_phone_dep)`` which runs first and
-    sets the state. See ``_otp_phone_dep`` below.
+    For every other request it returns the remote-IP bucket (the historical,
+    intentionally coarse behaviour: per-IP, not per-phone, so a sender can't
+    dodge the limit by cycling phone numbers). ``request.state.otp_phone`` is
+    populated by ``_otp_phone_dep`` before the limiter fires.
     """
     phone = getattr(request.state, "otp_phone", None)
     if phone and isinstance(phone, str):
-        return f"phone:{phone.strip()}"
+        demo = get_settings().DEMO_PHONE
+        if demo and phone == _loose_normalise(demo):
+            return ""  # exempt the demo number from rate limiting
     return _ip_fallback(request)
 
 

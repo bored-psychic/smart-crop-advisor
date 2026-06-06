@@ -18,7 +18,8 @@ Tested behaviours
 2. Over-limit: call N+1 within the window returns 429.
 3. 429 response body is the structured JSON the audit requires:
        {"error": "rate_limited", "retry_after": <int>}
-4. The /auth/request-otp endpoint is rate-limited (3/hour).
+4. The /auth/request-otp endpoint is rate-limited (5/hour), with the
+   configured DEMO_PHONE exempt.
 5. The /disease/analyze-image endpoint is rate-limited (20/hour) and
    now requires a JWT, not an API key.
 6. The /acoustic/analyze endpoint is rate-limited (20/hour) and
@@ -120,22 +121,15 @@ def test_subscribe_under_limit_returns_2xx(client):
 
 def test_subscribe_over_limit_returns_429(client, monkeypatch):
     """
-    Temporarily tighten the subscribe limit to 1/minute so we can trigger
-    the 429 in exactly 2 calls without waiting.
+    The /auth/request-otp endpoint is limited to 5/hour, keyed per-IP
+    (the unauthenticated fallback). Six calls from the same IP within the
+    window — the 6th must return 429.
 
-    We patch the limiter's limit string on the decorated function instead
-    of reconfiguring slowapi (which would require a new Limiter instance).
-    Since we can't easily change the decorator's stored limit post-hoc
-    through the public API, we exercise the 429 path on a route with a very
-    small limit by testing _otp_ (3/hour) which is the most lenient non-
-    trivial limit we can hit quickly.
-
-    Note: this approach calls /auth/request-otp 4 times from the same IP
-    (fallback key for unauthenticated route) in a test environment where the
-    counter is already cleared.  The 4th call should return 429.
+    Note: the limit is per-IP, not per-phone, so cycling phone numbers does
+    not dodge it; that's why distinct phones still share one bucket here.
     """
-    # Call /request-otp 3 times — should all succeed.
-    for i in range(3):
+    # Call /request-otp 5 times — should all succeed (under the 5/hour limit).
+    for i in range(5):
         r = client.post(
             "/api/auth/request-otp",
             json={"phone": f"+9199999{i:05d}"},
@@ -145,15 +139,15 @@ def test_subscribe_over_limit_returns_429(client, monkeypatch):
             f"Call {i+1} was unexpectedly rate-limited: {r.text}"
         )
 
-    # 4th call from the same IP should be rate-limited (3/hour exhausted).
-    r4 = client.post(
+    # 6th call from the same IP should be rate-limited (5/hour exhausted).
+    r6 = client.post(
         "/api/auth/request-otp",
         json={"phone": "+919999999999"},
     )
-    assert r4.status_code == 429, (
-        f"Expected 429 on 4th OTP request, got {r4.status_code}: {r4.text}"
+    assert r6.status_code == 429, (
+        f"Expected 429 on 6th OTP request, got {r6.status_code}: {r6.text}"
     )
-    body = r4.json()
+    body = r6.json()
     assert body.get("error") == "rate_limited", f"Wrong error key: {body}"
     assert isinstance(body.get("retry_after"), int), (
         f"retry_after must be an int: {body}"
@@ -166,8 +160,8 @@ def test_429_response_shape(client):
     Verify the 429 JSON body is exactly:
         {"error": "rate_limited", "retry_after": <positive int>}
     """
-    # Exhaust the OTP limit (3/hour, same IP)
-    for _ in range(3):
+    # Exhaust the OTP limit (5/hour, same IP)
+    for _ in range(5):
         client.post("/api/auth/request-otp", json={"phone": "+919999900099"})
 
     r = client.post("/api/auth/request-otp", json={"phone": "+919999900099"})
@@ -269,17 +263,34 @@ def test_rate_limit_key_falls_back_to_ip_when_no_user():
     assert key == "ip:5.6.7.8", f"Expected IP key, got: {key}"
 
 
-def test_otp_rate_limit_key_uses_phone():
-    """_otp_rate_limit_key reads otp_phone from request.state."""
+def _otp_key_req(phone: str, host: str = "9.8.7.6"):
     from unittest.mock import MagicMock
-    from backend.middleware.rate_limit import _otp_rate_limit_key
-
     req = MagicMock()
     req.state = MagicMock()
-    req.state.otp_phone = "+919876543210"
+    req.state.otp_phone = phone
     req.headers.get.return_value = None
     req.client = MagicMock()
-    req.client.host = "9.8.7.6"
+    req.client.host = host
+    return req
 
-    key = _otp_rate_limit_key(req)
-    assert key == "phone:+919876543210", f"Expected phone key, got: {key}"
+
+def test_otp_rate_limit_key_falls_back_to_ip_for_normal_number(monkeypatch):
+    """A normal number is throttled per-IP (not per-phone)."""
+    monkeypatch.delenv("DEMO_PHONE", raising=False)
+    from backend.config import get_settings
+    get_settings.cache_clear()
+    from backend.middleware.rate_limit import _otp_rate_limit_key
+
+    key = _otp_rate_limit_key(_otp_key_req("+919876543210"))
+    assert key == "ip:9.8.7.6", f"Expected IP key, got: {key}"
+
+
+def test_otp_rate_limit_key_exempts_demo_number(monkeypatch):
+    """The configured DEMO_PHONE gets an empty key → slowapi skips the limit."""
+    monkeypatch.setenv("DEMO_PHONE", "1234567890")
+    from backend.config import get_settings
+    get_settings.cache_clear()
+    from backend.middleware.rate_limit import _otp_rate_limit_key
+
+    key = _otp_rate_limit_key(_otp_key_req("+911234567890"))
+    assert key == "", f"Expected empty (exempt) key for demo number, got: {key}"
