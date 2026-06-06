@@ -1,3 +1,13 @@
+---
+title: Smart Crop Advisory System
+emoji: 🌾
+colorFrom: green
+colorTo: yellow
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Smart Crop Advisory System
 
 > AI-powered decision support for small and marginal farmers in India
