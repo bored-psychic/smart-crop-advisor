@@ -1,12 +1,15 @@
 venv/
+.venv/
 **/__pycache__/
 *.pyc
 .git/
+.claude/
 .env
 .env.*
 !.env.example
 kisanos.db
-data/embeddings_cache/
+data/
+*.zip
 *.log
 .pytest_cache/
 docs/superpowers/
