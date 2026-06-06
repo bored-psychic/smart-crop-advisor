@@ -80,6 +80,26 @@ curl -s -X POST https://<user>-<space>.hf.space/api/auth/request-otp \
 
 ---
 
+## Cost note + demo login (added 2026-06-06)
+
+The quick route is **₹5/SMS** (confirmed in the Fast2SMS transaction history:
+"Quick SMS (1 SMS) → Debited ₹5.0000" per send). The cheap routes (~₹0.25/SMS)
+need DLT registration / website verification, which take days — not feasible
+before the demo.
+
+**Demo login (zero cost):** set Space secret `DEMO_PHONE=1234567890`. Logging in
+with that one number **skips SMS** (no ₹5 charge) and returns the OTP on screen
+for instant login — works in production. Every *other* number still gets a real
+SMS, and real codes are never leaked. Judges use `1234567890`; the OTP appears
+on screen. Don't set it to a real user's number.
+
+> Rate limit: `/request-otp` is capped at **3/hour per number**. If judges hammer
+> the demo number, they can hit that cap — say the word and we raise/exempt it
+> for `DEMO_PHONE`.
+
+For a real launch later: complete **DLT registration** (TRAI DLT portal → Entity +
+6-char Sender ID + approved template), then switch to `route=dlt` (~₹0.25/SMS).
+
 ## Rollback
 - `git revert 8ad032d && git push space main`, or
 - Space UI → **Settings → Factory rebuild** / pin a previous commit.

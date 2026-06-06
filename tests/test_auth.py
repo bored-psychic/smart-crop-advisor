@@ -305,6 +305,61 @@ def test_alerts_history_phone_query_param_ignored(client, monkeypatch):
 
 
 @pytest.fixture
+def demo_number_client(settings_singleton_clear, tmp_path, monkeypatch):
+    """Production Space with a real SMS key AND a dedicated DEMO_PHONE set."""
+    monkeypatch.setenv("SQLITE_PATH", str(tmp_path / "demo.db"))
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("FAST2SMS_API_KEY", "live-key")  # SMS "enabled"
+    monkeypatch.setenv("DEMO_PHONE", "1234567890")
+    from backend.config import get_settings
+    get_settings.cache_clear()
+    import importlib, backend.main
+    importlib.reload(backend.main)
+    from backend.middleware.rate_limit import limiter
+    try:
+        limiter.reset()
+    except Exception:
+        pass
+    from fastapi.testclient import TestClient
+    with TestClient(backend.main.app) as c:
+        yield c
+    get_settings.cache_clear()
+    importlib.reload(backend.main)
+
+
+def test_demo_number_shows_otp_and_skips_sms_in_production(demo_number_client, monkeypatch):
+    """The dedicated demo number returns the OTP on screen and sends NO SMS."""
+    from backend.routers import auth as auth_router
+    from unittest.mock import AsyncMock
+    monkeypatch.setattr(auth_router, "generate_otp", lambda: "424242")
+    spy = AsyncMock(return_value=True)
+    monkeypatch.setattr(auth_router, "send_sms", spy)
+
+    r = demo_number_client.post("/api/auth/request-otp", json={"phone": "1234567890"})
+    assert r.status_code == 200, r.text
+    assert r.json()["demo_otp"] == "424242"   # surfaced on screen
+    spy.assert_not_called()                    # no ₹5 SMS charge
+
+    # And the on-screen code logs in normally.
+    v = demo_number_client.post(
+        "/api/auth/verify-otp", json={"phone": "1234567890", "otp": "424242"}
+    )
+    assert v.status_code == 200, v.text
+
+
+def test_demo_phone_does_not_leak_other_numbers(demo_number_client, monkeypatch):
+    """A non-demo number must still go through SMS and never leak its code."""
+    from backend.routers import auth as auth_router
+    from unittest.mock import AsyncMock
+    monkeypatch.setattr(auth_router, "generate_otp", lambda: "999999")
+    monkeypatch.setattr(auth_router, "send_sms", AsyncMock(return_value=True))
+
+    r = demo_number_client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    assert r.status_code == 200, r.text
+    assert r.json()["demo_otp"] is None        # real number never leaked
+
+
+@pytest.fixture
 def prod_client(settings_singleton_clear, tmp_path, monkeypatch):
     """TestClient with ENVIRONMENT=production and SMS unconfigured.
 

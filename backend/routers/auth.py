@@ -106,13 +106,28 @@ async def request_otp(
     settings = get_settings()
     sms_enabled = bool(settings.FAST2SMS_API_KEY)
 
-    sent = await send_sms(phone, f"Your KisanOS code is {otp}. Valid for 5 minutes.")
-    if not sent and sms_enabled:
-        raise http_error(502, "otp_send_failed", "Failed to send OTP")
-    # Demo convenience: surface the OTP back to the SPA so a presenter can sign
-    # in without SMS. SECURITY: only ever in non-production. In production this
-    # is always None even if SMS is misconfigured — the bypass fails closed.
-    demo_mode = (not settings.is_production) and (not sms_enabled)
+    # Dedicated demo number: skip the ₹5 quick-route SMS and surface the OTP
+    # on screen instead. Only this one configured number is treated this way.
+    demo_target = None
+    if settings.DEMO_PHONE:
+        try:
+            demo_target = _normalise_phone(settings.DEMO_PHONE)
+        except Exception:
+            demo_target = None
+    is_demo_number = demo_target is not None and phone == demo_target
+
+    if is_demo_number:
+        sent = True  # no SMS sent — no charge
+    else:
+        sent = await send_sms(phone, f"Your KisanOS code is {otp}. Valid for 5 minutes.")
+        if not sent and sms_enabled:
+            raise http_error(502, "otp_send_failed", "Failed to send OTP")
+    # Surface the OTP back to the SPA when (a) it's the dedicated demo number, or
+    # (b) the legacy dev fallback (non-production AND no SMS configured). For
+    # every other production number this is None — real codes are never leaked.
+    demo_mode = is_demo_number or (
+        (not settings.is_production) and (not sms_enabled)
+    )
     return RequestOtpResponse(
         phone=phone,
         demo_otp=otp if demo_mode else None,

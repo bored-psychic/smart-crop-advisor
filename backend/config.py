@@ -98,6 +98,13 @@ class Settings(BaseSettings):
 
     # Alert System
     FAST2SMS_API_KEY: str = ""
+    # A single dedicated demo phone number. When /auth/request-otp is called
+    # with this number, no SMS is sent (saves the ₹5 quick-route charge) and
+    # the OTP is returned in the response for on-screen display — even in
+    # production. Every OTHER number goes through SMS normally. Empty = off.
+    # SECURITY: only this one known demo account can be logged into without
+    # SMS; real numbers are unaffected. Never set it to a real user's number.
+    DEMO_PHONE: str = ""
     VAPID_PRIVATE_KEY: str = ""
     VAPID_PUBLIC_KEY: str = ""
     VAPID_EMAIL: str = "mailto:admin@kisanos.app"
