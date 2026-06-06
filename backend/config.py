@@ -108,6 +108,17 @@ class Settings(BaseSettings):
         """Resolve full path to a model file."""
         return os.path.join(self.MODEL_DIR, filename)
 
+    @property
+    def is_production(self) -> bool:
+        """True when ENVIRONMENT is 'production' (case-insensitive).
+
+        Demo/dev conveniences (returning the OTP in the response, the magic
+        123456 code, interactive API docs) MUST be gated on `not is_production`
+        so a deployment fails *closed*: forgetting to configure SMS can never
+        re-open an auth bypass.
+        """
+        return self.ENVIRONMENT.strip().lower() == "production"
+
     class Config:
         env_file = str(Path(__file__).parent.parent / ".env")
         env_file_encoding = "utf-8"

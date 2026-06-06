@@ -132,6 +132,13 @@ def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     settings = get_settings()
 
+    # In production, disable the interactive docs and OpenAPI schema so the full
+    # endpoint/parameter surface is not exposed to anonymous callers.
+    _docs_kwargs = (
+        dict(docs_url=None, redoc_url=None, openapi_url=None)
+        if settings.is_production
+        else {}
+    )
     app = FastAPI(
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
@@ -141,6 +148,7 @@ def create_app() -> FastAPI:
             "irrigation advice, acoustic pest detection, and satellite field watch."
         ),
         lifespan=lifespan,
+        **_docs_kwargs,
     )
 
     # ── Rate limiting (slowapi) ───────────────────────────────────────

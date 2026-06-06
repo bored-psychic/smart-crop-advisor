@@ -26,8 +26,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
-        # HSTS only on HTTPS (skip on http for local dev)
-        if request.url.scheme == "https":
+        # HSTS only on HTTPS (skip on plain http for local dev). Behind a
+        # TLS-terminating proxy (e.g. HF Spaces) the app sees http, so trust
+        # the X-Forwarded-Proto the edge sets to detect the real scheme.
+        forwarded_proto = request.headers.get(
+            "x-forwarded-proto", request.url.scheme
+        ).split(",")[0].strip()
+        if forwarded_proto == "https":
             response.headers["Strict-Transport-Security"] = (
                 "max-age=31536000; includeSubDomains"
             )

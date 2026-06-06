@@ -109,11 +109,13 @@ async def request_otp(
     sent = await send_sms(phone, f"Your KisanOS code is {otp}. Valid for 5 minutes.")
     if not sent and sms_enabled:
         raise http_error(502, "otp_send_failed", "Failed to send OTP")
-    # If SMS is disabled (demo mode), surface the OTP back to the SPA so
-    # the user can see it on screen instead of digging through server logs.
+    # Demo convenience: surface the OTP back to the SPA so a presenter can sign
+    # in without SMS. SECURITY: only ever in non-production. In production this
+    # is always None even if SMS is misconfigured — the bypass fails closed.
+    demo_mode = (not settings.is_production) and (not sms_enabled)
     return RequestOtpResponse(
         phone=phone,
-        demo_otp=None if sms_enabled else otp,
+        demo_otp=otp if demo_mode else None,
     )
 
 
@@ -124,12 +126,16 @@ async def verify_otp_route(
 ):
     phone = _normalise_phone(body.phone)
     supplied_otp = body.otp.strip()
-    # Demo mode: when Fast2SMS is unconfigured we accept the universal
-    # magic code 123456 in addition to the stored OTP, so a presenter
-    # can sign in without round-tripping through the SMS provider.
+    # Demo mode: accept the universal magic code 123456 so a presenter can sign
+    # in without an SMS round-trip. SECURITY: gated on non-production AND no SMS,
+    # so production never honours the magic code regardless of SMS config.
     from backend.config import get_settings
     settings = get_settings()
-    magic_ok = (not settings.FAST2SMS_API_KEY) and supplied_otp == "123456"
+    magic_ok = (
+        (not settings.is_production)
+        and (not settings.FAST2SMS_API_KEY)
+        and supplied_otp == "123456"
+    )
     ok = magic_ok or await verify_otp(db, phone, supplied_otp)
     if not ok:
         raise http_error(401, "otp_invalid", "Invalid or expired OTP")

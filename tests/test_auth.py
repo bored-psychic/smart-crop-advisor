@@ -299,3 +299,69 @@ def test_alerts_history_phone_query_param_ignored(client, monkeypatch):
     )
     assert r.status_code == 200
     assert isinstance(r.json(), list)
+
+
+# ─── Production hardening: demo-mode auth bypass must fail closed ────────
+
+
+@pytest.fixture
+def prod_client(settings_singleton_clear, tmp_path, monkeypatch):
+    """TestClient with ENVIRONMENT=production and SMS unconfigured.
+
+    This is the dangerous-by-default combination: a deployment that forgot
+    to set an SMS key. In production the demo conveniences (OTP echoed in the
+    response, magic 123456 code, interactive docs) must all be OFF.
+    """
+    monkeypatch.setenv("SQLITE_PATH", str(tmp_path / "prod.db"))
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("FAST2SMS_API_KEY", "")
+    from backend.config import get_settings
+    get_settings.cache_clear()
+    import importlib, backend.main
+    importlib.reload(backend.main)
+    from backend.middleware.rate_limit import limiter
+    try:
+        limiter.reset()
+    except Exception:
+        pass
+    from fastapi.testclient import TestClient
+    with TestClient(backend.main.app) as c:
+        yield c
+    # Restore the default app (development) for subsequent tests.
+    get_settings.cache_clear()
+    importlib.reload(backend.main)
+
+
+def test_production_request_otp_does_not_leak_code(prod_client):
+    """In production the OTP must NEVER be returned in the response body."""
+    r = prod_client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    assert r.status_code == 200, r.text
+    assert r.json()["demo_otp"] is None
+
+
+def test_production_rejects_magic_code(prod_client):
+    """The universal 123456 backdoor must be dead in production."""
+    prod_client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    r = prod_client.post(
+        "/api/auth/verify-otp", json={"phone": "+919876543210", "otp": "123456"}
+    )
+    assert r.status_code == 401, r.text
+
+
+def test_production_disables_interactive_docs(prod_client):
+    """OpenAPI schema and Swagger/ReDoc must not be exposed in production."""
+    assert prod_client.get("/openapi.json").status_code == 404
+    assert prod_client.get("/docs").status_code == 404
+    assert prod_client.get("/redoc").status_code == 404
+
+
+def test_development_still_allows_demo_login(client, monkeypatch):
+    """Sanity: dev mode keeps the demo conveniences so presenters can sign in."""
+    from backend.routers import auth as auth_router
+    monkeypatch.setattr(auth_router, "generate_otp", lambda: "424242")
+    r = client.post("/api/auth/request-otp", json={"phone": "+919876543210"})
+    assert r.json()["demo_otp"] == "424242"
+    v = client.post(
+        "/api/auth/verify-otp", json={"phone": "+919876543210", "otp": "123456"}
+    )
+    assert v.status_code == 200, v.text
