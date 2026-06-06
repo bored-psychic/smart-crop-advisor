@@ -1,0 +1,13 @@
+venv/
+**/__pycache__/
+*.pyc
+.git/
+.env
+.env.*
+!.env.example
+kisanos.db
+data/embeddings_cache/
+*.log
+.pytest_cache/
+docs/superpowers/
+tests/
