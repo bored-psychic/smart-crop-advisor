@@ -43,6 +43,12 @@ RUN mkdir -p /home/user/panns_data && \
 WORKDIR /app
 COPY --chown=user . /app
 
+# WORKDIR creates /app owned by root; the app runs as non-root `user` and must
+# write kisanos.db (demo-grade ephemeral SQLite) and feedback clips under /app.
+# Make the whole app tree user-owned and ensure the write dirs exist.
+RUN mkdir -p /app/data/feedback_clips /app/data/feedback_queue && \
+    chown -R user:user /app
+
 USER user
 EXPOSE 7860
 
