@@ -43,6 +43,13 @@ RUN mkdir -p /home/user/panns_data && \
 WORKDIR /app
 COPY --chown=user . /app
 
+# web/config.js sets window.API_BASE for the SPA but is gitignored, so it is
+# absent when HF builds from the git repo (→ API_BASE undefined → calls hit
+# /undefined/...). Generate it from the tracked example when missing; the
+# example uses same-origin "/api", which is correct for this single-container
+# deploy. `-n` preserves a config.js that was present in the build context.
+RUN cp -n web/config.example.js web/config.js 2>/dev/null || true
+
 # WORKDIR creates /app owned by root; the app runs as non-root `user` and must
 # write kisanos.db (demo-grade ephemeral SQLite) and feedback clips under /app.
 # Make the whole app tree user-owned and ensure the write dirs exist.
