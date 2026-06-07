@@ -40,3 +40,24 @@ def test_rewrite_index_html_removes_babel_and_unpkg():
     assert out.index("components/atoms.jsx") < out.index("components/app.jsx")
     # untouched plain script preserved
     assert '<script src="lib/api.js"></script>' in out
+
+
+def test_build_produces_babel_free_frontend(tmp_path):
+    import shutil
+    from pathlib import Path
+    from scripts.build_frontend import build
+
+    repo = Path(__file__).resolve().parent.parent
+    web = tmp_path / "web"
+    shutil.copytree(repo / "web", web)
+    build(str(web))
+    index = (web / "index.html").read_text()
+    # index is babel/unpkg free
+    assert "text/babel" not in index and "unpkg.com" not in index
+    # React vendored
+    assert (web / "vendor" / "react.production.min.js").is_file()
+    assert (web / "vendor" / "react-dom.production.min.js").is_file()
+    # a representative component compiled to plain JS (classic JSX output)
+    atoms = (web / "components" / "atoms.jsx").read_text()
+    assert "React.createElement" in atoms             # classic JSX, not raw <jsx>
+    assert not atoms.lstrip().startswith("import ")    # NOT automatic-runtime imports

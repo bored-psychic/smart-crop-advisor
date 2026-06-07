@@ -46,3 +46,7 @@ web/config.js
 # Runtime data — local SQLite + user-submitted feedback audio
 *.db
 data/feedback_clips/
+
+# Frontend production build artifacts (scripts/build_frontend.py, snapshot-time)
+scripts/.esbuild/
+web/vendor/

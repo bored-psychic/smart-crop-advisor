@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import platform
 import re
+import subprocess
 import tarfile
 import urllib.request
 from pathlib import Path
@@ -83,3 +84,84 @@ def rewrite_index_html(html: str) -> str:
     # 3. drop the text/babel type attr (keep src + ordering intact)
     out = out.replace(' type="text/babel"', "")
     return out
+
+
+# The 16 in-browser-Babel sources, in load order (see web/index.html).
+_BABEL_SOURCES = [
+    "components/atoms.jsx",
+    "components/views/hooks/useViewCropForm.js",
+    "components/views/hooks/usePhotoPanelForm.js",
+    "components/views/hooks/useAcousticForm.js",
+    "components/views/hooks/useAcousticDisplayHelpers.js",
+    "components/views/hooks/useFieldData.js",
+    "components/views/hooks/useAlertSubscribe.js",
+    "components/views/ViewCrop.jsx",
+    "components/views/ViewDisease.jsx",
+    "components/views/ViewMarket.jsx",
+    "components/views/ViewIrrigation.jsx",
+    "components/views/ViewAcoustic.jsx",
+    "components/views/ViewField.jsx",
+    "tweaks-panel.jsx",
+    "components/Login.jsx",
+    "components/app.jsx",
+]
+
+_REACT_VER = "18.3.1"
+_VENDOR_FILES = {
+    "react.production.min.js": f"https://unpkg.com/react@{_REACT_VER}/umd/react.production.min.js",
+    "react-dom.production.min.js": f"https://unpkg.com/react-dom@{_REACT_VER}/umd/react-dom.production.min.js",
+}
+
+
+def transform_file(esbuild: str, path: Path) -> None:
+    """Transform one JSX/text-babel file to plain classic-JSX JS, in place.
+
+    Reads via stdin so `--loader=jsx` applies to BOTH .js and .jsx sources
+    (some hooks are .js but contain JSX). Classic transform targets the global
+    React/ReactDOM UMDs, matching the previous @babel/standalone behaviour.
+    """
+    src = path.read_text()
+    proc = subprocess.run(
+        [
+            esbuild,
+            "--loader=jsx",
+            "--jsx=transform",
+            "--jsx-factory=React.createElement",
+            "--jsx-fragment=React.Fragment",
+        ],
+        input=src,
+        text=True,
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(f"esbuild failed on {path}:\n{proc.stderr}")
+    path.write_text(proc.stdout)
+
+
+def vendor_react(web_dir: Path) -> None:
+    vendor = web_dir / "vendor"
+    vendor.mkdir(exist_ok=True)
+    for name, url in _VENDOR_FILES.items():
+        urllib.request.urlretrieve(url, vendor / name)
+
+
+def build(web_dir: str) -> None:
+    """Transform `web_dir` in place into the production (Babel-free) frontend."""
+    web = Path(web_dir)
+    esbuild = ensure_esbuild()
+    for rel in _BABEL_SOURCES:
+        f = web / rel
+        if not f.is_file():
+            raise FileNotFoundError(f"expected source missing: {f}")
+        transform_file(esbuild, f)
+    vendor_react(web)
+    index = web / "index.html"
+    index.write_text(rewrite_index_html(index.read_text()))
+
+
+if __name__ == "__main__":
+    import sys
+
+    target = sys.argv[1] if len(sys.argv) > 1 else "web"
+    build(target)
+    print(f"✅ production frontend built in {target}/")
