@@ -149,13 +149,17 @@ def transform_file(esbuild: str, path: Path) -> None:
 
 
 def vendor_react(web_dir: Path) -> None:
-    """Download the pinned React/ReactDOM UMDs, verifying each against its
-    expected sha384 before writing — a mismatch aborts the build."""
+    """Download the pinned React/ReactDOM UMDs, verify each against its expected
+    sha384, and write them only after ALL pass — so any mismatch aborts before a
+    single byte is written (fully atomic; nothing is left behind).
+
+    To re-pin after bumping ``_REACT_VER``, recompute each hash with:
+        curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A
+    """
     import base64
     import hashlib
 
-    vendor = web_dir / "vendor"
-    vendor.mkdir(exist_ok=True)
+    verified: dict[str, bytes] = {}
     for name, (url, expected) in _VENDOR_FILES.items():
         with urllib.request.urlopen(url, timeout=30) as resp:
             data = resp.read()
@@ -165,6 +169,10 @@ def vendor_react(web_dir: Path) -> None:
                 f"vendor integrity check failed for {name}: "
                 f"expected sha384-{expected}, got sha384-{actual}"
             )
+        verified[name] = data
+    vendor = web_dir / "vendor"
+    vendor.mkdir(exist_ok=True)
+    for name, data in verified.items():
         (vendor / name).write_bytes(data)
 
 
