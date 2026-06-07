@@ -54,9 +54,10 @@ def test_build_produces_babel_free_frontend(tmp_path):
     index = (web / "index.html").read_text()
     # index is babel/unpkg free
     assert "text/babel" not in index and "unpkg.com" not in index
-    # React vendored
+    # React vendored AND loaded before the components that reference it
     assert (web / "vendor" / "react.production.min.js").is_file()
     assert (web / "vendor" / "react-dom.production.min.js").is_file()
+    assert index.index("vendor/react.production.min.js") < index.index("components/atoms.jsx")
     # a representative component compiled to plain JS (classic JSX output)
     atoms = (web / "components" / "atoms.jsx").read_text()
     assert "React.createElement" in atoms             # classic JSX, not raw <jsx>

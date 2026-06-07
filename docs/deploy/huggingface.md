@@ -167,6 +167,11 @@ mutates `web/` in place). If you build a snapshot without it while
 `ENVIRONMENT=production`, the strict CSP will block the still-Babel frontend and
 the SPA won't load.
 
+The build does all network work (esbuild + React download, sha384-verified)
+**before** touching `web/`, so a transient download failure leaves the tree
+clean. If a build is interrupted and `web/` ends up partially transformed,
+recover with `git checkout -- web/ && git clean -fd web/vendor` before retrying.
+
 ---
 
 ## Cold starts / paid upgrade

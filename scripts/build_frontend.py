@@ -107,9 +107,19 @@ _BABEL_SOURCES = [
 ]
 
 _REACT_VER = "18.3.1"
+# (url, expected sha384 base64). Build-time integrity pin replacing the SRI the
+# old unpkg <script> tags carried — a tampered/changed download fails loudly
+# instead of being baked into the snapshot. The build still FETCHES from unpkg,
+# but only on the build host; the served app loads these same-origin.
 _VENDOR_FILES = {
-    "react.production.min.js": f"https://unpkg.com/react@{_REACT_VER}/umd/react.production.min.js",
-    "react-dom.production.min.js": f"https://unpkg.com/react-dom@{_REACT_VER}/umd/react-dom.production.min.js",
+    "react.production.min.js": (
+        f"https://unpkg.com/react@{_REACT_VER}/umd/react.production.min.js",
+        "DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z",
+    ),
+    "react-dom.production.min.js": (
+        f"https://unpkg.com/react-dom@{_REACT_VER}/umd/react-dom.production.min.js",
+        "gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1",
+    ),
 }
 
 
@@ -139,22 +149,40 @@ def transform_file(esbuild: str, path: Path) -> None:
 
 
 def vendor_react(web_dir: Path) -> None:
+    """Download the pinned React/ReactDOM UMDs, verifying each against its
+    expected sha384 before writing — a mismatch aborts the build."""
+    import base64
+    import hashlib
+
     vendor = web_dir / "vendor"
     vendor.mkdir(exist_ok=True)
-    for name, url in _VENDOR_FILES.items():
-        urllib.request.urlretrieve(url, vendor / name)
+    for name, (url, expected) in _VENDOR_FILES.items():
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            data = resp.read()
+        actual = base64.b64encode(hashlib.sha384(data).digest()).decode()
+        if actual != expected:
+            raise RuntimeError(
+                f"vendor integrity check failed for {name}: "
+                f"expected sha384-{expected}, got sha384-{actual}"
+            )
+        (vendor / name).write_bytes(data)
 
 
 def build(web_dir: str) -> None:
-    """Transform `web_dir` in place into the production (Babel-free) frontend."""
+    """Transform `web_dir` in place into the production (Babel-free) frontend.
+
+    All network work (esbuild download, React vendor download+verify) runs FIRST,
+    before any file in `web_dir` is mutated, so a transient download failure
+    leaves the source tree untouched rather than half-built.
+    """
     web = Path(web_dir)
     esbuild = ensure_esbuild()
+    vendor_react(web)
     for rel in _BABEL_SOURCES:
         f = web / rel
         if not f.is_file():
             raise FileNotFoundError(f"expected source missing: {f}")
         transform_file(esbuild, f)
-    vendor_react(web)
     index = web / "index.html"
     index.write_text(rewrite_index_html(index.read_text()))
 
