@@ -9,11 +9,14 @@ from __future__ import annotations
 
 import os
 import platform
+import re
 import tarfile
 import urllib.request
 from pathlib import Path
 
 ESBUILD_VERSION = "0.24.0"
+_VENDOR_REACT = '<script src="vendor/react.production.min.js"></script>'
+_VENDOR_REACT_DOM = '<script src="vendor/react-dom.production.min.js"></script>'
 _CACHE_DIR = Path(__file__).resolve().parent / ".esbuild"
 
 
@@ -49,3 +52,34 @@ def ensure_esbuild() -> str:
     tgz.unlink()
     binary.chmod(binary.stat().st_mode | 0o111)
     return str(binary)
+
+
+def rewrite_index_html(html: str) -> str:
+    """Make index.html Babel-free and CDN-free.
+
+    1. Drop the `@babel/standalone` script entirely.
+    2. Replace the two unpkg React scripts with self-hosted production vendor ones.
+    3. Strip `type="text/babel"` from every script so the precompiled files load
+       as ordinary JS (their paths/content were transformed in place by the build).
+    """
+    out = html
+    # 1. remove the babel-standalone <script ...></script> line
+    out = re.sub(
+        r'[ \t]*<script[^>]*@babel/standalone[^>]*>\s*</script>\s*\n?',
+        "",
+        out,
+    )
+    # 2. swap the two unpkg react scripts for vendor scripts (order preserved)
+    out = re.sub(
+        r'<script[^>]*unpkg\.com/react@[^>]*>\s*</script>',
+        _VENDOR_REACT,
+        out,
+    )
+    out = re.sub(
+        r'<script[^>]*unpkg\.com/react-dom@[^>]*>\s*</script>',
+        _VENDOR_REACT_DOM,
+        out,
+    )
+    # 3. drop the text/babel type attr (keep src + ordering intact)
+    out = out.replace(' type="text/babel"', "")
+    return out
