@@ -37,19 +37,31 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "max-age=31536000; includeSubDomains"
             )
 
-        # Content-Security-Policy: tuned for the in-browser Babel/React SPA.
-        # unsafe-eval is required by @babel/standalone to compile JSX at runtime.
-        # unpkg.com hosts React/ReactDOM/Babel UMD bundles; Google Fonts hosts
-        # the display fonts. Production should self-host React/Babel and drop
-        # both the unpkg allowance and 'unsafe-eval'.
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "img-src 'self' data:; "
-            "media-src 'self' blob:; "
-            "connect-src 'self' https://unpkg.com; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com"
-        )
+        # Content-Security-Policy. Production serves a PRECOMPILED frontend
+        # (scripts/build_frontend.py) so we drop 'unsafe-eval', script
+        # 'unsafe-inline' and the unpkg CDN. Dev keeps the permissive policy the
+        # in-browser Babel SPA needs. style-src keeps 'unsafe-inline' in both for
+        # React style={{}} props (low XSS risk) + Google Fonts.
+        from backend.config import get_settings
+        if get_settings().is_production:
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "img-src 'self' data:; "
+                "media-src 'self' blob:; "
+                "connect-src 'self'; "
+                "script-src 'self'; "
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                "font-src 'self' https://fonts.gstatic.com"
+            )
+        else:
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "img-src 'self' data:; "
+                "media-src 'self' blob:; "
+                "connect-src 'self' https://unpkg.com; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; "
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                "font-src 'self' https://fonts.gstatic.com"
+            )
 
         return response
