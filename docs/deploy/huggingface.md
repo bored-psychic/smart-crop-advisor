@@ -144,6 +144,31 @@ Open the URL, confirm the UI renders and an acoustic upload returns
 
 ---
 
+## Snapshot-time frontend build (strict production CSP)
+
+The production CSP (`ENVIRONMENT=production`) drops `unsafe-eval`, script
+`unsafe-inline`, and the unpkg allowance. That only works because the deployed
+frontend is **precompiled** — no in-browser Babel. So when building the deploy
+snapshot, after the snapshot's `web/` is checked out and **before `git add -A`**,
+run the frontend build:
+
+```bash
+# Precompile JSX + self-host React so the strict prod CSP can be applied.
+# Runs on the orphan deploy branch ONLY; main/web stays live-Babel source.
+.venv/bin/python scripts/build_frontend.py web
+
+# web/ is now Babel-free and has web/vendor/ (both are gitignored), so force-add
+# the generated vendor dir into the snapshot:
+git add -f web/vendor
+```
+
+This step is part of building `deploy-snapN`; **never run it on `main`** (it
+mutates `web/` in place). If you build a snapshot without it while
+`ENVIRONMENT=production`, the strict CSP will block the still-Babel frontend and
+the SPA won't load.
+
+---
+
 ## Cold starts / paid upgrade
 
 torch + TF + CNN14 give a ~30–60 s cold start, and the free Space sleeps after
