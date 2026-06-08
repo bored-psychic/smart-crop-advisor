@@ -250,6 +250,16 @@ def create_app() -> FastAPI:
             "version": settings.APP_VERSION,
         }
 
+    # The production build precompiles JSX into plain JS files that keep the
+    # `.jsx` extension and load as ordinary <script src>. StaticFiles guesses
+    # their MIME from the extension; `.jsx` is not a registered JS type, so it
+    # serves `application/octet-stream`, and with `X-Content-Type-Options:
+    # nosniff` the browser REFUSES to execute the script (blank SPA). Register
+    # `.jsx` (and `.js`, defensively) as JavaScript so they execute under nosniff.
+    import mimetypes
+    mimetypes.add_type("text/javascript", ".jsx")
+    mimetypes.add_type("text/javascript", ".js")
+
     WEB_DIR = Path(__file__).parent.parent / "web"
     app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="web")
 

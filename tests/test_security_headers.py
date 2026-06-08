@@ -39,3 +39,21 @@ def test_production_csp_drops_unsafe_eval_inline_unpkg(monkeypatch):
 def test_development_csp_keeps_permissive(monkeypatch):
     csp = _client(monkeypatch, "development").get("/").headers["content-security-policy"]
     assert "unsafe-eval" in csp and "unpkg.com" in csp
+
+
+def test_jsx_registered_as_javascript_mime(monkeypatch):
+    """Precompiled .jsx scripts must serve as JS so nosniff doesn't block them.
+
+    create_app() registers the mimetype; without it StaticFiles serves
+    application/octet-stream and the browser refuses to execute the SPA
+    (X-Content-Type-Options: nosniff) -> blank screen.
+    """
+    import mimetypes
+    monkeypatch.setenv("API_KEY", "x"); monkeypatch.setenv("JWT_SECRET", "y")
+    monkeypatch.setenv("APP_PEPPER", "z")
+    monkeypatch.setenv("FERNET_KEY", "44dN8b2b2y0n7n2n9k4Q1pX9c5kqV1mWnLrJ3yq3v3o=")
+    from backend.config import get_settings
+    get_settings.cache_clear()
+    from backend.main import create_app
+    create_app()
+    assert mimetypes.guess_type("anything.jsx")[0] == "text/javascript"
