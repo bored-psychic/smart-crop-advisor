@@ -25,10 +25,13 @@ function ViewIrrigation({ profile, setProfile, t, fieldData, fieldLoading }){
     setAutofilling(!!fieldLoading);
     const w = fieldData && fieldData.weather;
     if (!w) return;
-    if (w.temp     != null) setTemperature(parseFloat(w.temp));
-    if (w.humidity != null) setHumidity(parseFloat(w.humidity));
-    if (w.wind     != null) setWindSpeed(parseFloat(w.wind));
-    if (w.rain_1h  != null) setLastRain(Math.min(100, Math.max(0, parseFloat(w.rain_1h) * 24)));
+    // Clamp autofilled weather to the slider/backend ranges so a gusty day
+    // (e.g. wind > 50 km/h) can't push state past the schema caps → 422.
+    const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    if (w.temp     != null) setTemperature(clamp(parseFloat(w.temp), 10, 48));
+    if (w.humidity != null) setHumidity(clamp(parseFloat(w.humidity), 10, 100));
+    if (w.wind     != null) setWindSpeed(clamp(parseFloat(w.wind), 0, 50));
+    if (w.rain_1h  != null) setLastRain(clamp(parseFloat(w.rain_1h) * 24, 0, 100));
     setAutofillNote(`Autofilled from ${fieldData.city || profile.village}`);
     const desc = (w.description || '').toLowerCase();
     const matched = Object.keys(CALAMITY_TIPS).find(k => desc.includes(k));

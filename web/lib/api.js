@@ -50,6 +50,24 @@ class ApiError extends Error {
   }
 }
 
+// FastAPI 422 returns `detail` as an array of validation-error objects, e.g.
+// [{loc:["body","wind_speed"], msg:"Input should be less than or equal to 50"}].
+// Turn that into one human-readable line instead of leaking raw JSON to users.
+function _normalizeDetail(detail) {
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    const parts = detail.map(e => {
+      const field = (e.loc || []).filter(p => p !== 'body').pop();
+      const label = field ? String(field).replace(/_/g, ' ') : '';
+      const msg = (e.msg || 'is invalid').replace(/^Input /, '');
+      return label ? `${label[0].toUpperCase()}${label.slice(1)} ${msg}` : msg;
+    });
+    return parts.join('; ') || 'Invalid input.';
+  }
+  if (detail && typeof detail === 'object') return detail.msg || JSON.stringify(detail);
+  return String(detail);
+}
+
 async function _req(path, opts = {}) {
   const headers = {};
   const token = getToken();
@@ -92,7 +110,7 @@ async function _req(path, opts = {}) {
     let detail;
     try {
       const json = await r.json();
-      detail = json.detail || r.statusText;
+      detail = json.detail != null ? _normalizeDetail(json.detail) : r.statusText;
     } catch (_) {
       detail = r.statusText;
     }
