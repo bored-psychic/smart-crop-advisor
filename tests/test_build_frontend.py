@@ -62,3 +62,16 @@ def test_build_produces_babel_free_frontend(tmp_path):
     atoms = (web / "components" / "atoms.jsx").read_text()
     assert "React.createElement" in atoms             # classic JSX, not raw <jsx>
     assert not atoms.lstrip().startswith("import ")    # NOT automatic-runtime imports
+
+    # The per-file `const { useState, ... } = React;` MUST be demoted to `var`:
+    # loaded as separate classic scripts these share one global lexical scope,
+    # so a `const` redeclaration across files throws "already declared" and
+    # aborts the script (blank page). `var` lands on window and tolerates it.
+    import re as _re
+    for comp in ("components/atoms.jsx", "components/app.jsx",
+                 "components/views/ViewMarket.jsx", "components/Login.jsx"):
+        text = (web / comp).read_text()
+        assert not _re.search(r'(?m)^const\s*\{[^}]*\}\s*=\s*React\s*;', text), \
+            f"{comp} still has a top-level `const {{...}} = React;` (will collide)"
+        assert _re.search(r'(?m)^var\s*\{[^}]*\}\s*=\s*React\s*;', text), \
+            f"{comp} missing the `var {{...}} = React;` global-hooks line"

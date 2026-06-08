@@ -145,7 +145,16 @@ def transform_file(esbuild: str, path: Path) -> None:
     )
     if proc.returncode != 0:
         raise RuntimeError(f"esbuild failed on {path}:\n{proc.stderr}")
-    path.write_text(proc.stdout)
+    out = proc.stdout
+    # Each source does a top-level `const { useState, ... } = React;`. Loaded as
+    # separate CLASSIC scripts they share ONE global lexical environment, so the
+    # 2nd+ such `const` throws "Identifier 'useState' has already been declared"
+    # and aborts that script (Babel's text/babel ran each script isolated, so it
+    # never collided). Demote that specific destructure to `var` — var lands on
+    # `window` and tolerates redeclaration, while component `function`s stay
+    # global as before. Other top-level consts have unique names (no collision).
+    out = re.sub(r'(?m)^const(\s*\{[^}]*\}\s*=\s*React\s*;)', r'var\1', out)
+    path.write_text(out)
 
 
 def vendor_react(web_dir: Path) -> None:
