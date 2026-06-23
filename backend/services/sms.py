@@ -29,12 +29,21 @@ async def send_sms(phone: str, message: str) -> bool:
     # Strip country code — Fast2SMS expects a bare 10-digit Indian number.
     number = phone.lstrip("+").removeprefix("91")
 
-    headers = {"authorization": settings.FAST2SMS_API_KEY}
-    params = {"route": "q", "message": message, "numbers": number, "flash": 0}
+    # Fast2SMS authenticates the key as a *query parameter*, not an HTTP header.
+    # The header form (authorization: <key>) is rejected with status 412
+    # "Invalid Authentication" for our dev-API key, even though the key is valid
+    # — verified against /dev/wallet (header → 412, query param → return:true).
+    params = {
+        "authorization": settings.FAST2SMS_API_KEY,
+        "route": "q",
+        "message": message,
+        "numbers": number,
+        "flash": 0,
+    }
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
-            resp = await client.get(FAST2SMS_URL, params=params, headers=headers)
+            resp = await client.get(FAST2SMS_URL, params=params)
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
